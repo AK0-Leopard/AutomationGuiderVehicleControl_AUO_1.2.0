@@ -1,0 +1,139 @@
+**********************************************
+*  BlockControlSystem_GVO-v1.0.1
+*  Latest modifications record
+*  Date  : 2014/11/20
+*  Author: 
+*  Mail  : 
+*  Tel   : 03-5783280
+**********************************************
+***v1.2.0.32
+   2020/05/25  (Mark Chou)
+   功能修正
+   --自動找出Section與Section間的的連通關係，並記錄至DB。
+   --於程式啟動與Disable/Enable路徑時，計算地圖中的單行道資料，並記錄於Cache中。
+
+***v1.2.0.31
+   2020/05/12  (Mark Chou)
+   功能修正
+   --調整命令優先執行邏輯，命令Load Port與Unload Port的Priority大於等於99要優先執行外，這些優先命令需要用Port Priority再進行優先度排序。
+
+***v1.2.0.30
+   2020/05/05  (Kevin Wei)
+   功能修正
+   --修正在AGV發生Vehicle Abort後，回覆給MCS的Return code = 7。(原本是:1)
+
+***v1.2.0.29
+   2020/05/05  (Mark Chou)
+   功能修正
+   --調整命令執行優先執行邏輯，取消WTO優先執行邏輯，以起始點的PortStation的Priority等於最大值(目前最大值是99)的命令優先執行的邏輯取而代之。
+
+***v1.2.0.28
+   2020/04/24  (Mark Chou)
+   功能修正
+   --各線Config加入ALARMCONVERTINFO.csv(用於轉換AGV Alarm Code為MCS所定義的)
+   --加入NORTH_INNOLUX_Test_Site 測試設定
+   --北群創對MCS加入上報VehicleAcquireFailed與VehicleDepositFailed
+   --ACEID CEID, AMCSREPORTQUEUE STREAMFUNCTION_CEID改為七碼,HCMD_OHTC VH_ID改為八碼。
+   Bugfix
+   --修改AUO_CAAGV100 MPLCConnectionSetting解決Charger點位讀取範圍過小的問題
+   --修正Charger PIO訊號部分顯示不正確的問題。
+
+***v1.2.0.27
+   2020/04/24  (Kevin Wei)
+   Bugfix
+   --修正在Avoide Complete後，會無法正常下達override的問題。
+
+***v1.2.0.26
+   2020/04/23  (Kevin Wei)
+   格式增加
+   --在ID:152-Avoid Complete中，加入Current Address、Current Section、X、Y...等欄位
+
+***v1.2.0.25
+   2020/04/22  (Kevin Wei)
+   功能修正
+   --修改趕車邏輯，取消在有Queue MCS命令時，不趕車的邏輯，否則會跟有WTO命令但不往那邊送時導致車子推不走。
+***v1.2.0.24
+   2020/04/21  (Kevin Wei)
+   功能修正
+   --避免同時多台AGV往WTO送貨造成在R2000的路段過於繁忙。
+***v1.2.0.23
+   2020/04/09  (Kevin Wei)
+   功能修正
+   --修正在舊版圖資下，無法Ban/Unban路徑的問題
+***v1.2.0.22
+   2020/04/08  (Kevin Wei)
+   功能加入
+   --加入能夠使用舊版的圖資以及在單車下By Pass Reserve功能。
+***v1.2.0.21
+   2020/03/31  (Kevin Wei)
+   Bugfix
+   --修正進行Override完成後，AGV再來要自己原本所在的那段路徑會失敗的問題(在把Reserve加回來的時候VhID有空白導致失敗)。
+   功能修改
+   --在Vehicle上報VehicleAbort後，將不會清除原本已經預約的路徑，以防安全。
+***v1.2.0.20
+   2020/03/30  (Mark Chou)
+   Bugfix
+   --修正在進行Override完成後，AGV再來要自己原本所在的那段路徑會失敗的問題。
+
+***v1.2.0.19
+   2020/03/26  (Mark Chou)
+   Bugfix
+   --修正Charger Index點位不正確與取值時會取到錯誤物件的問題。
+***v1.2.0.18
+   2020/03/26  (Kevin Wei)
+   Bugfix
+   --修正當有車子載著CST前往充電且又有MCS命令給他的時候，會跳例外的問題。
+***v1.2.0.17
+   2020/03/25  (Kevin Wei)
+   功能修改
+   --增加當擋住路的車子因為障礙物檢知，而無法前進時，也要對目前Reseve失敗的車子進行Override
+***v1.2.0.16
+   2020/03/24  (Kevin Wei)
+   功能增加
+   --提前對AGV下達路徑Overried的功能，並增加如果前方的AGV正在進行Override時，也會預先下達Override。
+
+***v1.2.0.14
+   2020/03/16  (Mark Chou)
+   功能增加
+   --加入Charger Control至Debug畫面。
+   Bug修正
+   --並修正部分Charger PLC 點位設定錯誤問題。
+***v1.2.0.13
+   2020/03/14  (Kevin Wei)
+	功能修正
+	--修正在Unload失敗後，Location會更新錯誤的問題。
+***v1.2.0.12
+   2020/03/12  (Kevin Wei)
+	功能修正
+	--修正會因為車子上報位置的時序過近，在位置更新的時序錯誤的問題。
+	--Unload MCS命令給VH失敗後，將會直接結束該筆命令，並將他的最後位置修正在上一筆收到的MCS
+***v1.2.0.11
+   2020/03/11  (Kevin Wei)
+	功能修正
+	--在接受到MCS命令是為指定車輛時(即要讓車子進行Unload)，如該Vh跟上沒有CST的話，將會拒絕該命令。
+	--如果再下達Unload MCS命令給VH失敗後，將會直接結束該筆命令，不會再將它變成Queue。
+***v1.2.0.10
+   2020/03/11  (Kevin Wei)
+	功能增加
+	--將執行完畢的OHTC_CMD搬移至HOHTC_CMD。
+***v1.2.0.8
+   2020/03/10  (Kevin Wei)
+	功能增加
+	--增加在車子電量低於設定的低水位時的保護機制。
+
+***v1.2.0.6
+   2020/02/27  (Mark Chou)
+   功能增加
+   --加入南北群創的BLL(繼承自AUO的BLL)
+   --加入南北群創的Service(繼承自AUO的Service)
+   --修改南北群創的SECS Format以符合規範
+   --增加部分資料庫欄位長度(如CEID長度由3改為4)。進板時需更新SQL(BCWinForm\MapFile\AUO_CAAGV100\v1.2.0.6更新用.sql)。
+
+***v1.2.0.3
+   2020/02/03  (Kevin Wei)
+	功能強化
+	--修正Reserve畫面，記憶體使用率高的問題。
+***v1.2.0.2
+   2020/01/20  (Kevin Wei)
+	功能增加
+	--當車子斷線超過30秒或切換成Manual Mode，會上報Alarm"10001 = VH_CAN_NOT_SERVICE"

@@ -1,0 +1,26 @@
+OBJECT_ID,ALARM_ID,ALARM_LVL,ALARM_DESC
+OHxC,1,2,Can't find the way to transfer. VH:{0} OhxC Cmd ID:{1}
+AGV01,00000,2,Alarm Happend
+AGV01,-910,2,T1~T4 PIO Error
+AGV01,-911,1,T6 PIO Error
+AGV01,-900,1,BCR Read Fail
+AGV01,-921,2,Load process error
+AGV01,-922,2,Unload process error
+AGV01,-987,2,Vehicle error987
+AGV01,-999,2,Vehicle error999
+AGV02,00000,2,Alarm Happend
+AGV02,-910,2,T1~T4 PIO Error
+AGV02,-911,1,T6 PIO Error
+AGV02,-900,1,BCR Read Fail
+AGV02,-921,2,Load process error
+AGV02,-922,2,Unload process error
+AGV02,-987,2,Vehicle error987
+AGV02,-999,2,Vehicle error999
+AGV03,00000,2,Alarm Happend
+AGV03,-910,2,T1~T4 PIO Error
+AGV03,-911,1,T6 PIO Error
+AGV03,-900,1,BCR Read Fail
+AGV03,-921,2,Load process error
+AGV03,-922,2,Unload process error
+AGV03,-987,2,Vehicle error987
+AGV03,-999,2,Vehicle error999

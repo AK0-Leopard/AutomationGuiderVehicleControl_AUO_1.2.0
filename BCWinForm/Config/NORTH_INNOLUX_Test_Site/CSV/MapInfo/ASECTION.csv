@@ -1,0 +1,10 @@
+Id,FromAddress,ToAddress,Speed, Type,PermitDirection
+0001,48001,48004,400,Horizontal,Forward
+0004,48004,48005,400,Horizontal,Forward
+0006,20006,48008,100,Horizontal,Forward
+0012,48004,48012,138,R2000,Forward
+0013,48012,48013,600,Horizontal,Forward
+0014,48008,48013,138,R2000,Forward
+0015,48013,20014,600,Horizontal,Forward
+0016,20014,24015,400,Horizontal,Forward
+0017,24015,48016,200,Horizontal,Forward

@@ -1,0 +1,1303 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BlockControlFramework</name>
+    </assembly>
+    <members>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.onSMAppError(System.Int32,System.String)">
+            <summary>
+            A0.03
+            當SMApplicatcion有錯誤發生時，發出事件
+            </summary>
+            <param name="errorCode"></param>
+            <param name="errorMsg"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.getSECSAgent(System.String)">
+            <summary>
+            A0.07
+            取得特定名稱之SECS Agent
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.getBaseAddressConfigSections">
+            <summary>
+            取得Base Address的設定
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.getValueEventRelatives">
+            <summary>
+            取得Value Event與相對位置的設定
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.buildValueEvent(System.String,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            用於建立Value Event(Value Read / Value Write)
+            </summary>
+            <param name="eqObjectID"></param>
+            <param name="eqObjectCate"></param>
+            <param name="baseName"></param>
+            <param name="relativeName"></param>
+            <param name="isAppend">如果為True，則不清空原有之Value Event。反之，會先清除所有Value Event。</param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.buildValueEvent(com.mirle.ibg3k0.bcf.ConfigHandler.EQMapValueEvents)">
+            <summary>
+            用於建立Value Event(Value Read / Value Write)
+            </summary>
+            <param name="eqMapValueEventSections">Equipment對應使用的Base Address、Relative Def設定</param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.loadMessageProperty">
+            <summary>
+            A0.06
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.createMPLCSMControl">
+            <summary>
+            A0.02
+            從MPLC設定檔建立對應的MPLC Connection Manager與Sharememory Control
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.getDBConnection">
+            <summary>
+            取得DB Connection
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.getMPLCConnectionManager(System.String)">
+            <summary>
+            A0.13
+            取得M/PCL Connection Manager
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.getInitialTimeoutSec">
+            <summary>
+            取得MPLC初始欄位值的Timeout時間限制
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.getInitialRetryCount">
+            <summary>
+            取得最多允許MPLC初始欄位值Timeout的次數
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.getDeviceLength(System.String,System.String)">
+            <summary>
+            取得MPLC Device要讀取資料的長度
+            </summary>
+            <param name="device"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.getDeviceUnitBitCount(System.String,System.String)">
+            <summary>
+            A0.01
+            取得PLC一個Device對應實際的bit數量
+            </summary>
+            <param name="device"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.getDeviceBlockBitCount(System.String,System.String)">
+            <summary>
+            A0.01
+            取得從PLC讀取一個Block對應的bit數量
+            </summary>
+            <param name="device"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.getDeviceCountPerBlock(System.String,System.String)">
+            <summary>
+            A0.01
+            取得一個Block包含多少個Device
+            </summary>
+            <param name="deviceType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.startAllSECSAgent">
+            <summary>
+            啟動所有SECS Agent(開始與SECS連線通訊)
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.stopAllSECSAgent">
+            <summary>
+            停止所有SECS Agent(中斷與SECS連線通訊)
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.startShareMemory(System.String)">
+            <summary>
+            啟動Share Memory，將與指定MPLC開始通訊
+            </summary>
+            <param name="mplcName"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.start(com.mirle.ibg3k0.bcf.App.BCFApplication.StartProcess)">
+            <summary>
+            開始執行
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.stopShareMemory(System.String)">
+            <summary>
+            停止Share Memory，將與指定MPLC停止通訊
+            </summary>
+            <param name="mplcName"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.stop(com.mirle.ibg3k0.bcf.App.BCFApplication.StopProcess)">
+            <summary>
+            停止執行SMC Timer
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.systemTimeActionStart">
+            <summary>
+            開始執行timerActionListSystem
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.tryGetReadValueEventstring(System.String,System.String,System.String,com.mirle.ibg3k0.bcf.Controller.ValueRead@)">
+            <summary>
+            根據Equipment Name以及ValueDef Name嘗試取得Read型態的ValueEvent，成功回傳True，失敗回傳False
+            </summary>
+            <param name="eqpt"></param>
+            <param name="name"></param>
+            <param name="vEvent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.getReadValueEvent(System.String,System.String)">
+            <summary>
+            根據Equipment Name以及ValueDef Name取得Read型態的ValueEvent，若沒有找到，則回傳null
+            </summary>
+            <param name="eqpt"></param>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.App.BCFApplication.getWriteValueEvent(System.String,System.String)">
+            <summary>
+            根據Equipment Name以及ValueDef Name取得Write型態的ValueEvent，若沒有找到，則回傳null
+            </summary>
+            <param name="eqpt"></param>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="P:com.mirle.ibg3k0.bcf.App.BCFApplication.Started">
+            <summary>
+            是否已啟動SMC Timer
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.Adapter.Initialize">
+            <summary>
+            請於UI執行緒呼叫此方法。
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.Adapter.Invoke(System.Threading.SendOrPostCallback,System.Object)">
+            <summary>
+            在 Dispatcher 關聯的執行緒上以同步方式執行指定的委派。
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.Adapter.BeginInvoke(System.Threading.SendOrPostCallback,System.Object)">
+            <summary>
+            在 Dispatcher 關聯的執行緒上以非同步方式執行指定的委派。
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.formatDateTime(System.DateTime,System.String)">
+            <summary>
+            對DateTime進行格式化
+            </summary>
+            <param name="date"></param>
+            <param name="format">格式字串</param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.isMatche(System.Object,System.Object)">
+            <summary>
+            表示兩個物件內容是否相同
+            </summary>
+            <param name="obj1"></param>
+            <param name="obj2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.isMatche(System.Array,System.Array)">
+            <summary>
+            比較兩個陣列內容是否相同
+            </summary>
+            <param name="ary1"></param>
+            <param name="ary2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.isMatche(System.String,System.String)">
+            <summary>
+            比較兩個字串內容是否相同
+            </summary>
+            <param name="str1"></param>
+            <param name="str2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.writeEquipmentLog(System.String,System.Collections.Generic.List{com.mirle.ibg3k0.bcf.Controller.ValueWrite})">
+            <summary>
+            輸出ValueWrite Log
+            </summary>
+            <param name="eqptName"></param>
+            <param name="vWriteList"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.writeEquipmentLog(System.String,System.Collections.Generic.List{com.mirle.ibg3k0.bcf.Controller.ValueWrite},System.String)">
+            <summary>
+            輸出ValueWrite Log
+            </summary>
+            <param name="eqptName"></param>
+            <param name="vWriteList"></param>
+            <param name="FunctionName"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.writeEquipmentLog(System.String,System.String,System.Collections.Generic.List{com.mirle.ibg3k0.bcf.Controller.ValueWrite},System.String)">
+            <summary>
+            輸出ValueWrite Log
+            </summary>
+            <param name="eqptName"></param>
+            <param name="sNote"></param>
+            <param name="vWriteList"></param>
+            <param name="FunctionName"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.writeEquipmentLog(com.mirle.ibg3k0.bcf.Controller.ValueWrite)">
+            <summary>
+            格式化ValueWrite Log
+            </summary>
+            <param name="vWrite"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.writeEquipmentLog(System.String,System.Collections.Generic.List{com.mirle.ibg3k0.bcf.Controller.ValueRead})">
+            <summary>
+            A0.02
+            輸出ValueEvent Log
+            </summary>
+            <param name="eqptName"></param>
+            <param name="vEventList"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.writeEquipmentLog(System.String,System.Collections.Generic.List{com.mirle.ibg3k0.bcf.Controller.ValueRead},System.String)">
+            <summary>
+            輸出ValueEvent Log
+            </summary>
+            <param name="eqptName"></param>
+            <param name="vEventList"></param>
+            <param name="FunctionName"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.writeEquipmentLog(System.String,System.String,System.Collections.Generic.List{com.mirle.ibg3k0.bcf.Controller.ValueRead},System.String)">
+            <summary>
+            輸出ValueEvent Log
+            </summary>
+            <param name="eqptName"></param>
+            <param name="sNote"></param>
+            <param name="vEventList"></param>
+            <param name="FunctionName"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.writeEquipmentLog(com.mirle.ibg3k0.bcf.Controller.ValueRead)">
+            <summary>
+            格式化ValueEvent Log
+            </summary>
+            <param name="vEvent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.convertObject2String(System.Object)">
+            <summary>
+            將Object轉換為String
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.convertInt2TextByType(System.Int32,System.Type,System.Int32[])">
+            <summary>
+            由int array轉換為對應型別的物件
+            </summary>
+            <param name="expandBitCntForBooleanType"></param>
+            <param name="targetType"></param>
+            <param name="intAry"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.writeTrxLog(System.String,System.String,com.mirle.ibg3k0.mqc.tx.BaseTX)">
+            <summary>
+            A0.02
+            輸出Transaction Log
+            </summary>
+            <param name="eqptName"></param>
+            <param name="trxName"></param>
+            <param name="trx"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.intAryToString(System.String,System.Int32[])">
+            <summary>
+            將整數陣列，以特定符號作區隔，形成字串
+            </summary>
+            <param name="tagS"></param>
+            <param name="iary"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.intAryToBCDString(System.Int32,System.Int32[])">
+            <summary>
+            將正整數陣列，轉成二進位表示法字串
+            </summary>
+            <param name="toBitCount">一個正整數以多少bit來表示</param>
+            <param name="iAry"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.boolArray2Int(System.Boolean[])">
+            <summary>
+            將Boolean陣列轉成UInt32
+            </summary>
+            <param name="bAry"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.convertIntAry2String(System.Int32[])">
+            <summary>
+            將正整數陣列，以ascii code轉成字串
+            </summary>
+            <param name="iAry"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.GetIntBinaryString(System.Int32)">
+            <summary>
+            將單一正整數，以ascii code轉成字串
+            </summary>
+            <param name="n"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.convertString2IntAry(System.String)">
+            <summary>
+            將字串依ascii code拆解轉成整數陣列
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.convertIntAry2BCDHex(System.Int32[])">
+            <summary>
+            將正整數[]，轉成BCD Hex(PLC特有型別資料)
+            </summary>
+            <param name="iAry"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.compressString(System.String)">
+            <summary>
+            壓縮字串資料
+            </summary>
+            <param name="rawString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.unCompressString(System.String)">
+            <summary>
+            解壓縮字串資料
+            </summary>
+            <param name="compressString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.checkObjectLock(System.Object,System.String,NLog.Logger)">
+            <summary>
+            檢查物件是否被lock住
+            </summary>
+            <param name="obj,objName,templogger"></param>
+            <returns></returns>
+            //A0.09 start
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.getPropertyName``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <typeparam name="TReturn"></typeparam>
+            <param name="expression">EX: (vo.Equipment eq) => eq.eqpt_desc</param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.BCFUtility.getArrayRange(System.UInt16[],System.Int32,System.Int32)">
+            A0.01
+            <summary>
+            抓出指定的陣列範圍
+            </summary>
+            <param name="dataTemp"></param>
+            <param name="startIndex"></param>
+            <param name="endIndex"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.DBConnection.BeginTransaction">
+            <summary>
+            Begin a unit of work and return the associated <c>ITransaction</c> object.
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.DBConnection.Commit">
+            <summary>
+            Flush the associated <c>ISession</c> and end the unit of work.
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.DBConnection.Rollback">
+            <summary>
+            Force the underlying transaction to roll back.
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.DBConnection.Close">
+            <summary>
+            End the <c>ISession</c> by disconnecting from the ADO.NET connection and cleaning up.
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.DBConnection.Lock(System.Object,NHibernate.LockMode)">
+            <summary>
+            Obtain the specified lock level upon the given object.
+            </summary>
+            <param name="obj"></param>
+            <param name="lockMode"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.DBConnection.Update(System.Object)">
+            <summary>
+            Update the persistent instance with the identifier of the given transient instance.
+            </summary>
+            <param name="obj"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.DBConnection.Save(System.Object)">
+            <summary>
+            Persist the given transient instance, first assigning a generated identifier. (Or
+            using the current value of the identifier property if the <tt>assigned</tt>
+            generator is used.)
+            </summary>
+            <param name="obj"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.DBConnection.SaveOrUpdate(System.Object)">
+            <summary>
+            Either <see cref="M:NHibernate.ISession.Save(System.String,System.Object)"/> or <see cref="M:NHibernate.ISession.Update(System.String,System.Object)"/>
+            the given instance, depending upon resolution of the unsaved-value checks
+            (see the manual for discussion of unsaved-value checking).
+            </summary>
+            <param name="obj"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.DBConnection.Delete(System.Object)">
+            <summary>
+            Remove a persistent instance from the datastore.
+            </summary>
+            <param name="obj">The instance to be removed</param>
+        </member>
+        <member name="T:com.mirle.ibg3k0.bcf.Common.FTPTool">
+            FTP處理操作類
+            功能：
+            下載文件
+            上傳文件
+            上傳文件的進度信息
+            下載文件的進度信息
+            刪除文件
+            列出文件
+            列出目錄
+            進入子目錄
+            退出當前目錄返回上一層目錄
+            判斷遠程文件是否存在
+            判斷遠程文件是否存在
+            刪除遠程文件    
+            建立目錄
+            刪除目錄
+            文件（目錄）改名
+        </member>
+        <member name="F:com.mirle.ibg3k0.bcf.Common.FTPTool.Request">
+            FTP請求對象
+            
+        </member>
+        <member name="F:com.mirle.ibg3k0.bcf.Common.FTPTool.Response">
+            FTP響應對象
+            
+        </member>
+        <member name="F:com.mirle.ibg3k0.bcf.Common.FTPTool._Uri">
+            FTP服務器地址
+            
+        </member>
+        <member name="F:com.mirle.ibg3k0.bcf.Common.FTPTool._DirectoryPath">
+            當前工作目錄
+            
+        </member>
+        <member name="F:com.mirle.ibg3k0.bcf.Common.FTPTool._UserName">
+            FTP登錄用戶
+            
+        </member>
+        <member name="F:com.mirle.ibg3k0.bcf.Common.FTPTool._ErrorMsg">
+            錯誤信息
+            
+        </member>
+        <member name="F:com.mirle.ibg3k0.bcf.Common.FTPTool._Password">
+            FTP登錄密碼
+            
+        </member>
+        <member name="F:com.mirle.ibg3k0.bcf.Common.FTPTool._Proxy">
+            連接FTP服務器的代理服務
+            
+        </member>
+        <member name="F:com.mirle.ibg3k0.bcf.Common.FTPTool._isDeleteTempFile">
+            是否需要刪除臨時文件
+            
+        </member>
+        <member name="F:com.mirle.ibg3k0.bcf.Common.FTPTool._UploadTempFile">
+            異步上傳所臨時生成的文件
+            
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.#ctor(System.Uri,System.String,System.String)">
+            構造函數
+            
+            FTP地址
+            登錄用戶名
+            登錄密碼
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.#ctor(System.Uri,System.String,System.String,System.Net.WebProxy)">
+            構造函數
+            
+            FTP地址
+            登錄用戶名
+            登錄密碼
+            連接代理
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.#ctor">
+            構造函數
+            
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.Finalize">
+            析構函數
+            
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.Open(System.Uri,System.String)">
+            建立FTP鏈接,返迴響應對象
+            
+            FTP地址
+            操作命令
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.OpenRequest(System.Uri,System.String)">
+            建立FTP鏈接,返回請求對象
+            
+            FTP地址
+            操作命令
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.DownloadFile(System.String,System.String)">
+            從FTP服務器下載文件，使用與遠程文件同名的文件名來保存文件
+            
+            遠程文件名
+            本地路徑
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.DownloadFile(System.String,System.String,System.String)">
+            從FTP服務器下載文件，指定本地路徑和本地文件名
+            
+            遠程文件名
+            本地路徑
+            保存文件的本地路徑,後面帶有"\"
+            保存本地的文件名
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.DownloadFile(System.String)">
+            從FTP服務器下載文件，返回文件二進制數據
+            
+            遠程文件名
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.DownloadFileAsync(System.String,System.String,System.String)">
+            從FTP服務器異步下載文件，指定本地路徑和本地文件名
+            
+            遠程文件名        
+            保存文件的本地路徑,後面帶有"\"
+            保存本地的文件名
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.DownloadFileAsync(System.String,System.String)">
+            從FTP服務器異步下載文件，指定本地完整路徑文件名
+            
+            遠程文件名
+            本地完整路徑文件名
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.client_DownloadFileCompleted(System.Object,System.ComponentModel.AsyncCompletedEventArgs)">
+            異步下載文件完成之後觸發的事件
+            
+            下載對象
+            數據信息對象
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.client_DownloadProgressChanged(System.Object,System.Net.DownloadProgressChangedEventArgs)">
+            異步下載進度發生改變觸發的事件
+            
+            下載對象
+            進度信息對象
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.UploadFile(System.String)">
+            上傳文件到FTP服務器
+            
+            本地帶有完整路徑的文件名
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.UploadFile(System.String,System.Boolean)">
+            上傳文件到FTP服務器
+            
+            本地帶有完整路徑的文件
+            是否覆蓋遠程服務器上面同名的文件
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.UploadFile(System.String,System.String)">
+            上傳文件到FTP服務器
+            
+            本地帶有完整路徑的文件
+            要在FTP服務器上面保存文件名
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.UploadFile(System.String,System.String,System.Boolean)">
+            上傳文件到FTP服務器
+            
+            本地帶有完整路徑的文件名
+            要在FTP服務器上面保存文件名
+            是否覆蓋遠程服務器上面同名的文件
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.UploadFile(System.Byte[],System.String)">
+            上傳文件到FTP服務器
+            
+            上傳的二進制數據
+            要在FTP服務器上面保存文件名
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.UploadFile(System.Byte[],System.String,System.Boolean)">
+            上傳文件到FTP服務器
+            
+            文件二進制內容
+            要在FTP服務器上面保存文件名
+            是否覆蓋遠程服務器上面同名的文件
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.UploadFileAsync(System.String)">
+            異步上傳文件到FTP服務器
+            
+            本地帶有完整路徑的文件名
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.UploadFileAsync(System.String,System.Boolean)">
+            異步上傳文件到FTP服務器
+            
+            本地帶有完整路徑的文件
+            是否覆蓋遠程服務器上面同名的文件
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.UploadFileAsync(System.String,System.String)">
+            異步上傳文件到FTP服務器
+            
+            本地帶有完整路徑的文件
+            要在FTP服務器上面保存文件名
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.UploadFileAsync(System.String,System.String,System.Boolean)">
+            異步上傳文件到FTP服務器
+            
+            本地帶有完整路徑的文件名
+            要在FTP服務器上面保存文件名
+            是否覆蓋遠程服務器上面同名的文件
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.UploadFileAsync(System.Byte[],System.String)">
+            異步上傳文件到FTP服務器
+            
+            上傳的二進制數據
+            要在FTP服務器上面保存文件名
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.UploadFileAsync(System.Byte[],System.String,System.Boolean)">
+            異步上傳文件到FTP服務器
+            
+            文件二進制內容
+            要在FTP服務器上面保存文件名
+            是否覆蓋遠程服務器上面同名的文件
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.client_UploadFileCompleted(System.Object,System.Net.UploadFileCompletedEventArgs)">
+            異步上傳文件完成之後觸發的事件
+            
+            下載對象
+            數據信息對象
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.client_UploadProgressChanged(System.Object,System.Net.UploadProgressChangedEventArgs)">
+            異步上傳進度發生改變觸發的事件
+            
+            下載對象
+            進度信息對象
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.ListFilesAndDirectories">
+            列出FTP服務器上面當前目錄的所有文件和目錄
+            
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.ListFiles">
+            列出FTP服務器上面當前目錄的所有文件
+            
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.ListDirectories">
+            列出FTP服務器上面當前目錄的所有的目錄
+            
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.GetList(System.String)">
+            獲得文件和目錄列表
+            
+            FTP返回的列表字符信息
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.ParseFileStructFromWindowsStyleRecord(System.String)">
+            從Windows格式中返回文件信息
+            
+            文件信息
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.GuessFileListStyle(System.String[])">
+            判斷文件列表的方式Window方式還是Unix方式
+            
+            文件信息列表
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.ParseFileStructFromUnixStyleRecord(System.String)">
+            從Unix格式中返回文件信息
+            
+            文件信息
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool._cutSubstringFromStringWithTrim(System.String@,System.Char,System.Int32)">
+            按照一定的規則進行字符串截取
+            
+            截取的字符串
+            查找的字符
+            查找的位置
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.DirectoryExist(System.String)">
+            判斷當前目錄下指定的子目錄是否存在
+            
+            指定的目錄名
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.FileExist(System.String)">
+            判斷一個遠程文件是否存在服務器當前目錄下面
+            
+            遠程文件名
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.DeleteFile(System.String)">
+            從FTP服務器上面刪除一個文件
+            
+            遠程文件名
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.ReName(System.String,System.String)">
+            更改一個文件的名稱或一個目錄的名稱
+            
+            原始文件或目錄名稱
+            新的文件或目錄的名稱
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.CopyFileToAnotherDirectory(System.String,System.String)">
+            把當前目錄下面的一個文件拷貝到服務器上面另外的目錄中，注意，拷貝文件之後，當前工作目錄還是文件原來所在的目錄
+            
+            當前目錄下的文件名
+            新目錄名稱。
+            說明：如果新目錄是當前目錄的子目錄，則直接指定子目錄。如: SubDirectory1/SubDirectory2 ；
+            如果新目錄不是當前目錄的子目錄，則必須從根目錄一級一級的指定。如： ./NewDirectory/SubDirectory1/SubDirectory2
+            
+            
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.MoveFileToAnotherDirectory(System.String,System.String)">
+            把當前目錄下面的一個文件移動到服務器上面另外的目錄中，注意，移動文件之後，當前工作目錄還是文件原來所在的目錄
+            
+            當前目錄下的文件名
+            新目錄名稱。
+            說明：如果新目錄是當前目錄的子目錄，則直接指定子目錄。如: SubDirectory1/SubDirectory2 ；
+            如果新目錄不是當前目錄的子目錄，則必須從根目錄一級一級的指定。如： ./NewDirectory/SubDirectory1/SubDirectory2
+            
+            
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.MakeDirectory(System.String)">
+            在FTP服務器上當前工作目錄建立一個子目錄
+            
+            子目錄名稱
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.RemoveDirectory(System.String)">
+            從當前工作目錄中刪除一個子目錄
+            
+            子目錄名稱
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.IsValidPathChars(System.String)">
+            判斷目錄名中字符是否合法
+            
+            目錄名稱
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.IsValidFileChars(System.String)">
+            判斷文件名中字符是否合法
+            
+            文件名稱
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.GotoDirectory(System.String)">
+            進入一個目錄
+            
+            
+            新目錄的名字。 
+            說明：如果新目錄是當前目錄的子目錄，則直接指定子目錄。如: SubDirectory1/SubDirectory2 ； 
+            如果新目錄不是當前目錄的子目錄，則必須從根目錄一級一級的指定。如： ./NewDirectory/SubDirectory1/SubDirectory2
+            
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.EnterOneSubDirectory(System.String)">
+            從當前工作目錄進入一個子目錄
+            
+            子目錄名稱
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.FTPTool.ComeoutDirectory">
+            從當前工作目錄往上一級目錄
+            
+        </member>
+        <member name="P:com.mirle.ibg3k0.bcf.Common.FTPTool.Uri">
+            FTP服務器地址
+            
+        </member>
+        <member name="P:com.mirle.ibg3k0.bcf.Common.FTPTool.DirectoryPath">
+            當前工作目錄
+            
+        </member>
+        <member name="P:com.mirle.ibg3k0.bcf.Common.FTPTool.UserName">
+            FTP登錄用戶
+            
+        </member>
+        <member name="P:com.mirle.ibg3k0.bcf.Common.FTPTool.ErrorMsg">
+            錯誤信息
+            
+        </member>
+        <member name="P:com.mirle.ibg3k0.bcf.Common.FTPTool.Password">
+            FTP登錄密碼
+            
+        </member>
+        <member name="P:com.mirle.ibg3k0.bcf.Common.FTPTool.Proxy">
+            連接FTP服務器的代理服務
+            
+        </member>
+        <member name="E:com.mirle.ibg3k0.bcf.Common.FTPTool.DownloadProgressChanged">
+            異步下載進度發生改變觸發的事件
+            
+        </member>
+        <member name="E:com.mirle.ibg3k0.bcf.Common.FTPTool.DownloadDataCompleted">
+            異步下載文件完成之後觸發的事件
+            
+        </member>
+        <member name="E:com.mirle.ibg3k0.bcf.Common.FTPTool.UploadProgressChanged">
+            異步上傳進度發生改變觸發的事件
+            
+        </member>
+        <member name="E:com.mirle.ibg3k0.bcf.Common.FTPTool.UploadFileCompleted">
+            異步上傳文件完成之後觸發的事件
+            
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.SystemTime.FromDateTime(System.DateTime)">
+            <summary>
+            Convert form System.DateTime
+            </summary>
+            <param name="time"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.SystemTime.ToDateTime">
+            <summary>
+            Convert to System.DateTime
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Common.SystemTime.ToDateTime(com.mirle.ibg3k0.bcf.Common.SystemTime)">
+            <summary>
+            Convert to System.DateTime
+            </summary>
+            <param name="time"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.ConfigHandler.BaseAddressConfigSections.getBaseAddressNames">
+            <summary>
+            取得Base Address所有設定的識別名
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.ConfigHandler.BaseAddressConfigSections.getBaseAddressConfig(System.String)">
+            <summary>
+            根據Base Address名稱，取得Base Address的設定資訊
+            </summary>
+            <param name="baseName"></param>
+            <returns></returns>
+        </member>
+        <member name="T:com.mirle.ibg3k0.bcf.ConfigHandler.ReadRange">
+            <summary>
+            A0.01
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.ConfigHandler.ValueEventRelatives.getValueEventRelativeName">
+            <summary>
+            取得Relative設定中所有的識別名
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.ConfigHandler.ValueEventRelatives.getValueEventRelative(System.String)">
+            <summary>
+            根據識別名，取得對應的Value Event Relative設定
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="T:com.mirle.ibg3k0.bcf.Controller.ISECSControl">
+            <summary>
+            用於SECS交握的通訊介面
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ISECSControl.addSECSReceivedHandler(com.mirle.ibg3k0.bcf.App.BCFApplication,System.String,System.String,System.EventHandler{com.mirle.ibg3k0.stc.Common.SECSEventArgs})">
+            <summary>
+            註冊監聽SECS Receive
+            </summary>
+            <param name="bcfApp"></param>
+            <param name="secsAgentName"></param>
+            <param name="streamFunction"></param>
+            <param name="handler"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ISECSControl.replySECS(com.mirle.ibg3k0.bcf.App.BCFApplication,com.mirle.ibg3k0.stc.Data.SecsData.SXFY)">
+            <summary>
+            傳送SECS Message
+            </summary>
+            <param name="bcfApp"></param>
+            <param name="inSecs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ISECSControl.sendRecv``1(com.mirle.ibg3k0.bcf.App.BCFApplication,com.mirle.ibg3k0.stc.Data.SecsData.SXFY,``0@,com.mirle.ibg3k0.stc.Data.SecsData.SXFY@,System.String@,System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}})">
+            <summary>
+            用於進行SECS的交握
+            </summary>
+            <typeparam name="TSource"></typeparam>
+            <param name="bcfApp"></param>
+            <param name="inSecs"></param>
+            <param name="outSecs"></param>
+            <param name="rtnMsg"></param>
+            <param name="predicate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ISECSControl.sendRecv``2(com.mirle.ibg3k0.bcf.App.BCFApplication,com.mirle.ibg3k0.stc.Data.SecsData.SXFY,``0@,com.mirle.ibg3k0.stc.Data.SecsData.SXFY@,System.String@,System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},``1@,System.Int64,System.Linq.Expressions.Expression{System.Func{``1,System.Boolean}})">
+            <summary>
+            用於進行SECS的交握，並且於交握完成後，進行接續的對話（等待Host的訊息）。
+            </summary>
+            <typeparam name="TSource"></typeparam>
+            <typeparam name="TSource2"></typeparam>
+            <param name="bcfApp"></param>
+            <param name="inSecs"></param>
+            <param name="outSecs"></param>
+            <param name="rtnMsg"></param>
+            <param name="predicate"></param>
+            <param name="convSecs"></param>
+            <param name="convTimeoutSec"></param>
+            <param name="convPredicate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ISECSControl.sendRecv``1(com.mirle.ibg3k0.bcf.App.BCFApplication,com.mirle.ibg3k0.stc.Data.SecsData.SXFY,``0@,com.mirle.ibg3k0.stc.Data.SecsData.SXFY@,System.String@,System.Int64,System.Int32,System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}})">
+            <summary>
+            用於進行SECS的交握
+            </summary>
+            <typeparam name="TSource"></typeparam>
+            <param name="bcfApp"></param>
+            <param name="inSecs"></param>
+            <param name="outSecs"></param>
+            <param name="rtnMsg"></param>
+            <param name="timeoutSec"></param>
+            <param name="retryCnt"></param>
+            <param name="predicate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ISECSControl.sendRecv``2(com.mirle.ibg3k0.bcf.App.BCFApplication,com.mirle.ibg3k0.stc.Data.SecsData.SXFY,``0@,com.mirle.ibg3k0.stc.Data.SecsData.SXFY@,System.String@,System.Int64,System.Int32,System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},``1@,System.Int64,System.Linq.Expressions.Expression{System.Func{``1,System.Boolean}})">
+            <summary>
+            用於進行SECS的交握，並且於交握完成後，進行接續的對話（等待Host的訊息）。
+            </summary>
+            <typeparam name="TSource"></typeparam>
+            <typeparam name="TSource2"></typeparam>
+            <param name="bcfApp"></param>
+            <param name="inSecs"></param>
+            <param name="outSecs"></param>
+            <param name="rtnMsg"></param>
+            <param name="timeoutSec"></param>
+            <param name="retryCnt"></param>
+            <param name="predicate"></param>
+            <param name="convSecs"></param>
+            <param name="convTimeoutSec"></param>
+            <param name="convPredicate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ISECSControl.sendRecv``2(com.mirle.ibg3k0.bcf.App.BCFApplication,com.mirle.ibg3k0.stc.Data.SecsData.SXFY,``0@,com.mirle.ibg3k0.stc.Data.SecsData.SXFY@,System.String@,System.Int64,System.Int32,System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},System.Boolean,``1@,System.Int64,System.Linq.Expressions.Expression{System.Func{``1,System.Boolean}})">
+            <summary>
+            用於進行SECS的交握，並且可以指定是否於交握完成後，還進行接續的對話（等待Host的訊息）。
+            </summary>
+            <typeparam name="TSource">指定Receive的SECS型別</typeparam>
+            <typeparam name="TSource2">指定接續談話Receive的SECS型別</typeparam>
+            <param name="bcfApp">BCFApplication</param>
+            <param name="inSecs">傳送給Host的SCES Message</param>
+            <param name="outSecs">接收到的SECS Message</param>
+            <param name="rtnMsg">回傳額外資訊</param>
+            <param name="timeoutSec">指定Timeout秒數(T3 Timeout)</param>
+            <param name="retryCnt">指定重試次數</param>
+            <param name="predicate">指定接收SECS的內容條件檢查</param>
+            <param name="continueConversation">指定此交握，是否於交握結束後，接續進行對話</param>
+            <param name="convSecs">從Host接收到的對話SECS Message</param>
+            <param name="convTimeoutSec">指定接續對話的Timeout秒數</param>
+            <param name="convPredicate">指定接續對話SECS的內容條件檢查</param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ISECSControl.conversationReceive``1(com.mirle.ibg3k0.bcf.App.BCFApplication,System.String,``0@,System.Int64,System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}})">
+            <summary>
+            指定接續進行談話(等待Host傳遞訊息)，並限定於特定時間內完成，否則回傳「ConversationTimeout」結果
+            </summary>
+            <typeparam name="TSource"></typeparam>
+            <param name="bcfApp"></param>
+            <param name="secsAgentName"></param>
+            <param name="outSecs"></param>
+            <param name="conversationTimeoutSec"></param>
+            <param name="predicate"></param>
+            <returns></returns>
+        </member>
+        <member name="E:com.mirle.ibg3k0.bcf.Controller.ISMControl.LinkError">
+            <summary>
+            連線錯誤
+            </summary>
+        </member>
+        <member name="E:com.mirle.ibg3k0.bcf.Controller.ISMControl.ReadError">
+            <summary>
+            讀取錯誤
+            </summary>
+        </member>
+        <member name="E:com.mirle.ibg3k0.bcf.Controller.ISMControl.HandshakeTimeoutError">
+            <summary>
+            交握逾時
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.MPLCSMControl.syncLoopValueEvent">
+            <summary>
+            走訪所有ValueEvent, 將buffer內的值取出, 放入ValueEvent內
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.MPLCSMControl.loopValueEvent">
+            <summary>
+            非同步走訪所有ValueEvent, 將buffer內的值取出, 放入ValueEvent內
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.MPLCSMControl.splitInt(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            切割整數值。將整數值轉成2進位後，根據指定區間，取得該區間的十進位數值<para/>
+            index計算順序由右至左，以0為起始<para/>
+            [ 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 ]
+            </summary>
+            <param name="expandBitCnt"></param>
+            <param name="orgInt"></param>
+            <param name="startIndex"></param>
+            <param name="endIndex"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.MPLCSMControl.writeRandomDeviceBlock">
+            <summary>
+            隨機寫值到MPLC中（測試用）
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.MPLCSMControl.isAlive">
+            <summary>
+            A0.03 
+            判定MPLC連線是否正常
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.MPLCSMControl.writeRandomDeviceBlock(System.String,System.Int32[])">
+            <summary>
+            依陣列連續寫值到MPLC中
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.MPLCSMControl.setBitValue(System.String,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            將writeVal根據指定區間，寫入原值內
+            </summary>
+            <param name="intVal">原值</param>
+            <param name="startIndex">起始位址</param>
+            <param name="endIndex">結束位址</param>
+            <param name="writeVal">欲寫入的值</param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.MPLCSMControl.setBitValue(System.String,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            將指定值, 放置到指定的bit位置上
+            </summary>
+            <param name="intVal"></param>
+            <param name="bitIndex"></param>
+            <param name="bitVal"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.MPLCSMControl.writeDeviceBlock(com.mirle.ibg3k0.bcf.Controller.ValueWrite)">
+            <summary>
+            將欲寫入MPLC的資料, 複製到memory buffer指定位置後, 再寫入MPLC
+            </summary>
+            <param name="vWrite">ValueWrite</param>
+            <returns>寫入失敗則回傳False</returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.MPLCSMControl.readDeviceBlock">
+            <summary>
+            從MPLC複製資料到memory buffer中
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.MPLCSMControl.logMemoryBuffer(System.String)">
+            <summary>
+            分別記錄所屬device 的log
+            </summary>
+            <param name="device"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ValueRead.getText">
+            <summary>
+            可根據設定的Targete Type來取得值
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ValueRead.getTextsBySplitLength">
+            <summary>
+            A0.01
+            根據設定的SplitLength，來切割Value，並依據原設定target type進行轉型
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ValueRead.viewAfterValueChangeEvnetData">
+            <summary>
+            A0.03
+            檢視註冊afterValueChange事件的Method Name
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ValueWrite.initWriteValue">
+             初始化內容值(初始值皆為0)
+            
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ValueWrite.setWriteValue(System.String)">
+            <summary>
+            設定要寫入MPLC的內容
+            strVal可以是一般ascii轉成的字串、整數表示字串、以0或1表示布林值
+            </summary>
+            <param name="strVal"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ValueWrite.setWriteValue(System.Collections.BitArray)">
+            <summary>
+            設定要寫入MPLC的內容，僅支援BitArrary陣列
+            </summary>
+            <param name="bitArray"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ValueWrite.setWriteValue(System.Boolean[])">
+            <summary>
+            設定要寫入MPLC的內容，僅支援Boolean陣列
+            </summary>
+            <param name="boolVals"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ValueWrite.setWriteValue(System.UInt64)">
+            <summary>
+            僅支援單一正整數
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ValueWrite.setWriteValue(System.UInt64[])">
+            <summary>
+            支援正整數陣列
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ValueWrite.setWriteValue(System.UInt16[])">
+            <summary>
+            支援正整數陣列
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ValueWrite.setWriteValue(System.Int32[])">
+            <summary>
+            支援正整數陣列
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ValueWrite.getText">
+            <summary>
+            取得寫入的資料
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Controller.ValueWrite.getTextsBySplitLength">
+            <summary>
+            A0.01
+            根據設定的SplitLength，來切割Value，並依據原設定target type進行轉型
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Data.BCD_Common.#ctor(System.Double,System.Int32,System.Double,System.Boolean)">
+             @realValue 30.5 or -30.5
+             @wordCount realValue用幾個Word來表示(以SPEC為準)
+             @multiplier 乘數(ex. realValue為30.5，multiplier則為0.1；realValue為3.99，multiplier為0.01)
+             @isContainSign 是否包含符號
+                            (ex. realValue為30.5，則isContainSign為false；realValue為-30.5，則isContainSign為true)
+            
+        </member>
+        <member name="P:com.mirle.ibg3k0.bcf.Data.BCD_Common.RealValue">
+            <summary>
+            實際意義上的整數值
+            </summary>
+        </member>
+        <member name="M:System.BCD_FTB.#ctor(System.Double,System.Int32,System.Int32,System.Double,System.Boolean)">
+             @realValue 30.5 or -30.5
+             @wordCount realValue用幾個Word來表示(以SPEC為準，至少為 trussCount/4，無法整除，則無條件進入到整數位)
+             @trussCount realValue(只包含符號 '-'，小數點不列入)佔多少個BCD碼
+                         (ex. realValue為30.5，則trussCount為3；realValue為-30.5，則trussCount為4)
+             @multiplier 乘數(ex. realValue為30.5，multiplier則為0.1；realValue為3.99，multiplier為0.01)
+             @isContainSign 是否包含符號
+                            (ex. realValue為30.5，則isContainSign為false；realValue為-30.5，則isContainSign為true)
+            
+        </member>
+        <member name="P:System.BCD_FTB.RealValue">
+            <summary>
+            實際意義上的整數值
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Data.FlowRule.IFlowRule.doDecide(com.mirle.ibg3k0.bcf.Data.VO.BaseEQObject,System.Collections.Generic.List{com.mirle.ibg3k0.bcf.Data.VO.BaseEQObject})">
+            <summary>
+            決定上游Node，流往哪一個可行的下游Node
+            </summary>
+            <param name="upstream">上游Node</param>
+            <param name="downstreamList">可行的下游Node</param>
+            <returns>回傳downstreamList的index。如果值為-1，表示找不到符合的路徑。</returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Data.TimerAction.ITimerAction.start">
+            <summary>
+            啟動Timer Action
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Data.TimerAction.ITimerAction.stop">
+            <summary>
+            停止Timer Action
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Data.TimerAction.ITimerAction.doProcess(System.Object)">
+            <summary>
+            Timer Action的執行動作
+            </summary>
+            <param name="obj"></param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Data.VO.BaseEQObject.getMapActionByIdentityKey(System.String)">
+            <summary>
+            A0.01
+            透過腳本的Identity Key取得該EQPT所使用的腳本
+            </summary>
+            <param name="identityKey"></param>
+            <returns></returns>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Data.VO.BaseEQObject.doShareMemoryInit(com.mirle.ibg3k0.bcf.App.BCFAppConstants.RUN_LEVEL)">
+            <summary>
+            開始進行初始化動作
+            每個腳本內部，有0~9共10個初始化層級。
+            系統啟動後，會先執行所有腳本的第0層級的初始化動作。然後再依序至第9層級執行初始化動作。
+            </summary>
+            <param name="runLevel">腳本內容初始化執行層級，0~9 以0為最高優先</param>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Data.VO.BaseEQObject.injectValueDefMapAction(com.mirle.ibg3k0.bcf.Data.ValueDefMapAction.IValueDefMapAction)">
+            <summary>
+            注入腳本
+            </summary>
+            <param name="valueDefMapAction"></param>
+        </member>
+        <member name="P:com.mirle.ibg3k0.bcf.Data.VO.BaseEQObject.Real_ID">
+            <summary>
+            真實的ID
+            </summary>
+        </member>
+        <member name="F:com.mirle.ibg3k0.bcf.Schedule.BackgroundWorkDriver.workDic">
+            <summary>
+            Key: Work Key
+            Value: Work Item List
+            </summary>
+        </member>
+        <member name="T:com.mirle.ibg3k0.bcf.Schedule.IBackgroundWork">
+            <summary>
+            背景執行器實際執行事項之介面類別。
+            所有使用背景執行器者，必須實作此介面，實現執行事項。
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Schedule.SMTimer.startSMControl(System.String)">
+              開始Timer去從memory buffer取資料 
+            
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Schedule.SMTimer.startReadTimer(System.String)">
+             開始Timer去從MPLC複製所有資料到memory buffer
+            
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Schedule.SMTimer.stopAllTimer">
+             停止Timer
+            
+        </member>
+        <member name="T:com.mirle.ibg3k0.bcf.Schedule.ControlTimer">
+            <summary>
+            A0.02
+            </summary>
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Schedule.SystemTimer.startSMControl(System.String)">
+              開始Timer去從memory buffer取資料 
+            
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Schedule.SystemTimer.startReadTimer(System.String)">
+             開始Timer去從MPLC複製所有資料到memory buffer
+            
+        </member>
+        <member name="M:com.mirle.ibg3k0.bcf.Schedule.SystemTimer.stopAllTimer">
+             停止Timer
+            
+        </member>
+    </members>
+</doc>
