@@ -1134,9 +1134,6 @@
     <Content Include="DLL\opencv_world412.dll" />
     <Content Include="DLL\SECSTrxControl.pdb" />
     <Content Include="DLL\TCPIPTrxControl.dll" />
-    <Content Include="DLL\TCPIPTrxControl.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="hasp_windows_24266.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
