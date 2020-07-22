@@ -17,6 +17,7 @@ namespace com.mirle.ibg3k0.sc.Data.VO
         public string BlockID;
         public List<ProtocolFormat.OHTMessage.ReserveInfo> EntrySectionInfos;
         public string[] EnhanceControlSections;
+
     }
 
 

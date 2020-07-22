@@ -1493,6 +1493,7 @@ namespace com.mirle.ibg3k0.sc.Common
                 port_station_do.PORT_SERVICE_STATUS = portStation.PORT_SERVICE_STATUS;
                 port_station_do.PORT_STATUS = portStation.PORT_STATUS;
                 port_station_do.PRIORITY = portStation.PRIORITY;
+                port_station_do.GROUP_ID = portStation.GROUP_ID;
             }
         }
         #endregion

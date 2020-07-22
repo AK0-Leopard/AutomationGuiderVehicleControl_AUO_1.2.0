@@ -7,6 +7,7 @@ using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using com.mirle.iibg3k0.ttc.Common;
+using Mirle.AK0.Hlt.Utils;
 using NLog;
 using StackExchange.Redis;
 using System;
@@ -117,8 +118,8 @@ namespace com.mirle.ibg3k0.sc.BLL
             vh.NotifyVhPositionChange();
             return true;
         }
-        public Mirle.Hlts.Utils.HltResult updateVheiclePositionToReserveControlModule(BLL.ReserveBLL reserveBLL, AVEHICLE vh, string currentSectionID, double x_axis, double y_axis, double dirctionAngle, double vehicleAngle, double speed,
-                                                                                      Mirle.Hlts.Utils.HltDirection sensorDir, Mirle.Hlts.Utils.HltDirection forkDir)
+        public HltResult updateVheiclePositionToReserveControlModule(BLL.ReserveBLL reserveBLL, AVEHICLE vh, string currentSectionID, double x_axis, double y_axis, double dirctionAngle, double vehicleAngle, double speed,
+                                                                                      HltDirection sensorDir, HltDirection forkDir)
         {
             string vh_id = vh.VEHICLE_ID;
             string section_id = currentSectionID;
@@ -1885,9 +1886,9 @@ namespace com.mirle.ibg3k0.sc.BLL
                 {
                     var sensor_dir = decideReserveDirection(vh_angle);
                     //var update_result = updateVheiclePositionToReserveControlModule(scApp.ReserveBLL, vh, x_axis, y_axis, dir_angle, vh_angle, speed,
-                    //                                                                Mirle.Hlts.Utils.HltDirection.NESW, Mirle.Hlts.Utils.HltDirection.None);
+                    //                                                                HltDirection.NESW, HltDirection.None);
                     var update_result = updateVheiclePositionToReserveControlModule(scApp.ReserveBLL, vh, current_sec_id, x_axis, y_axis, dir_angle, vh_angle, speed,
-                                                                                    sensor_dir, Mirle.Hlts.Utils.HltDirection.None);
+                                                                                    sensor_dir, HltDirection.None);
                     if (!update_result.OK)
                     {
                         string message = $"The vehicles bumped, vh:{vh.VEHICLE_ID} with vh:{update_result.VehicleID}";
@@ -1953,16 +1954,16 @@ namespace com.mirle.ibg3k0.sc.BLL
             return Math.Sqrt(dx * dx + dy * dy);
         }
 
-        private Mirle.Hlts.Utils.HltDirection decideReserveDirection(double vhAngle)
+        private HltDirection decideReserveDirection(double vhAngle)
         {
             if (vhAngle == 90
                 || vhAngle == -90
                 || vhAngle == -270
                 || vhAngle == 270)
-                return Mirle.Hlts.Utils.HltDirection.NS;
+                return HltDirection.NorthSouth;
             else
             {
-                return Mirle.Hlts.Utils.HltDirection.EW;
+                return HltDirection.EastWest;
             }
         }
         #region Vehicle Object Info

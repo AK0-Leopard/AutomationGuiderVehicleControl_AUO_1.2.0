@@ -12,17 +12,9 @@ namespace com.mirle.ibg3k0.sc
     using System;
     using System.Collections.Generic;
     
-    public partial class APORTSTATION
+    public partial class AGROUPPORTSTATION
     {
-        public string PORT_ID { get; set; }
-        public string ADR_ID { get; set; }
-        public E_VH_TYPE LD_VH_TYPE { get; set; }
-        public E_VH_TYPE ULD_VH_TYPE { get; set; }
-        public int PRIORITY { get; set; }
-        public int PORT_TYPE { get; set; }
-        public com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage.PortStationStatus PORT_STATUS { get; set; }
-        public int PORT_DIR { get; set; }
-        public com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage.PortStationServiceStatus PORT_SERVICE_STATUS { get; set; }
         public string GROUP_ID { get; set; }
+        public mirle.ibg3k0.sc.ProtocolFormat.OHTMessage.GroupPortType TYPE { get; set; }
     }
 }

@@ -127,7 +127,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
             {
                 try
                 {
-                    Taichung();
+                    //Taichung();
                 }
                 catch (Exception ex)
                 {

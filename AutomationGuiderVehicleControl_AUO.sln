@@ -60,4 +60,16 @@ Global
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A4DA2442-52E1-4098-81CB-2844636FC7E4}
 	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://swdev:8080/tfs/defaultcollection
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = BCWinForm\\BCWinForm.csproj
+		SccProjectName1 = BCWinForm
+		SccLocalPath1 = BCWinForm
+		SccProjectUniqueName2 = ScriptControl\\ScriptControl.csproj
+		SccProjectName2 = ScriptControl
+		SccLocalPath2 = ScriptControl
+	EndGlobalSection
 EndGlobal

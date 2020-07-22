@@ -11,6 +11,10 @@
     <AssemblyName>ScriptControl</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
     <PublishUrl>發行\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -148,17 +152,14 @@
     <Reference Include="M2Mqtt.Net">
       <HintPath>DLL\M2Mqtt.Net.dll</HintPath>
     </Reference>
-    <Reference Include="Mirle.Hlts.ReserveSection.Map, Version=1.0.7292.27279, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLL\Mirle.Hlts.ReserveSection.Map.dll</HintPath>
+    <Reference Include="Mirle.AK0.Hlt.ReserveSection.Map">
+      <HintPath>DLL\Mirle.AK0.Hlt.ReserveSection.Map.dll</HintPath>
     </Reference>
-    <Reference Include="Mirle.Hlts.ReserveSection.Vision, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLL\Mirle.Hlts.ReserveSection.Vision.dll</HintPath>
+    <Reference Include="Mirle.AK0.Hlt.ReserveSection.Vision">
+      <HintPath>DLL\Mirle.AK0.Hlt.ReserveSection.Vision.dll</HintPath>
     </Reference>
-    <Reference Include="Mirle.Hlts.Utils, Version=1.0.7292.26460, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLL\Mirle.Hlts.Utils.dll</HintPath>
+    <Reference Include="Mirle.AK0.Hlt.Utils">
+      <HintPath>DLL\Mirle.AK0.Hlt.Utils.dll</HintPath>
     </Reference>
     <Reference Include="MPLCConnectionControl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -321,6 +322,9 @@
     <Compile Include="AFLOW_REL.cs">
       <DependentUpon>OHTCContext.tt</DependentUpon>
     </Compile>
+    <Compile Include="AGROUPPORTSTATION.cs">
+      <DependentUpon>OHTCContext.tt</DependentUpon>
+    </Compile>
     <Compile Include="AGROUPRAILS.cs">
       <DependentUpon>OHTCContext.tt</DependentUpon>
     </Compile>
@@ -434,6 +438,7 @@
     <Compile Include="BCSTAT.cs">
       <DependentUpon>OHTCContext.tt</DependentUpon>
     </Compile>
+    <Compile Include="BLL\GroupPortStationBLL.cs" />
     <Compile Include="BLL\SouthInnolux\SouthInnoLuxAddressesBLL.cs" />
     <Compile Include="BLL\SouthInnolux\SouthInnoLuxAlarmBLL.cs" />
     <Compile Include="BLL\SouthInnolux\SouthInnoLuxBCSystemBLL.cs" />
@@ -506,6 +511,7 @@
     <Compile Include="Data\DAO\AlarmConvertInfoDao.cs" />
     <Compile Include="Data\DAO\EntityFramework\HCMD_OHTCDao.cs" />
     <Compile Include="Data\DAO\FireDoorDao.cs" />
+    <Compile Include="Data\DAO\GroupPortStationDao.cs" />
     <Compile Include="Data\DAO\TrafficControlInfoDao.cs" />
     <Compile Include="Data\DAO\VCMD_MCSDao.cs" />
     <Compile Include="Data\DAO\EntityFramework\HCMD_MCSDao.cs" />
@@ -1122,12 +1128,9 @@
     </Content>
     <Content Include="DLL\BlockControlFramework.dll" />
     <Content Include="DLL\BlockControlFramework.pdb" />
-    <Content Include="DLL\Mirle.Hlts.ReserveSection.Map.dll" />
-    <Content Include="DLL\Mirle.Hlts.ReserveSection.Map.pdb" />
-    <Content Include="DLL\Mirle.Hlts.ReserveSection.Vision.dll" />
-    <Content Include="DLL\Mirle.Hlts.ReserveSection.Vision.pdb" />
-    <Content Include="DLL\Mirle.Hlts.Utils.dll" />
-    <Content Include="DLL\Mirle.Hlts.Utils.pdb" />
+    <Content Include="DLL\Mirle.AK0.Hlt.ReserveSection.Map.dll" />
+    <Content Include="DLL\Mirle.AK0.Hlt.ReserveSection.Vision.dll" />
+    <Content Include="DLL\Mirle.AK0.Hlt.Utils.dll" />
     <Content Include="DLL\MPLCConnectionControl.dll" />
     <Content Include="DLL\MPLCConnectionControl.pdb" />
     <Content Include="DLL\MPLCConnectionControl.XML" />

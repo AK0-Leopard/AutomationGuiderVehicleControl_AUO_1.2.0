@@ -935,8 +935,12 @@ message Timestamp {
 	    BatteryLevel_Full=4;
    }
 
-
-
+   enum GroupPortType
+   {
+	    GroupPortType_None=0;
+	    GroupPortType_OnePortExcute=1;
+	    GroupPortType_OnTheWayAfter=2;
+   }
 
   message WrapperMessage {
     int32 ID = 1000;

@@ -1,6 +1,7 @@
 ﻿using com.mirle.ibg3k0.bc.winform.App;
 using com.mirle.ibg3k0.bc.winform.Common;
 using com.mirle.ibg3k0.sc;
+using Mirle.AK0.Hlt.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -39,10 +40,10 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             string[] allSec_ID = sections.Select(sec => sec.SEC_ID).ToArray();
             BCUtility.setComboboxDataSource(cmb_reserve_section, allSec_ID.ToArray());
 
-            cmb_fork_dir.DataSource = Enum.GetValues(typeof(Mirle.Hlts.Utils.HltDirection)).Cast<Mirle.Hlts.Utils.HltDirection>();
-            cmb_sensor_dir.DataSource = Enum.GetValues(typeof(Mirle.Hlts.Utils.HltDirection)).Cast<Mirle.Hlts.Utils.HltDirection>();
-            cmb_vh_fork_dir.DataSource = Enum.GetValues(typeof(Mirle.Hlts.Utils.HltDirection)).Cast<Mirle.Hlts.Utils.HltDirection>();
-            cmb_vh_sensor_dir.DataSource = Enum.GetValues(typeof(Mirle.Hlts.Utils.HltDirection)).Cast<Mirle.Hlts.Utils.HltDirection>();
+            cmb_fork_dir.DataSource = Enum.GetValues(typeof(HltDirection)).Cast<HltDirection>();
+            cmb_sensor_dir.DataSource = Enum.GetValues(typeof(HltDirection)).Cast<HltDirection>();
+            cmb_vh_fork_dir.DataSource = Enum.GetValues(typeof(HltDirection)).Cast<HltDirection>();
+            cmb_vh_sensor_dir.DataSource = Enum.GetValues(typeof(HltDirection)).Cast<HltDirection>();
             //bcApp.SCApplication.ReserveBLL.ReserveStatusChange += ReserveBLL_ReserveStatusChange;
         }
 
@@ -64,12 +65,12 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             string vh_id = cmb_vh_ids.Text;
             var map_address_axis = bcApp.SCApplication.ReserveBLL.GetHltMapAddress(adr_id);
 
-            Mirle.Hlts.Utils.HltDirection vh_fork_dir;
-            Enum.TryParse<Mirle.Hlts.Utils.HltDirection>(cmb_vh_fork_dir.SelectedValue.ToString(), out vh_fork_dir);
-            Mirle.Hlts.Utils.HltDirection vh_sensor_dir;
-            Enum.TryParse<Mirle.Hlts.Utils.HltDirection>(cmb_vh_sensor_dir.SelectedValue.ToString(), out vh_sensor_dir);
+            HltDirection vh_fork_dir;
+            Enum.TryParse<HltDirection>(cmb_vh_fork_dir.SelectedValue.ToString(), out vh_fork_dir);
+            HltDirection vh_sensor_dir;
+            Enum.TryParse<HltDirection>(cmb_vh_sensor_dir.SelectedValue.ToString(), out vh_sensor_dir);
 
-            Mirle.Hlts.Utils.HltResult result = null;
+            HltResult result = null;
             await Task.Run(() => result = bcApp.SCApplication.ReserveBLL.TryAddVehicleOrUpdate(vh_id, "", map_address_axis.x, map_address_axis.y, 0, 0, vh_sensor_dir, vh_fork_dir));
             MessageBox.Show(result.ToString());
             RefreshReserveInfo();
@@ -84,13 +85,19 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             string vh_id = cmb_vh_ids.Text;
             string sec_id = cmb_reserve_section.Text.Trim();
-            Mirle.Hlts.Utils.HltDirection fork_dir;
-            Enum.TryParse<Mirle.Hlts.Utils.HltDirection>(cmb_fork_dir.SelectedValue.ToString(), out fork_dir);
-            Mirle.Hlts.Utils.HltDirection sensor_dir;
-            Enum.TryParse<Mirle.Hlts.Utils.HltDirection>(cmb_sensor_dir.SelectedValue.ToString(), out sensor_dir);
+            HltDirection fork_dir;
+            Enum.TryParse<HltDirection>(cmb_fork_dir.SelectedValue.ToString(), out fork_dir);
+            HltDirection sensor_dir;
+            Enum.TryParse<HltDirection>(cmb_sensor_dir.SelectedValue.ToString(), out sensor_dir);
 
-            Mirle.Hlts.Utils.HltResult result = null;
+            HltResult result = null;
             await Task.Run(() => result = bcApp.SCApplication.ReserveBLL.TryAddReservedSection(vh_id, sec_id, sensor_dir, fork_dir));
+
+            //await Task.Run(() =>
+            //{
+            //    result = bcApp.SCApplication.ReserveBLL.TryAddReservedSection(vh_id, "0025", sensor_dir, fork_dir);
+            //    result = bcApp.SCApplication.ReserveBLL.TryAddReservedSection(vh_id, "0024", sensor_dir, fork_dir);
+            //});
             MessageBox.Show(result.ToString());
             RefreshReserveInfo();
         }
@@ -114,12 +121,12 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             string y_axis = txt_y.Text;
             double.TryParse(x_axis, out double x);
             double.TryParse(y_axis, out double y);
-            Mirle.Hlts.Utils.HltDirection vh_fork_dir;
-            Enum.TryParse<Mirle.Hlts.Utils.HltDirection>(cmb_vh_fork_dir.SelectedValue.ToString(), out vh_fork_dir);
-            Mirle.Hlts.Utils.HltDirection vh_sensor_dir;
-            Enum.TryParse<Mirle.Hlts.Utils.HltDirection>(cmb_vh_sensor_dir.SelectedValue.ToString(), out vh_sensor_dir);
+            HltDirection vh_fork_dir;
+            Enum.TryParse<HltDirection>(cmb_vh_fork_dir.SelectedValue.ToString(), out vh_fork_dir);
+            HltDirection vh_sensor_dir;
+            Enum.TryParse<HltDirection>(cmb_vh_sensor_dir.SelectedValue.ToString(), out vh_sensor_dir);
 
-            Mirle.Hlts.Utils.HltResult result = null;
+            HltResult result = null;
             await Task.Run(() => result = bcApp.SCApplication.ReserveBLL.TryAddVehicleOrUpdate(vh_id, "", x, y, 0, 0, vh_sensor_dir, vh_fork_dir));
             MessageBox.Show(result.ToString());
         }

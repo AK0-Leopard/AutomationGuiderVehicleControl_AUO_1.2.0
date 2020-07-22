@@ -7,6 +7,7 @@ using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using com.mirle.iibg3k0.ttc.Common;
+using Mirle.AK0.Hlt.Utils;
 using NLog;
 using StackExchange.Redis;
 using System;
@@ -127,8 +128,8 @@ namespace com.mirle.ibg3k0.sc.BLL
             vh.NotifyVhPositionChange();
             return true;
         }
-        public Mirle.Hlts.Utils.HltResult updateVheiclePositionToReserveControlModule(BLL.ReserveBLL reserveBLL, AVEHICLE vh, string currentSectionID, double x_axis, double y_axis, double dirctionAngle, double vehicleAngle, double speed,
-                                                                                      Mirle.Hlts.Utils.HltDirection sensorDir, Mirle.Hlts.Utils.HltDirection forkDir)
+        public HltResult updateVheiclePositionToReserveControlModule(BLL.ReserveBLL reserveBLL, AVEHICLE vh, string currentSectionID, double x_axis, double y_axis, double dirctionAngle, double vehicleAngle, double speed,
+                                                                                      HltDirection sensorDir, HltDirection forkDir)
         {
             string vh_id = vh.VEHICLE_ID;
             string section_id = currentSectionID;
@@ -948,6 +949,20 @@ namespace com.mirle.ibg3k0.sc.BLL
 
             foreach (AVEHICLE vh in vhs.ToList())
             {
+                if (!vh.IS_INSTALLED)
+                {
+                    vhs.Remove(vh);
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
+                       Data: $"vh id:{vh.VEHICLE_ID} not installed :{vh.IS_INSTALLED}" +
+                             $"so filter it out",
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID);
+                }
+            }
+
+
+            foreach (AVEHICLE vh in vhs.ToList())
+            {
                 if (!vh.isTcpIpConnect)
                 {
                     vhs.Remove(vh);
@@ -1281,6 +1296,14 @@ namespace com.mirle.ibg3k0.sc.BLL
             return vhs.Where(vh => vh.ACT_STATUS == VHActionStatus.Commanding &&
                                    vh.CmdType == E_CMD_TYPE.Move_Charger &&
                                    vh.ToAdr.Trim() == adrID.Trim()).
+                       Count() != 0;
+        }
+        public bool hasVhGoingParkingAdr(string adrID)
+        {
+            List<AVEHICLE> vhs = scApp.getEQObjCacheManager().getAllVehicle();
+            return vhs.Where(vh => vh.ACT_STATUS == VHActionStatus.Commanding &&
+                                   vh.CmdType == E_CMD_TYPE.Move &&
+                                   SCUtility.isMatche(vh.ToAdr, adrID)).
                        Count() != 0;
         }
         public bool hasVhReserveParkAdr(string park_adr)
@@ -1902,22 +1925,22 @@ namespace com.mirle.ibg3k0.sc.BLL
             {
                 double distanceWithLastPosition = getDistance(x_axis, y_axis, vh.X_Axis, vh.Y_Axis);
                 Console.WriteLine($"distance:{distanceWithLastPosition}");
-                if (distanceWithLastPosition < ALLOWANCE_DISTANCE_mm)
-                {
-                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(VehicleBLL), Device: Service.VehicleService.DEVICE_NAME_AGV,
-                       Data: $"The vehicles report position change, the distan less then:{ALLOWANCE_DISTANCE_mm}mm, by pass it.",
-                       VehicleID: vh.VEHICLE_ID,
-                       CarrierID: vh.CST_ID);
-                    return;
-                }
+                //if (distanceWithLastPosition < ALLOWANCE_DISTANCE_mm)
+                //{
+                //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(VehicleBLL), Device: Service.VehicleService.DEVICE_NAME_AGV,
+                //       Data: $"The vehicles report position change, the distan less then:{ALLOWANCE_DISTANCE_mm}mm, by pass it.",
+                //       VehicleID: vh.VEHICLE_ID,
+                //       CarrierID: vh.CST_ID);
+                //    return;
+                //}
                 updateVheiclePosition_CacheManager(vh, current_adr_id, current_sec_id, current_seg_id, sec_dis, drive_dirction, x_axis, y_axis, dir_angle, vh_angle);
                 //if (!SCUtility.isMatche(current_adr_id, last_adr_id))
                 {
                     var sensor_dir = decideReserveDirection(vh_angle);
                     //var update_result = updateVheiclePositionToReserveControlModule(scApp.ReserveBLL, vh, x_axis, y_axis, dir_angle, vh_angle, speed,
-                    //                                                                Mirle.Hlts.Utils.HltDirection.NESW, Mirle.Hlts.Utils.HltDirection.None);
+                    //                                                                HltDirection.NESW, HltDirection.None);
                     var update_result = updateVheiclePositionToReserveControlModule(scApp.ReserveBLL, vh, current_sec_id, x_axis, y_axis, dir_angle, vh_angle, speed,
-                                                                                    sensor_dir, Mirle.Hlts.Utils.HltDirection.None);
+                                                                                    sensor_dir, HltDirection.None);
                     if (!update_result.OK)
                     {
                         string message = $"The vehicles bumped, vh:{vh.VEHICLE_ID} with vh:{update_result.VehicleID}";
@@ -1983,17 +2006,18 @@ namespace com.mirle.ibg3k0.sc.BLL
             return Math.Sqrt(dx * dx + dy * dy);
         }
 
-        private Mirle.Hlts.Utils.HltDirection decideReserveDirection(double vhAngle)
+        private HltDirection decideReserveDirection(double vhAngle)
         {
-            if (vhAngle == 90
-                || vhAngle == -90
-                || vhAngle == -270
-                || vhAngle == 270)
-                return Mirle.Hlts.Utils.HltDirection.NS;
-            else
-            {
-                return Mirle.Hlts.Utils.HltDirection.EW;
-            }
+            return HltDirection.None;
+            //if (vhAngle == 90
+            //    || vhAngle == -90
+            //    || vhAngle == -270
+            //    || vhAngle == 270)
+            //    return HltDirection.NorthSouth;
+            //else
+            //{
+            //    return HltDirection.EastWest;
+            //}
         }
 
 
@@ -2239,6 +2263,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                        Where(vh => vh.isTcpIpConnect &&
                                    vh.MODE_STATUS == VHModeStatus.AutoRemote &&
                                    vh.ACT_STATUS == VHActionStatus.NoCommand &&
+                                   vh.IS_INSTALLED && //20200528增加 Kevinwei
                                    !vh.IsError &&
                                    !cmdBll.isCMD_OHTCExcuteByVh(vh.VEHICLE_ID)).
                        Count();

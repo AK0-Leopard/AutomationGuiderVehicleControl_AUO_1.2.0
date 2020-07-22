@@ -59,12 +59,15 @@ namespace com.mirle.ibg3k0.sc
 
 
         [JsonIgnore]
+        public bool IsParking
+        { get { return this.ADRTYPE == 2; } }//暫時先用,1:充電站 ,2:作為停車的Type,4:可避車點
+        [JsonIgnore]
+        public bool IsAvoid
+        { get { return this.ADRTYPE == 4 || this.ADRTYPE == 6; } }//暫時先用,1:充電站 ,2:作為停車的Type,4:可避車點
+        [JsonIgnore]
         public bool IsCoupler
-        //{ get { return AddressTypeFlags[BIT_INDEX_COUPLER]; } }
-        //{ get { return false; } }
-        { get { return ADR_ID == "24014"; }}
-        //{ get { return ADR_ID == "10001"|| ADR_ID == "10007"; } }
-[JsonIgnore]
+        { get { return AddressTypeFlags[BIT_INDEX_COUPLER]; } }
+        [JsonIgnore]
         public bool IsPort
         { get { return AddressTypeFlags[BIT_INDEX_PORT]; } }
         [JsonIgnore]
@@ -100,7 +103,8 @@ namespace com.mirle.ibg3k0.sc
                 }
                 else
                 {
-                    return IsCoupler || IsPort;
+                    //return IsCoupler || IsPort || IsAvoid;
+                    return IsAvoid;
                 }
                 //return IsCoupler || IsPort || (!IsSegment && IsSection);
             }
@@ -195,6 +199,46 @@ namespace com.mirle.ibg3k0.sc
         public List<Data.VO.ReserveEnhanceInfo> infos { get; set; }
     }
 
+
+    public class CouplerAndParkingAddress : AADDRESS, ICpuplerType, IParkingType
+    {
+        public string ChargerID { get; set; }
+        public CouplerNum CouplerNum { get; set; }
+        public bool IsEnable { get; set; }
+        public int Priority { get; set; }
+        public string[] TrafficControlSegment { get; set; }
+
+        public bool hasVh(VehicleBLL vehicleBLL)
+        {
+            return vehicleBLL.hasVhOnAddress(ADR_ID);
+        }
+        public bool hasVhGoing(VehicleBLL vehicleBLL)
+        {
+            return vehicleBLL.hasVhGoingAdr(ADR_ID);
+        }
+        public string getAddressID()
+        {
+            return this.ADR_ID;
+        }
+
+    }
+    public class ParkingAddress : AADDRESS, IParkingType
+    {
+        public bool hasVh(VehicleBLL vehicleBLL)
+        {
+            return vehicleBLL.hasVhOnAddress(ADR_ID);
+        }
+        public bool hasVhGoing(VehicleBLL vehicleBLL)
+        {
+            return vehicleBLL.hasVhGoingAdr(ADR_ID);
+        }
+        public string getAddressID()
+        {
+            return this.ADR_ID;
+        }
+
+    }
+
     public enum CouplerNum
     {
         NumberOne = 1,
@@ -211,6 +255,12 @@ namespace com.mirle.ibg3k0.sc
         string[] TrafficControlSegment { get; set; }
         bool hasVh(VehicleBLL vehicleBLL);
         bool hasVhGoing(VehicleBLL vehicleBLL);
+    }
+    public interface IParkingType
+    {
+        bool hasVh(VehicleBLL vehicleBLL);
+        bool hasVhGoing(VehicleBLL vehicleBLL);
+        string getAddressID();
     }
 
     public interface IReserveEnhance

@@ -153,6 +153,14 @@ namespace com.mirle.ibg3k0.sc.BLL
                                                                          SingleOrDefault();
                 return portTemp;
             }
+            public List<APORTSTATION> loadPortStationByGroupID(string groupID)
+            {
+                if (SCUtility.isEmpty(groupID)) return null;
+                List<APORTSTATION> portsTemp = CacheManager.getALLPortStation().Where(port_station => SCUtility.isMatche(port_station.GROUP_ID, groupID)).
+                                                                         ToList();
+                return portsTemp;
+            }
+
             public void updatePortStationCSTExistStatus(string port_id, string cst_id)
             {
                 APORTSTATION port_station = CacheManager.getPortStation(port_id);

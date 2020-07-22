@@ -364,13 +364,13 @@
     <value>Engineer</value>
   </data>
   <data name="zhTwToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 26</value>
+    <value>136, 26</value>
   </data>
   <data name="zhTwToolStripMenuItem.Text" xml:space="preserve">
     <value>zh-TW</value>
   </data>
   <data name="enUSToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 26</value>
+    <value>136, 26</value>
   </data>
   <data name="enUSToolStripMenuItem.Text" xml:space="preserve">
     <value>en-US</value>
@@ -442,19 +442,19 @@
     <value>Maintenance</value>
   </data>
   <data name="englishToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 26</value>
+    <value>160, 26</value>
   </data>
   <data name="englishToolStripMenuItem.Text" xml:space="preserve">
     <value>English</value>
   </data>
   <data name="zh_twToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 26</value>
+    <value>160, 26</value>
   </data>
   <data name="zh_twToolStripMenuItem.Text" xml:space="preserve">
     <value>繁體中文</value>
   </data>
   <data name="zh_chToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 26</value>
+    <value>160, 26</value>
   </data>
   <data name="zh_chToolStripMenuItem.Text" xml:space="preserve">
     <value>简体中文</value>

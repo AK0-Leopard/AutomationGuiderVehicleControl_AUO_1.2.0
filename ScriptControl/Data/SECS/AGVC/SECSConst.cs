@@ -12,7 +12,9 @@
 //                                                     由原本的1(Unsuccess)改為8(Intererror)，
 //                                                     長是這樣是否可以讓MCS重複下命令。
 // 2020/05/05    Kevin Wei      N/A            A0.02   在Vehicle Abort發生時，要上報Result code = 7給MCS，
-//                                                      MCS才可以再再次下達命令。
+//                                                     MCS才可以再再次下達命令。
+// 2020/06/02    Kevin Wei      N/A            A0.03   將"CMD_Result_VehicleAbortError" 上報成8，
+//                                                     試試看MCS是否就會重新下命令
 //**********************************************************************************
 
 using System;
@@ -232,7 +234,8 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.AGVC
         public const string CMD_Result_DisableLoad = "3";
         public const string CMD_Result_BCRError = "4";
         public const string CMD_Result_CarrierIDUnmach = "5";
-        public const string CMD_Result_VehicleAbortError = "7";
+        //A0.03 public const string CMD_Result_VehicleAbortError = "7";
+        public const string CMD_Result_VehicleAbortError = "8"; //A0.03
         public const string CMD_Result_InterlockError = "8";
 
         public const string CMD_Result_FromMCS = "65";

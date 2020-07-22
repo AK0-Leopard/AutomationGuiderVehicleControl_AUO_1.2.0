@@ -379,7 +379,12 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
             //{
             //    return 1;
             //}
+            string v1_current_sec_id = SCUtility.Trim(vh1.CUR_SEC_ID, true);
 
+            if (scApp.GuideBLL.isOneDirectPathSection(v1_current_sec_id))
+            {
+                return 1;
+            }
 
             if (!SCUtility.isEmpty(vh1.MCS_CMD) && !SCUtility.isEmpty(vh2.MCS_CMD))
             {

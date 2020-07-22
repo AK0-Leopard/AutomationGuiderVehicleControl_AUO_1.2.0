@@ -11,6 +11,7 @@ using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using com.mirle.ibg3k0.sc.RouteKit;
 using Google.Protobuf.Collections;
 using KingAOP;
+using Mirle.AK0.Hlt.Utils;
 using Newtonsoft.Json.Linq;
 using NLog;
 using System;
@@ -1728,7 +1729,7 @@ namespace com.mirle.ibg3k0.sc.Service
         }
 
 
-    public bool TeachingRequest(string vh_id, string from_adr, string to_adr)
+        public bool TeachingRequest(string vh_id, string from_adr, string to_adr)
         {
             bool isSuccess = false;
             AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vh_id);
@@ -2155,7 +2156,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                    Data: $"vh:{vhID} Try add reserve section:{reserve_section_id}...",
                    VehicleID: vhID);
-                Mirle.Hlts.Utils.HltDirection hltDirection = decideReserveDirection(vh, reserve_section_id);
+                HltDirection hltDirection = decideReserveDirection(vh, reserve_section_id);
 
                 var result = scApp.ReserveBLL.TryAddReservedSection(vhID, reserve_section_id,
                                                                     sensorDir: hltDirection,
@@ -2178,7 +2179,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 return (false, string.Empty, string.Empty);
             }
         }
-        private Mirle.Hlts.Utils.HltDirection decideReserveDirection(AVEHICLE reserveVh, string reserveSectionID)
+        private HltDirection decideReserveDirection(AVEHICLE reserveVh, string reserveSectionID)
         {
             //先取得目前vh所在的current adr，如果這次要求的Reserve Sec是該Current address連接的其中一點時
             //就不用增加Secsor預約的範圍，預防發生車子預約不到本身路段的問題
@@ -2186,18 +2187,18 @@ namespace com.mirle.ibg3k0.sc.Service
             var related_sections_id = scApp.SectionBLL.cache.GetSectionsByAddress(cur_adr).Select(sec => sec.SEC_ID.Trim()).ToList();
             if (related_sections_id.Contains(reserveSectionID))
             {
-                return Mirle.Hlts.Utils.HltDirection.None;
+                return HltDirection.None;
             }
             else
             {
                 //在R2000的路段上，預約方向要帶入
                 if (scApp.ReserveBLL.IsR2000Section(reserveSectionID))
                 {
-                    return Mirle.Hlts.Utils.HltDirection.NS;
+                    return HltDirection.NorthSouth;
                 }
                 else
                 {
-                    return Mirle.Hlts.Utils.HltDirection.NESW;
+                    return HltDirection.NESW;
                 }
             }
         }
@@ -2324,7 +2325,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                     if (cmd_ohtc != null && request_vh.CanNotReserveInfo != null)
                                     {
                                         bool is_override_success = scApp.VehicleService.trydoOverrideCommandToVh
-                                            (request_vh, cmd_ohtc, request_vh.CanNotReserveInfo.ReservedSectionID);
+                                            (request_vh, cmd_ohtc, new List<string> { request_vh.CanNotReserveInfo.ReservedSectionID });
                                         if (is_override_success)
                                         {
                                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
@@ -2533,8 +2534,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 var hlt_vh_obj = scApp.ReserveBLL.GetHltVehicle(reservedVh.VEHICLE_ID);
                 string virtual_vh_id = $"{VehicleVirtualSymbol}_{reservedVh.VEHICLE_ID}";
                 scApp.ReserveBLL.TryAddVehicleOrUpdate(virtual_vh_id, "", hlt_vh_obj.X, hlt_vh_obj.Y, hlt_vh_obj.Angle, 0,
-                    sensorDir: Mirle.Hlts.Utils.HltDirection.NESW,
-                      forkDir: Mirle.Hlts.Utils.HltDirection.None);
+                    sensorDir: HltDirection.NESW,
+                      forkDir: HltDirection.None);
                 virtual_vh_ids.Add(virtual_vh_id);
                 do
                 {
@@ -3496,7 +3497,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
                         if (report_alarm.ALAM_STAT == ErrorStatus.ErrSet)
                         {
-                            scApp.ReportBLL.ReportAlarmHappend(report_alarm.ALAM_STAT,report_alarm.ALAM_LVL, alarm_code, report_alarm.ALAM_DESC);
+                            scApp.ReportBLL.ReportAlarmHappend(report_alarm.ALAM_STAT, report_alarm.ALAM_LVL, alarm_code, report_alarm.ALAM_DESC);
                             scApp.ReportBLL.newReportUnitAlarmSet(eqpt.Real_ID, report_alarm.ALAM_STAT, report_alarm.ALAM_LVL, alarm_code, report_alarm.ALAM_DESC, reportqueues);
                         }
                         else

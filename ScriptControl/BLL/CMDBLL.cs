@@ -916,17 +916,24 @@ namespace com.mirle.ibg3k0.sc.BLL
                     //    return;
                     //if (DebugParameter.CanAutoRandomGeneratesCommand || scApp.getEQObjCacheManager().getLine().SCStats == ALINE.TSCState.AUTO)
 
-                    if (DebugParameter.CanAutoRandomGeneratesCommand || (scApp.getEQObjCacheManager().getLine().SCStats == ALINE.TSCState.AUTO && scApp.getEQObjCacheManager().getLine().MCSCommandAutoAssign))
+                    if (DebugParameter.CanAutoRandomGeneratesCommand ||
+                        (scApp.getEQObjCacheManager().getLine().SCStats == ALINE.TSCState.AUTO &&
+                         scApp.getEQObjCacheManager().getLine().MCSCommandAutoAssign))
                     {
                         int idle_vh_count = scApp.VehicleBLL.cache.getVhCurrentStatusInIdleCount(scApp.CMDBLL);
                         if (idle_vh_count > 0)
                         {
                             List<ACMD_MCS> ACMD_MCSs = scApp.CMDBLL.loadMCS_Command_Queue();
-                            checkOnlyOneExcuteWTOCommand(ref ACMD_MCSs);
+                            List<AVEHICLE> idle_vhs = scApp.VehicleBLL.cache.loadAllVh().ToList();
+                            scApp.VehicleBLL.filterVh(ref idle_vhs, E_VH_TYPE.None);
+                            //checkOnlyOneExcuteWTOCommand(ref ACMD_MCSs);
+                            //checkOnlyOneCommandExcuteInOneCommandGroup(ref ACMD_MCSs);
                             //List<ACMD_MCS> wto_command = null;
                             List<ACMD_MCS> port_priority_max_command = null;
                             if (ACMD_MCSs != null && ACMD_MCSs.Count > 0)
                             {
+                                checkOnTheWayAfterCommandExcuteInOneCommandGroup(ref ACMD_MCSs, idle_vhs);
+
                                 //string WTO_GROUP_NAME = "AAWTO400";
                                 ////先找是否有CST要到從WTO出來的，如果有找看看有沒有要去WTO的貨，有的話就先把它搬過去，
                                 ////如果找不到要去WTO的Command就直接去把它搬出來
@@ -948,15 +955,15 @@ namespace com.mirle.ibg3k0.sc.BLL
                                 //    }
                                 //}
                                 port_priority_max_command = new List<ACMD_MCS>();
-                                foreach(ACMD_MCS cmd in ACMD_MCSs)
+                                foreach (ACMD_MCS cmd in ACMD_MCSs)
                                 {
                                     APORTSTATION source_port = scApp.getEQObjCacheManager().getPortStation(cmd.HOSTSOURCE);
                                     APORTSTATION destination_port = scApp.getEQObjCacheManager().getPortStation(cmd.HOSTDESTINATION);
-                                    if(source_port!=null&& source_port.PRIORITY >= SCAppConstants.PortMaxPriority)
+                                    if (source_port != null && source_port.PRIORITY >= SCAppConstants.PortMaxPriority)
                                     {
                                         if (destination_port != null)
                                         {
-                                            if(source_port.PRIORITY>= destination_port.PRIORITY)
+                                            if (source_port.PRIORITY >= destination_port.PRIORITY)
                                             {
                                                 cmd.PORT_PRIORITY = source_port.PRIORITY;
                                             }
@@ -993,6 +1000,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                                         continue;
                                     }
                                 }
+
                                 if (port_priority_max_command.Count == 0)
                                 {
                                     port_priority_max_command = null;
@@ -1001,7 +1009,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                                 {
                                     port_priority_max_command = port_priority_max_command.OrderByDescending(cmd => cmd.PORT_PRIORITY).ToList();
                                 }
-                              
+
                                 List<ACMD_MCS> timeout_command = null;
                                 //bool has_hight_priority_command = ACMD_MCSs.Where(cmd => cmd.PRIORITY_SUM >= HIGHT_PRIORITY_VALUE).Count() > 0;
                                 //var hight_priority_command = ACMD_MCSs.Where(cmd => cmd.PRIORITY_SUM >= HIGHT_PRIORITY_VALUE).ToList();
@@ -1062,9 +1070,9 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                                 AVEHICLE nearest_vh = null;
                                 ACMD_MCS nearest_cmd_mcs = null;
-                                List<AVEHICLE> vhs = scApp.VehicleBLL.cache.loadAllVh().ToList();
-                                scApp.VehicleBLL.filterVh(ref vhs, E_VH_TYPE.None);
-                                (nearest_vh, nearest_cmd_mcs) = FindNearestVhAndCommand(vhs, search_nearest_mcs_cmd);
+                                //List<AVEHICLE> vhs = scApp.VehicleBLL.cache.loadAllVh().ToList();
+                                //scApp.VehicleBLL.filterVh(ref vhs, E_VH_TYPE.None);
+                                (nearest_vh, nearest_cmd_mcs) = FindNearestVhAndCommand(idle_vhs, search_nearest_mcs_cmd);
                                 if (nearest_vh != null && nearest_cmd_mcs != null)
                                 {
                                     if (AssignMCSCommand2Vehicle(nearest_cmd_mcs, E_CMD_TYPE.LoadUnload, nearest_vh))
@@ -1216,6 +1224,97 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
             }
         }
+
+        /// <summary>
+        /// 確認是否已有命令是執行在One command group type，
+        /// 是的話則要將其他已經在Queue中的Command移除
+        /// </summary>
+        private void checkOnlyOneCommandExcuteInOneCommandGroup(ref List<ACMD_MCS> InQueueACMD_MCSs)
+        {
+            List<AGROUPPORTSTATION> group_port_stations = scApp.GroupPortStationBLL.OperateCatch.loadAllGroupPortStation();
+            foreach (var group_port_station in group_port_stations)
+            {
+                if (group_port_station.TYPE != GroupPortType.OnePortExcute) continue;
+                //找出目前是OnePortExcute Type的Port並確定是否有已在執行命令的
+                List<APORTSTATION> one_ports_excute = scApp.PortStationBLL.OperateCatch.
+                                                      loadPortStationByGroupID(group_port_station.GROUP_ID);
+                List<string> one_port_ids_excute = one_ports_excute.
+                                                   Select(port => SCUtility.Trim(port.PORT_ID, true)).
+                                                   ToList();
+                bool has_one_port_excute_command_in_queue =
+                     InQueueACMD_MCSs.Where(mcs_cmd => one_port_ids_excute.Contains(SCUtility.Trim(mcs_cmd.HOSTSOURCE)) ||
+                                                       one_port_ids_excute.Contains(SCUtility.Trim(mcs_cmd.HOSTDESTINATION))).
+                                      Count() != 0;
+                if (has_one_port_excute_command_in_queue)
+                {
+                    bool has_excute_one_port_type_commnad = scApp.CMDBLL.hasCMD_MCSExcuteByFromToPort(one_port_ids_excute);
+                    if (has_excute_one_port_type_commnad)
+                    {
+                        foreach (var mcs_cmd in InQueueACMD_MCSs.ToList())
+                        {
+                            if (one_port_ids_excute.Contains(SCUtility.Trim(mcs_cmd.HOSTSOURCE)) ||
+                                one_port_ids_excute.Contains(SCUtility.Trim(mcs_cmd.HOSTDESTINATION)))
+                            {
+                                InQueueACMD_MCSs.Remove(mcs_cmd);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// 確認是否有可以等待的後順途搬送命令
+        /// </summary>
+        /// <param name="InQueueACMD_MCSs"></param>
+        private void checkOnTheWayAfterCommandExcuteInOneCommandGroup(ref List<ACMD_MCS> InQueueACMD_MCSs, List<AVEHICLE> idleVhs)
+        {
+            List<AGROUPPORTSTATION> group_port_stations = scApp.GroupPortStationBLL.OperateCatch.loadAllGroupPortStation();
+            foreach (var group_port_station in group_port_stations)
+            {
+                if (group_port_station.TYPE != GroupPortType.OnTheWayAfter) continue;
+                //找出目前是OnePortExcute Type的Port並確定是否有已在執行命令的
+                List<APORTSTATION> on_the_way_after_port = scApp.PortStationBLL.OperateCatch.
+                                                      loadPortStationByGroupID(group_port_station.GROUP_ID);
+                List<string> on_the_way_after_port_ids = on_the_way_after_port.
+                                                   Select(port => SCUtility.Trim(port.PORT_ID, true)).
+                                                   ToList();
+                List<string> on_the_way_after_adr_ids = on_the_way_after_port.
+                                                   Select(port => SCUtility.Trim(port.ADR_ID, true)).
+                                                   ToList();
+                //如果Source是在這個Group的則可以看是否有命令是準備往這個Group放的正在執行，有的話就把它刪除
+                //等待命令結束後再讓他進去Queue裡面排隊
+                bool has_on_the_way_after_in_queue =
+                     InQueueACMD_MCSs.Where(mcs_cmd => on_the_way_after_port_ids.Contains(SCUtility.Trim(mcs_cmd.HOSTSOURCE))).
+                                      Count() != 0;
+                if (has_on_the_way_after_in_queue)
+                {
+                    //確認是否已經有車子Idel(可以執行命令的車子)在這個Group Port裡面，
+                    //有的話就不執行把她刪除的動作，這樣外面自然就會找到這台Idle的Vh去搬送
+                    if (idleVhs != null)
+                    {
+                        bool has_idle_vh_in_group_port =
+                            idleVhs.Where(idle_vh => on_the_way_after_adr_ids.Contains(SCUtility.Trim(idle_vh.CUR_ADR_ID, true))).
+                                    Count() > 0;
+                        if (has_idle_vh_in_group_port)
+                        {
+                            return;
+                        }
+                    }
+                    bool has_excute_one_port_type_commnad = scApp.CMDBLL.hasCMD_MCSExcuteByToPort(on_the_way_after_port_ids);
+                    if (has_excute_one_port_type_commnad)
+                    {
+                        foreach (var mcs_cmd in InQueueACMD_MCSs.ToList())
+                        {
+                            if (on_the_way_after_port_ids.Contains(SCUtility.Trim(mcs_cmd.HOSTSOURCE)))
+                            {
+                                InQueueACMD_MCSs.Remove(mcs_cmd);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
 
         private (AVEHICLE nearestVh, ACMD_MCS nearestCmdMcs) FindNearestVhAndCommand(List<AVEHICLE> vhs, List<ACMD_MCS> ACMD_MCSs)
         {
@@ -1422,6 +1521,25 @@ namespace com.mirle.ibg3k0.sc.BLL
             using (DBConnection_EF con = DBConnection_EF.GetUContext())
             {
                 count = cmd_mcsDao.getCMD_MCSExcutingCountByFromToPort(con, containsPortID);
+            }
+            return count != 0;
+        }
+        public bool hasCMD_MCSExcuteByFromToPort(List<string> containsPortIDs)
+        {
+            int count = 0;
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                count = cmd_mcsDao.getCMD_MCSExcutingCountByFromToPort(con, containsPortIDs);
+            }
+            return count != 0;
+        }
+
+        public bool hasCMD_MCSExcuteByToPort(List<string> containsPortIDs)
+        {
+            int count = 0;
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                count = cmd_mcsDao.getCMD_MCSExcutingCountByToPort(con, containsPortIDs);
             }
             return count != 0;
         }
@@ -2360,7 +2478,6 @@ namespace com.mirle.ibg3k0.sc.BLL
             {
                 setWillPassSectionInfo(acmd_ohtc.VH_ID, guideSectionToDestination);
             }
-
 
             vh.vh_CMD_Status = E_CMD_STATUS.Execution;
             vh.Action();

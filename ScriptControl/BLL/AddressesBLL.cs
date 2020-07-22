@@ -58,6 +58,11 @@ namespace com.mirle.ibg3k0.sc.BLL
                 List<CouplerAddress> CouplerAddresses = CommObjCacheManager.getCouplerAddresses();
                 return CouplerAddresses;
             }
+            public List<IParkingType> GetParkingAddresses()
+            {
+                List<IParkingType> parkingAddresses = CommObjCacheManager.getParkingAddresses();
+                return parkingAddresses;
+            }
             public List<CouplerAddress> GetEnableCouplerAddresses(UnitBLL unitBLL)
             {
                 List<CouplerAddress> CouplerAddresses = CommObjCacheManager.getCouplerAddresses();
@@ -68,7 +73,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
             public bool IsCouplerWork(CouplerAddress couplerAddress, UnitBLL unitBLL)
             {
-                if(SCApplication.getInstance().BC_ID== "NORTH_INNOLUX_Test_Site") return true;//暫時都return ok
+                if (SCApplication.getInstance().BC_ID == "NORTH_INNOLUX_Test_Site") return true;//暫時都return ok
                 AUNIT charger = unitBLL.OperateCatch.getUnit(couplerAddress.ChargerID);
                 if (charger != null)
                 {

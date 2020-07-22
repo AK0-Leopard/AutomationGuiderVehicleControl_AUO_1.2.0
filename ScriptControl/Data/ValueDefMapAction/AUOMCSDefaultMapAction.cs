@@ -430,6 +430,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 {
                     check_result = $"MCS command id:{command_id} ,source port:{source_port_or_vh_id} to destination port:{dest_port} no path to go{Environment.NewLine}," +
                         $"please check the road traffic status.";
+
+                    //int[] current_ban_route = scApp.NewRouteGuide.getAllBanDirectArray();
+                    //LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(GuideBLL), Device: "OHxC",
+                    //   Data: $"start node:{start_node}({i_start_address}) and target node:{target_node}({i_target_address})," +
+                    //         $"can't find the path. Current ban route:{string.Join(",", current_ban_route)}");
+
                     return SECSConst.HCACK_Cannot_Perform_Now;
                 }
             }

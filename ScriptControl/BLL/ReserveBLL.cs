@@ -1,16 +1,18 @@
 ﻿using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.Common;
-using Mirle.Hlts.Utils;
 using System;
 using System.Text;
 using System.Linq;
+using Mirle.AK0.Hlt.Utils;
+using Mirle.AK0.Hlt.ReserveSection.Map.ViewModels;
+using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
     public class ReserveBLL
     {
         NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private Mirle.Hlts.ReserveSection.Map.ViewModels.HltMapViewModel mapAPI { get; set; }
+        private MapViewModel mapAPI { get; set; }
 
         private EventHandler reserveStatusChange;
         private object _reserveStatusChangeEventLock = new object();
@@ -91,8 +93,9 @@ namespace com.mirle.ibg3k0.sc.BLL
                Data: $"add vh in reserve system: vh:{vhID},x:{vehicleX},y:{vehicleY},angle:{vehicleAngle},speedMmPerSecond:{speedMmPerSecond},sensorDir:{sensorDir},forkDir:{forkDir}",
                VehicleID: vhID);
             //HltResult result = mapAPI.TryAddVehicleOrUpdate(vhID, vehicleX, vehicleY, vehicleAngle, sensorDir, forkDir);
-            var hlt_vh = new HltVehicle(vhID, vehicleX, vehicleY, vehicleAngle, speedMmPerSecond, sensorDirection: sensorDir, forkDirection: forkDir);
-            HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh);
+            //var hlt_vh = new HltVehicle(vhID, vehicleX, vehicleY, vehicleAngle, speedMmPerSecond, sensorDirection: sensorDir, forkDirection: forkDir);
+            var hlt_vh = new HltVehicle(vhID, vehicleX, vehicleY, vehicleAngle, speedMmPerSecond, sensorDirection: sensorDir, forkDirection: forkDir, currentSectionID: currentSectionID);
+            HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh, isKeepRestSection: false);
             //mapAPI.KeepRestSection(hlt_vh, currentSectionID);
             onReserveStatusChange();
 
@@ -101,8 +104,8 @@ namespace com.mirle.ibg3k0.sc.BLL
         public virtual HltResult TryAddVehicleOrUpdate(string vhID, string adrID, float angle = 0)
         {
             var adr_obj = mapAPI.GetAddressObjectByID(adrID);
-            var hlt_vh = new HltVehicle(vhID, adr_obj.X, adr_obj.Y, angle, sensorDirection: Mirle.Hlts.Utils.HltDirection.NESW);
-            //HltResult result = mapAPI.TryAddVehicleOrUpdate(vhID, adr_obj.X, adr_obj.Y, 0, vehicleSensorDirection: Mirle.Hlts.Utils.HltDirection.NESW);
+            var hlt_vh = new HltVehicle(vhID, adr_obj.X, adr_obj.Y, angle, sensorDirection: HltDirection.NESW);
+            //HltResult result = mapAPI.TryAddVehicleOrUpdate(vhID, adr_obj.X, adr_obj.Y, 0, vehicleSensorDirection: HltDirection.NESW);
             HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh);
             onReserveStatusChange();
 
@@ -143,17 +146,38 @@ namespace com.mirle.ibg3k0.sc.BLL
             return mapAPI.GetVehicleObjectByID(vhID);
         }
 
-        public virtual HltResult TryAddReservedSection(string vhID, string sectionID, HltDirection sensorDir = HltDirection.NESW, HltDirection forkDir = HltDirection.None, bool isAsk = false)
+        public virtual HltResult TryAddReservedSection(string vhID, string sectionID,
+            HltDirection sensorDir = HltDirection.ForwardReverse, HltDirection forkDir = HltDirection.None,
+            DriveDirction driveDirection = DriveDirction.DriveDirNone, bool isAsk = false)
         {
             //int sec_id = 0;
             //int.TryParse(sectionID, out sec_id);
             string sec_id = SCUtility.Trim(sectionID);
-
-            HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, isAsk);
+            int vehicle_direction = getVehicleDirection(driveDirection);
+            //HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, isAsk);
+            HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, vehicle_direction, isAsk);
+            LogHelper.Log(logger: logger, LogLevel: NLog.LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
+               Data: $"vh:{vhID} Try add reserve section:{sectionID} dir:{sensorDir},result:{result}",
+               VehicleID: vhID);
             onReserveStatusChange();
 
             return result;
         }
+        private int getVehicleDirection(DriveDirction driveDirction)
+        {
+            switch (driveDirction)
+            {
+                case DriveDirction.DriveDirNone:
+                    return 0;
+                case DriveDirction.DriveDirForward:
+                    return 1;
+                case DriveDirction.DriveDirReverse:
+                    return -1;
+                default:
+                    return 0;
+            }
+        }
+
 
         public virtual HltResult RemoveAllReservedSectionsBySectionID(string sectionID)
         {
@@ -180,24 +204,25 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             //先取得目前vh所在的current adr，如果這次要求的Reserve Sec是該Current address連接的其中一點時
             //就不用增加Secsor預約的範圍，預防發生車子預約不到本身路段的問題
-            string cur_adr = reserveVh.CUR_ADR_ID;
-            var related_sections_id = sectionBLL.cache.GetSectionsByAddress(cur_adr).Select(sec => sec.SEC_ID.Trim()).ToList();
-            if (related_sections_id.Contains(reserveSectionID))
-            {
-                return Mirle.Hlts.Utils.HltDirection.None;
-            }
-            else
-            {
-                //在R2000的路段上，預約方向要帶入
-                if (IsR2000Section(reserveSectionID))
-                {
-                    return Mirle.Hlts.Utils.HltDirection.NS;
-                }
-                else
-                {
-                    return Mirle.Hlts.Utils.HltDirection.NESW;
-                }
-            }
+            return HltDirection.Forward;
+            //string cur_adr = reserveVh.CUR_ADR_ID;
+            //var related_sections_id = sectionBLL.cache.GetSectionsByAddress(cur_adr).Select(sec => sec.SEC_ID.Trim()).ToList();
+            //if (related_sections_id.Contains(reserveSectionID))
+            //{
+            //    return HltDirection.None;
+            //}
+            //else
+            //{
+            //    //在R2000的路段上，預約方向要帶入
+            //    if (IsR2000Section(reserveSectionID))
+            //    {
+            //        return HltDirection.NorthSouth;
+            //    }
+            //    else
+            //    {
+            //        return HltDirection.NESW;
+            //    }
+            //}
         }
 
 
@@ -256,7 +281,9 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             //not thing...
         }
-        public override HltResult TryAddReservedSection(string vhID, string sectionID, HltDirection sensorDir = HltDirection.NESW, HltDirection forkDir = HltDirection.None, bool isAsk = false)
+        public virtual HltResult TryAddReservedSection(string vhID, string sectionID,
+            HltDirection sensorDir = HltDirection.ForwardReverse, HltDirection forkDir = HltDirection.None,
+            DriveDirction driveDirection = DriveDirction.DriveDirNone, bool isAsk = false)
         {
             return new HltResult(true, "By Pass Reserve");
         }

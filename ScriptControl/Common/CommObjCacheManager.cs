@@ -24,6 +24,7 @@ using com.mirle.ibg3k0.sc.Data.VO;
 using NLog;
 using com.mirle.ibg3k0.sc.ConfigHandler;
 using com.mirle.ibg3k0.sc.Data;
+using Quartz.Util;
 
 namespace com.mirle.ibg3k0.sc.Common
 {
@@ -35,11 +36,6 @@ namespace com.mirle.ibg3k0.sc.Common
         private static CommObjCacheManager instance = null;
         private static Object _lock = new Object();
         private SCApplication scApp = null;
-        private List<ReserveEnhanceInfo> ReserveEnhanceInfos = new List<ReserveEnhanceInfo>()
-        {
-            new ReserveEnhanceInfo(){  AddressID="24032",EnhanceControlAddress =new string[]{"001,017" } },
-            new ReserveEnhanceInfo(){  AddressID="48115",EnhanceControlAddress = new string[]{"48106" } },
-        };
         private List<ReserveEnhanceInfoSection> ReserveEnhanceInfosSections = null;
         private List<TrafficControlInfo> TrafficControlInfos = null;
         //Cache Object
@@ -49,13 +45,19 @@ namespace com.mirle.ibg3k0.sc.Common
         private List<ASEGMENT> Segments;
         //Address
         private List<AADDRESS> Addresses;
+        //GroupPortStation
+        private List<AGROUPPORTSTATION> GroupPortStations;
+
         private List<string> EnhanceSubAddresses = new List<string>();
         private CommonInfo CommonInfo;
         //
         public List<DataCollectionSetting> DataCollectionList { get; private set; }
 
-        public List<List<ASECTION>>  oneDirectPathList =new List<List<ASECTION>>();
+        public List<List<ASECTION>> oneDirectPathList = new List<List<ASECTION>>();
         public Dictionary<string, List<ASECTION>> oneDirectPathDic = new Dictionary<string, List<ASECTION>>();
+
+
+
 
         private CommObjCacheManager() { }
         public static CommObjCacheManager getInstance()
@@ -82,7 +84,7 @@ namespace com.mirle.ibg3k0.sc.Common
             Segments = scApp.MapBLL.loadAllSegments();
             Sections = scApp.MapBLL.loadAllSection();
             Addresses = scApp.MapBLL.loadAllAddress();
-
+            GroupPortStations = scApp.GroupPortStationBLL.OperateDB.loadAllGroupPortStation();
             ReserveEnhanceInfosSections = scApp.ReserveEnhanceInfoDao.getReserveEnhanceInfoSections(scApp);
             TrafficControlInfos = scApp.TrafficControlInfoDao.getTrafficControlInfos(scApp);
 
@@ -101,11 +103,24 @@ namespace com.mirle.ibg3k0.sc.Common
                     setCouplerTypeAddressInfo(couplerAndReserveEnhanceAddress);
                     Addresses[i] = couplerAndReserveEnhanceAddress;
                 }
+                else if (address.IsCoupler && address.IsParking)
+                {
+                    AADDRESS couplerAddress = new CouplerAndParkingAddress();
+                    BCFUtility.setValueToPropety(ref address, ref couplerAddress);
+                    setCouplerTypeAddressInfo(couplerAddress);
+                    Addresses[i] = couplerAddress;
+                }
                 else if (address.IsCoupler)
                 {
                     AADDRESS couplerAddress = new CouplerAddress();
                     BCFUtility.setValueToPropety(ref address, ref couplerAddress);
                     setCouplerTypeAddressInfo(couplerAddress);
+                    Addresses[i] = couplerAddress;
+                }
+                else if (address.IsParking)
+                {
+                    AADDRESS couplerAddress = new ParkingAddress();
+                    BCFUtility.setValueToPropety(ref address, ref couplerAddress);
                     Addresses[i] = couplerAddress;
                 }
                 else if (isReserveEnhanceAddress)
@@ -153,7 +168,7 @@ namespace com.mirle.ibg3k0.sc.Common
         public List<ASEGMENT> getFireDoorSegment(string fireDoorID)
         {
             List<string> segment_ids = scApp.FireDoorDao.loadFireDoorSegmentID(scApp, fireDoorID);
-            List <ASEGMENT> segments = Segments.Where(seg => segment_ids.Contains( seg.SEG_ID.Trim())).ToList();
+            List<ASEGMENT> segments = Segments.Where(seg => segment_ids.Contains(seg.SEG_ID.Trim())).ToList();
             return segments;
         }
         public bool isSectionAtFireDoorArea(string section_id)
@@ -269,6 +284,12 @@ namespace com.mirle.ibg3k0.sc.Common
                              Select(adr => adr as CouplerAddress).
                              ToList();
         }
+        public List<IParkingType> getParkingAddresses()
+        {
+            return Addresses.Where(adr => adr is IParkingType).
+                             Select(adr => adr as IParkingType).
+                             ToList();
+        }
         public List<string> getEnhanceSubAddresses()
         {
             return EnhanceSubAddresses;
@@ -278,6 +299,11 @@ namespace com.mirle.ibg3k0.sc.Common
         {
             return TrafficControlInfos;
         }
+        public List<AGROUPPORTSTATION> loadGroupPortStations()
+        {
+            return GroupPortStations;
+        }
+
 
 
         public (bool isBlockControlSec, ReserveEnhanceInfoSection enhanceInfo) IsBlockControlSection(string sectionID)

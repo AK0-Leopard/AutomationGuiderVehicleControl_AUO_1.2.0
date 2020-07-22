@@ -253,10 +253,25 @@ namespace com.mirle.ibg3k0.sc.Data.DAO.EntityFramework
 
         public int getCMD_MCSExcutingCountByFromToPort(DBConnection_EF con, string containsPortID)
         {
-            DateTime nowTime = DateTime.Now;
             var query = from cmd in con.ACMD_MCS
                         where (cmd.HOSTSOURCE.Contains(containsPortID) || cmd.HOSTDESTINATION.Contains(containsPortID)) &&
                               (cmd.TRANSFERSTATE >= E_TRAN_STATUS.Initial && cmd.TRANSFERSTATE <= E_TRAN_STATUS.Canceled)
+                        select cmd;
+            return query.Count();
+        }
+        public int getCMD_MCSExcutingCountByFromToPort(DBConnection_EF con, List<string> containsPortIDs)
+        {
+            var query = from cmd in con.ACMD_MCS
+                        where (containsPortIDs.Contains(cmd.HOSTSOURCE) || containsPortIDs.Contains(cmd.HOSTDESTINATION)) &&
+                              (cmd.TRANSFERSTATE >= E_TRAN_STATUS.Initial && cmd.TRANSFERSTATE < E_TRAN_STATUS.Canceled)
+                        select cmd;
+            return query.Count();
+        }
+        public int getCMD_MCSExcutingCountByToPort(DBConnection_EF con, List<string> containsPortIDs)
+        {
+            var query = from cmd in con.ACMD_MCS
+                        where (containsPortIDs.Contains(cmd.HOSTDESTINATION)) &&
+                              (cmd.TRANSFERSTATE >= E_TRAN_STATUS.PreInitial && cmd.TRANSFERSTATE < E_TRAN_STATUS.Canceled)
                         select cmd;
             return query.Count();
         }

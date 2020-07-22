@@ -23,6 +23,7 @@ using com.mirle.ibg3k0.sc.Data.VO;
 using NLog;
 using com.mirle.ibg3k0.bcf.Common;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
+using com.mirle.ibg3k0.sc.Common;
 
 namespace com.mirle.ibg3k0.sc.Data.DAO
 {
@@ -110,6 +111,7 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
         List<ProtocolFormat.OHTMessage.ReserveInfo> GetEntrySectionInfos(string entrySectionInfos)
         {
             List<ProtocolFormat.OHTMessage.ReserveInfo> reserve_infos = new List<ReserveInfo>();
+            if (SCUtility.isEmpty(entrySectionInfos)) return reserve_infos;
             if (entrySectionInfos.Contains("-"))
             {
                 string[] infos = entrySectionInfos.Split('-');

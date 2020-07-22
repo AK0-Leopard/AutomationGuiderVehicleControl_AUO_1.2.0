@@ -77,8 +77,8 @@ namespace com.mirle.ibg3k0.sc.App
         private CommObjCacheManager commObjCacheManager;
         private RedisCacheManager redisCacheManager;
         private NatsManager natsManager;
-        private Mirle.Hlts.ReserveSection.Map.MapAPI _reserveSectionAPI { get; set; }
-        private Mirle.Hlts.ReserveSection.Map.ViewModels.HltMapViewModel reserveSectionAPI { get; set; }
+        private Mirle.AK0.Hlt.ReserveSection.Map.MapAPI _reserveSectionAPI { get; set; }
+        private Mirle.AK0.Hlt.ReserveSection.Map.ViewModels.MapViewModel reserveSectionAPI { get; set; }
 
         public HAProxyConnectionTest hAProxyConnectionTest { get; private set; }
         public NancyHost NancyHost { get; private set; }
@@ -260,6 +260,8 @@ namespace com.mirle.ibg3k0.sc.App
         public ReserveEnhanceInfoDao ReserveEnhanceInfoDao { get { return reserveEnhanceInfoDao; } }
         private TrafficControlInfoDao trafficControlInfoDao = null;
         public TrafficControlInfoDao TrafficControlInfoDao { get { return trafficControlInfoDao; } }
+        private GroupPortStationDao groupPortStationDao = null;
+        public GroupPortStationDao GroupPortStationDao { get { return groupPortStationDao; } }
 
         //BLL
         private UserBLL userBLL = null;
@@ -328,6 +330,8 @@ namespace com.mirle.ibg3k0.sc.App
         public HIDBLL HIDBLL { get { return hidBLL; } }
         private GuideBLL guideBLL = null;
         public GuideBLL GuideBLL { get { return guideBLL; } }
+        private GroupPortStationBLL groupPortStationBLL = null;
+        public GroupPortStationBLL GroupPortStationBLL { get { return groupPortStationBLL; } }
 
 
         public CheckSystemEventHandler CheckSystemEventHandler { get; private set; } = null;
@@ -559,7 +563,7 @@ namespace com.mirle.ibg3k0.sc.App
 
         private void initialReserveSectionAPI()
         {
-            _reserveSectionAPI = new Mirle.Hlts.ReserveSection.Map.MapAPI();
+            _reserveSectionAPI = new Mirle.AK0.Hlt.ReserveSection.Map.MapAPI();
             reserveSectionAPI = _reserveSectionAPI.MapVM;
 
             setHltVehicleInfo();
@@ -909,6 +913,7 @@ namespace com.mirle.ibg3k0.sc.App
             couplerInfoDao = new CouplerInfoDao();
             reserveEnhanceInfoDao = new ReserveEnhanceInfoDao();
             trafficControlInfoDao = new TrafficControlInfoDao();
+            groupPortStationDao = new GroupPortStationDao();
             fireDoorDao = new FireDoorDao();
             flexsimcommandDao = new FlexsimCommandDao();
             vehicleMapDao = new VehicleMapDao();
@@ -1174,7 +1179,7 @@ namespace com.mirle.ibg3k0.sc.App
                 datasynBLL = new DataSyncBLL();
 
                 hidBLL = new HIDBLL();
-
+                groupPortStationBLL = new GroupPortStationBLL();
                 if (algorithm.Trim() == "FLOYD")
                 {
                     guideBLL = new GuldeBLLForFloy();
@@ -1193,7 +1198,7 @@ namespace com.mirle.ibg3k0.sc.App
                 switch (BC_ID)
                 {
                     case SCAppConstants.WorkVersion.VERSION_NAME_AUO_CAAGVC00:
-                    case SCAppConstants.WorkVersion.VERSION_NAME_AUO_CAAGV200:
+                    //case SCAppConstants.WorkVersion.VERSION_NAME_AUO_CAAGV200:
                     case SCAppConstants.WorkVersion.VERSION_NAME_AUO_FAXAGV03:
                         ReserveBLL = new ReserveBLLForByPass();
                         break;
@@ -1275,6 +1280,8 @@ namespace com.mirle.ibg3k0.sc.App
 
             UnitBLL.start(this);
             ReserveBLL.start(this);
+            groupPortStationBLL.start(this);
+
         }
 
         private void startService()
@@ -1527,7 +1534,7 @@ namespace com.mirle.ibg3k0.sc.App
             return natsManager;
         }
 
-        public Mirle.Hlts.ReserveSection.Map.ViewModels.HltMapViewModel getReserveSectionAPI()
+        public Mirle.AK0.Hlt.ReserveSection.Map.ViewModels.MapViewModel getReserveSectionAPI()
         {
             return reserveSectionAPI;
         }
