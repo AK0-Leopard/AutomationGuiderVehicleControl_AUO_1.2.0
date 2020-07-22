@@ -10,6 +10,7 @@ using com.mirle.iibg3k0.ttc.Common;
 using Mirle.AK0.Hlt.Utils;
 using NLog;
 using StackExchange.Redis;
+using STAN.Client;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -1995,7 +1996,9 @@ namespace com.mirle.ibg3k0.sc.BLL
                     }
                 }
                 //scApp.VehicleBLL.updateVheiclePosition_CacheManager(vh, current_adr_id, current_sec_id, current_seg_id, sec_dis, drive_dirction);
+
             }
+
         }
 
         private double getDistance(double x1, double y1, double x2, double y2)
@@ -2274,6 +2277,19 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return (UInt16)vhs.
                        Where(vh => vh.ERROR == VhStopSingle.StopSingleOn).
                        Count();
+            }
+
+            public bool IsIdle(AVEHICLE vh)
+            {
+                bool is_idle = true;
+                //1.一定要是Auto的狀態
+                is_idle &= vh.MODE_STATUS == ProtocolFormat.OHTMessage.VHModeStatus.AutoRemote;
+                //2.是處於沒有命令的狀態
+                is_idle &= vh.ACT_STATUS == ProtocolFormat.OHTMessage.VHActionStatus.NoCommand;
+                //3.而且沒有異常發生
+                is_idle &= !vh.IsError;
+                return is_idle;
+
             }
 
 

@@ -618,6 +618,17 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return new List<ASECTION>();
             }
         }
+        public (bool isOneDirectPathSection, List<ASECTION> oneDirectCollection)
+            tryGetOneDirectPathSection(string sectionID)
+        {
+            if (isOneDirectPathSection(sectionID))
+            {
+                var one_direction = getOneDirectPathBySectionID(sectionID);
+                return (true, one_direction);
+            }
+            return (false, new List<ASECTION>());
+        }
+
     }
 
 

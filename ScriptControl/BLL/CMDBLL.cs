@@ -2124,7 +2124,8 @@ namespace com.mirle.ibg3k0.sc.BLL
                                 continue;
                             }
 
-                            scApp.VehicleService.doSendCommandToVh(assignVH, cmd);
+                            bool is_send_success = scApp.VehicleService.doSendCommandToVh(assignVH, cmd);
+
                         }
                         //else
                         //{

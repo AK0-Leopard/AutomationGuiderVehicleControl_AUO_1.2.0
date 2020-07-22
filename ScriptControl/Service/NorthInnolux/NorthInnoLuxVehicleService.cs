@@ -207,7 +207,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                    Data: $"vh:{vh.VEHICLE_ID} leave section {entry_section.SEC_ID},remove reserved.",
                    VehicleID: vh.VEHICLE_ID);
-            }
+            }            
         }
 
         private void Vh_SegementChange(object sender, SegmentChangeEventArgs e)
