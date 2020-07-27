@@ -2536,15 +2536,20 @@ namespace com.mirle.ibg3k0.sc.Service
                    Data: $"reserve section:{reserveSectionID} is reserve enhance section, group:{string.Join(",", reserve_enhance_sections)}",
                    VehicleID: vh_id);
 
-                bool has_r2000_section = willPassSectionHasR2000(vh);
-                if (!has_r2000_section)
+                bool reserve_sec_is_r2000 = scApp.ReserveBLL.IsR2000Section(reserveSectionID);
+                if (!reserve_sec_is_r2000)
                 {
-                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                       Data: $"vh:{vh_id} reserve section:{reserveSectionID} it is reserve enhance section, but will pass section not include r2000," +
-                             $"return true.",
-                       VehicleID: vh_id);
-                    return (true, "");
+                    bool has_r2000_section = willPassSectionHasR2000(vh);
+                    if (!has_r2000_section)
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                           Data: $"vh:{vh_id} reserve section:{reserveSectionID} it is reserve enhance section, but will pass section not include r2000," +
+                                 $"return true.",
+                           VehicleID: vh_id);
+                        return (true, "");
+                    }
                 }
+
                 foreach (var enhance_section in reserve_enhance_sections)
                 {
                     var check_one_direct_result = scApp.ReserveBLL.TryAddReservedSection(vh_id, enhance_section,
