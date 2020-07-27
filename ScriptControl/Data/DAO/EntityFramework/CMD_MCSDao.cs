@@ -256,7 +256,8 @@ namespace com.mirle.ibg3k0.sc.Data.DAO.EntityFramework
             DateTime nowTime = DateTime.Now;
             var query = from cmd in con.ACMD_MCS
                         where (cmd.HOSTSOURCE.Contains(containsPortID) || cmd.HOSTDESTINATION.Contains(containsPortID)) &&
-                              (cmd.TRANSFERSTATE >= E_TRAN_STATUS.Initial && cmd.TRANSFERSTATE <= E_TRAN_STATUS.Canceled)
+                              //(cmd.TRANSFERSTATE >= E_TRAN_STATUS.Initial && cmd.TRANSFERSTATE <= E_TRAN_STATUS.Canceled)
+                              (cmd.TRANSFERSTATE >= E_TRAN_STATUS.PreInitial && cmd.TRANSFERSTATE <= E_TRAN_STATUS.Aborting)
                         select cmd;
             return query.Count();
         }
