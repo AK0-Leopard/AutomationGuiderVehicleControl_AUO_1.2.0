@@ -2624,6 +2624,19 @@ namespace com.mirle.ibg3k0.sc.Service
                        reservedVh.ACT_STATUS == VHActionStatus.NoCommand &&
                        !scApp.CMDBLL.isCMD_OHTCQueueByVh(reservedVh.VEHICLE_ID);
                 //&& !scApp.CMDBLL.HasCMD_MCSInQueue();
+                //取消在命令有Queue就不趕車的邏輯，因為會有命令被Queue在等待順途的命令，這樣會導致應該被趕走的車沒被趕走 20200730 kevinwei
+                //if (is_can)
+                //{
+                //    var line = scApp.getEQObjCacheManager().getLine();
+                //    if (line.SCStats == ALINE.TSCState.AUTO)
+                //    {
+                //        is_can = !scApp.CMDBLL.HasCMD_MCSInQueue();
+                //    }
+                //    else
+                //    {
+                //        //not thing...
+                //    }
+                //}
                 return (is_can, CAN_NOT_AVOID_RESULT.Normal);
             }
 
@@ -2641,6 +2654,13 @@ namespace com.mirle.ibg3k0.sc.Service
                     AVEHICLE reserved_vh = scApp.VehicleBLL.cache.getVehicle(reservedVhID);
                     AVEHICLE request_vh = scApp.VehicleBLL.cache.getVehicle(requestVhID);
 
+                    //在每次要趕車以前，再次確認目前是不是有可以執行的命令，最後真的沒有的時候再去進行趕車。
+                    //如果這邊沒有確認到的話，代表有其他執行續正在執行，因此要加一下延遲等一下另外一隻執行序
+                    bool has_check_again = scApp.CMDBLL.checkMCSTransferCommand_New();
+                    if (!has_check_again)
+                    {
+                        SpinWait.SpinUntil(() => false, 2000);
+                    }
                     //先確認是否可以進行趕車的確認，如果當前Reserved的車子狀態是
                     //1.發出Error的
                     //2.正在進行長充電的
@@ -3738,7 +3758,7 @@ namespace com.mirle.ibg3k0.sc.Service
             vh.onCommandComplete(completeStatus);
             //命令結束後就先找一次命令確認沒有命令要給該VH後 在執行是否要退出單行道的流程
             scApp.CMDBLL.checkMCSTransferCommand_New();
-            SpinWait.SpinUntil(() => false, 2000);
+            //SpinWait.SpinUntil(() => false, 2000);
             //if (scApp.GuideBLL.isOneDirectPathSection(cur_sec_id))
             //{
             //    AADDRESS current_adr = scApp.AddressesBLL.cache.GetAddress(cur_adr_id);

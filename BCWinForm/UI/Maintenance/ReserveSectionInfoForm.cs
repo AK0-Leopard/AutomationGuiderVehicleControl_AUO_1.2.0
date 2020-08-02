@@ -119,6 +119,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             string vh_id = cmb_vh_ids.Text;
             string x_axis = txt_x.Text;
             string y_axis = txt_y.Text;
+            float angle = (float)num_vh_angle.Value;
             double.TryParse(x_axis, out double x);
             double.TryParse(y_axis, out double y);
             HltDirection vh_fork_dir;
@@ -127,7 +128,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             Enum.TryParse<HltDirection>(cmb_vh_sensor_dir.SelectedValue.ToString(), out vh_sensor_dir);
 
             HltResult result = null;
-            await Task.Run(() => result = bcApp.SCApplication.ReserveBLL.TryAddVehicleOrUpdate(vh_id, "", x, y, 0, 0, vh_sensor_dir, vh_fork_dir));
+            await Task.Run(() => result = bcApp.SCApplication.ReserveBLL.TryAddVehicleOrUpdate(vh_id, "", x, y, angle, 0, vh_sensor_dir, vh_fork_dir));
             MessageBox.Show(result.ToString());
         }
 
