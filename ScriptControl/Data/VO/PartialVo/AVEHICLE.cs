@@ -224,6 +224,7 @@ namespace com.mirle.ibg3k0.sc
         public virtual List<string> PredictSectionsStartToLoad { get; set; }
         public virtual List<string> PredictSectionsToDesination { get; set; }
 
+        public int PrePositionSeqNum = 0;
         [JsonIgnore]
         public virtual string[] PredictAddresses { get; set; }
         [JsonIgnore]
