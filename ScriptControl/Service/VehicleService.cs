@@ -1013,6 +1013,10 @@ namespace com.mirle.ibg3k0.sc.Service
                 SCUtility.TrimAllParameter(cmd);
                 //scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(cmd.CMD_ID, E_CMD_STATUS.Sending);
                 scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(vh_id, cmd.CMD_ID, E_CMD_STATUS.Sending);
+
+                scApp.CMDBLL.setVhExcuteCmdToShow(cmd, assignVH, guide_segment_ids, guide_section_ids?.ToArray(), guide_addresses_ids?.ToArray(),
+                                  guide_start_to_from_section_ids, guide_to_dest_section_ids);
+
                 isSuccess = ProcSendTransferCommandToVh(cmd, assignVH, active_type,
                  guide_start_to_from_segment_ids?.ToArray(), guide_start_to_from_section_ids?.ToArray(), guide_start_to_from_address_ids?.ToArray(),
                  guide_to_dest_segment_ids?.ToArray(), guide_to_dest_section_ids?.ToArray(), guide_to_dest_address_ids?.ToArray());
@@ -1032,13 +1036,14 @@ namespace com.mirle.ibg3k0.sc.Service
                     }
 
                     assignVH.VehicleAssign();
-                    scApp.CMDBLL.setVhExcuteCmdToShow(cmd, assignVH, guide_segment_ids, guide_section_ids?.ToArray(), guide_addresses_ids?.ToArray(),
-                                                      guide_start_to_from_section_ids, guide_to_dest_section_ids);
+                    //scApp.CMDBLL.setVhExcuteCmdToShow(cmd, assignVH, guide_segment_ids, guide_section_ids?.ToArray(), guide_addresses_ids?.ToArray(),
+                    //                                  guide_start_to_from_section_ids, guide_to_dest_section_ids);
 
                     assignVH.sw_speed.Restart();
                 }
                 else
                 {
+                    scApp.CMDBLL.setInitialVhExcuteCmdToShow(vh_id);
                     //AbnormalProcess(cmd);
                     AbnormalProcess(vh_id, cmd);
                     BCFApplication.onWarningMsg($"doSendCommandToVh fail.vh:{vh_id}, cmd id:{cmd_id},from:{source_adr},to:{dest_adr},active type:{active_type}." +
@@ -1457,6 +1462,9 @@ namespace com.mirle.ibg3k0.sc.Service
                     //    }
                     //}
                     scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(assignVH.VEHICLE_ID, cmd.CMD_ID, E_CMD_STATUS.Sending);
+
+                    scApp.CMDBLL.setVhExcuteCmdToShow(cmd, assignVH, guide_segment_ids, guide_section_ids?.ToArray(), guide_start_to_from_address_ids?.ToArray(),
+                                  guide_start_to_from_section_ids, guide_to_dest_section_ids);
                     isSuccess = ProcSendTransferCommandToVh(cmd, assignVH, ActiveType.Override,
                      guide_start_to_from_segment_ids?.ToArray(), guide_start_to_from_section_ids?.ToArray(), guide_start_to_from_address_ids?.ToArray(),
                      guide_to_dest_segment_ids?.ToArray(), guide_to_dest_section_ids?.ToArray(), guide_to_dest_address_ids?.ToArray());
@@ -1482,14 +1490,15 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
 
 
-                        scApp.CMDBLL.setVhExcuteCmdToShow(cmd, assignVH, guide_segment_ids, guide_section_ids?.ToArray(), guide_start_to_from_address_ids?.ToArray(),
-                                                          guide_start_to_from_section_ids, guide_to_dest_section_ids);
+                        //scApp.CMDBLL.setVhExcuteCmdToShow(cmd, assignVH, guide_segment_ids, guide_section_ids?.ToArray(), guide_start_to_from_address_ids?.ToArray(),
+                        //                                  guide_start_to_from_section_ids, guide_to_dest_section_ids);
 
 
                         assignVH.sw_speed.Restart();
                     }
                     else
                     {
+                        scApp.CMDBLL.setInitialVhExcuteCmdToShow(vh_id);
                         BCFApplication.onWarningMsg($"doSendOverrideCommandToVh fail.vh:{vh_id}, cmd id:{cmd_id},from:{source_adr},to:{dest_adr},active type:{active_type}." +
                                 $"vh current adr:{vh_current_address},start section:{vh_current_section}");
                     }
@@ -2437,6 +2446,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 //確認ReserveEnhance的Section是否都可以預約到
                 var reserve_enhance_check_result = IsReserveBlockSuccess(vh, reserve_section_id);
+                //var reserve_enhance_check_result = IsReserveBlockSuccessNew(vh, reserve_section_id, drive_dirction);
                 if (!reserve_enhance_check_result.isSuccess)
                 {
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
@@ -2520,7 +2530,6 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
             }
             return (true, "");
-
         }
 
         private (bool isSuccess, string reservedVhID) IsReserveBlockSuccess(AVEHICLE vh, string reserveSectionID)
@@ -2567,6 +2576,68 @@ namespace com.mirle.ibg3k0.sc.Service
             }
             return (true, "");
         }
+        //private (bool isSuccess, string reservedVhID) IsReserveBlockSuccessNew(AVEHICLE vh, string reserveSectionID, DriveDirction driveDirction)
+        //{
+        //    string vh_id = vh.VEHICLE_ID;
+        //    var block_control_check_result = scApp.getCommObjCacheManager().IsBlockControlSection(reserveSectionID);
+
+
+        //    //if (block_control_check_result.isBlockControlSec &&
+        //    //    !current_section_is_in_block_control_check_result.isBlockControlSec)
+        //    if (block_control_check_result.isBlockControlSec)
+        //    {
+        //        List<string> reserve_enhance_sections = block_control_check_result.enhanceInfo.EnhanceControlSections.ToList();
+        //        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+        //           Data: $"reserve section:{reserveSectionID} is reserve enhance section, group:{string.Join(",", reserve_enhance_sections)}",
+        //           VehicleID: vh_id);
+        //        bool reserve_sec_is_r2000 = scApp.ReserveBLL.IsR2000Section(reserveSectionID);
+        //        var current_section_is_in_block_control_check_result = scApp.getCommObjCacheManager().IsBlockControlSection(vh.CUR_SEC_ID);
+        //        if (current_section_is_in_block_control_check_result.isBlockControlSec)
+        //        {
+        //            if (reserve_sec_is_r2000 &&
+        //                driveDirction == DriveDirction.DriveDirForward)
+        //            {
+        //                //not thing...就算車子已經在Block裡面但在他要求要進入R2000的路段時還是需要繼續往下判斷
+        //            }
+        //            else
+        //            {
+        //                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+        //                   Data: $"reserve section:{reserveSectionID} is reserve enhance section, but vh is in this block, by pass check block section.",
+        //                   VehicleID: vh_id);
+        //                return (true, "");
+        //            }
+        //        }
+
+        //        if (!reserve_sec_is_r2000)
+        //        {
+        //            bool has_r2000_section = willPassSectionHasR2000(vh);
+        //            if (!has_r2000_section)
+        //            {
+        //                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+        //                   Data: $"vh:{vh_id} reserve section:{reserveSectionID} it is reserve enhance section, but will pass section not include r2000," +
+        //                         $"return true.",
+        //                   VehicleID: vh_id);
+        //                return (true, "");
+        //            }
+        //        }
+
+        //        foreach (var enhance_section in reserve_enhance_sections)
+        //        {
+        //            var check_one_direct_result = scApp.ReserveBLL.TryAddReservedSection(vh_id, enhance_section,
+        //                                                            sensorDir: HltDirection.ForwardReverse,
+        //                                                            isAsk: true);
+        //            if (!check_one_direct_result.OK)
+        //            {
+        //                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+        //                   Data: $"vh:{vh_id} Try add reserve section:{reserveSectionID} , it is reserve enhance section" +
+        //                         $"try to reserve section:{reserveSectionID} fail,result:{check_one_direct_result}.",
+        //                   VehicleID: vh_id);
+        //                return (false, check_one_direct_result.VehicleID);
+        //            }
+        //        }
+        //    }
+        //    return (true, "");
+        //}
 
         private bool willPassSectionHasR2000(AVEHICLE vh)
         {
@@ -2582,6 +2653,31 @@ namespace com.mirle.ibg3k0.sc.Service
             }
             return false;
         }
+        //private bool willPassSectionHasR2000(AVEHICLE vh)
+        //{
+        //    bool is_carry_cst = vh.HAS_CST != 0;
+        //    List<string> will_pass_sections = null;
+        //    if (vh.CmdType == E_CMD_TYPE.Move ||
+        //        vh.CmdType == E_CMD_TYPE.Move_Charger ||
+        //        is_carry_cst)
+        //    {
+        //        will_pass_sections = vh.PredictSectionsToDesination;
+        //    }
+        //    else
+        //    {
+        //        will_pass_sections = vh.PredictSectionsStartToLoad;
+        //    }
+        //    if (will_pass_sections == null || will_pass_sections.Count == 0)
+        //        return false;
+        //    foreach (string sec in will_pass_sections)
+        //    {
+        //        if (scApp.ReserveBLL.IsR2000Section(SCUtility.Trim(sec, true)))
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
 
         private long syncPoint_NotifyVhAvoid = 0;
         enum CAN_NOT_AVOID_RESULT

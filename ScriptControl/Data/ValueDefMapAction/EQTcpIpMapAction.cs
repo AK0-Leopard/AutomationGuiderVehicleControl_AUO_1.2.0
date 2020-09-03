@@ -195,11 +195,17 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 ID_134_TRANS_EVENT_REP recive_str = (ID_134_TRANS_EVENT_REP)e.objPacket;
                 SCUtility.RecodeReportInfo(eqpt.VEHICLE_ID, 0, recive_str);
-                int current_seq_num = e.iSeqNum;
-                int pre_position_seq_num = eqpt.PrePositionSeqNum;
+
                 bool need_process_position = true;
+                int pre_position_seq_num = 0;
+                int current_seq_num = 0;
                 lock (eqpt.PositionRefresh_Sync)
                 {
+                    current_seq_num = e.iSeqNum;
+                    pre_position_seq_num = eqpt.PrePositionSeqNum;
+                    //bool need_process_position = true;
+                    //lock (eqpt.PositionRefresh_Sync)
+                    //{
                     need_process_position = checkPositionSeqNum(current_seq_num, pre_position_seq_num);
                     eqpt.PrePositionSeqNum = current_seq_num;
                 }

@@ -87,6 +87,11 @@ namespace com.mirle.ibg3k0.sc.Module
                 {
                     case BatteryLevel.Full:
                         vehicleBLL.updataVehicleLastFullyChargerTime(vh.VEHICLE_ID);
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleChargerModule), Device: DEVICE_NAME,
+                                 Data: $"ask vh:{vh.VEHICLE_ID} recover to auto remmote (battery:Full)",
+                                 VehicleID: vh.VEHICLE_ID);
+                        vehicleService.changeVhStatusToAutoRemote(vh.VEHICLE_ID);
+                        RoadControl(vh.VEHICLE_ID, vh.CUR_ADR_ID, true);
                         break;
                     case BatteryLevel.Low:
                         //if (vh.MODE_STATUS == VHModeStatus.Manual || vh.MODE_STATUS == VHModeStatus.None)
@@ -342,7 +347,7 @@ namespace com.mirle.ibg3k0.sc.Module
                             && ChargingVh.MODE_STATUS == VHModeStatus.AutoCharging)
                         {
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleChargerModule), Device: DEVICE_NAME,
-                                     Data: $"ask vh:{ChargingVh.VEHICLE_ID} recover to auto remmote " +
+                                     Data: $"ask vh:{ChargingVh.VEHICLE_ID} recover to auto remmote (battery full on charger)" +
                                      $"and unban segment id:{string.Join(",", coupler_address.TrafficControlSegment)} ",
                                      VehicleID: ChargingVh.VEHICLE_ID);
                             vehicleService.changeVhStatusToAutoRemote(ChargingVh.VEHICLE_ID);

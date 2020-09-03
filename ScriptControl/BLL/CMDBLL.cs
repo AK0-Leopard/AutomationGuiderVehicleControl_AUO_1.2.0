@@ -2466,6 +2466,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             //{
             //    vh.ToPort = to_port;
             //}
+            //if (acmd_ohtc.CMD_TPYE != E_CMD_TYPE.Override)
             vh.CmdType = acmd_ohtc.CMD_TPYE;
 
             vh.PredictSegment = min_segment_seq;
@@ -2488,6 +2489,28 @@ namespace com.mirle.ibg3k0.sc.BLL
             vh.Action();
             vh.NotifyVhExcuteCMDStatusChange();
             //_vhCatchObject.VID_Collection.VID_58_CommandID.COMMAND_ID = acmd_ohtc.CMD_ID_MCS;
+        }
+        public void setInitialVhExcuteCmdToShow(string vhID)
+        {
+            AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vhID);
+            vh.MCS_CMD = string.Empty;
+            vh.OHTC_CMD = string.Empty;
+            vh.startAdr = string.Empty;
+            vh.FromAdr = string.Empty;
+            vh.ToAdr = string.Empty;
+            vh.CmdType = E_CMD_TYPE.Home;
+
+            vh.PredictSegment = new List<string>();
+            vh.PredictSections = new string[0];
+            vh.PredictSectionsStartToLoad = new List<string>();
+            vh.PredictSectionsToDesination = new List<string>();
+
+            vh.PredictAddresses = new string[0];
+            vh.WillPassAddressID = new List<string>();
+            removeAllWillPassSection(vhID);
+            vh.vh_CMD_Status = E_CMD_STATUS.NormalEnd;
+            vh.Stop();
+            vh.NotifyVhExcuteCMDStatusChange();
         }
         public void setWillPassSectionInfo(string vhID, List<string> willPassSection)
         {

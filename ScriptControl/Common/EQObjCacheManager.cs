@@ -694,7 +694,7 @@ namespace com.mirle.ibg3k0.sc.Common
                         {
                             //if (recoverFromDB)
                             //{
-                                put(tmpPortStation);
+                            put(tmpPortStation);
                             //}
                         }
                     }
@@ -938,7 +938,8 @@ namespace com.mirle.ibg3k0.sc.Common
             AVEHICLE vh = null;
             try
             {
-                vh = vhList.Where(e => e.VEHICLE_ID.Trim() == vh_id.Trim()).FirstOrDefault();
+                //vh = vhList.Where(e => e.VEHICLE_ID.Trim() == vh_id.Trim()).FirstOrDefault();
+                vh = vhList.Where(e => SCUtility.isMatche(e.VEHICLE_ID, vh_id)).FirstOrDefault();
             }
             catch (Exception ex)
             {
@@ -1416,8 +1417,8 @@ namespace com.mirle.ibg3k0.sc.Common
             vh_vo.BATTERYCAPACITY = vh_bo.BATTERYCAPACITY;
             vh_vo.LAST_FULLY_CHARGED_TIME = vh_bo.LAST_FULLY_CHARGED_TIME;
             vh_vo.IS_INSTALLED = vh_bo.IS_INSTALLED;
-            vh_vo.INSTALLED_TIME= vh_bo.INSTALLED_TIME;
-            vh_vo.REMOVED_TIME= vh_bo.REMOVED_TIME;
+            vh_vo.INSTALLED_TIME = vh_bo.INSTALLED_TIME;
+            vh_vo.REMOVED_TIME = vh_bo.REMOVED_TIME;
             //if (vh != source_vh)
             //{
             //    setValueToPropety<AVEHICLE>(ref source_vh, ref vh);

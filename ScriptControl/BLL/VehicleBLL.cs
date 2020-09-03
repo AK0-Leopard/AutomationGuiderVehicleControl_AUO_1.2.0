@@ -1527,14 +1527,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 AVEHICLE vh = scApp.VehicleBLL.getVehicleByID(vh_id);
                 string mcs_cmd_id = vh.MCS_CMD;
 
-                vh.WillPassSectionID = null;
-                vh.FromPort = null;
-                vh.ToPort = null;
-                vh.startAdr = string.Empty;
-                vh.FromAdr = string.Empty;
-                vh.ToAdr = string.Empty;
-                vh.procProgress_Percen = 0;
-                vh.vh_CMD_Status = E_CMD_STATUS.NormalEnd;
+                initialCmdInfo(vh);
                 vh.VehicleUnassign();
                 vh.Stop();
                 E_CMD_STATUS ohtc_cmd_status = CompleteStatusToECmdStatus(completeStatus);
@@ -1603,6 +1596,19 @@ namespace com.mirle.ibg3k0.sc.BLL
             //mcsDefaultMapAction.sendS6F11_common(SECSConst.CEID_Transfer_Completed, eq_id);
             //scApp.VIDBLL.initialVIDCommandInfo(eq_id);
         }
+
+        private void initialCmdInfo(AVEHICLE vh)
+        {
+            vh.WillPassSectionID = null;
+            vh.FromPort = null;
+            vh.ToPort = null;
+            vh.startAdr = string.Empty;
+            vh.FromAdr = string.Empty;
+            vh.ToAdr = string.Empty;
+            vh.procProgress_Percen = 0;
+            vh.vh_CMD_Status = E_CMD_STATUS.NormalEnd;
+        }
+
         private E_CMD_STATUS CompleteStatusToECmdStatus(CompleteStatus completeStatus)
         {
             switch (completeStatus)
