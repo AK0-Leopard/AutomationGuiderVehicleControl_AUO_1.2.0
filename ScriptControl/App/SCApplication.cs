@@ -1812,6 +1812,7 @@ namespace com.mirle.ibg3k0.sc.App
         public static int TheLongestFullyChargedIntervalTime_Mim = 15;
 
         public static bool AutoOverride = true;
+        public static int AllowVhIdleTime_ms = 300000;
 
         public static void setSECSConversactionTimeout(int timeout)
         {
@@ -1874,6 +1875,12 @@ namespace com.mirle.ibg3k0.sc.App
         {
             TheLongestFullyChargedIntervalTime_Mim = longestFullyChargedIntervalTime;
         }
+        public static void setAllowIdleTime_ms(int allowIdleTime_ms)
+        {
+            AllowVhIdleTime_ms = allowIdleTime_ms;
+        }
+
+
     }
 
     public class HAProxyConnectionTest

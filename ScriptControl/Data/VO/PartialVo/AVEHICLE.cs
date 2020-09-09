@@ -87,12 +87,14 @@ namespace com.mirle.ibg3k0.sc
         public event EventHandler<string> LongTimeInaction;
         public event EventHandler LongTimeDisconnection;
         public event EventHandler<VHModeStatus> ModeStatusChange;
+        public event EventHandler Idling;
 
         VehicleTimerAction vehicleTimer = null;
 
         public VehicleStateMachine vhStateMachine;
 
         private Stopwatch CurrentCommandExcuteTime;
+        private Stopwatch IdleTimer;
 
         public void addAttentionReserveSection(ASECTION attentionSection)
         {
@@ -182,6 +184,11 @@ namespace com.mirle.ibg3k0.sc
         {
             ModeStatusChange?.Invoke(this, modeStatus);
         }
+        public void onVehicleIdle()
+        {
+            isIdling = true;
+            Idling?.Invoke(this, EventArgs.Empty);
+        }
 
         public AVEHICLE()
         {
@@ -192,6 +199,7 @@ namespace com.mirle.ibg3k0.sc
             vhStateMachine.OnUnhandledTrigger(UnhandledTriggerHandler);
 
             CurrentCommandExcuteTime = new Stopwatch();
+            IdleTimer = new Stopwatch();
 
         }
         public void TimerActionStart()
@@ -488,6 +496,7 @@ namespace com.mirle.ibg3k0.sc
                 }
             }
         }
+        public virtual bool isIdling { get; private set; }
 
         [BaseElement(NonChangeFromOtherVO = true)]
         public virtual bool isAuto
@@ -1604,6 +1613,15 @@ namespace com.mirle.ibg3k0.sc
                         {
                             vh.onLongTimeInaction(vh.OHTC_CMD);
                         }
+                        IdleTimeCheck();
+                        //if (!vh.isIdling && vh.IdleTimer.ElapsedMilliseconds > AVEHICLE.MAX_ALLOW_IDLE_TIME_MILLISECOND)
+                        if (!vh.isIdling &&
+                            SystemParameter.AllowVhIdleTime_ms != 0 &&
+                            vh.IdleTimer.ElapsedMilliseconds > SystemParameter.AllowVhIdleTime_ms)
+                        {
+                            vh.onVehicleIdle();
+                        }
+
                     }
                     catch (Exception ex)
                     {
@@ -1619,7 +1637,24 @@ namespace com.mirle.ibg3k0.sc
 
                 }
             }
-
+            private void IdleTimeCheck()
+            {
+                if (vh.ACT_STATUS == VHActionStatus.NoCommand)
+                {
+                    if (!vh.IdleTimer.IsRunning)
+                    {
+                        vh.IdleTimer.Restart();
+                    }
+                }
+                else
+                {
+                    if (vh.IdleTimer.IsRunning)
+                    {
+                        vh.IdleTimer.Reset();
+                    }
+                    vh.isIdling = false;
+                }
+            }
         }
     }
 }

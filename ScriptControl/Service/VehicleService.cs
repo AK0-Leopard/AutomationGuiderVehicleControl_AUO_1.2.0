@@ -92,8 +92,35 @@ namespace com.mirle.ibg3k0.sc.Service
                 vh.LongTimeInaction += Vh_LongTimeInaction;
                 vh.LongTimeDisconnection += Vh_LongTimeDisconnection;
                 vh.ModeStatusChange += Vh_ModeStatusChange;
+                vh.Idling += Vh_Idling;
+
             }
             oneDirectPath();
+        }
+        private void Vh_Idling(object sender, EventArgs e)
+        {
+            try
+            {
+                AVEHICLE vh = sender as AVEHICLE;
+                if (vh == null) return;
+                bool has_cmd_excute = scApp.CMDBLL.isCMD_OHTCExcuteByVh(vh.VEHICLE_ID);
+                if (!has_cmd_excute)
+                {
+                    scApp.VehicleChargerModule.askVhToChargerForWait(vh);
+                }
+                else
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: $"has command excute, can't ask idling vh to paking",
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+            }
         }
 
         private void Vh_ModeStatusChange(object sender, VHModeStatus e)
@@ -2545,8 +2572,10 @@ namespace com.mirle.ibg3k0.sc.Service
                    Data: $"reserve section:{reserveSectionID} is reserve enhance section, group:{string.Join(",", reserve_enhance_sections)}",
                    VehicleID: vh_id);
 
+
                 bool reserve_sec_is_r2000 = scApp.ReserveBLL.IsR2000Section(reserveSectionID);
-                if (!reserve_sec_is_r2000)
+                //if (!reserve_sec_is_r2000)
+                if (SCUtility.isMatche(reserveSectionID, "0102"))
                 {
                     bool has_r2000_section = willPassSectionHasR2000(vh);
                     if (!has_r2000_section)

@@ -452,5 +452,14 @@ namespace com.mirle.ibg3k0.sc.Module
             }
         }
 
+        public void askVhToChargerForWait(AVEHICLE vh)
+        {
+            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleChargerModule), Device: DEVICE_NAME,
+                     Data: $"ask vh:{vh.VEHICLE_ID} to charger idle.",
+                     VehicleID: vh.VEHICLE_ID);
+            askVhToCharging(vh);
+        }
+
+
     }
 }

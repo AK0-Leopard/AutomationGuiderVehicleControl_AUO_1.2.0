@@ -1513,6 +1513,9 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             DebugParameter.UseHostOffline = checkBox_host_offline.Checked;
         }
 
-
+        private void num_vh_idle_time_ValueChanged(object sender, EventArgs e)
+        {
+            sc.App.SystemParameter.setAllowIdleTime_ms((int)num_vh_idle_time.Value);
+        }
     }
 }

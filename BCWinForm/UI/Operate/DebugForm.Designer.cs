@@ -327,6 +327,8 @@
             this.label45 = new System.Windows.Forms.Label();
             this.label44 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.label97 = new System.Windows.Forms.Label();
+            this.num_vh_idle_time = new System.Windows.Forms.NumericUpDown();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -370,6 +372,7 @@
             this.DIO_DEVICE_TEST.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.num_vh_idle_time)).BeginInit();
             this.SuspendLayout();
             // 
             // cb_FroceBlockPass
@@ -1330,6 +1333,8 @@
             // tabPage1
             // 
             this.tabPage1.AutoScroll = true;
+            this.tabPage1.Controls.Add(this.label97);
+            this.tabPage1.Controls.Add(this.num_vh_idle_time);
             this.tabPage1.Controls.Add(this.grb_Reserve);
             this.tabPage1.Controls.Add(this.groupBox7);
             this.tabPage1.Controls.Add(this.gb_blockControl);
@@ -1537,7 +1542,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 8);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 3);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(164, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -3491,6 +3496,28 @@
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // label97
+            // 
+            this.label97.AutoSize = true;
+            this.label97.Location = new System.Drawing.Point(1127, 530);
+            this.label97.Name = "label97";
+            this.label97.Size = new System.Drawing.Size(170, 22);
+            this.label97.TabIndex = 56;
+            this.label97.Text = "Vh Idle Time(ms)";
+            // 
+            // num_vh_idle_time
+            // 
+            this.num_vh_idle_time.Location = new System.Drawing.Point(1137, 555);
+            this.num_vh_idle_time.Maximum = new decimal(new int[] {
+            600000,
+            0,
+            0,
+            0});
+            this.num_vh_idle_time.Name = "num_vh_idle_time";
+            this.num_vh_idle_time.Size = new System.Drawing.Size(120, 30);
+            this.num_vh_idle_time.TabIndex = 57;
+            this.num_vh_idle_time.ValueChanged += new System.EventHandler(this.num_vh_idle_time_ValueChanged);
+            // 
             // DebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 22F);
@@ -3576,6 +3603,7 @@
             this.tabPage2.ResumeLayout(false);
             this.tabPage6.ResumeLayout(false);
             this.tabPage6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.num_vh_idle_time)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -3880,5 +3908,7 @@
         private System.Windows.Forms.Label label81;
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.TextBox tb_ChargerAlive;
+        private System.Windows.Forms.Label label97;
+        private System.Windows.Forms.NumericUpDown num_vh_idle_time;
     }
 }
