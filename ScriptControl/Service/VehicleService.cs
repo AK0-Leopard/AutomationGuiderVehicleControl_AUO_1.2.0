@@ -103,6 +103,7 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 AVEHICLE vh = sender as AVEHICLE;
                 if (vh == null) return;
+                if (vh.MODE_STATUS != VHModeStatus.AutoRemote) return;
                 bool has_cmd_excute = scApp.CMDBLL.isCMD_OHTCExcuteByVh(vh.VEHICLE_ID);
                 if (!has_cmd_excute)
                 {
@@ -1042,7 +1043,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(vh_id, cmd.CMD_ID, E_CMD_STATUS.Sending);
 
                 scApp.CMDBLL.setVhExcuteCmdToShow(cmd, assignVH, guide_segment_ids, guide_section_ids?.ToArray(), guide_addresses_ids?.ToArray(),
-                                  guide_start_to_from_section_ids, guide_to_dest_section_ids);
+                                  guide_start_to_from_section_ids, guide_to_dest_section_ids,
+                                  guide_start_to_from_address_ids, guide_to_dest_address_ids);
 
                 isSuccess = ProcSendTransferCommandToVh(cmd, assignVH, active_type,
                  guide_start_to_from_segment_ids?.ToArray(), guide_start_to_from_section_ids?.ToArray(), guide_start_to_from_address_ids?.ToArray(),
@@ -1438,6 +1440,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     //2.建立Cmd Details
                     List<string> guide_section_ids = new List<string>();
                     List<string> guide_segment_ids = new List<string>();
+                    List<string> guide_addresses_ids = new List<string>();
 
                     if (guide_start_to_from_section_ids == null && guide_to_dest_section_ids == null)
                     {
@@ -1490,8 +1493,9 @@ namespace com.mirle.ibg3k0.sc.Service
                     //}
                     scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(assignVH.VEHICLE_ID, cmd.CMD_ID, E_CMD_STATUS.Sending);
 
-                    scApp.CMDBLL.setVhExcuteCmdToShow(cmd, assignVH, guide_segment_ids, guide_section_ids?.ToArray(), guide_start_to_from_address_ids?.ToArray(),
-                                  guide_start_to_from_section_ids, guide_to_dest_section_ids);
+                    scApp.CMDBLL.setVhExcuteCmdToShow(cmd, assignVH, guide_segment_ids, guide_section_ids?.ToArray(), guide_addresses_ids?.ToArray(),
+                                      guide_start_to_from_section_ids, guide_to_dest_section_ids,
+                                      guide_start_to_from_address_ids, guide_to_dest_address_ids);
                     isSuccess = ProcSendTransferCommandToVh(cmd, assignVH, ActiveType.Override,
                      guide_start_to_from_segment_ids?.ToArray(), guide_start_to_from_section_ids?.ToArray(), guide_start_to_from_address_ids?.ToArray(),
                      guide_to_dest_segment_ids?.ToArray(), guide_to_dest_section_ids?.ToArray(), guide_to_dest_address_ids?.ToArray());
@@ -2435,7 +2439,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 if (reserveInfos == null || reserveInfos.Count == 0) return (false, string.Empty, string.Empty);
                 string reserve_section_id = reserveInfos[0].ReserveSectionID;
-                DriveDirction drive_dirction = reserveInfos[0].DriveDirction;
+                //DriveDirction drive_dirction = reserveInfos[0].DriveDirction;
+                DriveDirction drive_dirction = scApp.VehicleBLL.getDrivingDirection(reserve_section_id, vh.sWillPassAddressID);
                 //HltDirection sensor_direction = HltDirection.ForwardReverse;
                 HltDirection sensor_direction = decideReserveDirection(vh, reserve_section_id);
 
@@ -2508,7 +2513,7 @@ namespace com.mirle.ibg3k0.sc.Service
             //就不用增加Secsor預約的範圍，預防發生車子預約不到本身路段的問題
             string cur_adr = reserveVh.CUR_ADR_ID;
             var related_sections_id = scApp.SectionBLL.cache.GetSectionsByAddress(cur_adr).Select(sec => sec.SEC_ID.Trim()).ToList();
-            if (related_sections_id.Contains(reserveSectionID))
+            if (related_sections_id.Contains(reserveSectionID) || scApp.ReserveBLL.IsR2000Section(reserveSectionID))
             {
                 return HltDirection.None;
             }
@@ -3425,6 +3430,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 case EventType.UnloadArrivals:
                     //scApp.VIDBLL.upDateVIDPortID(eqpt.VEHICLE_ID, eqpt.CUR_ADR_ID);
                     scApp.CMDBLL.setWillPassSectionInfo(vh.VEHICLE_ID, vh.PredictSectionsToDesination);
+                    scApp.CMDBLL.setWillPassAddressesInfo(vh.VEHICLE_ID, vh.PredictAddressesToDesination);
                     scApp.VIDBLL.upDateVIDPortID(vh.VEHICLE_ID, eventType);
                     break;
                 case EventType.LoadComplete:
@@ -3432,6 +3438,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     if (!SCUtility.isEmpty(vh.MCS_CMD))
                         scApp.CMDBLL.updateCMD_MCS_TranStatus2Transferring(vh.MCS_CMD);
                     scApp.CMDBLL.setWillPassSectionInfo(vh.VEHICLE_ID, vh.PredictSectionsToDesination);
+                    scApp.CMDBLL.setWillPassAddressesInfo(vh.VEHICLE_ID, vh.PredictAddressesToDesination);
+
                     scApp.MapBLL.getPortID(vh.CUR_ADR_ID, out port_id);
                     scApp.PortBLL.OperateCatch.updatePortStationCSTExistStatus(port_id, string.Empty);
                     //scApp.PortBLL.OperateCatch.ClearAllPortStationCSTExistToEmpty();
@@ -3631,6 +3639,10 @@ namespace com.mirle.ibg3k0.sc.Service
             if (eqpt.RESERVE_PAUSE != reserveStatus)
             {
                 scApp.VehicleBLL.cache.SetReservePause(eqpt.VEHICLE_ID, reserveStatus);
+                //if (reserveStatus == VhStopSingle.StopSingleOn)
+                //{
+                //    scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(eqpt.VEHICLE_ID);
+                //}
             }
             if (hasdifferent && !scApp.VehicleBLL.doUpdateVehicleStatus(eqpt,
                                    cstID, modeStat, actionStat,
@@ -3851,6 +3863,7 @@ namespace com.mirle.ibg3k0.sc.Service
             if (completeStatus != CompleteStatus.CmpStatusVehicleAbort)
                 scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(vh.VEHICLE_ID);
             scApp.CMDBLL.removeAllWillPassSection(vh.VEHICLE_ID);
+            scApp.CMDBLL.removeAllWillPassAddresses(vh.VEHICLE_ID);
 
             if (reportqueues != null && reportqueues.Count > 0)
                 scApp.ReportBLL.newSendMCSMessage(reportqueues);

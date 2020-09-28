@@ -457,6 +457,15 @@ namespace com.mirle.ibg3k0.sc.Module
             LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleChargerModule), Device: DEVICE_NAME,
                      Data: $"ask vh:{vh.VEHICLE_ID} to charger idle.",
                      VehicleID: vh.VEHICLE_ID);
+            string cur_adr_id = SCUtility.Trim(vh.CUR_ADR_ID, true);
+            AADDRESS vh_on_address = addressesBLL.cache.GetAddress(cur_adr_id);
+            if (vh_on_address.IsCoupler)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleChargerModule), Device: DEVICE_NAME,
+                         Data: $"ask vh:{vh.VEHICLE_ID} to charger for idle , but it already on charger",
+                         VehicleID: vh.VEHICLE_ID);
+                return;
+            }
             askVhToCharging(vh);
         }
 

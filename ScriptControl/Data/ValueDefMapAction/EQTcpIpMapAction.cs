@@ -94,7 +94,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                                     }
                                 }
                                 scApp.CMDBLL.setVhExcuteCmdToShow(aCMD_OHTC, this.eqpt, segments, PredictPath, null,
-                                                                  new List<string>(), new List<string>());
+                                                                  new List<string>(), new List<string>(), new List<string>(), new List<string>());
                             }
                         }
 

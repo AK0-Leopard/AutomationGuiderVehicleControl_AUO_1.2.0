@@ -64,6 +64,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             string adr_id = cmb_adr_id.Text;
             string vh_id = cmb_vh_ids.Text;
             var map_address_axis = bcApp.SCApplication.ReserveBLL.GetHltMapAddress(adr_id);
+            float angle = (float)num_vh_angle.Value;
 
             HltDirection vh_fork_dir;
             Enum.TryParse<HltDirection>(cmb_vh_fork_dir.SelectedValue.ToString(), out vh_fork_dir);
@@ -71,7 +72,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             Enum.TryParse<HltDirection>(cmb_vh_sensor_dir.SelectedValue.ToString(), out vh_sensor_dir);
 
             HltResult result = null;
-            await Task.Run(() => result = bcApp.SCApplication.ReserveBLL.TryAddVehicleOrUpdate(vh_id, "", map_address_axis.x, map_address_axis.y, 0, 0, vh_sensor_dir, vh_fork_dir));
+            await Task.Run(() => result = bcApp.SCApplication.ReserveBLL.TryAddVehicleOrUpdate(vh_id, "", map_address_axis.x, map_address_axis.y, angle, 0, vh_sensor_dir, vh_fork_dir));
             MessageBox.Show(result.ToString());
             RefreshReserveInfo();
         }

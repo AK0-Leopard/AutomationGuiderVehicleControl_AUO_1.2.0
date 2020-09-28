@@ -231,6 +231,8 @@ namespace com.mirle.ibg3k0.sc
         public virtual string[] PredictSections { get; set; }
         public virtual List<string> PredictSectionsStartToLoad { get; set; }
         public virtual List<string> PredictSectionsToDesination { get; set; }
+        public virtual List<string> PredictAddressesStartToLoad { get; set; }
+        public virtual List<string> PredictAddressesToDesination { get; set; }
 
         public int PrePositionSeqNum = 0;
         [JsonIgnore]
@@ -463,6 +465,7 @@ namespace com.mirle.ibg3k0.sc
 
         public virtual List<string> WillPassSectionID { get; set; }
         public virtual List<string> WillPassAddressID { get; set; }
+        public virtual string sWillPassAddressID { get; set; }
 
         private int procprogress_percen;
         [JsonIgnore]

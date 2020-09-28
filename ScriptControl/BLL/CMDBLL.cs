@@ -2448,7 +2448,8 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         //private static void setVhExcuteCmdToShow(ACMD_OHTC acmd_ohtc, AVEHICLE vehicle, Equipment eqpt, string[] min_route_seq)
         public void setVhExcuteCmdToShow(ACMD_OHTC acmd_ohtc, AVEHICLE vehicle, List<string> min_segment_seq, string[] min_section_seq, string[] willPassAddressIDs,
-                                         List<string> guideSectionStartToLoad, List<string> guideSectionToDestination)
+                                         List<string> guideSectionStartToLoad, List<string> guideSectionToDestination,
+                                         List<string> guideAddressesStartToLoad, List<string> guideAddressesToDestination)
         {
             AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(acmd_ohtc.VH_ID);
             vh.MCS_CMD = acmd_ohtc.CMD_ID_MCS;
@@ -2473,6 +2474,8 @@ namespace com.mirle.ibg3k0.sc.BLL
             vh.PredictSections = min_section_seq;
             vh.PredictSectionsStartToLoad = guideSectionStartToLoad;
             vh.PredictSectionsToDesination = guideSectionToDestination;
+            vh.PredictAddressesStartToLoad = guideAddressesStartToLoad;
+            vh.PredictAddressesToDesination = guideAddressesToDestination;
 
             vh.PredictAddresses = willPassAddressIDs;
             vh.WillPassAddressID = willPassAddressIDs?.ToList();
@@ -2483,6 +2486,15 @@ namespace com.mirle.ibg3k0.sc.BLL
             else
             {
                 setWillPassSectionInfo(acmd_ohtc.VH_ID, guideSectionToDestination);
+            }
+
+            if (guideAddressesStartToLoad != null && guideAddressesStartToLoad.Count > 0)
+            {
+                setWillPassAddressesInfo(acmd_ohtc.VH_ID, guideAddressesStartToLoad);
+            }
+            else
+            {
+                setWillPassAddressesInfo(acmd_ohtc.VH_ID, guideAddressesToDestination);
             }
 
             vh.vh_CMD_Status = E_CMD_STATUS.Execution;
@@ -2504,10 +2516,13 @@ namespace com.mirle.ibg3k0.sc.BLL
             vh.PredictSections = new string[0];
             vh.PredictSectionsStartToLoad = new List<string>();
             vh.PredictSectionsToDesination = new List<string>();
+            vh.PredictAddressesStartToLoad = new List<string>();
+            vh.PredictAddressesToDesination = new List<string>();
 
             vh.PredictAddresses = new string[0];
             vh.WillPassAddressID = new List<string>();
             removeAllWillPassSection(vhID);
+            removeAllWillPassAddresses(vhID);
             vh.vh_CMD_Status = E_CMD_STATUS.NormalEnd;
             vh.Stop();
             vh.NotifyVhExcuteCMDStatusChange();
@@ -2516,6 +2531,11 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vhID);
             vh.WillPassSectionID = willPassSection;
+        }
+        public void setWillPassAddressesInfo(string vhID, List<string> willPassAddresses)
+        {
+            AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vhID);
+            vh.sWillPassAddressID = string.Join(",", willPassAddresses);
         }
         public void removeAlreadyPassedSection(string vhID, string sectionID)
         {
@@ -2528,6 +2548,12 @@ namespace com.mirle.ibg3k0.sc.BLL
             AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vhID);
             if (vh != null)
                 vh.WillPassSectionID = null;
+        }
+        public void removeAllWillPassAddresses(string vhID)
+        {
+            AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vhID);
+            if (vh != null)
+                vh.sWillPassAddressID = "";
         }
 
         public ActiveType convertECmdType2ActiveType(E_CMD_TYPE cmdType)

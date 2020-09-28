@@ -250,9 +250,9 @@ namespace com.mirle.ibg3k0.bc.winform
                 {
                     progress.ShowDialog();
                 }
-//#if DEBUG
+                //#if DEBUG
                 openForm(typeof(OHT_Form).Name);
-//#endif
+                //#endif
                 timer1.Enabled = true;
             }
             catch (Exception ex)

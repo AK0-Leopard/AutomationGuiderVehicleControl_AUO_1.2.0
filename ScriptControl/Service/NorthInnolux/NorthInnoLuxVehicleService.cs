@@ -950,7 +950,9 @@ namespace com.mirle.ibg3k0.sc.Service
 
                     assignVH.VehicleAssign();
                     scApp.CMDBLL.setVhExcuteCmdToShow(cmd, assignVH, guide_segment_ids, guide_section_ids?.ToArray(), guide_addresses_ids?.ToArray(),
-                                                      guide_start_to_from_section_ids, guide_to_dest_section_ids);
+                                      guide_start_to_from_section_ids, guide_to_dest_section_ids,
+                                      guide_start_to_from_address_ids, guide_to_dest_address_ids);
+
 
                     assignVH.sw_speed.Restart();
                 }
@@ -1367,8 +1369,8 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
 
 
-                        scApp.CMDBLL.setVhExcuteCmdToShow(cmd, assignVH, guide_segment_ids, guide_section_ids?.ToArray(), guide_start_to_from_address_ids?.ToArray(),
-                                                          guide_start_to_from_section_ids, guide_to_dest_section_ids);
+                        //scApp.CMDBLL.setVhExcuteCmdToShow(cmd, assignVH, guide_segment_ids, guide_section_ids?.ToArray(), guide_start_to_from_address_ids?.ToArray(),
+                        //                                  guide_start_to_from_section_ids, guide_to_dest_section_ids);
 
 
                         assignVH.sw_speed.Restart();

@@ -1294,9 +1294,11 @@ namespace com.mirle.ibg3k0.sc.BLL
         public bool hasVhGoingAdr(string adrID)
         {
             List<AVEHICLE> vhs = scApp.getEQObjCacheManager().getAllVehicle();
+            //return vhs.Where(vh => vh.ACT_STATUS == VHActionStatus.Commanding &&
+            //                       vh.CmdType == E_CMD_TYPE.Move_Charger &&
+            //                       vh.ToAdr.Trim() == adrID.Trim()).
             return vhs.Where(vh => vh.ACT_STATUS == VHActionStatus.Commanding &&
-                                   vh.CmdType == E_CMD_TYPE.Move_Charger &&
-                                   vh.ToAdr.Trim() == adrID.Trim()).
+                                   SCUtility.isMatche(vh.CUR_ADR_ID, adrID)).
                        Count() != 0;
         }
         public bool hasVhGoingParkingAdr(string adrID)
@@ -1904,7 +1906,8 @@ namespace com.mirle.ibg3k0.sc.BLL
             double vh_angle = report_obj.VehicleAngle;
             double speed = report_obj.Speed;
             List<string> current_guide_address = vh.PredictAddresses?.ToList();
-            DriveDirction drive_dirction = report_obj.DrivingDirection;
+            //DriveDirction drive_dirction = report_obj.DrivingDirection;
+            DriveDirction drive_dirction = getDrivingDirection(current_sec_id, vh.sWillPassAddressID);
             //DriveDirction drive_dirction = getDrivingDirection(current_sec_id, current_guide_address);
             //DriveDirction drive_dirction = getDrivingDirection(vh, current_sec_id);
             speed = drive_dirction == DriveDirction.DriveDirForward ? speed : -speed;
@@ -2030,11 +2033,11 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
 
 
-        private DriveDirction getDrivingDirection(string currentSec, List<string> currentGuideAddress)
+        public DriveDirction getDrivingDirection(string currentSec, string currentGuideAddress)
         {
             if (currentGuideAddress == null) return DriveDirction.DriveDirNone;
-            ASECTION sec = scApp.SectionBLL.cache.GetSection(currentSec);
-            string from_to_addresses = $"{SCUtility.Trim(sec.REAL_FROM_ADR_ID)},{SCUtility.Trim(sec.REAL_TO_ADR_ID)}";
+            var sec = scApp.ReserveBLL.GetHltMapSections(currentSec);
+            string from_to_addresses = $"{SCUtility.Trim(sec.StartAddressID)},{SCUtility.Trim(sec.EndAddressID)}";
 
             string current_guide_Addresses = string.Join(",", currentGuideAddress);
 

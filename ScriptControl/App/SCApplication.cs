@@ -1812,7 +1812,7 @@ namespace com.mirle.ibg3k0.sc.App
         public static int TheLongestFullyChargedIntervalTime_Mim = 15;
 
         public static bool AutoOverride = true;
-        public static int AllowVhIdleTime_ms = 300000;
+        public static int AllowVhIdleTime_ms = 0;
 
         public static void setSECSConversactionTimeout(int timeout)
         {

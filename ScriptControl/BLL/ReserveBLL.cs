@@ -77,6 +77,11 @@ namespace com.mirle.ibg3k0.sc.BLL
             var adr_obj = mapAPI.GetAddressObjectByID(adrID);
             return (adr_obj.X, adr_obj.Y, adr_obj.IsTR50);
         }
+        public virtual HltMapSection GetHltMapSections(string secID)
+        {
+            var sec_obj = mapAPI.HltMapSections.Where(sec => SCUtility.isMatche(sec.ID, secID)).FirstOrDefault();
+            return (sec_obj);
+        }
         public virtual HltResult TryAddVehicleOrUpdateResetSensorForkDir(string vhID)
         {
             var hltvh = mapAPI.HltVehicles.Where(vh => SCUtility.isMatche(vh.ID, vhID)).SingleOrDefault();
@@ -95,7 +100,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             //HltResult result = mapAPI.TryAddVehicleOrUpdate(vhID, vehicleX, vehicleY, vehicleAngle, sensorDir, forkDir);
             //var hlt_vh = new HltVehicle(vhID, vehicleX, vehicleY, vehicleAngle, speedMmPerSecond, sensorDirection: sensorDir, forkDirection: forkDir);
             var hlt_vh = new HltVehicle(vhID, vehicleX, vehicleY, vehicleAngle, speedMmPerSecond, sensorDirection: sensorDir, forkDirection: forkDir, currentSectionID: currentSectionID);
-            HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh, isKeepRestSection: false);
+            HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh, isKeepRestSection: true);
             //mapAPI.KeepRestSection(hlt_vh, currentSectionID);
             onReserveStatusChange();
 
@@ -155,9 +160,12 @@ namespace com.mirle.ibg3k0.sc.BLL
             string sec_id = SCUtility.Trim(sectionID);
             int vehicle_direction = getVehicleDirection(driveDirection);
             //HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, isAsk);
+
+            if (SCUtility.isMatche(sec_id, "0162"))
+                sensorDir = HltDirection.None;
             HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, vehicle_direction, isAsk);
             LogHelper.Log(logger: logger, LogLevel: NLog.LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
-               Data: $"vh:{vhID} Try add reserve section:{sectionID} dir:{sensorDir},result:{result}",
+               Data: $"vh:{vhID} Try add reserve section:{sectionID} sensor dir:{sensorDir} forkDIr:{forkDir} vh dir:{vehicle_direction},result:{result}",
                VehicleID: vhID);
             onReserveStatusChange();
 
