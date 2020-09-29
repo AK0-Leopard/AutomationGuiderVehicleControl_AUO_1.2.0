@@ -129,13 +129,13 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             tabControl1.TabPages.RemoveAt(1);
 
             ECDATAMAPs = bcApp.SCApplication.LineBLL.loadECDataList(bcApp.SCApplication.getEQObjCacheManager().getLine().LINE_ID);
-            foreach(AECDATAMAP item in ECDATAMAPs)
+            foreach (AECDATAMAP item in ECDATAMAPs)
             {
-                if(BCFUtility.isMatche(item.ECID, SCAppConstants.ECID_EQPNAME))
+                if (BCFUtility.isMatche(item.ECID, SCAppConstants.ECID_EQPNAME))
                 {
                     textBox_eqpname.Text = item.ECV;
                 }
-                else if(BCFUtility.isMatche(item.ECID, SCAppConstants.ECID_ESTABLISH_COMMUNICATION_TIMEOUT))
+                else if (BCFUtility.isMatche(item.ECID, SCAppConstants.ECID_ESTABLISH_COMMUNICATION_TIMEOUT))
                 {
                     textBox_EstablishCommunicationTimeout.Text = item.ECV;
                 }
@@ -158,7 +158,8 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 else if (BCFUtility.isMatche(item.ECID, SCAppConstants.ECID_MDLN))
                 {
                     textBox_ModelName.Text = item.ECV;
-                }else
+                }
+                else
                 {
                     continue;
                 }
@@ -166,15 +167,15 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             mCharger = bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID("MCharger");
             if (mCharger != null)
             {
-                foreach(AUNIT unit in mCharger.UnitList)
+                foreach (AUNIT unit in mCharger.UnitList)
                 {
                     cb_Charger.Items.Add(unit.UNIT_ID);
                     cb_ChargerID.Items.Add(unit.UNIT_ID);
                 }
             }
-            for(int i =0; i < 15; i++)
+            for (int i = 0; i < 15; i++)
             {
-                cb_PIOCoupler.Items.Add(i+1);
+                cb_PIOCoupler.Items.Add(i + 1);
             }
             initChargerValue();
             registerEvent();
@@ -193,7 +194,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         //}
 
 
-        private void agvcAliveChange(AEQPT eqpt) 
+        private void agvcAliveChange(AEQPT eqpt)
         {
 
 
@@ -354,7 +355,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
                 tb_PIOIndex.Text = unit.PIOIndex.ToString();
                 int x;
-                bool result =  int.TryParse(cb_PIOCoupler.Text,out x);
+                bool result = int.TryParse(cb_PIOCoupler.Text, out x);
                 if (result)
                 {
                     if (unit.PIOInfos.Count >= x)
@@ -382,10 +383,10 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 {
                     if (unit.PIOInfos.Count >= x)
                     {
-                        tb_PIOCouplerID.Text = unit.PIOInfos[x-1].CouplerID.ToString();
-                        tb_PIOHandshakeTime.Text = unit.PIOInfos[x-1].Timestamp.ToString("yyyy/MM/dd hh:mm:ss");
-                        tb_PIOSignal1.Text = unit.PIOInfos[x-1].signal1.Replace(",", "").Replace("True", "1").Replace("False", "0");
-                        tb_PIOSignal2.Text = unit.PIOInfos[x-1].signal2.Replace(",", "").Replace("True", "1").Replace("False", "0");
+                        tb_PIOCouplerID.Text = unit.PIOInfos[x - 1].CouplerID.ToString();
+                        tb_PIOHandshakeTime.Text = unit.PIOInfos[x - 1].Timestamp.ToString("yyyy/MM/dd hh:mm:ss");
+                        tb_PIOSignal1.Text = unit.PIOInfos[x - 1].signal1.Replace(",", "").Replace("True", "1").Replace("False", "0");
+                        tb_PIOSignal2.Text = unit.PIOInfos[x - 1].signal2.Replace(",", "").Replace("True", "1").Replace("False", "0");
                     }
                 }
             }
@@ -420,7 +421,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 mCharger.addEventHandler(Handler, BCFUtility.getPropertyName(() => mCharger.AbnormalReportIndex),
                     (s1, e1) => MChargerAbnormalIndexChange(mCharger));
 
-                foreach(AUNIT unit in mCharger.UnitList)
+                foreach (AUNIT unit in mCharger.UnitList)
                 {
                     unit.addEventHandler(Handler, BCFUtility.getPropertyName(() => unit.ChargerAlive),
                         (s1, e1) => ChargerAliveChange(unit));
@@ -434,7 +435,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                         (s1, e1) => CouplerChargeInfoIndexChange(unit));
                     unit.addEventHandler(Handler, BCFUtility.getPropertyName(() => unit.PIOIndex),
                         (s1, e1) => PIOIndexChange(unit));
-                  
+
                 }
             }
         }
@@ -450,7 +451,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 }
             }
         }
-        
+
         private void DebugForm_Load(object sender, EventArgs e)
         {
             DebugParameter.IsDebugMode = true;
@@ -1470,7 +1471,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         private void button_set_ECID_Click(object sender, EventArgs e)
         {
             string rtnMsg;
-            for(int i= 0;i< ECDATAMAPs.Count; i++)
+            for (int i = 0; i < ECDATAMAPs.Count; i++)
             {
                 if (BCFUtility.isMatche(ECDATAMAPs[i].ECID, SCAppConstants.ECID_EQPNAME))
                 {
@@ -1512,7 +1513,6 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             DebugParameter.UseHostOffline = checkBox_host_offline.Checked;
         }
-
 
     }
 }

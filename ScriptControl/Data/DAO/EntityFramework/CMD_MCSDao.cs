@@ -22,11 +22,20 @@ namespace com.mirle.ibg3k0.sc.Data.DAO.EntityFramework
             con.SaveChanges();
         }
 
+        public void Remove(DBConnection_EF con, ACMD_MCS cmd_mcs)
+        {
+            con.Entry(cmd_mcs).State = EntityState.Deleted;
+            con.ACMD_MCS.Remove(cmd_mcs);
+            con.SaveChanges();
+        }
+
 
         public void update(DBConnection_EF con, ACMD_MCS cmd)
         {
             con.SaveChanges();
         }
+
+
 
         public ACMD_MCS getByID(DBConnection_EF con, String cmd_id)
         {

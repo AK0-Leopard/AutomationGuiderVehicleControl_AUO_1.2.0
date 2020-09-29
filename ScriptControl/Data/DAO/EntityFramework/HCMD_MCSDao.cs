@@ -10,6 +10,11 @@ namespace com.mirle.ibg3k0.sc.Data.DAO.EntityFramework
 {
     public class HCMD_MCSDao
     {
+        public void Add(DBConnection_EF con, HCMD_MCS hcmdMcs)
+        {
+            con.HCMD_MCS.Add(hcmdMcs);
+            con.SaveChanges();
+        }
         public void AddByBatch(DBConnection_EF con, List<HCMD_MCS> cmd_ohtcs)
         {
             con.HCMD_MCS.AddRange(cmd_ohtcs);

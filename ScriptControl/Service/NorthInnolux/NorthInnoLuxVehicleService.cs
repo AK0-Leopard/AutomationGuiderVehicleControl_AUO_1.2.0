@@ -3212,10 +3212,24 @@ namespace com.mirle.ibg3k0.sc.Service
                 SeqNum = seq_num,
                 TranCmpResp = send_str
             };
-            Boolean resp_cmp = vh.sendMessage(wrapper, true);
 
-            if (reportqueues != null && reportqueues.Count > 0)
-                scApp.ReportBLL.newSendMCSMessage(reportqueues);
+            //加入Transaction控制，防止在同一筆命令ID下來時，還沒有處裡完。
+            //(在北群創會有在命令結束後，MCS會再派送同樣CMD ID來繼續進行原來的搬送)
+            Boolean resp_cmp = false;
+            using (TransactionScope tx = SCUtility.getTransactionScope())
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    if (!SCUtility.isEmpty(finish_mcs_cmd))
+                    {
+                        scApp.CMDBLL.MoveACMD_MCSToHCMD_MCS(finish_mcs_cmd);
+                    }
+                    resp_cmp = vh.sendMessage(wrapper, true);
+                    if (reportqueues != null && reportqueues.Count > 0)
+                        scApp.ReportBLL.newSendMCSMessage(reportqueues);
+                    tx.Complete();
+                }
+            }
 
             SCUtility.RecodeReportInfo(vh.VEHICLE_ID, seq_num, send_str, finish_ohxc_cmd, finish_mcs_cmd, resp_cmp.ToString());
             vh.NotifyVhExcuteCMDStatusChange();

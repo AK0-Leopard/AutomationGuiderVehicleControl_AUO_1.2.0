@@ -2823,9 +2823,15 @@ namespace com.mirle.ibg3k0.sc.BLL
 
 
         #region HCMD_MCS
+        public void CreatHCMD_MCS(HCMD_MCS hcmdMCS)
+        {
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                hcmd_mcsDao.Add(con, hcmdMCS);
+            }
+        }
         public void CreatHCMD_MCSs(List<HCMD_MCS> HCMD_MCS)
         {
-
             using (DBConnection_EF con = DBConnection_EF.GetUContext())
             {
                 hcmd_mcsDao.AddByBatch(con, HCMD_MCS);
@@ -2861,6 +2867,29 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
         #endregion HCMD_OHTC
 
+    
+        public void MoveACMD_MCSToHCMD_MCS(string mcsCmdID)
+        {
+            try
+            {
+                ACMD_MCS cmd_mcs = null;
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    cmd_mcs = cmd_mcsDao.getByID(con, mcsCmdID);
+                    if (cmd_mcs == null)
+                    {
+                        return;
+                    }
+                    cmd_mcsDao.Remove(con, cmd_mcs);
+                    var hcmd_mcs = cmd_mcs.ToHCMD_MCS();
+                    hcmd_mcsDao.Add(con, hcmd_mcs);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+        }
 
 
     }
