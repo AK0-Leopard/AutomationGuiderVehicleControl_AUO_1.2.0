@@ -1,12 +1,6 @@
 ﻿using com.mirle.ibg3k0.sc.App;
-using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data;
-using com.mirle.ibg3k0.sc.Data.DAO.EntityFramework;
-using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
-using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {

@@ -68,9 +68,13 @@ namespace com.mirle.ibg3k0.sc
         /// </summary>
         public static UInt16 MAX_ALLOW_NO_COMMUNICATION_TIME_SECOND { get; private set; } = 60;
         /// <summary>
-        /// 單筆命令，最大允許的搬送時間
+        /// 單筆命令，最大允許的CST搬送時間
         /// </summary>
         public static UInt16 MAX_ALLOW_ACTION_TIME_SECOND { get; private set; } = 1200;
+        /// <summary>
+        /// Carrier 最大可以Installed在車子的時間
+        /// </summary>
+        public static UInt16 MAX_ALLOW_CARRIER_INSTALLED_TIME_SECOND { get; private set; } = 1200;
         /// <summary>
         /// 最大允許斷線時間
         /// </summary>
@@ -88,6 +92,7 @@ namespace com.mirle.ibg3k0.sc
         public event EventHandler LongTimeDisconnection;
         public event EventHandler<VHModeStatus> ModeStatusChange;
         public event EventHandler Idling;
+        public event EventHandler<string> LongTimeCarrierInstalled;
 
         VehicleTimerAction vehicleTimer = null;
 
@@ -95,6 +100,7 @@ namespace com.mirle.ibg3k0.sc
 
         private Stopwatch CurrentCommandExcuteTime;
         private Stopwatch IdleTimer;
+        private Stopwatch CarrierInstalledTime;
 
         public void addAttentionReserveSection(ASECTION attentionSection)
         {
@@ -189,6 +195,10 @@ namespace com.mirle.ibg3k0.sc
             isIdling = true;
             Idling?.Invoke(this, EventArgs.Empty);
         }
+        public void onCarrierLongTimeInstalledInVh(string carrierID)
+        {
+            LongTimeCarrierInstalled?.Invoke(this, carrierID);
+        }
 
         public AVEHICLE()
         {
@@ -199,8 +209,8 @@ namespace com.mirle.ibg3k0.sc
             vhStateMachine.OnUnhandledTrigger(UnhandledTriggerHandler);
 
             CurrentCommandExcuteTime = new Stopwatch();
+            CarrierInstalledTime = new Stopwatch();
             IdleTimer = new Stopwatch();
-
         }
         public void TimerActionStart()
         {
@@ -696,6 +706,18 @@ namespace com.mirle.ibg3k0.sc
         public void Stop()
         {
             CurrentCommandExcuteTime.Reset();
+        }
+
+        public void CarrierInstall()
+        {
+            if (!CarrierInstalledTime.IsRunning)
+                CarrierInstalledTime.Restart();
+        }
+
+        public void CarrierRemove()
+        {
+            if (CarrierInstalledTime.IsRunning)
+                CarrierInstalledTime.Reset();
         }
 
         public bool send_Str1(ID_1_HOST_BASIC_INFO_VERSION_REP sned_gpp, out ID_101_HOST_BASIC_INFO_VERSION_RESPONSE receive_gpp)
@@ -1615,6 +1637,11 @@ namespace com.mirle.ibg3k0.sc
                         if (action_time > AVEHICLE.MAX_ALLOW_ACTION_TIME_SECOND)
                         {
                             vh.onLongTimeInaction(vh.OHTC_CMD);
+                        }
+                        double carrier_installed_time = vh.CarrierInstalledTime.Elapsed.TotalSeconds;
+                        if (carrier_installed_time > AVEHICLE.MAX_ALLOW_CARRIER_INSTALLED_TIME_SECOND)
+                        {
+                            vh.onCarrierLongTimeInstalledInVh(SCUtility.Trim(vh.CST_ID, true));
                         }
                         IdleTimeCheck();
                         //if (!vh.isIdling && vh.IdleTimer.ElapsedMilliseconds > AVEHICLE.MAX_ALLOW_IDLE_TIME_MILLISECOND)

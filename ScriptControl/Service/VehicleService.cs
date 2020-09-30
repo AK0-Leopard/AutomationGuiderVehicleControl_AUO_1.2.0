@@ -93,10 +93,47 @@ namespace com.mirle.ibg3k0.sc.Service
                 vh.LongTimeDisconnection += Vh_LongTimeDisconnection;
                 vh.ModeStatusChange += Vh_ModeStatusChange;
                 vh.Idling += Vh_Idling;
-
+                vh.LongTimeCarrierInstalled += Vh_LongTimeCarrierInstalled;
             }
             oneDirectPath();
         }
+
+        private long syncPoint_LongTimeCarrierInstalled = 0;
+        private void Vh_LongTimeCarrierInstalled(object sender, string carrierID)
+        {
+            AVEHICLE vh = sender as AVEHICLE;
+            if (vh == null) return;
+            if (System.Threading.Interlocked.Exchange(ref syncPoint_LongTimeCarrierInstalled, 1) == 0)
+            {
+
+                try
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: $"Process vehicle long time inaction, cmd id:{carrierID}",
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID);
+
+                    //當發生
+                    //doCommandFigish(vh.VEHICLE_ID, cmdID, CompleteStatus.CmpStatusLongTimeInaction, 0);
+                    //要再上報Alamr Rerport給MCS
+                    ProcessAlarmReport(vh, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrSet, $"vehicle long time installed carrier, carrier id:{carrierID}");
+
+                    BCFApplication.onWarningMsg($"Vehicle:{vh.VEHICLE_ID} long time installed carrier, carrier id:{carrierID}");
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: ex,
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID);
+                }
+                finally
+                {
+                    System.Threading.Interlocked.Exchange(ref syncPoint_LongTimeCarrierInstalled, 0);
+                }
+            }
+        }
+
         private void Vh_Idling(object sender, EventArgs e)
         {
             try
@@ -687,6 +724,14 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     //checkRemoveReserveStatusByModeChange(vh, modeStat, vh.MODE_STATUS);
                     vh.onModeStatusChange(modeStat);
+                }
+                if (loadCSTStatus == VhLoadCSTStatus.Exist)
+                {
+                    vh.CarrierInstall();
+                }
+                else
+                {
+                    vh.CarrierRemove();
                 }
                 if (!scApp.VehicleBLL.doUpdateVehicleStatus(vh,
                                       cst_id, modeStat, actionStat,
@@ -3628,11 +3673,21 @@ namespace com.mirle.ibg3k0.sc.Service
                                 eqpt.BatteryCapacity != batteryCapacity ||
                                 eqpt.STEERINGWHEELANGLE != steeringWheel;
 
+            if (loadCSTStatus == VhLoadCSTStatus.Exist)
+            {
+                eqpt.CarrierInstall();
+            }
+            else
+            {
+                eqpt.CarrierRemove();
+            }
+
             if (modeStat != eqpt.MODE_STATUS)
             {
                 //checkRemoveReserveStatusByModeChange(eqpt, modeStat, eqpt.MODE_STATUS);
                 eqpt.onModeStatusChange(modeStat);
             }
+
 
             //20190906 暫時不去判斷該條件
             //checkCurrentCmdStatusWithVhActionStat(eqpt.VEHICLE_ID, actionStat);

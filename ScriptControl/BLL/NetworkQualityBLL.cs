@@ -2,13 +2,8 @@
 using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data;
 using com.mirle.ibg3k0.sc.Data.DAO.EntityFramework;
-using com.mirle.ibg3k0.sc.Data.SECS;
-using com.mirle.ibg3k0.sc.Data.VO;
-using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
 using System.Net.NetworkInformation;
 
 namespace com.mirle.ibg3k0.sc.BLL
