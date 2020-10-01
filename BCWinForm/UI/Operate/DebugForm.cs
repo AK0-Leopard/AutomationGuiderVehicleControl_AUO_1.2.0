@@ -1514,5 +1514,10 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             DebugParameter.UseHostOffline = checkBox_host_offline.Checked;
         }
 
+        private void btn_reposition_Click(object sender, EventArgs e)
+        {
+            var report_event = sc.ProtocolFormat.OHTMessage.EventType.RePosition;
+            McsReportEventTest(report_event);
+        }
     }
 }

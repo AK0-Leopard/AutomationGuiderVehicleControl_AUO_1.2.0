@@ -7,6 +7,7 @@ using com.mirle.ibg3k0.sc.Data;
 using com.mirle.ibg3k0.sc.Data.PLC_Functions;
 using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.sc.Module;
+using com.mirle.ibg3k0.sc.ProtocolFormat.NorthInnolux.Agvmessage;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using com.mirle.ibg3k0.sc.RouteKit;
 using Google.Protobuf.Collections;
@@ -2016,7 +2017,7 @@ namespace com.mirle.ibg3k0.sc.Service
         #endregion Position Report
         #region Transfer Report
         [ClassAOPAspect]
-        public void TranEventReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_136_TRANS_EVENT_REP recive_str, int seq_num)
+        public override void TranEventReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_136_TRANS_EVENT_REP recive_str, int seq_num)
         {
             if (scApp.getEQObjCacheManager().getLine().ServerPreStop)
                 return;
@@ -2060,11 +2061,30 @@ namespace com.mirle.ibg3k0.sc.Service
                     //replyTranEventReport(bcfApp, eventType, eqpt, seq_num);
                     TransferReportBCRRead(bcfApp, eqpt, seq_num, eventType, carrier_id, bCRReadResult);
                     break;
+                case EventType.RePosition:
+                    TransferReportRePosition(bcfApp, eqpt, seq_num, eventType);
+                    break;
                 default:
                     replyTranEventReport(bcfApp, eventType, eqpt, seq_num);
                     break;
             }
         }
+        protected void TransferReportRePosition(BCFApplication bcfApp, AVEHICLE eqpt, int seqNum,
+                                         EventType eventType)
+        {
+            List<string> guide_addresses = new List<string>() { "111", "222", "333" };
+            List<string> guide_sections = new List<string>() { "555", "666", "777" };
+
+            ID_36_TRANS_EVENT_RESPONSE_EXTENSION iD_36_TRANS_EVENT_RESPONSE_EXTENSION = new ID_36_TRANS_EVENT_RESPONSE_EXTENSION()
+            {
+                DestinationAdr = ""
+            };
+
+            iD_36_TRANS_EVENT_RESPONSE_EXTENSION.GuideAddresses.AddRange(guide_addresses);
+            iD_36_TRANS_EVENT_RESPONSE_EXTENSION.GuideSections.AddRange(guide_addresses);
+            replyTranEventReport(bcfApp, eventType, eqpt, seqNum, extensionMessage: iD_36_TRANS_EVENT_RESPONSE_EXTENSION);
+        }
+
 
         protected override void TransferReportBCRRead(BCFApplication bcfApp, AVEHICLE eqpt, int seqNum,
                                            EventType eventType, string readCarrierID, BCRReadResult bCRReadResult)
@@ -2931,8 +2951,10 @@ namespace com.mirle.ibg3k0.sc.Service
             }
             replyTranEventReport(bcfApp, recive_str.EventType, eqpt, seq_num);
         }
+
         private bool replyTranEventReport(BCFApplication bcfApp, EventType eventType, AVEHICLE eqpt, int seq_num, bool reserveSuccess = true, bool canBlockPass = true, bool canHIDPass = true,
-                                          string renameCarrierID = "", CMDCancelType cancelType = CMDCancelType.CmdNone, RepeatedField<ReserveInfo> reserveInfos = null)
+                                  string renameCarrierID = "", CMDCancelType cancelType = CMDCancelType.CmdNone, RepeatedField<ReserveInfo> reserveInfos = null,
+                                  Google.Protobuf.IMessage extensionMessage = null)
         {
             ID_36_TRANS_EVENT_RESPONSE send_str = new ID_36_TRANS_EVENT_RESPONSE
             {
@@ -2941,17 +2963,33 @@ namespace com.mirle.ibg3k0.sc.Service
                 IsBlockPass = canBlockPass ? PassType.Pass : PassType.Block,
                 ReplyCode = 0,
                 RenameCarrierID = renameCarrierID,
-                ReplyActiveType = cancelType
+                ReplyActiveType = cancelType,
+
             };
             if (reserveInfos != null)
             {
                 send_str.ReserveInfos.AddRange(reserveInfos);
             }
+            if (extensionMessage != null)
+            {
+                send_str.ExtensionMessage = Google.Protobuf.WellKnownTypes.Any.Pack(extensionMessage);
+            }
+
+
             WrapperMessage wrapper = new WrapperMessage
             {
                 SeqNum = seq_num,
                 ImpTransEventResp = send_str
             };
+
+
+
+
+
+            //在client端將其解封包
+            ID_36_TRANS_EVENT_RESPONSE_EXTENSION extension_message = null;
+            send_str.ExtensionMessage.TryUnpack(out extension_message);
+
             //Boolean resp_cmp = ITcpIpControl.sendGoogleMsg(bcfApp, eqpt.TcpIpAgentName, wrapper, true);
 
             LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,

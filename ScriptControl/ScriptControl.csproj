@@ -1030,6 +1030,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProtocolFormat\NorthInnolux\Agvmessage.cs" />
     <Compile Include="ProtocolFormat\Ohtmessage.cs" />
     <Compile Include="RouteKit\FloydAlgorithmRouteGuide.cs" />
     <Compile Include="RouteKit\IRouteGuide.cs" />
@@ -1114,6 +1115,19 @@
       <DependentUpon>OHTCContext.edmx</DependentUpon>
     </None>
     <None Include="packages.config" />
+    <None Include="ProtocolFormat\google\protobuf\any.proto" />
+    <None Include="ProtocolFormat\google\protobuf\api.proto" />
+    <None Include="ProtocolFormat\google\protobuf\compiler\plugin.proto" />
+    <None Include="ProtocolFormat\google\protobuf\descriptor.proto" />
+    <None Include="ProtocolFormat\google\protobuf\duration.proto" />
+    <None Include="ProtocolFormat\google\protobuf\empty.proto" />
+    <None Include="ProtocolFormat\google\protobuf\field_mask.proto" />
+    <None Include="ProtocolFormat\google\protobuf\source_context.proto" />
+    <None Include="ProtocolFormat\google\protobuf\struct.proto" />
+    <None Include="ProtocolFormat\google\protobuf\timestamp.proto" />
+    <None Include="ProtocolFormat\google\protobuf\type.proto" />
+    <None Include="ProtocolFormat\google\protobuf\wrappers.proto" />
+    <None Include="ProtocolFormat\NorthInnolux\agvmessage.proto" />
     <None Include="ProtocolFormat\ohtmessage.proto" />
   </ItemGroup>
   <ItemGroup>
