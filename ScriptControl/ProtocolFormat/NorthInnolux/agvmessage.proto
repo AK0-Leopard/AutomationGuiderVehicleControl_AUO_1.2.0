@@ -1,0 +1,33 @@
+﻿// See README.txt for information and build instructions.
+//
+// Note: START and END tags are used in comments to define sections used in
+// tutorials.  They are not part of the syntax for Protocol Buffers.
+//
+// To get an in-depth walkthrough of this file and the related examples, see:
+// https://developers.google.com/protocol-buffers/docs/tutorials
+
+// [START declaration]
+syntax = "proto3";
+
+option cc_enable_arenas = true;
+option go_package = "github.com/golang/protobuf/ptypes/timestamp";
+option java_multiple_files = true;
+option objc_class_prefix = "GPB";
+package tutorial;
+// [END declaration]
+
+// [START java_declaration]
+option java_package = "com.example.tutorial";
+option java_outer_classname = "AddressBookProtos";
+// [END java_declaration]
+
+// [START csharp_declaration]
+option csharp_namespace = "com.mirle.ibg3k0.sc.ProtocolFormat.NorthInnolux.Agvmessage";
+// [END csharp_declaration]
+
+
+  message ID_36_TRANS_EVENT_RESPONSE_EXTENSION {
+	string DestinationAdr = 1;
+	repeated string Guide_Sections = 2;
+	repeated string Guide_Addresses = 3;
+  }

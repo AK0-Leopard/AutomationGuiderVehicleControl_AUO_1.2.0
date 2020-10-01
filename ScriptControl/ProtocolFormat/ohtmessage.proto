@@ -8,7 +8,7 @@
 
 // [START declaration]
 syntax = "proto3";
-
+import "google/protobuf/any.proto";
 option cc_enable_arenas = true;
 option go_package = "github.com/golang/protobuf/ptypes/timestamp";
 option java_multiple_files = true;
@@ -62,6 +62,7 @@ message Timestamp {
     UnloadComplete = 3;
 	AdrOrMoveArrivals =4;
 	AdrPass = 5;
+	RePosition = 6;
     ReserveReq = 7;
 	BlockReq = 8;
 	VHLoading = 11;
@@ -439,6 +440,7 @@ message Timestamp {
 	CMDCancelType ReplyActiveType = 5;
 	int32 ReplyCode = 6;	
 	repeated ReserveInfo ReserveInfos = 7;
+	google.protobuf.Any ExtensionMessage = 101; 
   }
 
 

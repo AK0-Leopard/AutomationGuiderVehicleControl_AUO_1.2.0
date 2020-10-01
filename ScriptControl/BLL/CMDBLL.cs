@@ -948,15 +948,15 @@ namespace com.mirle.ibg3k0.sc.BLL
                                 //    }
                                 //}
                                 port_priority_max_command = new List<ACMD_MCS>();
-                                foreach(ACMD_MCS cmd in ACMD_MCSs)
+                                foreach (ACMD_MCS cmd in ACMD_MCSs)
                                 {
                                     APORTSTATION source_port = scApp.getEQObjCacheManager().getPortStation(cmd.HOSTSOURCE);
                                     APORTSTATION destination_port = scApp.getEQObjCacheManager().getPortStation(cmd.HOSTDESTINATION);
-                                    if(source_port!=null&& source_port.PRIORITY >= SCAppConstants.PortMaxPriority)
+                                    if (source_port != null && source_port.PRIORITY >= SCAppConstants.PortMaxPriority)
                                     {
                                         if (destination_port != null)
                                         {
-                                            if(source_port.PRIORITY>= destination_port.PRIORITY)
+                                            if (source_port.PRIORITY >= destination_port.PRIORITY)
                                             {
                                                 cmd.PORT_PRIORITY = source_port.PRIORITY;
                                             }
@@ -1001,7 +1001,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                                 {
                                     port_priority_max_command = port_priority_max_command.OrderByDescending(cmd => cmd.PORT_PRIORITY).ToList();
                                 }
-                              
+
                                 List<ACMD_MCS> timeout_command = null;
                                 //bool has_hight_priority_command = ACMD_MCSs.Where(cmd => cmd.PRIORITY_SUM >= HIGHT_PRIORITY_VALUE).Count() > 0;
                                 //var hight_priority_command = ACMD_MCSs.Where(cmd => cmd.PRIORITY_SUM >= HIGHT_PRIORITY_VALUE).ToList();
@@ -1198,9 +1198,12 @@ namespace com.mirle.ibg3k0.sc.BLL
             if (InQueueACMD_MCSs != null && InQueueACMD_MCSs.Count > 0)
             {
                 bool has_wto_command_in_queue = InQueueACMD_MCSs.Where(mcs_cmd => mcs_cmd.HOSTSOURCE.Contains(WTO_GROUP_NAME) ||
-                                                                  mcs_cmd.HOSTDESTINATION.Contains(WTO_GROUP_NAME)).Count() != 0;
+                                                                                  mcs_cmd.HOSTDESTINATION.Contains(WTO_GROUP_NAME)).Count() != 0;
                 if (has_wto_command_in_queue)
                 {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(CMDBLL), Device: string.Empty,
+                                  Data: $"Has wto command in queue, start check has orther wto command excute...");
+
                     bool has_excute_wto_commnad = scApp.CMDBLL.hasCMD_MCSExcuteByFromToPort(WTO_GROUP_NAME);
                     if (has_excute_wto_commnad)
                     {
@@ -1210,8 +1213,15 @@ namespace com.mirle.ibg3k0.sc.BLL
                                 mcs_cmd.HOSTDESTINATION.Contains(WTO_GROUP_NAME))
                             {
                                 InQueueACMD_MCSs.Remove(mcs_cmd);
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(CMDBLL), Device: string.Empty,
+                                              Data: $"Has orther wto command excute, remove it:{SCUtility.Trim(mcs_cmd.CMD_ID)}");
                             }
                         }
+                    }
+                    else
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(CMDBLL), Device: string.Empty,
+                                      Data: $"Has wto command in queue, no wto command excute.");
                     }
                 }
             }
@@ -2813,9 +2823,15 @@ namespace com.mirle.ibg3k0.sc.BLL
 
 
         #region HCMD_MCS
+        public void CreatHCMD_MCS(HCMD_MCS hcmdMCS)
+        {
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                hcmd_mcsDao.Add(con, hcmdMCS);
+            }
+        }
         public void CreatHCMD_MCSs(List<HCMD_MCS> HCMD_MCS)
         {
-
             using (DBConnection_EF con = DBConnection_EF.GetUContext())
             {
                 hcmd_mcsDao.AddByBatch(con, HCMD_MCS);
@@ -2851,6 +2867,29 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
         #endregion HCMD_OHTC
 
+    
+        public void MoveACMD_MCSToHCMD_MCS(string mcsCmdID)
+        {
+            try
+            {
+                ACMD_MCS cmd_mcs = null;
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    cmd_mcs = cmd_mcsDao.getByID(con, mcsCmdID);
+                    if (cmd_mcs == null)
+                    {
+                        return;
+                    }
+                    cmd_mcsDao.Remove(con, cmd_mcs);
+                    var hcmd_mcs = cmd_mcs.ToHCMD_MCS();
+                    hcmd_mcsDao.Add(con, hcmd_mcs);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+        }
 
 
     }

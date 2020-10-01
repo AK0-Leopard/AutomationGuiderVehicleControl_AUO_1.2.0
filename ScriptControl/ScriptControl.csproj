@@ -1030,7 +1030,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProtocolFormat\Agvmessage.cs" />
+    <Compile Include="ProtocolFormat\NorthInnolux\Agvmessage.cs" />
     <Compile Include="ProtocolFormat\Ohtmessage.cs" />
     <Compile Include="RouteKit\FloydAlgorithmRouteGuide.cs" />
     <Compile Include="RouteKit\IRouteGuide.cs" />
@@ -1115,7 +1115,19 @@
       <DependentUpon>OHTCContext.edmx</DependentUpon>
     </None>
     <None Include="packages.config" />
-    <None Include="ProtocolFormat\agvmessage.proto" />
+    <None Include="ProtocolFormat\google\protobuf\any.proto" />
+    <None Include="ProtocolFormat\google\protobuf\api.proto" />
+    <None Include="ProtocolFormat\google\protobuf\compiler\plugin.proto" />
+    <None Include="ProtocolFormat\google\protobuf\descriptor.proto" />
+    <None Include="ProtocolFormat\google\protobuf\duration.proto" />
+    <None Include="ProtocolFormat\google\protobuf\empty.proto" />
+    <None Include="ProtocolFormat\google\protobuf\field_mask.proto" />
+    <None Include="ProtocolFormat\google\protobuf\source_context.proto" />
+    <None Include="ProtocolFormat\google\protobuf\struct.proto" />
+    <None Include="ProtocolFormat\google\protobuf\timestamp.proto" />
+    <None Include="ProtocolFormat\google\protobuf\type.proto" />
+    <None Include="ProtocolFormat\google\protobuf\wrappers.proto" />
+    <None Include="ProtocolFormat\NorthInnolux\agvmessage.proto" />
     <None Include="ProtocolFormat\ohtmessage.proto" />
   </ItemGroup>
   <ItemGroup>
@@ -1123,12 +1135,18 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="DLL\BlockControlFramework.dll" />
+    <Content Include="DLL\BlockControlFramework.pdb" />
     <Content Include="DLL\Mirle.Hlts.ReserveSection.Map.dll" />
+    <Content Include="DLL\Mirle.Hlts.ReserveSection.Map.pdb" />
     <Content Include="DLL\Mirle.Hlts.ReserveSection.Vision.dll" />
+    <Content Include="DLL\Mirle.Hlts.ReserveSection.Vision.pdb" />
     <Content Include="DLL\Mirle.Hlts.Utils.dll" />
+    <Content Include="DLL\Mirle.Hlts.Utils.pdb" />
     <Content Include="DLL\MPLCConnectionControl.dll" />
+    <Content Include="DLL\MPLCConnectionControl.pdb" />
     <Content Include="DLL\MPLCConnectionControl.XML" />
     <Content Include="DLL\opencv_world412.dll" />
+    <Content Include="DLL\SECSTrxControl.pdb" />
     <Content Include="DLL\TCPIPTrxControl.dll" />
     <Content Include="hasp_windows_24266.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

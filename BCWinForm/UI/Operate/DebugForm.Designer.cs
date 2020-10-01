@@ -327,6 +327,7 @@
             this.uctl_SendFun23 = new com.mirle.ibg3k0.bc.winform.UI.Components.uctlButton();
             this.uctl_Send_Fun_71 = new com.mirle.ibg3k0.bc.winform.UI.Components.uctlButton();
             this.uctl_SendAllFun = new com.mirle.ibg3k0.bc.winform.UI.Components.uctlButton();
+            this.btn_reposition = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1314,7 +1315,7 @@
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.61165F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 95.38835F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1449, 833);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(1449, 824);
             this.tableLayoutPanel2.TabIndex = 3;
             // 
             // dgv_cache_object_data
@@ -1327,12 +1328,12 @@
             this.ReverseVhs});
             this.tableLayoutPanel2.SetColumnSpan(this.dgv_cache_object_data, 2);
             this.dgv_cache_object_data.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgv_cache_object_data.Location = new System.Drawing.Point(3, 41);
+            this.dgv_cache_object_data.Location = new System.Drawing.Point(3, 40);
             this.dgv_cache_object_data.MultiSelect = false;
             this.dgv_cache_object_data.Name = "dgv_cache_object_data";
             this.dgv_cache_object_data.RowTemplate.Height = 24;
             this.dgv_cache_object_data.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgv_cache_object_data.Size = new System.Drawing.Size(1217, 789);
+            this.dgv_cache_object_data.Size = new System.Drawing.Size(1217, 781);
             this.dgv_cache_object_data.TabIndex = 0;
             this.dgv_cache_object_data.Visible = false;
             this.dgv_cache_object_data.EditModeChanged += new System.EventHandler(this.dgv_cache_object_data_EditModeChanged);
@@ -1374,7 +1375,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 4);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 3);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(164, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -1384,7 +1385,7 @@
             // 
             this.label22.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(44, 8);
+            this.label22.Location = new System.Drawing.Point(44, 7);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(160, 22);
             this.label22.TabIndex = 2;
@@ -1392,7 +1393,7 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(1226, 41);
+            this.button7.Location = new System.Drawing.Point(1226, 40);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(123, 54);
             this.button7.TabIndex = 3;
@@ -1502,6 +1503,7 @@
             // 
             // groupBox18
             // 
+            this.groupBox18.Controls.Add(this.btn_reposition);
             this.groupBox18.Controls.Add(this.checkBox_host_offline);
             this.groupBox18.Controls.Add(this.btn_cmp_vh_abort);
             this.groupBox18.Controls.Add(this.btn_idReadError);
@@ -3491,6 +3493,16 @@
             this.uctl_SendAllFun.UseVisualStyleBackColor = true;
             this.uctl_SendAllFun.Click += new System.EventHandler(this.uctl_SendAllFun_Click);
             // 
+            // btn_reposition
+            // 
+            this.btn_reposition.Location = new System.Drawing.Point(40, 662);
+            this.btn_reposition.Name = "btn_reposition";
+            this.btn_reposition.Size = new System.Drawing.Size(201, 30);
+            this.btn_reposition.TabIndex = 54;
+            this.btn_reposition.Text = "RePosition";
+            this.btn_reposition.UseVisualStyleBackColor = true;
+            this.btn_reposition.Click += new System.EventHandler(this.btn_reposition_Click);
+            // 
             // DebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 22F);
@@ -3880,5 +3892,6 @@
         private System.Windows.Forms.Label label81;
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.TextBox tb_ChargerAlive;
+        private System.Windows.Forms.Button btn_reposition;
     }
 }

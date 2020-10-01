@@ -458,7 +458,8 @@ namespace com.mirle.ibg3k0.sc.BLL
         public bool updataVehicleLastFullyChargerTime(string vh_id)
         {
             bool isSuccess = false;
-            AVEHICLE vh = scApp.VehiclPool.GetObject();
+            //AVEHICLE vh = scApp.VehiclPool.GetObject();
+            AVEHICLE vh = new AVEHICLE();
             try
             {
                 using (DBConnection_EF con = DBConnection_EF.GetUContext())
@@ -474,7 +475,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             finally
             {
-                scApp.VehiclPool.PutObject(vh);
+                //scApp.VehiclPool.PutObject(vh);
             }
             return isSuccess;
         }

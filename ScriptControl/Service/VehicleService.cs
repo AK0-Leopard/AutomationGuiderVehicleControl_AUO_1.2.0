@@ -2112,7 +2112,7 @@ namespace com.mirle.ibg3k0.sc.Service
         #endregion Position Report
         #region Transfer Report
         [ClassAOPAspect]
-        public void TranEventReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_136_TRANS_EVENT_REP recive_str, int seq_num)
+        public virtual void TranEventReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_136_TRANS_EVENT_REP recive_str, int seq_num)
         {
             if (scApp.getEQObjCacheManager().getLine().ServerPreStop)
                 return;
@@ -4229,7 +4229,7 @@ namespace com.mirle.ibg3k0.sc.Service
         private void oneDirectPath()
         {
             List<ASECTION> sections = scApp.SectionBLL.dataBase.loadAllSection();
-            List<ASEGMENT> ban_segment = scApp.SegmentBLL.cache.GetSegments().Where(seg=> seg.STATUS== E_SEG_STATUS.Closed).ToList();
+            List<ASEGMENT> ban_segment = scApp.SegmentBLL.cache.GetSegments().Where(seg => seg.STATUS == E_SEG_STATUS.Closed).ToList();
             List<ASECTION> ban_sections = null;//不能使用的section
             List<List<ASECTION>> oneDirectPaths = new List<List<ASECTION>>();
             Dictionary<string, ASECTION> ban_sec_dic = new Dictionary<string, ASECTION>();
@@ -4242,9 +4242,9 @@ namespace com.mirle.ibg3k0.sc.Service
             }
             foreach (ASECTION sec in ban_sections)
             {
-                for(int i= 0; i < sections.Count; i++) 
+                for (int i = 0; i < sections.Count; i++)
                 {
-                    if(SCUtility.isMatche( sections[i].SEC_ID, sec.SEC_ID)) 
+                    if (SCUtility.isMatche(sections[i].SEC_ID, sec.SEC_ID))
                     {
                         sections.RemoveAt(i);
                         break;
@@ -4256,7 +4256,7 @@ namespace com.mirle.ibg3k0.sc.Service
             while (isfind)
             {
                 Dictionary<string, ASECTION> temp_ban_sec_dic = new Dictionary<string, ASECTION>();
-                foreach(string key in ban_sec_dic.Keys)
+                foreach (string key in ban_sec_dic.Keys)
                 {
                     temp_ban_sec_dic.Add(key, ban_sec_dic[key]);
                 }
@@ -4275,7 +4275,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         ASECTION pre = sections[i];
                         temp_ban_sec_dic.Add(sections[i].SEC_ID, sections[i]);
                         sections.RemoveAt(i);
-                        if (count2 == 1||count1==1)
+                        if (count2 == 1 || count1 == 1)
                         {
                             hasMore = true;
                         }
@@ -4284,7 +4284,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             oneDirectPaths.Add(oneDirectPath);
                             break;
                         }
-                        while (hasMore) 
+                        while (hasMore)
                         {
                             ASECTION connectedSection = null;
                             FindOnlyConnectedSection(pre, out connectedSection, temp_ban_sec_dic);
@@ -4327,7 +4327,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
             }
             Dictionary<string, List<ASECTION>> oneDirectPathDic = new Dictionary<string, List<ASECTION>>();
-            for(int i = 0;i< oneDirectPaths.Count; i++)
+            for (int i = 0; i < oneDirectPaths.Count; i++)
             {
                 for (int j = 0; j < oneDirectPaths[i].Count; j++)
                 {
@@ -4339,7 +4339,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
 
         }
-        private void calculateConnectedSection(ASECTION sec,out int count1,out int count2, Dictionary<string, ASECTION> ban_sec_dic)
+        private void calculateConnectedSection(ASECTION sec, out int count1, out int count2, Dictionary<string, ASECTION> ban_sec_dic)
         {
             count1 = 0;
             count2 = 0;
