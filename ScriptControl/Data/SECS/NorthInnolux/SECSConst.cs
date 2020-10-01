@@ -234,6 +234,8 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.NorthInnolux
         public const string CMD_Result_BCRError = "4";
         public const string CMD_Result_CarrierIDUnmach = "5";
         public const string CMD_Result_InterlockError = "8";
+
+
         public static string convert2MCS(AVEHICLE.VehicleState vehicleState, ProtocolFormat.OHTMessage.CompleteStatus tran_cmp_status)
         {
             switch (tran_cmp_status)
@@ -251,9 +253,9 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.NorthInnolux
                 case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusSystemIn:
                 case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusTechingMove:
                     return CMD_Result_Successful;
-                case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusCancel:
-                case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusAbort:
-                case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusVehicleAbort:
+                //A0.01 case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusCancel:
+                //A0.01 case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusAbort:
+                //A0.02 case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusVehicleAbort:
                 case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusLongTimeInaction:
                 case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusForceFinishByOp:
                     return CMD_Result_Unsuccessful;
@@ -262,6 +264,9 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.NorthInnolux
                 case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusIdmisMatch:
                     return CMD_Result_CarrierIDUnmach;
                 case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusInterlockError:
+                case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusCancel:
+                case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusAbort: 
+                case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusVehicleAbort: 
                     //if (vehicleState == AVEHICLE.VehicleState.ACQUIRING)
                     //{
                     //    return CMD_Result_DisableLoad;

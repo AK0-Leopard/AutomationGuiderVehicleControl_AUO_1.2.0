@@ -328,7 +328,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccess;
         }
 
-        public bool upDateVIDResultCode(string eq_id, AVEHICLE.VehicleState vehicleState, CompleteStatus cmp_status)
+        public virtual bool upDateVIDResultCode(string eq_id, AVEHICLE.VehicleState vehicleState, CompleteStatus cmp_status)
         {
 
             bool isSuccess = true;

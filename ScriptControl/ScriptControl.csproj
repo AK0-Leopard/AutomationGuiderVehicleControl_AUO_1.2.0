@@ -1030,6 +1030,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProtocolFormat\Agvmessage.cs" />
     <Compile Include="ProtocolFormat\Ohtmessage.cs" />
     <Compile Include="RouteKit\FloydAlgorithmRouteGuide.cs" />
     <Compile Include="RouteKit\IRouteGuide.cs" />
@@ -1114,6 +1115,7 @@
       <DependentUpon>OHTCContext.edmx</DependentUpon>
     </None>
     <None Include="packages.config" />
+    <None Include="ProtocolFormat\agvmessage.proto" />
     <None Include="ProtocolFormat\ohtmessage.proto" />
   </ItemGroup>
   <ItemGroup>
