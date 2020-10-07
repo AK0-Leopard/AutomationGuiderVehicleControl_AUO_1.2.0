@@ -3811,10 +3811,25 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //VID_55_CarrierInfo
             vid_collection.VID_55_CarrierInfo.CARRIER_ID = vid_info.CARRIER_ID;
             vid_collection.VID_55_CarrierInfo.VEHICLE_ID = vh.Real_ID;
-            vid_collection.VID_55_CarrierInfo.CARRIER_LOC = vh.Real_ID + "-01";//北群創的CARRIER_LOC一律都在車上的Crane
+            if (vh.HAS_CST==1)
+            {
+                vid_collection.VID_55_CarrierInfo.CARRIER_LOC = vh.Real_ID + "-01";//北群創的CARRIER_LOC一律都在車上的Crane
+            }
+            else
+            {
+                vid_collection.VID_55_CarrierInfo.CARRIER_LOC = vid_info.SOURCEPORT;
+            }
 
             //VID_56_CARRIER_LOC
-            vid_collection.VID_56_CarrierLoc.CARRIER_LOC = vh.Real_ID + "-01";//北群創的CARRIER_LOC一律都在車上的Crane
+            if (vh.HAS_CST == 1)
+            {
+                vid_collection.VID_56_CarrierLoc.CARRIER_LOC = vh.Real_ID + "-01";//北群創的CARRIER_LOC一律都在車上的Crane
+            }
+            else
+            {
+                vid_collection.VID_56_CarrierLoc.CARRIER_LOC = vid_info.SOURCEPORT;
+            }
+
             //VID_58_CommandID
             vid_collection.VID_58_CommandID.COMMAND_ID = vid_info.COMMAND_ID;
 
@@ -3860,7 +3875,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //VID_70_VehicleID
             vid_collection.VID_70_VehicleID.VEHICLE_ID = vh.Real_ID;
             vid_collection.VID_317_ReadIDInfo.ID_RESULT_CODE = SECSConst.NorthInnoluxBarcodeReadReultMap( vh.BCRReadResult);
-            vid_collection.VID_317_ReadIDInfo.READ_CARRRIER_ID = vh.CST_ID;
+            //vid_collection.VID_317_ReadIDInfo.READ_CARRRIER_ID = vh.CST_ID;
+            vid_collection.VID_317_ReadIDInfo.READ_CARRRIER_ID = vid_info.CARRIER_ID;
             //VID_901_AlarmText
             vid_collection.VID_1060_AlarmText.ALARM_TEXT = vid_info.ALARM_TEXT;
 

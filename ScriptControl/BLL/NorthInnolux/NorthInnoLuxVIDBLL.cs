@@ -15,7 +15,7 @@ using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data;
 using com.mirle.ibg3k0.sc.Data.DAO.EntityFramework;
-using com.mirle.ibg3k0.sc.Data.SECS.AGVC;
+using com.mirle.ibg3k0.sc.Data.SECS.NorthInnolux;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using NLog;
 using System;
@@ -328,7 +328,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccess;
         }
 
-        public bool upDateVIDResultCode(string eq_id, AVEHICLE.VehicleState vehicleState, CompleteStatus cmp_status)
+        public override bool upDateVIDResultCode(string eq_id, AVEHICLE.VehicleState vehicleState, CompleteStatus cmp_status)
         {
 
             bool isSuccess = true;

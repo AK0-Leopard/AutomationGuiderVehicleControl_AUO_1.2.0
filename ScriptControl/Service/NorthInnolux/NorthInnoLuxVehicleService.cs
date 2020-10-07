@@ -1520,7 +1520,7 @@ namespace com.mirle.ibg3k0.sc.Service
             }
             return is_success;
         }
-        public bool cancleOrAbortCommandByMCSCmdID(string mcsCmdID, CMDCancelType actType)
+        public override bool cancleOrAbortCommandByMCSCmdID(string mcsCmdID, CMDCancelType actType)
         {
             bool isSuccess = true;
             AVEHICLE assign_vh = null;
@@ -1539,7 +1539,18 @@ namespace com.mirle.ibg3k0.sc.Service
                         scApp.CMDBLL.updateCMD_MCS_TranStatus2Canceling(mcsCmdID);
                         break;
                 }
-                isSuccess = doAbortCommand(assign_vh, ohtc_cmd_id, actType);
+                bool pause_success = false;
+                bool is_success = true;
+                is_success = is_success && PauseRequest(assign_vh.VEHICLE_ID, PauseEvent.Pause, SCAppConstants.OHxCPauseType.Normal);
+                if (is_success)
+                {
+                    pause_success = true;
+                }
+                is_success = is_success && FinishExecutionMCSCommand(assign_vh.VEHICLE_ID);
+                if (!is_success && pause_success)
+                {
+                    PauseRequest(assign_vh.VEHICLE_ID, PauseEvent.Continue, SCAppConstants.OHxCPauseType.Normal);
+                }
             }
             catch (Exception ex)
             {
@@ -2098,10 +2109,7 @@ namespace com.mirle.ibg3k0.sc.Service
                        Data: $"BCR miss match happend,start abort command id:{eqpt.OHTC_CMD?.Trim()}",
                        VehicleID: eqpt.VEHICLE_ID,
                        CarrierID: eqpt.CST_ID);
-                    //replyTranEventReport(bcfApp, eventType, eqpt, seqNum,
-                    //    renameCarrierID: readCarrierID,
-                    //    cancelType: CMDCancelType.CmdCancelIdMismatch);
-                    // Task.Run(() => doAbortCommand(eqpt, eqpt.OHTC_CMD, CMDCancelType.CmdCancelIdMismatch));
+
                     replyTranEventReport(bcfApp, eventType, eqpt, seqNum);
                     scApp.VIDBLL.upDateVIDCarrierID(eqpt.VEHICLE_ID, readCarrierID);
 
@@ -2113,15 +2121,12 @@ namespace com.mirle.ibg3k0.sc.Service
                        CarrierID: eqpt.CST_ID);
 
                     AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(eqpt.VEHICLE_ID);
-                    string new_carrier_id =
-                        $"ERR-{eqpt.Real_ID.Trim()}-{vid_info.CARRIER_INSTALLED_TIME?.ToString(SCAppConstants.TimestampFormat_16)}";
-                    //replyTranEventReport(bcfApp, eventType, eqpt, seqNum,
-                    //    renameCarrierID: new_carrier_id, cancelType: CMDCancelType.CmdCancelIdReadFailed);
+                    //string new_carrier_id =
+                    //    $"ERR-{eqpt.Real_ID.Trim()}-{vid_info.CARRIER_INSTALLED_TIME?.ToString(SCAppConstants.TimestampFormat_16)}";
                     replyTranEventReport(bcfApp, eventType, eqpt, seqNum);
-                    scApp.VIDBLL.upDateVIDCarrierID(eqpt.VEHICLE_ID, new_carrier_id);
+                    //scApp.VIDBLL.upDateVIDCarrierID(eqpt.VEHICLE_ID, new_carrier_id);
 
 
-                    //     Task.Run(() => doAbortCommand(eqpt, eqpt.OHTC_CMD, CMDCancelType.CmdCancelIdReadFailed));
                     break;
                 case BCRReadResult.BcrNormal:
                     replyTranEventReport(bcfApp, eventType, eqpt, seqNum);
@@ -2839,11 +2844,37 @@ namespace com.mirle.ibg3k0.sc.Service
                     scApp.VIDBLL.upDateVIDPortID(vh.VEHICLE_ID, eventType);
                     break;
                 case EventType.LoadComplete:
-                    //scApp.VIDBLL.upDateVIDCarrierLocInfo(eqpt.VEHICLE_ID, eqpt.Real_ID);
+
                     if (!SCUtility.isEmpty(vh.MCS_CMD))
                         scApp.CMDBLL.updateCMD_MCS_TranStatus2Transferring(vh.MCS_CMD);
                     scApp.MapBLL.getPortID(vh.CUR_ADR_ID, out port_id);
                     scApp.PortBLL.OperateCatch.updatePortStationCSTExistStatus(port_id, string.Empty);
+                    BCRReadResult bCRReadResult = BCRReadResult.BcrNormal;
+                        AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(vh.VEHICLE_ID);
+                    if (carrier_id.StartsWith("ERROR"))
+                    {
+                        scApp.VIDBLL.upDateVIDCarrierID(vh.VEHICLE_ID, string.Empty);//讀不到ID的話，更新為空白
+                        bCRReadResult = BCRReadResult.BcrReadFail;
+                    }
+                    else if(!SCUtility.isMatche( carrier_id , vid_info.MCS_CARRIER_ID))
+                    {
+                        scApp.VIDBLL.upDateVIDCarrierID(vh.VEHICLE_ID, carrier_id);
+                        bCRReadResult = BCRReadResult.BcrMisMatch;
+                    }
+                    else
+                    {
+                        scApp.VIDBLL.upDateVIDCarrierID(vh.VEHICLE_ID, carrier_id);
+                        bCRReadResult = BCRReadResult.BcrNormal;
+                    }
+                    scApp.VehicleBLL.updateVehicleBCRReadResult(vh, bCRReadResult);//因為已經要上報MCS Bcrcode Read Report，要先更新BCRReadResult
+
+
+
+
+
+
+
+
                     //scApp.PortBLL.OperateCatch.ClearAllPortStationCSTExistToEmpty();
                     break;
                 case EventType.UnloadComplete:
@@ -3208,6 +3239,28 @@ namespace com.mirle.ibg3k0.sc.Service
                     isSuccess &= scApp.VehicleBLL.doTransferCommandFinish(vh_id, cmd_id, completeStatus, travel_dis);
                     //isSuccess &= scApp.VIDBLL.initialVIDCommandInfo(vh.VEHICLE_ID);
                     isSuccess &= scApp.VIDBLL.initialVIDCommandInfo(vh_id);
+                    if(isSuccess && completeStatus == CompleteStatus.CmpStatusInterlockError)
+                    {
+                        string toAdr = string.Empty;
+                        ASECTION sec = scApp.SectionBLL.cache.GetSection(vh.CUR_SEC_ID);
+                        if (sec != null)
+                        {
+                            if(SCUtility.isMatche( vh.CUR_ADR_ID, sec.FROM_ADR_ID))
+                            {
+                                toAdr = sec.TO_ADR_ID;
+                            }
+                            else
+                            {
+                                toAdr = sec.FROM_ADR_ID;
+                            }
+                            scApp.CMDBLL.doCreatTransferCommand(vh_id, string.Empty, string.Empty,
+                                E_CMD_TYPE.Move,
+                                string.Empty,
+                                toAdr, 0, 0);
+                        }
+                    }
+
+
                     if (isSuccess)
                     {
                         tx.Complete();

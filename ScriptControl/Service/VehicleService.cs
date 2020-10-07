@@ -1576,7 +1576,7 @@ namespace com.mirle.ibg3k0.sc.Service
             }
             return is_success;
         }
-        public bool cancleOrAbortCommandByMCSCmdID(string mcsCmdID, CMDCancelType actType)
+        public virtual bool cancleOrAbortCommandByMCSCmdID(string mcsCmdID, CMDCancelType actType)
         {
             bool isSuccess = true;
             AVEHICLE assign_vh = null;
