@@ -833,7 +833,10 @@ namespace com.mirle.ibg3k0.sc.Common
             System.Threading.ThreadPool.QueueUserWorkItem(new WaitCallback(SCApplication.getInstance().LineService.PublishEQMsgInfo), logEntry);
         }
 
-        static Google.Protobuf.JsonFormatter jsonFormatter = new JsonFormatter(new JsonFormatter.Settings(true).WithFormatDefaultValues(true));
+        static Google.Protobuf.JsonFormatter jsonFormatter = 
+            new JsonFormatter(new JsonFormatter.Settings(true).
+                WithFormatDefaultValues(true).
+                WithTypeRegistry(Google.Protobuf.Reflection.TypeRegistry.FromMessages(ProtocolFormat.NorthInnolux.Agvmessage.ID_36_TRANS_EVENT_RESPONSE_EXTENSION.Descriptor)));
         #region TCPIP Msg Log
         public static void RecodeReportInfo(string vh_id, int seq_num, ID_134_TRANS_EVENT_REP recive_str)
         {
@@ -872,6 +875,7 @@ namespace com.mirle.ibg3k0.sc.Common
         {
             AVEHICLE vh_DO = SCApplication.getInstance().getEQObjCacheManager().getVehicletByVHID(vh_id);
             string fun_name = RenameFunName(send_str);
+
 
             RecodeReportInfo(MSG_ROLE_OHXC, MSG_ROLE_VH,
                 fun_name, seq_num, vh_id, vh_DO.OHTC_CMD, string.Empty,
