@@ -36,6 +36,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         public const string VEHICLE_ALARM_HAPPEND = "00000";
         public const string VEHICLE_LONG_TIME_INACTION = "10000";
         public const string VEHICLE_CAN_NOT_SERVICE = "10001";
+        public const string VEHICLE_LONG_TIME_INSTALLED_CARRIER = "10002";
         /// <summary>
         /// The sc application
         /// </summary>
