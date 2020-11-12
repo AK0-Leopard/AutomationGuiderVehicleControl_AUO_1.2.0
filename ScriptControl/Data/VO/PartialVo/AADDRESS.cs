@@ -62,7 +62,8 @@ namespace com.mirle.ibg3k0.sc
         public bool IsCoupler
         //{ get { return AddressTypeFlags[BIT_INDEX_COUPLER]; } }
         //{ get { return false; } }
-        { get { return ADR_ID == "24031"; } }
+        //{ get { return ADR_ID == "24031"; } }
+        { get { return ADR_ID == "10010"; } }
         //{ get { return ADR_ID == "24014"; }}
         //{ get { return ADR_ID == "10001"|| ADR_ID == "10007"; } }
         [JsonIgnore]

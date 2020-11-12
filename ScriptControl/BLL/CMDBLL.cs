@@ -124,6 +124,10 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
                 else
                 {
+                    if(scApp.BC_ID == "NORTH_INNOLUX")
+                    {
+                        HostSource = HostSource.Replace("-01", "");
+                    }
                     port_priority = source_portStation.PRIORITY;
                 }
             }
@@ -2865,6 +2869,18 @@ namespace com.mirle.ibg3k0.sc.BLL
                 hcmd_ohtcDao.AddByBatch(con, HCMD_OHTC);
             }
         }
+
+        public HCMD_OHTC getHCmd_OHTCByCMDID(string cmd_id)
+        {
+            HCMD_OHTC cmd_ohtc = null;
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                cmd_ohtc = hcmd_ohtcDao.geCmdByCMDID(con, cmd_id);
+            }
+            return cmd_ohtc;
+        }
+        
+
         #endregion HCMD_OHTC
 
 

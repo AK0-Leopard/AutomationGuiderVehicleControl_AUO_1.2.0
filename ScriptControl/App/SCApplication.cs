@@ -491,6 +491,7 @@ namespace com.mirle.ibg3k0.sc.App
             dataCollectionCss = (DataCollectionConfigSections)ConfigurationManager.GetSection(SCAppConstants.CONFIG_DATA_COLLECTION_SETTING);
 
             initialReserveSectionAPI();
+            setRePositionInfo();
 
             startBLL();
             initWIF();      //Initial WIF   //A0.01
@@ -563,7 +564,6 @@ namespace com.mirle.ibg3k0.sc.App
             reserveSectionAPI = _reserveSectionAPI.MapVM;
 
             setHltVehicleInfo();
-
             LoadMapFiles();
         }
 
@@ -575,6 +575,12 @@ namespace com.mirle.ibg3k0.sc.App
             reserveSectionAPI.VehicleHeight = vh_highi;
             reserveSectionAPI.VehicleWidth = vh_width;
             reserveSectionAPI.SensorLength = vh_sensor_wlength;
+        }
+
+        private void setRePositionInfo()
+        {
+            int RePositionDistance = getInt("RePositionDistance", 5000);
+            vehicleService.repositionDistance = RePositionDistance;
         }
 
         private void LoadMapFiles(string addressPath = null, string sectionPath = null)

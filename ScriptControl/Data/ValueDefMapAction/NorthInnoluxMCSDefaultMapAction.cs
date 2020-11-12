@@ -11,6 +11,7 @@
 // 2019/07/16    Mark Chou      N/A            M0.01   修正回覆S1F4 SVID305會發生Exception的問題
 // 2019/08/26    Kevin Wei      N/A            M0.02   修正原本在只要有From、To命令還是在Wating的狀態時，
 //                                                     此時MCS若下達一筆命令則會拒絕，改成只要是From相同，就會拒絕。
+// 2020/10/05    Mark Chou      N/A            M0.03   北群創收到MCS S2F49不檢查是否有相同的Load Port命令
 //**********************************************************************************
 using com.mirle.ibg3k0.bcf.App;
 using com.mirle.ibg3k0.bcf.Controller;
@@ -1272,6 +1273,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             check_result = string.Empty;
             string checkcode = SECSConst.HCACK_Confirm;
             bool isSuccess = true;
+            string vehicleID = "";
 
 
             //string command_id = s2F49_TRANSFER.REPITEMS.COMMAND_INFO.CommandID.CPVAL;
@@ -1390,18 +1392,19 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
 
             //確認是否有在相同Load Port的Transfer Command且該命令狀態還沒有變成Transferring(代表還在Port上還沒搬走)
-            if (isSuccess)
-            {
-                //M0.02 var cmd_obj = scApp.CMDBLL.getWatingCMDByFromTo(source_port_or_vh_id, dest_port);
-                var cmd_obj = scApp.CMDBLL.getWatingCMD_MCSByFrom(source_port_or_vh_id);//M0.02 
-                if (cmd_obj != null)
-                {
-                    check_result = $"MCS command id:{command_id} is same as orther mcs command id {cmd_obj.CMD_ID.Trim()} of load port.";//M0.02 
-                    //M0.02 check_result = $"MCS command id:{command_id} of transfer load port is same command id:{cmd_obj.CMD_ID.Trim()}";
-                    return SECSConst.HCACK_Rejected;
-                }
-            }
-
+            //M0.03 start
+            //if (isSuccess)
+            //{
+            //    //M0.02 var cmd_obj = scApp.CMDBLL.getWatingCMDByFromTo(source_port_or_vh_id, dest_port);
+            //    var cmd_obj = scApp.CMDBLL.getWatingCMD_MCSByFrom(source_port_or_vh_id);//M0.02 
+            //    if (cmd_obj != null)
+            //    {
+            //        check_result = $"MCS command id:{command_id} is same as orther mcs command id {cmd_obj.CMD_ID.Trim()} of load port.";//M0.02 
+            //        //M0.02 check_result = $"MCS command id:{command_id} of transfer load port is same command id:{cmd_obj.CMD_ID.Trim()}";
+            //        return SECSConst.HCACK_Rejected;
+            //    }
+            //}
+            //M0.03 end
             //確認 Port是否存在
             bool source_is_a_port = scApp.PortStationBLL.OperateCatch.IsExist(source_port_or_vh_id);
             if (source_is_a_port)
@@ -1411,7 +1414,18 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //如果不是PortID的話，則可能是VehicleID
             else
             {
-                isSuccess = scApp.VehicleBLL.cache.IsVehicleExistByRealID(source_port_or_vh_id);
+                if (scApp.BC_ID == "NORTH_INNOLUX")
+                {
+                    vehicleID = source_port_or_vh_id.Replace("-01", "");
+                    isSuccess = scApp.VehicleBLL.cache.IsVehicleExistByRealID(vehicleID);
+
+                }
+                else
+                {
+                    vehicleID = source_port_or_vh_id;
+                    isSuccess = scApp.VehicleBLL.cache.IsVehicleExistByRealID(source_port_or_vh_id);
+
+                }
             }
             if (!isSuccess)
             {
@@ -1451,7 +1465,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //如果不是Port(則為指定車號)，要檢查是否從該車位置可以到達放貨地點
             else
             {
-                AVEHICLE carry_vh = scApp.VehicleBLL.cache.getVehicleByRealID(source_port_or_vh_id);
+                AVEHICLE carry_vh = scApp.VehicleBLL.cache.getVehicleByRealID(vehicleID);
                 APORTSTATION dest_port_station = scApp.PortStationBLL.OperateCatch.getPortStation(dest_port);
                 isSuccess = scApp.GuideBLL.IsRoadWalkable(carry_vh.CUR_ADR_ID, dest_port_station.ADR_ID);
                 if (!isSuccess)
@@ -1594,6 +1608,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                     bool result = false;
                     if (canRenameCarrier)
                     {
+                        if (old_carrier_id == null || string.IsNullOrWhiteSpace(old_carrier_id))
+                        {
+                            old_carrier_id = "ERROR";
+                        }
                         result = scApp.VehicleService.DoCarrierIDRenameRequset(s2f41_rename.ITEM.CMDITEM.CPVAL, new_carrier_id, old_carrier_id);
                         if (!result)
                         {

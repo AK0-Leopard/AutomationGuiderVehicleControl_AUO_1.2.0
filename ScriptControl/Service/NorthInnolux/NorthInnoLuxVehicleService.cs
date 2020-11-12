@@ -1539,18 +1539,18 @@ namespace com.mirle.ibg3k0.sc.Service
                         scApp.CMDBLL.updateCMD_MCS_TranStatus2Canceling(mcsCmdID);
                         break;
                 }
-                bool pause_success = false;
+                //bool pause_success = false;
                 bool is_success = true;
-                is_success = is_success && PauseRequest(assign_vh.VEHICLE_ID, PauseEvent.Pause, SCAppConstants.OHxCPauseType.Normal);
-                if (is_success)
-                {
-                    pause_success = true;
-                }
+                //is_success = is_success && PauseRequest(assign_vh.VEHICLE_ID, PauseEvent.Pause, SCAppConstants.OHxCPauseType.Normal);
+                //if (is_success)
+                //{
+                //    pause_success = true;
+                //}
                 is_success = is_success && FinishExecutionMCSCommand(assign_vh.VEHICLE_ID);
-                if (!is_success && pause_success)
-                {
-                    PauseRequest(assign_vh.VEHICLE_ID, PauseEvent.Continue, SCAppConstants.OHxCPauseType.Normal);
-                }
+                //if (!is_success && pause_success)
+                //{
+                //    PauseRequest(assign_vh.VEHICLE_ID, PauseEvent.Continue, SCAppConstants.OHxCPauseType.Normal);
+                //}
             }
             catch (Exception ex)
             {
@@ -2083,19 +2083,243 @@ namespace com.mirle.ibg3k0.sc.Service
         protected void TransferReportRePosition(BCFApplication bcfApp, AVEHICLE eqpt, int seqNum,
                                          EventType eventType)
         {
-            List<string> guide_addresses = new List<string>() { "111", "222", "333" };
-            List<string> guide_sections = new List<string>() { "555", "666", "777" };
-
-            ID_36_TRANS_EVENT_RESPONSE_EXTENSION iD_36_TRANS_EVENT_RESPONSE_EXTENSION = new ID_36_TRANS_EVENT_RESPONSE_EXTENSION()
+            RepositionPath path = getRepositionInfo(eqpt);
+            List<string> guide_addresses = new List<string>();
+            List<string> guide_sections = new List<string>();
+            string dest = string.Empty;
+            if (path != null)
             {
-                DestinationAdr = ""
+                guide_addresses = path.guide_addresses;
+                guide_sections = path.guide_sections;
+                dest = path.destinationAdr;
+            }
+            ID_36_TRANS_EVENT_RESPONSE_EXTENSION iD_36_TRANS_EVENT_RESPONSE_EXTENSION = new com.mirle.ibg3k0.sc.ProtocolFormat.NorthInnolux.Agvmessage.ID_36_TRANS_EVENT_RESPONSE_EXTENSION()
+            {
+                DestinationAdr = dest
             };
 
+
             iD_36_TRANS_EVENT_RESPONSE_EXTENSION.GuideAddresses.AddRange(guide_addresses);
-            iD_36_TRANS_EVENT_RESPONSE_EXTENSION.GuideSections.AddRange(guide_addresses);
+            iD_36_TRANS_EVENT_RESPONSE_EXTENSION.GuideSections.AddRange(guide_sections);
             replyTranEventReport(bcfApp, eventType, eqpt, seqNum, extensionMessage: iD_36_TRANS_EVENT_RESPONSE_EXTENSION);
         }
 
+
+        private RepositionPath getRepositionInfo(AVEHICLE eqpt)
+        {
+            if (eqpt != null)
+            {
+                string current_adr_id = eqpt.CUR_ADR_ID;
+
+                List<RepositionPath> RepositionPathList = new List<RepositionPath>();
+                RepositionPath firstRepositionPath = new RepositionPath();
+                firstRepositionPath.destinationAdr = current_adr_id;
+                firstRepositionPath.guide_addresses.Add(current_adr_id);
+                RepositionPathList.Add(firstRepositionPath);
+
+
+                RepositionPath currentBestRepositionPath = null;
+                RepositionPath finalRepositionPath = null;
+
+
+                bool is_find = false;
+
+                while(!is_find)
+                {
+                    List<string> destAdrList = RepositionPathList.Select(p => p.destinationAdr).Distinct().ToList();
+                    List<RepositionPath> newRepositionPathList = new List<RepositionPath>();
+                    List<RepositionPath> HaveChanceRepositionPathList = new List<RepositionPath>();
+                    foreach (string destAdr in destAdrList)
+                    {
+                        List<ASECTION> sections = scApp.SectionBLL.cache.GetSectionsByAddress(destAdr);
+                        foreach (ASECTION sec in sections)
+                        {
+                            if (!sec.IsActive(scApp.SegmentBLL)) continue;
+
+                            bool needsTurn = scApp.ReserveBLL.IsR2000Section(sec.SEC_ID);
+                            double cost = sec.SEC_DIS;
+                            foreach (RepositionPath repositionPath in
+                                RepositionPathList.Where(p =>SCUtility.isMatche(p.destinationAdr,destAdr)).ToList())
+                            {
+                                if (repositionPath.guide_sections.Contains(sec.SEC_ID)) continue;
+                                RepositionPath newRepositionPath = new RepositionPath();
+                                newRepositionPath.destinationAdr = sec.GetOrtherEndPoint(repositionPath.destinationAdr);
+                                newRepositionPath.needsTurn = repositionPath.needsTurn || needsTurn;
+                                if (needsTurn)
+                                {
+                                    newRepositionPath.turnCount = repositionPath.turnCount + 1;
+                                }
+                                newRepositionPath.guide_sections = repositionPath.guide_sections.ToList();
+                                newRepositionPath.guide_sections.Add(sec.SEC_ID);
+                                newRepositionPath.guide_addresses = repositionPath.guide_addresses.ToList();
+                                newRepositionPath.guide_addresses.Add(newRepositionPath.destinationAdr);
+                                newRepositionPath.cost = repositionPath.cost + cost;
+
+                                newRepositionPathList.Add(newRepositionPath);
+                            }
+                        }
+                    }
+
+                    RepositionPathList = newRepositionPathList.ToList();
+
+                    if (RepositionPathList.Count == 0) 
+                    {
+                        if (currentBestRepositionPath != null)
+                        {
+                            finalRepositionPath = currentBestRepositionPath;
+                            is_find = true;
+                        }
+                        else
+                        {
+                            is_find = false;
+                        }
+                        break;
+                    }
+
+
+                    foreach (RepositionPath path in RepositionPathList)
+                    {
+                        if (isRepositionPathQualified(path, repositionDistance))
+                        {
+                            if(isBetterRepositionPath(currentBestRepositionPath, path))
+                            {
+                                currentBestRepositionPath = path;
+                            }
+                        }
+                        else
+                        {
+                            if (isBetterRepositionPath(currentBestRepositionPath, path))
+                            {
+                                HaveChanceRepositionPathList.Add(path);
+                            }
+                        }
+                    }
+
+                    if (HaveChanceRepositionPathList.Count == 0)
+                    {
+                        if (currentBestRepositionPath != null)
+                        {
+                            finalRepositionPath = currentBestRepositionPath;
+                            is_find = true;
+                        }
+                        else
+                        {
+                            is_find = false;
+                        }
+                        break;
+                    }
+                    else
+                    {
+                        RepositionPathList = HaveChanceRepositionPathList.ToList();
+                        continue;
+                    }
+
+
+
+                }
+
+
+
+                //根據車子所在位置，補足路段
+                if (finalRepositionPath != null)
+                {
+                    bool start_section_is_same = true;
+                    if (finalRepositionPath.guide_sections != null && finalRepositionPath.guide_sections.Count > 0)
+                    {
+                        start_section_is_same = SCUtility.isMatche(finalRepositionPath.guide_sections[0], eqpt.CUR_SEC_ID);
+                        if (!start_section_is_same)
+                        {
+                            finalRepositionPath.guide_sections.Insert(0, eqpt.CUR_SEC_ID);
+                            ASECTION new_start_section = scApp.SectionBLL.cache.GetSection(eqpt.CUR_SEC_ID);
+                            if (SCUtility.isMatche(finalRepositionPath.guide_addresses[0], new_start_section.FROM_ADR_ID))
+                            {
+                                finalRepositionPath.guide_addresses.Insert(0, new_start_section.TO_ADR_ID);
+                            }
+                            else
+                            {
+                                finalRepositionPath.guide_addresses.Insert(0, new_start_section.FROM_ADR_ID);
+                            }
+                            //if (!SCUtility.isMatche(guide_segment_ids[0], new_start_section.SEG_NUM))
+                            //{
+                            //    guide_segment_ids.Insert(0, new_start_section.SEG_NUM);
+                            //}
+                        }
+                    }
+                }
+                
+                return finalRepositionPath;
+
+
+
+
+
+
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+
+        bool isRepositionPathQualified(RepositionPath path ,int cost)
+        {
+            if(path.cost> cost)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        bool isBetterRepositionPath(RepositionPath currentBestPath, RepositionPath path)
+        {
+            if (currentBestPath == null) return true;
+            if (currentBestPath.needsTurn)
+            {
+                if (!path.needsTurn)
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                if (path.needsTurn)
+                {
+                    return false;
+                }
+            }
+
+            if (currentBestPath.turnCount > path.turnCount)
+            {
+                return true;
+            }
+            else if (currentBestPath.turnCount < path.turnCount)
+            {
+                return false;
+            }
+
+            if (currentBestPath.cost > path.cost)
+            {
+                return true;
+            }
+            return false;
+
+        }
+
+        class RepositionPath
+        {
+            public string destinationAdr;
+            public bool needsTurn = false;
+            public double cost = 0;
+            public List<string> guide_sections = new List<string>();
+            public List<string> guide_addresses = new List<string>();
+            public int turnCount = 0; 
+
+
+        }
 
         protected override void TransferReportBCRRead(BCFApplication bcfApp, AVEHICLE eqpt, int seqNum,
                                            EventType eventType, string readCarrierID, BCRReadResult bCRReadResult)
@@ -3001,11 +3225,12 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 send_str.ReserveInfos.AddRange(reserveInfos);
             }
-            if (extensionMessage != null)
+            if (extensionMessage == null)
             {
-                send_str.ExtensionMessage = Google.Protobuf.WellKnownTypes.Any.Pack(extensionMessage);
+                extensionMessage = new com.mirle.ibg3k0.sc.ProtocolFormat.NorthInnolux.Agvmessage.ID_36_TRANS_EVENT_RESPONSE_EXTENSION();
             }
 
+            send_str.ExtensionMessage = Google.Protobuf.WellKnownTypes.Any.Pack(extensionMessage);
 
             WrapperMessage wrapper = new WrapperMessage
             {
@@ -3019,8 +3244,12 @@ namespace com.mirle.ibg3k0.sc.Service
 
             //在client端將其解封包
             ID_36_TRANS_EVENT_RESPONSE_EXTENSION extension_message = null;
-            send_str.ExtensionMessage.TryUnpack(out extension_message);
+            if (send_str.ExtensionMessage != null)
+            {
+                send_str.ExtensionMessage.TryUnpack(out extension_message);
+            }
 
+            Google.Protobuf.Reflection.TypeRegistry t = Google.Protobuf.Reflection.TypeRegistry.FromMessages(ID_36_TRANS_EVENT_RESPONSE_EXTENSION.Descriptor);
             //Boolean resp_cmp = ITcpIpControl.sendGoogleMsg(bcfApp, eqpt.TcpIpAgentName, wrapper, true);
 
             LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
@@ -3028,7 +3257,7 @@ namespace com.mirle.ibg3k0.sc.Service
               VehicleID: eqpt.VEHICLE_ID,
               CarrierID: eqpt.CST_ID);
             Boolean resp_cmp = eqpt.sendMessage(wrapper, true);
-            SCUtility.RecodeReportInfo(eqpt.VEHICLE_ID, seq_num, send_str, resp_cmp.ToString());
+            SCUtility.RecodeReportInfo(eqpt.VEHICLE_ID, seq_num, send_str, resp_cmp.ToString(), t);
             return resp_cmp;
         }
         #endregion Transfer Report
@@ -3134,7 +3363,7 @@ namespace com.mirle.ibg3k0.sc.Service
         #endregion Status Report
         #region Command Complete Report
         [ClassAOPAspect]
-        public void CommandCompleteReport(string tcpipAgentName, BCFApplication bcfApp, AVEHICLE vh, ID_132_TRANS_COMPLETE_REPORT recive_str, int seq_num)
+        public override void CommandCompleteReport(string tcpipAgentName, BCFApplication bcfApp, AVEHICLE vh, ID_132_TRANS_COMPLETE_REPORT recive_str, int seq_num)
         {
             if (scApp.getEQObjCacheManager().getLine().ServerPreStop)
                 return;
@@ -3230,6 +3459,7 @@ namespace com.mirle.ibg3k0.sc.Service
             }
 
             //tryReleaseReservedControl(vh_id, cur_sec_id);
+            string start_adr = vh.startAdr;
             scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(vh.VEHICLE_ID);
             using (TransactionScope tx = SCUtility.getTransactionScope())
             {
@@ -3239,27 +3469,6 @@ namespace com.mirle.ibg3k0.sc.Service
                     isSuccess &= scApp.VehicleBLL.doTransferCommandFinish(vh_id, cmd_id, completeStatus, travel_dis);
                     //isSuccess &= scApp.VIDBLL.initialVIDCommandInfo(vh.VEHICLE_ID);
                     isSuccess &= scApp.VIDBLL.initialVIDCommandInfo(vh_id);
-                    if(isSuccess && completeStatus == CompleteStatus.CmpStatusInterlockError)
-                    {
-                        string toAdr = string.Empty;
-                        ASECTION sec = scApp.SectionBLL.cache.GetSection(vh.CUR_SEC_ID);
-                        if (sec != null)
-                        {
-                            if(SCUtility.isMatche( vh.CUR_ADR_ID, sec.FROM_ADR_ID))
-                            {
-                                toAdr = sec.TO_ADR_ID;
-                            }
-                            else
-                            {
-                                toAdr = sec.FROM_ADR_ID;
-                            }
-                            scApp.CMDBLL.doCreatTransferCommand(vh_id, string.Empty, string.Empty,
-                                E_CMD_TYPE.Move,
-                                string.Empty,
-                                toAdr, 0, 0);
-                        }
-                    }
-
 
                     if (isSuccess)
                     {
@@ -3345,7 +3554,7 @@ namespace com.mirle.ibg3k0.sc.Service
             if (DebugParameter.IsDebugMode && DebugParameter.IsCycleRun)
             {
                 SpinWait.SpinUntil(() => false, DebugParameter.CycleRunIntervalTime);
-                TestCycleRun(vh, cmd_id);
+                TestCycleRun(vh, cmd_id, start_adr);
             }
             vh.onCommandComplete(completeStatus);
 
@@ -3524,7 +3733,7 @@ namespace com.mirle.ibg3k0.sc.Service
         }
 
 
-        private void TestCycleRun(AVEHICLE vh, string cmd_id)
+        private void TestCycleRun(AVEHICLE vh, string cmd_id, string start_adr)
         {
             ACMD_OHTC cmd = scApp.CMDBLL.GetCMD_OHTCByID(cmd_id);
             if (cmd == null) return;
@@ -3545,7 +3754,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     scApp.MapBLL.getAddressID(to_port_id, out to_adr);
                     break;
                 case E_CMD_TYPE.Move:
-                    to_adr = vh.startAdr.Trim();
+                    to_adr = start_adr.Trim();
                     break;
             }
             isSuccess = scApp.CMDBLL.doCreatTransferCommand_New(cmd.VH_ID, out cmd_obj,
