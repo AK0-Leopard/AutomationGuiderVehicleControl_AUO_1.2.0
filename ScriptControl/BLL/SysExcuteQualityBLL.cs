@@ -270,7 +270,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         public bool updateSysExecQity_CmdFinish(string mcs_cmd_id, E_CMD_STATUS cmdFinishStatus, CompleteStatus completeStatus,int total_cmd_dis, out ASYSEXCUTEQUALITY quality)
         {
-            bool isSuccess = true;
+            bool isSuccess = true; 
             //DBConnection_EF con = DBConnection_EF.GetContext();
             //using (DBConnection_EF con = new DBConnection_EF())
             quality = sysExeQualityDAO.getByID(scApp.getRedisCacheManager(), mcs_cmd_id);
