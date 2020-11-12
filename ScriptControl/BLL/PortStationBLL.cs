@@ -141,6 +141,14 @@ namespace com.mirle.ibg3k0.sc.BLL
             {
                 return CacheManager.getALLPortStation();
             }
+            public List<APORTSTATION> getWTOPortStation()
+            {
+                var all_port = CacheManager.getALLPortStation();
+
+                return all_port.Where(port => port != null &&
+                                              port.PORT_ID != null &&
+                                              port.PORT_ID.Contains("WTO")).ToList();
+            }
             public APORTSTATION getPortStation(string port_id)
             {
                 APORTSTATION portTemp = CacheManager.getPortStation(port_id);

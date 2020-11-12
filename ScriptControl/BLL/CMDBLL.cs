@@ -2867,7 +2867,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
         #endregion HCMD_OHTC
 
-    
+
         public void MoveACMD_MCSToHCMD_MCS(string mcsCmdID)
         {
             try

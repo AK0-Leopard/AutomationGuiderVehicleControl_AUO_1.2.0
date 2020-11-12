@@ -2206,6 +2206,13 @@ namespace com.mirle.ibg3k0.sc.BLL
                        Where(vh => segIDs.Contains(SCUtility.Trim(vh.CUR_SEC_ID, true))).
                        ToList();
             }
+            public List<AVEHICLE> loadVhByAddressIDs(List<string> adrIDs)
+            {
+                var vhs = eqObjCacheManager.getAllVehicle();
+                return vhs.
+                       Where(vh => adrIDs.Contains(SCUtility.Trim(vh.CUR_ADR_ID, true))).
+                       ToList();
+            }
 
             public UInt16 getVhCurrentModeInAutoRemoteCount()
             {

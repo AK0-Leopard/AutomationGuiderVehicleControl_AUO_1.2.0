@@ -275,6 +275,42 @@ namespace com.mirle.ibg3k0.sc.Service
                    VehicleID: vh.VEHICLE_ID);
             }
             scApp.CMDBLL.removeAlreadyPassedSection(vh.VEHICLE_ID, e.LeaveSection);
+
+            Task.Run(() => tryDriveAwayInWTOIdleVh(vh));
+
+        }
+        private void tryDriveAwayInWTOIdleVh(AVEHICLE movingVh)
+        {
+            try
+            {
+                //1.確認該vh的to adr是否是要到wto
+                //2.確認是否有車子是在wto
+                //3.有的話，嘗試將他趕走
+                string moving_vh_to_adr_id = SCUtility.Trim(movingVh.ToAdr, true);
+                var wto_ports = scApp.PortStationBLL.OperateCatch.getWTOPortStation();
+                var wto_adrs = wto_ports.Select(port => port.ADR_ID).ToList();
+                bool vh_is_to_wto = wto_adrs.Contains(moving_vh_to_adr_id);
+
+                var check_has_vh_is_at_wto_result = checkHasVhAtWTO(wto_adrs);
+                if (vh_is_to_wto && check_has_vh_is_at_wto_result.has)
+                {
+                    var at_wto_vhs = check_has_vh_is_at_wto_result.vhs;
+                    foreach (var at_wto_vh in at_wto_vhs)
+                    {
+                        if (at_wto_vh == movingVh) continue;
+                        tryNotifyVhAvoid_New(movingVh.VEHICLE_ID, at_wto_vh.VEHICLE_ID);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+            }
+        }
+        private (bool has, List<AVEHICLE> vhs) checkHasVhAtWTO(List<string> wtoAdrs)
+        {
+            var vhs = scApp.VehicleBLL.cache.loadVhByAddressIDs(wtoAdrs);
+            return (vhs != null && vhs.Count > 0, vhs);
         }
 
         private void Vh_SegementChange(object sender, SegmentChangeEventArgs e)

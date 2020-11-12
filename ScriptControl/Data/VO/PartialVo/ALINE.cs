@@ -57,6 +57,7 @@ namespace com.mirle.ibg3k0.sc
             LongTimeNoCommuncation?.Invoke(this, EventArgs.Empty);
         }
 
+        public List<ACMD_MCS> ExcutingMCSCmd = null;
 
         public TSCStateMachine TSC_state_machine;
         private AlarmHisList alarmHisList = new AlarmHisList();
@@ -624,7 +625,7 @@ namespace com.mirle.ibg3k0.sc
                             tx.Complete();
                         }
                     }
-                    
+
                     //reportBLL.ReportTSCAutoCompleted();
                     //reportBLL.ReportTSAvailChanged();
                     return true;
@@ -681,7 +682,7 @@ namespace com.mirle.ibg3k0.sc
                             reportBLL.insertMCSReport(reportqueues);
                             reportBLL.newSendMCSMessage(reportqueues);
                             tx.Complete();
-                        } 
+                        }
                     }
 
                     return true;
