@@ -885,7 +885,22 @@ namespace com.mirle.ibg3k0.sc.Common
                 reply_result);//144          
         }
 
-
+        public static void RecodeReportInfo(string vh_id, int seq_num, ID_36_TRANS_EVENT_RESPONSE send_str, string reply_result, Google.Protobuf.Reflection.TypeRegistry t)
+        {
+            AVEHICLE vh_DO = SCApplication.getInstance().getEQObjCacheManager().getVehicletByVHID(vh_id);
+            string fun_name = RenameFunName(send_str);
+            Google.Protobuf.JsonFormatter newjsonFormatter = new JsonFormatter(new JsonFormatter.Settings(true, t).WithFormatDefaultValues(true));
+            RecodeReportInfo(MSG_ROLE_OHXC, MSG_ROLE_VH,
+                fun_name, seq_num, vh_id, vh_DO.OHTC_CMD, string.Empty,
+                vh_DO.MCS_CMD, //S2F49
+                vh_DO.CUR_ADR_ID, vh_DO.CUR_SEC_ID, string.Empty, (uint)vh_DO.ACC_SEC_DIST, string.Empty, string.Empty, //134
+                (int)send_str.IsBlockPass, 0,//134 reply
+                0,
+                vh_DO.ACT_STATUS.ToString(),
+                newjsonFormatter.Format(send_str),
+                //send_str.ToString(),
+                reply_result);//144          
+        }
         public static void RecodeReportInfo(string vh_id, int seq_num, ID_143_STATUS_RESPONSE recive_str, string reply_result)
         {
             AVEHICLE vh_DO = SCApplication.getInstance().getEQObjCacheManager().getVehicletByVHID(vh_id);

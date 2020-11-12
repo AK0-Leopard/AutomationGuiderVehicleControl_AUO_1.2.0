@@ -2862,25 +2862,37 @@ namespace com.mirle.ibg3k0.sc.Service
                 IsBlockPass = canBlockPass ? PassType.Pass : PassType.Block,
                 ReplyCode = 0,
                 RenameCarrierID = renameCarrierID,
-                ReplyActiveType = cancelType
+                ReplyActiveType = cancelType,
+                ExtensionMessage =null
             };
             if (reserveInfos != null)
             {
                 send_str.ReserveInfos.AddRange(reserveInfos);
             }
+            //if (extensionMessage == null)
+            //{
+            //    extensionMessage = new com.mirle.ibg3k0.sc.ProtocolFormat.NorthInnolux.Agvmessage.ID_36_TRANS_EVENT_RESPONSE_EXTENSION();
+            //}
+
+            send_str.ExtensionMessage = Google.Protobuf.WellKnownTypes.Any.Pack(new com.mirle.ibg3k0.sc.ProtocolFormat.NorthInnolux.Agvmessage.ID_36_TRANS_EVENT_RESPONSE_EXTENSION());
+
             WrapperMessage wrapper = new WrapperMessage
             {
                 SeqNum = seq_num,
                 ImpTransEventResp = send_str
             };
+
+            Google.Protobuf.Reflection.TypeRegistry t = Google.Protobuf.Reflection.TypeRegistry.FromMessages(ProtocolFormat.NorthInnolux.Agvmessage.ID_36_TRANS_EVENT_RESPONSE_EXTENSION.Descriptor);
             //Boolean resp_cmp = ITcpIpControl.sendGoogleMsg(bcfApp, eqpt.TcpIpAgentName, wrapper, true);
+
 
             LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
               seq_num: seq_num, Data: send_str,
               VehicleID: eqpt.VEHICLE_ID,
               CarrierID: eqpt.CST_ID);
             Boolean resp_cmp = eqpt.sendMessage(wrapper, true);
-            SCUtility.RecodeReportInfo(eqpt.VEHICLE_ID, seq_num, send_str, resp_cmp.ToString());
+            SCUtility.RecodeReportInfo(eqpt.VEHICLE_ID, seq_num, send_str, resp_cmp.ToString(), t);
+            //SCUtility.RecodeReportInfo(eqpt.VEHICLE_ID, seq_num, send_str, resp_cmp.ToString());
             return resp_cmp;
         }
         #endregion Transfer Report
@@ -3069,7 +3081,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 //scApp.ReportBLL.newSendMCSMessage(reportqueues);
             }
-
+            string start_adr = vh.startAdr;
             //tryReleaseReservedControl(vh_id, cur_sec_id);
             scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(vh.VEHICLE_ID);
             using (TransactionScope tx = SCUtility.getTransactionScope())
@@ -3150,7 +3162,7 @@ namespace com.mirle.ibg3k0.sc.Service
             if (DebugParameter.IsDebugMode && DebugParameter.IsCycleRun)
             {
                 SpinWait.SpinUntil(() => false, DebugParameter.CycleRunIntervalTime);
-                TestCycleRun(vh, cmd_id);
+                TestCycleRun(vh, cmd_id, start_adr);
             }
             vh.onCommandComplete(completeStatus);
 
@@ -3329,8 +3341,9 @@ namespace com.mirle.ibg3k0.sc.Service
         }
 
 
-        private void TestCycleRun(AVEHICLE vh, string cmd_id)
+        private void TestCycleRun(AVEHICLE vh, string cmd_id,string start_adr)
         {
+            //HCMD_OHTC cmd = scApp.CMDBLL.getHCmd_OHTCByCMDID(cmd_id);
             ACMD_OHTC cmd = scApp.CMDBLL.GetCMD_OHTCByID(cmd_id);
             if (cmd == null) return;
             if (!(cmd.CMD_TPYE == E_CMD_TYPE.LoadUnload || cmd.CMD_TPYE == E_CMD_TYPE.Move)) return;
@@ -3350,7 +3363,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     scApp.MapBLL.getAddressID(to_port_id, out to_adr);
                     break;
                 case E_CMD_TYPE.Move:
-                    to_adr = vh.startAdr.Trim();
+                    to_adr = start_adr.Trim();
                     break;
             }
             isSuccess = scApp.CMDBLL.doCreatTransferCommand_New(cmd.VH_ID, out cmd_obj,

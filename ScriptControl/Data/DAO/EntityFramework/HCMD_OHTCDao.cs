@@ -25,6 +25,14 @@ namespace com.mirle.ibg3k0.sc.Data.DAO.EntityFramework
                         select cmd;
             return query.ToList();
         }
+
+        public HCMD_OHTC geCmdByCMDID(DBConnection_EF con, string cmd_id)
+        {
+            var query = from cmd in con.HCMD_OHTC
+                        where cmd.CMD_ID.Trim() == cmd_id.Trim() 
+                        select cmd;
+            return query.FirstOrDefault();
+        }
     }
 
 }

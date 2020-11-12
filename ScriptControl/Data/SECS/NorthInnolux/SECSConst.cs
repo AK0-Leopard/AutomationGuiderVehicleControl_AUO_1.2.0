@@ -234,7 +234,9 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.NorthInnolux
         public const string CMD_Result_BCRError = "4";
         public const string CMD_Result_CarrierIDUnmach = "5";
         public const string CMD_Result_InterlockError = "8";
-
+        public const string CMD_From_MCS = "65";
+        public const string CMD_From_Operator = "66";
+        public const string CMD_Local_Error = "67";
 
         public static string convert2MCS(AVEHICLE.VehicleState vehicleState, ProtocolFormat.OHTMessage.CompleteStatus tran_cmp_status)
         {
@@ -260,9 +262,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.NorthInnolux
                 case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusForceFinishByOp:
                     return CMD_Result_Unsuccessful;
                 case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusIdreadFailed:
-                    return CMD_Result_BCRError;
                 case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusIdmisMatch:
-                    return CMD_Result_CarrierIDUnmach;
                 case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusInterlockError:
                 case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusCancel:
                 case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusAbort: 
