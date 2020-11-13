@@ -429,6 +429,7 @@ namespace com.mirle.ibg3k0.sc.App
             public const string VERSION_NAME_NORTH_INNOLUX = "NORTH_INNOLUX";
             public const string VERSION_NAME_NORTH_INNOLUX_TEST_SITE = "NORTH_INNOLUX_Test_Site";
             public const string VERSION_NAME_SOUTH_INNOLUX = "SOUTH_INNOLUX";
+            public const string VERSION_NAME_UMTC_TEST_SITE = "UMTC_Test_Site";
         }
 
         #endregion current work version

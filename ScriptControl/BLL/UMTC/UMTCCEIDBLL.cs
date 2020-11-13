@@ -10,12 +10,12 @@ using System.Linq;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
-    public class CEIDBLL
+    public class UMTCCEIDBLL : CEIDBLL
     {
         protected CEIDDao ceidDAO = null;
         protected RPTIDDao rptidDAO = null;
         protected SCApplication scApp = null;
-        public CEIDBLL()
+        public UMTCCEIDBLL()
         {
 
         }
@@ -27,12 +27,19 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
 
 
-        public virtual bool buildCEIDAndReportID(Dictionary<string, string[]> reportItem)
+        public override bool buildCEIDAndReportID(Dictionary<string, string[]> reportItem)
         {
             using (DBConnection_EF con = DBConnection_EF.GetUContext())
             {
                 foreach (var item in reportItem)
                 {
+                    //if CEID is exists, remove them first
+                    List<ACEID> existCEIDs = ceidDAO.getAllRPTIDByCEID(con, item.Key);
+                    if (existCEIDs.Count > 0)
+                    {
+                        ceidDAO.RemoveByBatch(con, existCEIDs);
+                    }
+
                     int order = 1;
                     foreach (var report_id in item.Value)
                     {
@@ -111,12 +118,19 @@ namespace com.mirle.ibg3k0.sc.BLL
             return dicRptidAndVid;
         }
 
-        public virtual bool buildReportIDAndVid(Dictionary<string, string[]> reportItems)
+        public override bool buildReportIDAndVid(Dictionary<string, string[]> reportItems)
         {
             using (DBConnection_EF con = DBConnection_EF.GetUContext())
             {
                 foreach (var item in reportItems)
                 {
+                    //if RPTID is exists, remove them first
+                    List<ARPTID> existRptIDs = rptidDAO.getAllVIDByRPTID(con, item.Key);
+                    if (existRptIDs.Count > 0)
+                    {
+                        rptidDAO.RemoveByBatch(con, existRptIDs);
+                    }
+
                     int order = 1;
                     foreach (var rpt_item in item.Value)
                     {

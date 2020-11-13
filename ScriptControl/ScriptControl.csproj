@@ -495,6 +495,8 @@
     <Compile Include="BLL\NorthInnolux\NorthInnoLuxVehicleBLL.cs" />
     <Compile Include="BLL\NorthInnolux\NorthInnoLuxVIDBLL.cs" />
     <Compile Include="BLL\ReserveBLL.cs" />
+    <Compile Include="BLL\UMTC\UMTCCEIDBLL.cs" />
+    <Compile Include="BLL\UMTC\UMTCVIDBLL.cs" />
     <Compile Include="BLL\UnitBLL.cs" />
     <Compile Include="BLL\FireDoorBLL.cs" />
     <Compile Include="BLL\TrafficControlBLL.cs" />
@@ -518,6 +520,50 @@
     <Compile Include="Data\PLC_Functions\FireReport.cs" />
     <Compile Include="Data\PLC_Functions\PortStationReport.cs" />
     <Compile Include="Data\PLC_Functions\EQStatusReport.cs" />
+    <Compile Include="Data\SECS\UMTC\S10F3.cs" />
+    <Compile Include="Data\SECS\UMTC\S10F4.cs" />
+    <Compile Include="Data\SECS\UMTC\S1F0.cs" />
+    <Compile Include="Data\SECS\UMTC\S1F11.cs" />
+    <Compile Include="Data\SECS\UMTC\S1F12.cs" />
+    <Compile Include="Data\SECS\UMTC\S1F13.cs" />
+    <Compile Include="Data\SECS\UMTC\S1F14.cs" />
+    <Compile Include="Data\SECS\UMTC\S1F15.cs" />
+    <Compile Include="Data\SECS\UMTC\S1F16.cs" />
+    <Compile Include="Data\SECS\UMTC\S1F17.cs" />
+    <Compile Include="Data\SECS\UMTC\S1F18.cs" />
+    <Compile Include="Data\SECS\UMTC\S1F3.cs" />
+    <Compile Include="Data\SECS\UMTC\S1F4.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F13.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F14.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F15.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F16.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F17.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F18.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F29.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F30.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F31.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F32.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F33.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F34.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F35.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F36.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F37.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F41.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F42.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F49.cs" />
+    <Compile Include="Data\SECS\UMTC\S2F50.cs" />
+    <Compile Include="Data\SECS\UMTC\S5F1.cs" />
+    <Compile Include="Data\SECS\UMTC\S5F2.cs" />
+    <Compile Include="Data\SECS\UMTC\S5F3.cs" />
+    <Compile Include="Data\SECS\UMTC\S5F5.cs" />
+    <Compile Include="Data\SECS\UMTC\S5F6.cs" />
+    <Compile Include="Data\SECS\UMTC\S6F11.cs" />
+    <Compile Include="Data\SECS\UMTC\S6F12.cs" />
+    <Compile Include="Data\SECS\UMTC\S6F15.cs" />
+    <Compile Include="Data\SECS\UMTC\S6F16.cs" />
+    <Compile Include="Data\SECS\UMTC\S6F19.cs" />
+    <Compile Include="Data\SECS\UMTC\S6F20.cs" />
+    <Compile Include="Data\SECS\UMTC\SECSConst.cs" />
     <Compile Include="Data\SECS\NorthInnolux\S64F1.cs" />
     <Compile Include="Data\SECS\NorthInnolux\S64F2.cs" />
     <Compile Include="Data\SECS\S10F4.cs" />
@@ -627,6 +673,7 @@
     <Compile Include="Data\SECS\AGVC\SECSConst.cs" />
     <Compile Include="Data\TimerAction\CouplerCheckTimerAction.cs" />
     <Compile Include="Data\TimerAction\RandomGeneratesCommandTimerActionTiming.cs" />
+    <Compile Include="Data\ValueDefMapAction\UMTCMCSDefaultMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\SouthInnoluxMCSDefaultMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\NorthInnoluxMCSDefaultMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\FireDoorDefaultValueDefMapAction.cs" />
@@ -1224,6 +1271,7 @@
   <ItemGroup>
     <Folder Include="Data\TcpIp\" />
     <Folder Include="docs\" />
+    <Folder Include="Service\UMTC\" />
     <Folder Include="ValueHandler\Vo\" />
   </ItemGroup>
   <ItemGroup>

@@ -1152,6 +1152,44 @@ namespace com.mirle.ibg3k0.sc.App
                 UnitBLL = new SouthInnoLuxUnitBLL();
                 ReserveBLL = new SouthInnoLuxReserveBLL();
             }
+            else if (BC_ID == "UMTC" || BC_ID == "UMTC_Test_Site")
+            {
+                bcSystemBLL = new BCSystemBLL();
+                lineBLL = new LineBLL();
+                alarmBLL = new AlarmBLL();
+
+                sequenceBLL = new SequenceBLL();
+                eventBLL = new EventBLL();
+                reportBLL = new ReportBLL();
+                userBLL = new UserBLL();
+
+                mapBLL = new MapBLL();
+                AddressesBLL = new AddressesBLL();
+                SectionBLL = new SectionBLL();
+                SegmentBLL = new SegmentBLL();
+                cmdBLL = new CMDBLL();
+                parkBLL = new ParkBLL();
+                cycleBLL = new CycleRunBLL();
+                ceidBLL = new UMTCCEIDBLL();
+                vidBLL = new UMTCVIDBLL();
+                vehicleBLL = new VehicleBLL();
+                networkqualityBLL = new NetworkQualityBLL();
+                sysexcutequalityBLL = new SysExcuteQualityBLL();
+                blockcontrolBLL = new BlockControlBLL();
+
+                datasynBLL = new DataSyncBLL();
+
+                hidBLL = new HIDBLL();
+                guideBLL = new GuideBLL();
+
+                CheckSystemEventHandler = new CheckSystemEventHandler();
+
+                PortBLL = new PortBLL();
+                PortStationBLL = new PortStationBLL();
+                TrafficControlBLL = new TrafficControlBLL();
+                UnitBLL = new UnitBLL();
+                ReserveBLL = new ReserveBLL();
+            }
             else
             {
                 bcSystemBLL = new BCSystemBLL();
@@ -1232,6 +1270,16 @@ namespace com.mirle.ibg3k0.sc.App
                 connectionInfoService = new SouthInnoLuxConnectionInfoService();
                 userControlService = new SouthInnoLuxUserControlService();
                 transferService = new SouthInnoLuxTransferService();
+            }
+            else if (BC_ID == "UMTC" || BC_ID == "UMTC_Test_Site")
+            {
+                vehicleService = new VehicleService();
+                lineService = new LineService();
+                portStationService = new PortStationService();
+                failOverService = new FailOverService();
+                connectionInfoService = new ConnectionInfoService();
+                userControlService = new UserControlService();
+                transferService = new TransferService();
             }
             else
             {
