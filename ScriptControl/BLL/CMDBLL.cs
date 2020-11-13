@@ -1197,6 +1197,11 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
         }
 
+        public virtual bool createWaitingRetryOHTCCmd(string vhID, string mcs_cmd_ID)
+        {
+            return false;
+        }
+
         private void checkOnlyOneExcuteWTOCommand(ref List<ACMD_MCS> InQueueACMD_MCSs)
         {
             if (InQueueACMD_MCSs != null && InQueueACMD_MCSs.Count > 0)

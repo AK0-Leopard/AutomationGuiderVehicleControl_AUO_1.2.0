@@ -1159,6 +1159,48 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
         }
 
+        public override bool createWaitingRetryOHTCCmd(string vhID, string mcs_cmd_ID)
+        {
+            AVEHICLE vehicle = scApp.VehicleBLL.cache.getVehicle(vhID);
+            ACMD_MCS waittingExcuteMcsCmd = getCMD_MCSByID(mcs_cmd_ID);
+            if (vehicle.MODE_STATUS != VHModeStatus.AutoRemote || vehicle.BatteryLevel == BatteryLevel.Low)
+            {
+                //LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(CMDBLL), Device: string.Empty,
+                //              Data: $"MCS command:{nearest_cmd_mcs.CMD_ID} specify of vehicle:{hostsource} not ready," +
+                //                    $"mode status:{bestSuitableVh.MODE_STATUS},battery level:{bestSuitableVh.BatteryLevel}",
+                //              XID: nearest_cmd_mcs.CMD_ID);
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(CMDBLL), Device: string.Empty,
+                              Data: $"MCS command:{waittingExcuteMcsCmd.CMD_ID} specify of vehicle:{vhID} not ready," +
+                                    $"mode status:{vehicle.MODE_STATUS},battery level:{vehicle.BatteryLevel}",
+                              XID: waittingExcuteMcsCmd.CMD_ID);
+                return false;
+            }
+
+            string hostsource = waittingExcuteMcsCmd.HOSTSOURCE;
+            string hostdest = waittingExcuteMcsCmd.HOSTDESTINATION;
+            var source_port = scApp.PortStationBLL.OperateCatch.getPortStation(hostsource);
+            var dest_port = scApp.PortStationBLL.OperateCatch.getPortStation(hostdest);
+            string from_adr = source_port == null ? string.Empty : source_port.ADR_ID;
+            string to_adr = dest_port == null ? string.Empty : dest_port.ADR_ID;
+
+            OHTCCommandCheckResult check_result = getOrSetCallContext<OHTCCommandCheckResult>(CALL_CONTEXT_KEY_WORD_OHTC_CMD_CHECK_RESULT);
+            ACMD_OHTC cmd_obj = null;
+            string vh_current_adr = vehicle.CUR_ADR_ID;
+            bool isCstOnVh = vehicle.HAS_CST != 0;
+
+            check_result.IsSuccess = creatCommand_OHTC
+                         (vhID, mcs_cmd_ID, waittingExcuteMcsCmd.CARRIER_ID, isCstOnVh ? E_CMD_TYPE.Unload : E_CMD_TYPE.LoadUnload,
+                         from_adr, to_adr, 0, 0, SCAppConstants.GenOHxCCommandType.Auto, out cmd_obj);
+
+            if (!check_result.IsSuccess)
+            {
+                check_result.Result.AppendLine($" vh:{vhID} creat command to db unsuccess.");
+            }
+            setCallContext(CALL_CONTEXT_KEY_WORD_OHTC_CMD_CHECK_RESULT, check_result);
+
+            return check_result.IsSuccess;
+        }
+
         private (AVEHICLE nearestVh, ACMD_MCS nearestCmdMcs) FindNearestVhAndCommand(List<AVEHICLE> vhs, List<ACMD_MCS> ACMD_MCSs)
         {
             AVEHICLE nearest_vh = null;

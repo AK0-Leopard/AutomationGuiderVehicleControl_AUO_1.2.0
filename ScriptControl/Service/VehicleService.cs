@@ -64,6 +64,7 @@ namespace com.mirle.ibg3k0.sc.Service
         protected SCApplication scApp = null;
 
         public event EventHandler<DeadLockEventArgs> DeadLockProcessFail;
+        public Dictionary<string, string> WaitingRetryMCSCMDList { get; set; } = new Dictionary<string, string>();
 
         public VehicleService()
         {

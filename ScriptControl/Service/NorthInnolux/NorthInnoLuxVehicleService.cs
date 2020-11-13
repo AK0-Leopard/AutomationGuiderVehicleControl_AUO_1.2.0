@@ -3414,7 +3414,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             case CompleteStatus.CmpStatusLoadunload:
                             case CompleteStatus.CmpStatusIdmisMatch:
                             case CompleteStatus.CmpStatusIdreadFailed:
-                            case CompleteStatus.CmpStatusVehicleAbort:
+                            //case CompleteStatus.CmpStatusVehicleAbort:    //20201030 removed
                                 isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
                                 break;
                             case CompleteStatus.CmpStatusInterlockError:
@@ -3438,6 +3438,10 @@ namespace com.mirle.ibg3k0.sc.Service
                             case CompleteStatus.CmpStatusSystemIn:
                             case CompleteStatus.CmpStatusTechingMove:
                                 //Nothing...
+                                break;
+                            case CompleteStatus.CmpStatusVehicleAbort: //20201030 added
+                                //just add new ohtc command...
+                                WaitingRetryMCSCMDList.Add(vh.VEHICLE_ID, finish_mcs_cmd);
                                 break;
                             default:
                                 logger.Info($"Proc func:CommandCompleteReport, but completeStatus:{completeStatus} notimplemented ");

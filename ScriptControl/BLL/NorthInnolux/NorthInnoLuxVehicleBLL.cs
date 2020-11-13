@@ -1481,7 +1481,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             //}
         }
         //public void doTransferCommandFinish(Equipment eqpt)
-        public bool doTransferCommandFinish(string vh_id, string cmd_id, CompleteStatus completeStatus, int total_cmd_dis)
+        public override bool doTransferCommandFinish(string vh_id, string cmd_id, CompleteStatus completeStatus, int total_cmd_dis)
         {
             bool isSuccess = true;
             //1.
@@ -1510,22 +1510,33 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                 if (!SCUtility.isEmpty(mcs_cmd_id))
                 {
-                    E_TRAN_STATUS mcs_cmd_tran_status = CompleteStatusToETransferStatus(completeStatus);
-                    //isSuccess &= scApp.SysExcuteQualityBLL.updateSysExecQity_CmdFinish(vh.MCS_CMD);
-                    //isSuccess &= scApp.CMDBLL.updateCMD_MCS_TranStatus2Complete(vh.MCS_CMD);
-                    ASYSEXCUTEQUALITY quality = null;
-                    scApp.SysExcuteQualityBLL.updateSysExecQity_CmdFinish(mcs_cmd_id, ohtc_cmd_status, completeStatus, total_cmd_dis, out quality);
-                    //scApp.CMDBLL.updateCMD_MCS_TranStatus2Complete(mcs_cmd_id, E_TRAN_STATUS.Complete);
-                    scApp.CMDBLL.updateCMD_MCS_TranStatus2Complete(mcs_cmd_id, mcs_cmd_tran_status);
-                    if (quality != null)
+                    if (completeStatus == CompleteStatus.CmpStatusVehicleAbort) //20201030 added
                     {
-                        SCUtility.TrimAllParameter(quality);
-                        LogManager.GetLogger("SysExcuteQuality").Info(quality.ToString());
+                        //do nothing...
                     }
+                    else
+                    {
+                        E_TRAN_STATUS mcs_cmd_tran_status = CompleteStatusToETransferStatus(completeStatus);
+                        //isSuccess &= scApp.SysExcuteQualityBLL.updateSysExecQity_CmdFinish(vh.MCS_CMD);
+                        //isSuccess &= scApp.CMDBLL.updateCMD_MCS_TranStatus2Complete(vh.MCS_CMD);
+                        ASYSEXCUTEQUALITY quality = null;
+                        scApp.SysExcuteQualityBLL.updateSysExecQity_CmdFinish(mcs_cmd_id, ohtc_cmd_status, completeStatus, total_cmd_dis, out quality);
+                        //scApp.CMDBLL.updateCMD_MCS_TranStatus2Complete(mcs_cmd_id, E_TRAN_STATUS.Complete);
+                        scApp.CMDBLL.updateCMD_MCS_TranStatus2Complete(mcs_cmd_id, mcs_cmd_tran_status);
+                        if (quality != null)
+                        {
+                            SCUtility.TrimAllParameter(quality);
+                            LogManager.GetLogger("SysExcuteQuality").Info(quality.ToString());
+                        }
+                        {
+                            SCUtility.TrimAllParameter(quality);
+                            LogManager.GetLogger("SysExcuteQuality").Info(quality.ToString());
+                        }
+                    }
+                    //isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByVhID(vh_id, E_CMD_STATUS.NormalEnd);
+                    //updateVehicleExcuteCMD(vh_id, string.Empty, string.Empty);
+                    vh.NotifyVhExcuteCMDStatusChange();
                 }
-                //isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByVhID(vh_id, E_CMD_STATUS.NormalEnd);
-                //updateVehicleExcuteCMD(vh_id, string.Empty, string.Empty);
-                vh.NotifyVhExcuteCMDStatusChange();
             }
             catch (Exception ex)
             {
