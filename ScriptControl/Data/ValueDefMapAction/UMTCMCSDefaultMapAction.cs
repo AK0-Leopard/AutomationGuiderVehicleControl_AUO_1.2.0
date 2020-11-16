@@ -1348,12 +1348,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             return true;
         }
 
-        public override bool S6F11SendEquiptmentOffLine()
+        public override bool S6F11SendEquiptmentOffLine()   //TODO: no RPTID
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_64_EqpName.EQP_NAME = line.LINE_ID;
+                Vids.VID_06_ControlState.CONTROLSTATE = SCAppConstants.LineHostControlState.convert2MES(line.Host_Control_State);
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Equipment_OFF_LINE, Vids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 S6F11SendMessage(mcs_queue);
@@ -1365,12 +1365,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             return true;
         }
-        public override bool S6F11SendControlStateLocal()
+        public override bool S6F11SendControlStateLocal()   //TODO: no RPTID
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_64_EqpName.EQP_NAME = line.LINE_ID;
+                Vids.VID_06_ControlState.CONTROLSTATE = SCAppConstants.LineHostControlState.convert2MES(line.Host_Control_State);
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Control_Status_Local, Vids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 S6F11SendMessage(mcs_queue);
@@ -1382,12 +1382,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             return true;
         }
-        public override bool S6F11SendControlStateRemote()
+        public override bool S6F11SendControlStateRemote()  //TODO: no RPTID
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_64_EqpName.EQP_NAME = line.LINE_ID;
+                Vids.VID_06_ControlState.CONTROLSTATE = SCAppConstants.LineHostControlState.convert2MES(line.Host_Control_State);
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Control_Status_Remote, Vids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 S6F11SendMessage(mcs_queue);
@@ -1400,12 +1400,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             return true;
         }
 
-        public override bool S6F11SendTSCAutoInitiated()
+        public override bool S6F11SendTSCAutoInitiated()    //TODO: no RPTID
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_64_EqpName.EQP_NAME = line.LINE_ID;
+                Vids.VID_73_TSCState.TSC_STATE = ((int)line.SCStats).ToString();
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TSC_Auto_Initiated, Vids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 S6F11SendMessage(mcs_queue);
@@ -1418,12 +1418,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             return true;
         }
 
-        public override bool S6F11SendTSCPaused()
+        public override bool S6F11SendTSCPaused()   //TODO: no RPTID
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_64_EqpName.EQP_NAME = line.LINE_ID;
+                Vids.VID_73_TSCState.TSC_STATE = ((int)line.SCStats).ToString();
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TSC_Paused, Vids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 S6F11SendMessage(mcs_queue);
@@ -1436,12 +1436,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             return true;
         }
 
-        public override bool S6F11SendTSCAutoCompleted()
+        public override bool S6F11SendTSCAutoCompleted()    //TODO: no RPTID
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_64_EqpName.EQP_NAME = line.LINE_ID;
+                Vids.VID_73_TSCState.TSC_STATE = ((int)line.SCStats).ToString();
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TSC_Auto_Completed, Vids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 S6F11SendMessage(mcs_queue);
@@ -1454,12 +1454,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             return true;
         }
 
-        public override bool S6F11SendTSCPauseInitiated()
+        public override bool S6F11SendTSCPauseInitiated()   //TODO: no RPTID
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_64_EqpName.EQP_NAME = line.LINE_ID;
+                Vids.VID_73_TSCState.TSC_STATE = ((int)line.SCStats).ToString();
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TSC_Pause_Initiated, Vids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 S6F11SendMessage(mcs_queue);
@@ -1472,12 +1472,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             return true;
         }
 
-        public override bool S6F11SendTSCPauseCompleted()
+        public override bool S6F11SendTSCPauseCompleted()   //TODO: no RPTID
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_64_EqpName.EQP_NAME = line.LINE_ID;
+                Vids.VID_73_TSCState.TSC_STATE = ((int)line.SCStats).ToString();
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TSC_Pause_Completed, Vids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 S6F11SendMessage(mcs_queue);
@@ -1490,7 +1490,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             return true;
         }
 
-        public override bool S6F11SendAlarmCleared()
+        public override bool S6F11SendAlarmCleared()    //TODO: no RPTID
         {
             try
             {
@@ -1507,7 +1507,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             return true;
         }
-        public override bool S6F11SendAlarmCleared(string vhid)
+        public override bool S6F11SendAlarmCleared(string vhid) //TODO: no RPTID
         {
             try
             {
@@ -1524,7 +1524,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             return true;
         }
-        public override bool S6F11SendAlarmSet()
+        public override bool S6F11SendAlarmSet()    //TODO: no RPTID
         {
             try
             {
@@ -1542,7 +1542,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             return true;
         }
 
-        public override bool S6F11SendAlarmSet(string vhid)
+        public override bool S6F11SendAlarmSet(string vhid) //TODO: no RPTID
         {
             try
             {
@@ -1845,12 +1845,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 return false;
             }
         }
-        public override bool S6F11SendTSCPauseCompleted(List<AMCSREPORTQUEUE> reportQueues = null)
+        public override bool S6F11SendTSCPauseCompleted(List<AMCSREPORTQUEUE> reportQueues = null)  //TODO: no RPTID
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_64_EqpName.EQP_NAME = line.LINE_ID;
+                Vids.VID_73_TSCState.TSC_STATE = ((int)line.SCStats).ToString();
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TSC_Pause_Completed, Vids);
                 if (reportQueues == null)
                 {
@@ -1872,12 +1872,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             return false;
         }
-        public override bool S6F11SendTSCAutoCompleted(List<AMCSREPORTQUEUE> reportQueues = null)
+        public override bool S6F11SendTSCAutoCompleted(List<AMCSREPORTQUEUE> reportQueues = null)   //TODO: no RPTID
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_64_EqpName.EQP_NAME = line.LINE_ID;
+                Vids.VID_73_TSCState.TSC_STATE = ((int)line.SCStats).ToString();
 
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TSC_Auto_Completed, Vids);
                 if (reportQueues == null)
@@ -2446,11 +2446,21 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 {
                     string rpt_id = RPTIDs[i];
                     s6f11.INFO.ITEM[i] = new S6F11.RPTINFO.RPTITEM();
-                    List<ARPTID> AVIDs = SECSConst.DicRPTIDAndVID[rpt_id];
-                    List<string> VIDs = AVIDs.OrderBy(avid => avid.ORDER_NUM).Select(avid => avid.VID.Trim()).ToList();
+                    List<string> VIDs;
+                    if (rpt_id.Trim() != "0")
+                    {
+                        List<ARPTID> AVIDs = SECSConst.DicRPTIDAndVID[rpt_id];
+                        VIDs = AVIDs.OrderBy(avid => avid.ORDER_NUM).Select(avid => avid.VID.Trim()).ToList();
+                    }
+                    else
+                    {
+                        //TODO: need to hard code
+                        VIDs = GetVIDWithoutRPTID(ceid);
+                    }
+
                     s6f11.INFO.ITEM[i].RPTID = rpt_id;
-                    s6f11.INFO.ITEM[i].VIDITEM = new SXFY[AVIDs.Count];
-                    for (int j = 0; j < AVIDs.Count; j++)
+                    s6f11.INFO.ITEM[i].VIDITEM = new SXFY[VIDs.Count];
+                    for (int j = 0; j < VIDs.Count; j++)
                     {
                         string vid = VIDs[j];
                         SXFY vid_item = null;
@@ -2606,6 +2616,35 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 return null;
             }
         }
+
+        private List<string> GetVIDWithoutRPTID(string ceid)
+        {
+            List<string> VIDs = new List<string>();
+            switch (ceid)
+            {
+                case SECSConst.CEID_Equipment_OFF_LINE:
+                case SECSConst.CEID_Control_Status_Local:
+                case SECSConst.CEID_Control_Status_Remote:
+                    VIDs.Add(SECSConst.VID_Control_State);
+                    break;
+                case SECSConst.CEID_Alarm_Cleared:
+                case SECSConst.CEID_Alarm_Set:
+                    VIDs.Add(SECSConst.VID_Alarm_Set);
+                    break;
+                case SECSConst.CEID_TSC_Auto_Completed:
+                case SECSConst.CEID_TSC_Auto_Initiated:
+                case SECSConst.CEID_TSC_Pause_Completed:
+                case SECSConst.CEID_TSC_Paused:
+                case SECSConst.CEID_TSC_Pause_Initiated:
+                    VIDs.Add(SECSConst.VID_TCS_State);
+                    break;
+                default:
+                    break;
+            }
+
+            return VIDs;
+        }
+
         private AMCSREPORTQUEUE BuildMCSReport(S6F11 sxfy, string cmd_id, string vh_id, string port_id)
         {
             byte[] byteArray = SCUtility.ToByteArray(sxfy);
