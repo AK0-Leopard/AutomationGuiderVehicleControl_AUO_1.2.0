@@ -12,9 +12,9 @@ namespace com.mirle.ibg3k0.sc.BLL
 {
     public class UMTCCEIDBLL : CEIDBLL
     {
-        protected CEIDDao ceidDAO = null;
-        protected RPTIDDao rptidDAO = null;
-        protected SCApplication scApp = null;
+        //protected CEIDDao ceidDAO = null;
+        //protected RPTIDDao rptidDAO = null;
+        //protected SCApplication scApp = null;
         public UMTCCEIDBLL()
         {
 
@@ -31,20 +31,28 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             using (DBConnection_EF con = DBConnection_EF.GetUContext())
             {
-                foreach (var item in reportItem)
+                try
                 {
-                    //if CEID is exists, remove them first
-                    List<ACEID> existCEIDs = ceidDAO.getAllRPTIDByCEID(con, item.Key);
-                    if (existCEIDs.Count > 0)
+                    foreach (var item in reportItem)
                     {
-                        ceidDAO.RemoveByBatch(con, existCEIDs);
+                        //if CEID is exists, remove them first
+                        List<ACEID> existCEIDs = ceidDAO.getAllRPTIDByCEID(con, item.Key);
+                        if (existCEIDs.Count > 0)
+                        {
+                            ceidDAO.RemoveByBatch(con, existCEIDs);
+                        }
+
+                        int order = 1;
+                        foreach (var report_id in item.Value)
+                        {
+                            addCEID(con, item.Key, report_id, order++);
+                        }
                     }
 
-                    int order = 1;
-                    foreach (var report_id in item.Value)
-                    {
-                        addCEID(con, item.Key, report_id, order++);
-                    }
+                }
+                catch (Exception ex)
+                {
+                    return false;
                 }
             }
             return true;
@@ -122,20 +130,27 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             using (DBConnection_EF con = DBConnection_EF.GetUContext())
             {
-                foreach (var item in reportItems)
+                try
                 {
-                    //if RPTID is exists, remove them first
-                    List<ARPTID> existRptIDs = rptidDAO.getAllVIDByRPTID(con, item.Key);
-                    if (existRptIDs.Count > 0)
+                    foreach (var item in reportItems)
                     {
-                        rptidDAO.RemoveByBatch(con, existRptIDs);
-                    }
+                        //if RPTID is exists, remove them first
+                        List<ARPTID> existRptIDs = rptidDAO.getAllVIDByRPTID(con, item.Key);
+                        if (existRptIDs.Count > 0)
+                        {
+                            rptidDAO.RemoveByBatch(con, existRptIDs);
+                        }
 
-                    int order = 1;
-                    foreach (var rpt_item in item.Value)
-                    {
-                        addRpt(con, item.Key, rpt_item, order++);
+                        int order = 1;
+                        foreach (var rpt_item in item.Value)
+                        {
+                            addRpt(con, item.Key, rpt_item, order++);
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    return false;
                 }
             }
             return true;

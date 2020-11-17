@@ -329,12 +329,22 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 SCUtility.secsActionRecordMsg(scApp, true, s2f33);
                 if (!isProcess(s2f33)) { return; }
 
+                bool isSuccess = false;
+                if (s2f33.RPTITEMS != null && s2f33.RPTITEMS.Length > 0)
+                    isSuccess = scApp.CEIDBLL.buildReportIDAndVid(s2f33.ToDictionary());
+
                 S2F34 s2f34 = null;
                 s2f34 = new S2F34();
                 s2f34.SystemByte = s2f33.SystemByte;
                 s2f34.SECSAgentName = scApp.EAPSecsAgentName;
-                s2f34.DRACK = "0";
-
+                if (!isSuccess)
+                {
+                    s2f34.DRACK = "4";
+                } 
+                else
+                {
+                    s2f34.DRACK = "0";
+                }
 
                 TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s2f34);
                 SCUtility.secsActionRecordMsg(scApp, false, s2f34);
@@ -342,15 +352,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
                 if (rtnCode != TrxSECS.ReturnCode.Normal)
                 {
-                    logger.Warn("Reply EQPT S2F18 Error:{0}", rtnCode);
+                    logger.Warn("Reply EQPT S2F34 Error:{0}", rtnCode);
                 }
-
-                //scApp.CEIDBLL.DeleteRptInfoByBatch();
-
-                if (s2f33.RPTITEMS != null && s2f33.RPTITEMS.Length > 0)
-                    scApp.CEIDBLL.buildReportIDAndVid(s2f33.ToDictionary());
-
-
 
                 SECSConst.setDicRPTIDAndVID(scApp.CEIDBLL.loadDicRPTIDAndVID());
 
@@ -369,26 +372,31 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 if (!isProcess(s2f35)) { return; }
 
 
+                bool isSuccess = false;
+                if (s2f35.RPTITEMS != null && s2f35.RPTITEMS.Length > 0)
+                    isSuccess = scApp.CEIDBLL.buildCEIDAndReportID(s2f35.ToDictionary());
+
                 S2F36 s2f36 = null;
                 s2f36 = new S2F36();
                 s2f36.SystemByte = s2f35.SystemByte;
                 s2f36.SECSAgentName = scApp.EAPSecsAgentName;
-                s2f36.LRACK = "0";
+                if (!isSuccess)
+                {
+                    s2f36.LRACK = "6";
+                }
+                else
+                {
+                    s2f36.LRACK = "0";
+                }
 
                 TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s2f36);
                 SCUtility.secsActionRecordMsg(scApp, false, s2f36);
                 if (rtnCode != TrxSECS.ReturnCode.Normal)
                 {
-                    logger.Warn("Reply EQPT S2F18 Error:{0}", rtnCode);
+                    logger.Warn("Reply EQPT S2F36 Error:{0}", rtnCode);
                 }
 
-                //scApp.CEIDBLL.DeleteCEIDInfoByBatch();
-
-                if (s2f35.RPTITEMS != null && s2f35.RPTITEMS.Length > 0)
-                    scApp.CEIDBLL.buildCEIDAndReportID(s2f35.ToDictionary());
-
                 SECSConst.setDicCEIDAndRPTID(scApp.CEIDBLL.loadDicCEIDAndRPTID());
-
             }
             catch (Exception ex)
             {
@@ -2458,7 +2466,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                         VIDs = GetVIDWithoutRPTID(ceid);
                     }
 
-                    s6f11.INFO.ITEM[i].RPTID = rpt_id;
+                    s6f11.INFO.ITEM[i].RPTID = rpt_id.Trim() != "0" ? rpt_id : String.Empty;
                     s6f11.INFO.ITEM[i].VIDITEM = new SXFY[VIDs.Count];
                     for (int j = 0; j < VIDs.Count; j++)
                     {
