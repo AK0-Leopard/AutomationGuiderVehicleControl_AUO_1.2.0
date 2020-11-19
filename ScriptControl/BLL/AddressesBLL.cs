@@ -66,27 +66,49 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return CouplerAddresses;
             }
 
+            //public bool IsCouplerWork(CouplerAddress couplerAddress, UnitBLL unitBLL)
+            //{
+            //    if (SCApplication.getInstance().BC_ID == "NORTH_INNOLUX_Test_Site") return true;//暫時都return ok
+            //    AUNIT charger = unitBLL.OperateCatch.getUnit(couplerAddress.ChargerID);
+            //    if (charger != null)
+            //    {
+            //        switch (couplerAddress.CouplerNum)
+            //        {
+            //            case CouplerNum.NumberOne:
+            //                return charger.coupler1Status == SCAppConstants.CouplerStatus.Enable ||
+            //                       charger.coupler1Status == SCAppConstants.CouplerStatus.Charging;
+            //            case CouplerNum.NumberTwo:
+            //                //return charger.coupler1Status == SCAppConstants.CouplerStatus.Enable ||
+            //                //       charger.coupler1Status == SCAppConstants.CouplerStatus.Charging;
+            //                return charger.coupler2Status == SCAppConstants.CouplerStatus.Enable ||
+            //                       charger.coupler2Status == SCAppConstants.CouplerStatus.Charging;
+            //            case CouplerNum.NumberThree:
+            //                //return charger.coupler1Status == SCAppConstants.CouplerStatus.Enable ||
+            //                //       charger.coupler1Status == SCAppConstants.CouplerStatus.Charging;
+            //                return charger.coupler3Status == SCAppConstants.CouplerStatus.Enable ||
+            //                       charger.coupler3Status == SCAppConstants.CouplerStatus.Charging;
+            //        }
+            //    }
+            //    return false;
+            //}
             public bool IsCouplerWork(CouplerAddress couplerAddress, UnitBLL unitBLL)
             {
-                if(SCApplication.getInstance().BC_ID== "NORTH_INNOLUX_Test_Site") return true;//暫時都return ok
+                string bc_id = SCApplication.getInstance().BC_ID;
+                if (bc_id == "NORTH_INNOLUX_Test_Site") return true;//暫時都return ok
                 AUNIT charger = unitBLL.OperateCatch.getUnit(couplerAddress.ChargerID);
                 if (charger != null)
                 {
                     switch (couplerAddress.CouplerNum)
                     {
                         case CouplerNum.NumberOne:
-                            return charger.coupler1Status == SCAppConstants.CouplerStatus.Enable ||
-                                   charger.coupler1Status == SCAppConstants.CouplerStatus.Charging;
+                            return charger.GetCoupler1Status(bc_id) == SCAppConstants.CouplerStatus.Enable ||
+                                   charger.GetCoupler1Status(bc_id) == SCAppConstants.CouplerStatus.Charging;
                         case CouplerNum.NumberTwo:
-                            //return charger.coupler1Status == SCAppConstants.CouplerStatus.Enable ||
-                            //       charger.coupler1Status == SCAppConstants.CouplerStatus.Charging;
-                            return charger.coupler2Status == SCAppConstants.CouplerStatus.Enable ||
-                                   charger.coupler2Status == SCAppConstants.CouplerStatus.Charging;
+                            return charger.GetCoupler2Status(bc_id) == SCAppConstants.CouplerStatus.Enable ||
+                                   charger.GetCoupler2Status(bc_id) == SCAppConstants.CouplerStatus.Charging;
                         case CouplerNum.NumberThree:
-                            //return charger.coupler1Status == SCAppConstants.CouplerStatus.Enable ||
-                            //       charger.coupler1Status == SCAppConstants.CouplerStatus.Charging;
-                            return charger.coupler3Status == SCAppConstants.CouplerStatus.Enable ||
-                                   charger.coupler3Status == SCAppConstants.CouplerStatus.Charging;
+                            return charger.GetCoupler3Status(bc_id) == SCAppConstants.CouplerStatus.Enable ||
+                                   charger.GetCoupler3Status(bc_id) == SCAppConstants.CouplerStatus.Charging;
                     }
                 }
                 return false;

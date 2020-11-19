@@ -7,7 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using com.mirle.ibg3k0.sc.App;
-namespace com.mirle.ibg3k0.sc.Data.PLC_Functions
+
+namespace com.mirle.ibg3k0.sc.Data.PLC_Functions.NorthInnolux
 {
     class ChargeToAGVCStatusReport : PLC_FunBase
     {
@@ -32,17 +33,18 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions
         [PLCElement(ValueName = "CHARGERX_TO_AGVC_CHARGER_STATUS_REPORT_RS485_STATUS")]
         public RS485StatusType RS485Status;
         [PLCElement(ValueName = "CHARGERX_TO_AGVC_CHARGER_STATUS_REPORT_COUPLER1_STATUS")]
-        public SCAppConstants.CouplerStatus Coupler1Status;
+        public SCAppConstants.CpuplerStatus_SOUTH_INNOLUX Coupler1Status;
         [PLCElement(ValueName = "CHARGERX_TO_AGVC_CHARGER_STATUS_REPORT_COUPLER2_STATUS")]
-        public SCAppConstants.CouplerStatus Coupler2Status;
+        public SCAppConstants.CpuplerStatus_SOUTH_INNOLUX Coupler2Status;
         [PLCElement(ValueName = "CHARGERX_TO_AGVC_CHARGER_STATUS_REPORT_COUPLER3_STATUS")]
-        public SCAppConstants.CouplerStatus Coupler3Status;
+        public SCAppConstants.CpuplerStatus_SOUTH_INNOLUX Coupler3Status;
         [PLCElement(ValueName = "CHARGERX_TO_AGVC_CHARGER_STATUS_REPORT_COUPLER1_POSITION")]
         public SCAppConstants.CouplerHPSafety Coupler1Position;
         [PLCElement(ValueName = "CHARGERX_TO_AGVC_CHARGER_STATUS_REPORT_COUPLER2_POSITION")]
         public SCAppConstants.CouplerHPSafety Coupler2Position;
         [PLCElement(ValueName = "CHARGERX_TO_AGVC_CHARGER_STATUS_REPORT_COUPLER3_POSITION")]
         public SCAppConstants.CouplerHPSafety Coupler3Position;
+
 
         public enum RS485StatusType
         {
@@ -55,12 +57,6 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions
             OutputCurrentOutRange = 7,
             DeviceOutputWriteForbid = 8
         }
-        //public enum CouplerStatus
-        //{
-        //    Disable = 0,
-        //    Enable = 1,
-        //    Charging = 2
-        //}
     }
 
 }

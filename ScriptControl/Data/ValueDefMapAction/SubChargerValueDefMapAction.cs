@@ -29,8 +29,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
     public class SubChargerValueDefMapAction : IValueDefMapAction
     {
         public const string DEVICE_NAME_CHARGER = "CHARGER";
-        Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        AUNIT unit = null;
+        protected Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        protected AUNIT unit = null;
         ALINE line;
         protected SCApplication scApp = null;
         protected BCFApplication bcfApp = null;
@@ -194,6 +194,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 unit.coupler1Status = function.Coupler1Status;
                 unit.coupler2Status = function.Coupler2Status;
                 unit.coupler3Status = function.Coupler3Status;
+                unit.coupler1HPSafety = function.Coupler1Position;
+                unit.coupler2HPSafety = function.Coupler2Position;
+                unit.coupler3HPSafety = function.Coupler3Position;
+
                 unit.ChargerStatusIndex = function.Index;
 
                 //3.logical (include db save)
@@ -431,7 +435,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 {
                     vr.afterValueChange += (_sender, _e) => ChargerPIOHandshake(_sender, _e);
                 }
-                
+
             }
             catch (Exception ex)
             {

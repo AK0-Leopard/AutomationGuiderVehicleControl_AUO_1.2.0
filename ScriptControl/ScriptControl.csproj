@@ -516,6 +516,7 @@
     <Compile Include="Data\PLC_Functions\FireDoorCross.cs" />
     <Compile Include="Data\PLC_Functions\FireDoorData.cs" />
     <Compile Include="Data\PLC_Functions\FireReport.cs" />
+    <Compile Include="Data\PLC_Functions\NorthInnolux\ChargeToAGVCStatusReport .cs" />
     <Compile Include="Data\PLC_Functions\PortStationReport.cs" />
     <Compile Include="Data\PLC_Functions\EQStatusReport.cs" />
     <Compile Include="Data\SECS\NorthInnolux\S64F1.cs" />
@@ -627,6 +628,7 @@
     <Compile Include="Data\SECS\AGVC\SECSConst.cs" />
     <Compile Include="Data\TimerAction\CouplerCheckTimerAction.cs" />
     <Compile Include="Data\TimerAction\RandomGeneratesCommandTimerActionTiming.cs" />
+    <Compile Include="Data\ValueDefMapAction\NorthInnolux\SubChargerValueDefMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\SouthInnoluxMCSDefaultMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\NorthInnoluxMCSDefaultMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\FireDoorDefaultValueDefMapAction.cs" />

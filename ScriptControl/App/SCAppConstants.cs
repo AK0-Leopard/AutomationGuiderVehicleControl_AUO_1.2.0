@@ -1179,6 +1179,22 @@ namespace com.mirle.ibg3k0.sc.App
         public const string FUNC_DEBUG = "FUNC_DEBUG";
         /******************************************************************/
         #endregion UAS
+        public enum CpuplerStatus_AUO
+        {
+            Disable = 0,
+            Enable = 1,
+            Charging = 2,
+            Error = 3
+        }
+        public enum CpuplerStatus_SOUTH_INNOLUX
+        {
+            None = 0,
+            Manual = 1,
+            Auto = 2,
+            Charging = 3,
+            Error = 4
+        }
+
         public enum CouplerStatus
         {
             Disable = 0,
@@ -1186,6 +1202,12 @@ namespace com.mirle.ibg3k0.sc.App
             Charging = 2,
             Error = 3
         }
+        public enum CouplerHPSafety
+        {
+            NonSafety = 0,
+            Safyte = 1,
+        }
+
 
 
 

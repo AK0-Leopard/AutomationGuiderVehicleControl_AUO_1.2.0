@@ -258,9 +258,14 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 tb_HighOutputCurrentProtect.Text = unit.chargerHighOutputCurrentProtection.ToString();
                 tb_OverheatProtect.Text = unit.chargerOverheatProtection.ToString();
                 tb_RS485Status.Text = unit.chargerRS485Status.ToString();
-                tb_CouplerStatus1.Text = unit.coupler1Status.ToString();
-                tb_CouplerStatus2.Text = unit.coupler2Status.ToString();
-                tb_CouplerStatus3.Text = unit.coupler3Status.ToString();
+                //tb_CouplerStatus1.Text = unit.coupler1Status.ToString();
+                //tb_CouplerStatus2.Text = unit.coupler2Status.ToString();
+                //tb_CouplerStatus3.Text = unit.coupler3Status.ToString();
+                setCouplerStatus(unit);
+                tb_Coupler1HPSafety.Text = unit.coupler1HPSafety.ToString();
+                tb_Coupler2HPSafety.Text = unit.coupler2HPSafety.ToString();
+                tb_Coupler3HPSafety.Text = unit.coupler3HPSafety.ToString();
+
             }), null);
         }
 
@@ -336,9 +341,12 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 tb_HighOutputCurrentProtect.Text = unit.chargerHighOutputCurrentProtection.ToString();
                 tb_OverheatProtect.Text = unit.chargerOverheatProtection.ToString();
                 tb_RS485Status.Text = unit.chargerRS485Status.ToString();
-                tb_CouplerStatus1.Text = unit.coupler1Status.ToString();
-                tb_CouplerStatus2.Text = unit.coupler2Status.ToString();
-                tb_CouplerStatus3.Text = unit.coupler3Status.ToString();
+
+                setCouplerStatus(unit);
+
+                tb_Coupler1HPSafety.Text = unit.coupler1HPSafety.ToString();
+                tb_Coupler2HPSafety.Text = unit.coupler2HPSafety.ToString();
+                tb_Coupler3HPSafety.Text = unit.coupler3HPSafety.ToString();
 
                 tb_ChargerCurrentParameterSettingIndex.Text = unit.ChargerCurrentParameterIndex.ToString();
                 tb_OutputVo.Text = unit.chargerOutputVoltage.ToString();
@@ -370,6 +378,22 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
         }
 
+        private void setCouplerStatus(AUNIT unit)
+        {
+            switch (bcApp.SCApplication.BC_ID)
+            {
+                case "SOUTH_INNOLUX":
+                    tb_CouplerStatus1.Text = unit.coupler1Status_SOUTH_INNOLUX.ToString();
+                    tb_CouplerStatus2.Text = unit.coupler2Status_SOUTH_INNOLUX.ToString();
+                    tb_CouplerStatus3.Text = unit.coupler3Status_SOUTH_INNOLUX.ToString();
+                    break;
+                default:
+                    tb_CouplerStatus1.Text = unit.coupler1Status.ToString();
+                    tb_CouplerStatus2.Text = unit.coupler2Status.ToString();
+                    tb_CouplerStatus3.Text = unit.coupler3Status.ToString();
+                    break;
+            }
+        }
 
         private void cb_PIOCoupler_SelectedIndexChanged(object sender, EventArgs e)
         {

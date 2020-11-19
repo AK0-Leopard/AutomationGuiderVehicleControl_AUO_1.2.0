@@ -328,6 +328,12 @@
             this.label45 = new System.Windows.Forms.Label();
             this.label44 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.tb_Coupler3HPSafety = new System.Windows.Forms.TextBox();
+            this.tb_Coupler2HPSafety = new System.Windows.Forms.TextBox();
+            this.tb_Coupler1HPSafety = new System.Windows.Forms.TextBox();
+            this.label68 = new System.Windows.Forms.Label();
+            this.label74 = new System.Windows.Forms.Label();
+            this.label75 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1538,7 +1544,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 5);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 8);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(164, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -2070,7 +2076,7 @@
             this.groupBox20.Controls.Add(this.label55);
             this.groupBox20.Location = new System.Drawing.Point(8, 491);
             this.groupBox20.Name = "groupBox20";
-            this.groupBox20.Size = new System.Drawing.Size(487, 259);
+            this.groupBox20.Size = new System.Drawing.Size(487, 273);
             this.groupBox20.TabIndex = 22;
             this.groupBox20.TabStop = false;
             this.groupBox20.Text = "Charging System Error Report";
@@ -2352,7 +2358,7 @@
             // 
             // num_BatteryHighBoundaryValue
             // 
-            this.num_BatteryHighBoundaryValue.Location = new System.Drawing.Point(522, 780);
+            this.num_BatteryHighBoundaryValue.Location = new System.Drawing.Point(952, 792);
             this.num_BatteryHighBoundaryValue.Name = "num_BatteryHighBoundaryValue";
             this.num_BatteryHighBoundaryValue.Size = new System.Drawing.Size(158, 30);
             this.num_BatteryHighBoundaryValue.TabIndex = 29;
@@ -2361,7 +2367,7 @@
             // label38
             // 
             this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(518, 755);
+            this.label38.Location = new System.Drawing.Point(948, 767);
             this.label38.Name = "label38";
             this.label38.Size = new System.Drawing.Size(360, 22);
             this.label38.TabIndex = 28;
@@ -2369,7 +2375,7 @@
             // 
             // num_BatteryLowBoundaryValue
             // 
-            this.num_BatteryLowBoundaryValue.Location = new System.Drawing.Point(522, 717);
+            this.num_BatteryLowBoundaryValue.Location = new System.Drawing.Point(530, 792);
             this.num_BatteryLowBoundaryValue.Name = "num_BatteryLowBoundaryValue";
             this.num_BatteryLowBoundaryValue.Size = new System.Drawing.Size(158, 30);
             this.num_BatteryLowBoundaryValue.TabIndex = 27;
@@ -2378,7 +2384,7 @@
             // lbl_batteryLowBoundaryValue
             // 
             this.lbl_batteryLowBoundaryValue.AutoSize = true;
-            this.lbl_batteryLowBoundaryValue.Location = new System.Drawing.Point(518, 692);
+            this.lbl_batteryLowBoundaryValue.Location = new System.Drawing.Point(526, 767);
             this.lbl_batteryLowBoundaryValue.Name = "lbl_batteryLowBoundaryValue";
             this.lbl_batteryLowBoundaryValue.Size = new System.Drawing.Size(350, 22);
             this.lbl_batteryLowBoundaryValue.TabIndex = 26;
@@ -2397,7 +2403,7 @@
             this.groupBox13.Controls.Add(this.groupBox14);
             this.groupBox13.Location = new System.Drawing.Point(501, 12);
             this.groupBox13.Name = "groupBox13";
-            this.groupBox13.Size = new System.Drawing.Size(946, 677);
+            this.groupBox13.Size = new System.Drawing.Size(946, 752);
             this.groupBox13.TabIndex = 21;
             this.groupBox13.TabStop = false;
             this.groupBox13.Text = "Charger";
@@ -2435,7 +2441,7 @@
             this.groupBox22.Controls.Add(this.tb_PIOSignal2);
             this.groupBox22.Location = new System.Drawing.Point(483, 450);
             this.groupBox22.Name = "groupBox22";
-            this.groupBox22.Size = new System.Drawing.Size(457, 216);
+            this.groupBox22.Size = new System.Drawing.Size(457, 296);
             this.groupBox22.TabIndex = 33;
             this.groupBox22.TabStop = false;
             this.groupBox22.Text = "PIO Handshake Report";
@@ -2806,6 +2812,12 @@
             // 
             // groupBox15
             // 
+            this.groupBox15.Controls.Add(this.tb_Coupler3HPSafety);
+            this.groupBox15.Controls.Add(this.tb_Coupler2HPSafety);
+            this.groupBox15.Controls.Add(this.tb_Coupler1HPSafety);
+            this.groupBox15.Controls.Add(this.label68);
+            this.groupBox15.Controls.Add(this.label74);
+            this.groupBox15.Controls.Add(this.label75);
             this.groupBox15.Controls.Add(this.tb_ChargerStatusReportIndex);
             this.groupBox15.Controls.Add(this.label71);
             this.groupBox15.Controls.Add(this.tb_CouplerStatus3);
@@ -2834,7 +2846,7 @@
             this.groupBox15.Controls.Add(this.tb_ContantCurrentOutput);
             this.groupBox15.Location = new System.Drawing.Point(21, 268);
             this.groupBox15.Name = "groupBox15";
-            this.groupBox15.Size = new System.Drawing.Size(457, 398);
+            this.groupBox15.Size = new System.Drawing.Size(457, 478);
             this.groupBox15.TabIndex = 33;
             this.groupBox15.TabStop = false;
             this.groupBox15.Text = "Charger Status Report";
@@ -3503,6 +3515,60 @@
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // tb_Coupler3HPSafety
+            // 
+            this.tb_Coupler3HPSafety.Font = new System.Drawing.Font("Consolas", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tb_Coupler3HPSafety.Location = new System.Drawing.Point(202, 443);
+            this.tb_Coupler3HPSafety.Name = "tb_Coupler3HPSafety";
+            this.tb_Coupler3HPSafety.ReadOnly = true;
+            this.tb_Coupler3HPSafety.Size = new System.Drawing.Size(134, 23);
+            this.tb_Coupler3HPSafety.TabIndex = 54;
+            // 
+            // tb_Coupler2HPSafety
+            // 
+            this.tb_Coupler2HPSafety.Font = new System.Drawing.Font("Consolas", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tb_Coupler2HPSafety.Location = new System.Drawing.Point(202, 421);
+            this.tb_Coupler2HPSafety.Name = "tb_Coupler2HPSafety";
+            this.tb_Coupler2HPSafety.ReadOnly = true;
+            this.tb_Coupler2HPSafety.Size = new System.Drawing.Size(134, 23);
+            this.tb_Coupler2HPSafety.TabIndex = 53;
+            // 
+            // tb_Coupler1HPSafety
+            // 
+            this.tb_Coupler1HPSafety.Font = new System.Drawing.Font("Consolas", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tb_Coupler1HPSafety.Location = new System.Drawing.Point(202, 399);
+            this.tb_Coupler1HPSafety.Name = "tb_Coupler1HPSafety";
+            this.tb_Coupler1HPSafety.ReadOnly = true;
+            this.tb_Coupler1HPSafety.Size = new System.Drawing.Size(134, 23);
+            this.tb_Coupler1HPSafety.TabIndex = 52;
+            // 
+            // label68
+            // 
+            this.label68.AutoSize = true;
+            this.label68.Location = new System.Drawing.Point(6, 444);
+            this.label68.Name = "label68";
+            this.label68.Size = new System.Drawing.Size(200, 22);
+            this.label68.TabIndex = 51;
+            this.label68.Text = "Coupler3 HP Safety:";
+            // 
+            // label74
+            // 
+            this.label74.AutoSize = true;
+            this.label74.Location = new System.Drawing.Point(6, 422);
+            this.label74.Name = "label74";
+            this.label74.Size = new System.Drawing.Size(200, 22);
+            this.label74.TabIndex = 50;
+            this.label74.Text = "Coupler2 HP Safety:";
+            // 
+            // label75
+            // 
+            this.label75.AutoSize = true;
+            this.label75.Location = new System.Drawing.Point(6, 400);
+            this.label75.Name = "label75";
+            this.label75.Size = new System.Drawing.Size(200, 22);
+            this.label75.TabIndex = 49;
+            this.label75.Text = "Coupler1 HP Safety:";
+            // 
             // DebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 22F);
@@ -3893,5 +3959,11 @@
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.TextBox tb_ChargerAlive;
         private System.Windows.Forms.Button btn_reposition;
+        private System.Windows.Forms.TextBox tb_Coupler3HPSafety;
+        private System.Windows.Forms.TextBox tb_Coupler2HPSafety;
+        private System.Windows.Forms.TextBox tb_Coupler1HPSafety;
+        private System.Windows.Forms.Label label68;
+        private System.Windows.Forms.Label label74;
+        private System.Windows.Forms.Label label75;
     }
 }

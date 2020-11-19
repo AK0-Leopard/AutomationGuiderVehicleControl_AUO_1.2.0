@@ -123,9 +123,96 @@ namespace com.mirle.ibg3k0.sc
         public bool chargerOverheatProtection;
         public string chargerRS485Status;
 
+        public SCAppConstants.CpuplerStatus_SOUTH_INNOLUX coupler1Status_SOUTH_INNOLUX;
+        public SCAppConstants.CpuplerStatus_SOUTH_INNOLUX coupler2Status_SOUTH_INNOLUX;
+        public SCAppConstants.CpuplerStatus_SOUTH_INNOLUX coupler3Status_SOUTH_INNOLUX;
+
         public SCAppConstants.CouplerStatus coupler1Status;
         public SCAppConstants.CouplerStatus coupler2Status;
         public SCAppConstants.CouplerStatus coupler3Status;
+
+        public SCAppConstants.CouplerStatus GetCoupler1Status(string bcID)
+        {
+            switch (bcID)
+            {
+                case "SOUTH_INNOLUX":
+                    if (coupler1Status_SOUTH_INNOLUX == SCAppConstants.CpuplerStatus_SOUTH_INNOLUX.None) return SCAppConstants.CouplerStatus.Disable;
+                    else if (coupler1Status_SOUTH_INNOLUX == SCAppConstants.CpuplerStatus_SOUTH_INNOLUX.Manual) return SCAppConstants.CouplerStatus.Disable;
+                    else if (coupler1Status_SOUTH_INNOLUX == SCAppConstants.CpuplerStatus_SOUTH_INNOLUX.Auto) return SCAppConstants.CouplerStatus.Enable;
+                    else if (coupler1Status_SOUTH_INNOLUX == SCAppConstants.CpuplerStatus_SOUTH_INNOLUX.Charging) return SCAppConstants.CouplerStatus.Charging;
+                    else if (coupler1Status_SOUTH_INNOLUX == SCAppConstants.CpuplerStatus_SOUTH_INNOLUX.Error) return SCAppConstants.CouplerStatus.Error;
+                    else return SCAppConstants.CouplerStatus.Error;
+                default:
+                    return coupler1Status;
+            }
+        }
+        public SCAppConstants.CouplerStatus GetCoupler2Status(string bcID)
+        {
+            switch (bcID)
+            {
+                case "SOUTH_INNOLUX":
+                    if (coupler2Status_SOUTH_INNOLUX == SCAppConstants.CpuplerStatus_SOUTH_INNOLUX.None) return SCAppConstants.CouplerStatus.Disable;
+                    else if (coupler2Status_SOUTH_INNOLUX == SCAppConstants.CpuplerStatus_SOUTH_INNOLUX.Manual) return SCAppConstants.CouplerStatus.Disable;
+                    else if (coupler2Status_SOUTH_INNOLUX == SCAppConstants.CpuplerStatus_SOUTH_INNOLUX.Auto) return SCAppConstants.CouplerStatus.Enable;
+                    else if (coupler2Status_SOUTH_INNOLUX == SCAppConstants.CpuplerStatus_SOUTH_INNOLUX.Charging) return SCAppConstants.CouplerStatus.Charging;
+                    else if (coupler2Status_SOUTH_INNOLUX == SCAppConstants.CpuplerStatus_SOUTH_INNOLUX.Error) return SCAppConstants.CouplerStatus.Error;
+                    else return SCAppConstants.CouplerStatus.Error;
+                default:
+                    return coupler2Status;
+            }
+        }
+        public SCAppConstants.CouplerStatus GetCoupler3Status(string bcID)
+        {
+            switch (bcID)
+            {
+                case "SOUTH_INNOLUX":
+                    if (coupler3Status_SOUTH_INNOLUX == SCAppConstants.CpuplerStatus_SOUTH_INNOLUX.None) return SCAppConstants.CouplerStatus.Disable;
+                    else if (coupler3Status_SOUTH_INNOLUX == SCAppConstants.CpuplerStatus_SOUTH_INNOLUX.Manual) return SCAppConstants.CouplerStatus.Disable;
+                    else if (coupler3Status_SOUTH_INNOLUX == SCAppConstants.CpuplerStatus_SOUTH_INNOLUX.Auto) return SCAppConstants.CouplerStatus.Enable;
+                    else if (coupler3Status_SOUTH_INNOLUX == SCAppConstants.CpuplerStatus_SOUTH_INNOLUX.Charging) return SCAppConstants.CouplerStatus.Charging;
+                    else if (coupler3Status_SOUTH_INNOLUX == SCAppConstants.CpuplerStatus_SOUTH_INNOLUX.Error) return SCAppConstants.CouplerStatus.Error;
+                    else return SCAppConstants.CouplerStatus.Error;
+                default:
+                    return coupler3Status;
+            }
+        }
+
+        private SCAppConstants.CouplerHPSafety coupler1hpsafety;
+        public SCAppConstants.CouplerHPSafety coupler1HPSafety
+        {
+            get { return coupler1hpsafety; }
+            set
+            {
+                if (coupler1hpsafety != value)
+                {
+                    coupler1hpsafety = value;
+                }
+            }
+        }
+        private SCAppConstants.CouplerHPSafety coupler2hpsafety;
+        public SCAppConstants.CouplerHPSafety coupler2HPSafety
+        {
+            get { return coupler2hpsafety; }
+            set
+            {
+                if (coupler2hpsafety != value)
+                {
+                    coupler2hpsafety = value;
+                }
+            }
+        }
+        private SCAppConstants.CouplerHPSafety coupler3hpsafety;
+        public SCAppConstants.CouplerHPSafety coupler3HPSafety
+        {
+            get { return coupler3hpsafety; }
+            set
+            {
+                if (coupler3hpsafety != value)
+                {
+                    coupler3hpsafety = value;
+                }
+            }
+        }
 
 
         public float chargerOutputVoltage;
@@ -183,7 +270,7 @@ namespace com.mirle.ibg3k0.sc
 
         private List<string> reserve_section_id_List = new List<string>();//在防火門所在區域Segment的Section被Reserve時，會把ID加到這個List。
 
-        Object reserve_section_id_dic_lock = new object(); 
+        Object reserve_section_id_dic_lock = new object();
         public void section_reserved(string section_id)
         {
             lock (reserve_section_id_dic_lock)
@@ -196,7 +283,7 @@ namespace com.mirle.ibg3k0.sc
                 {
 
                 }
-                if(reserve_section_id_List.Count == 1)//剛好被預約一個Section時，發送CrossSignal。
+                if (reserve_section_id_List.Count == 1)//剛好被預約一個Section時，發送CrossSignal。
                 {
                     FireDoorDefaultValueDefMapAction mapAction = getMapActionByIdentityKey(nameof(FireDoorDefaultValueDefMapAction)) as FireDoorDefaultValueDefMapAction;
                     mapAction.sendFireDoorCrossSignal(true);
