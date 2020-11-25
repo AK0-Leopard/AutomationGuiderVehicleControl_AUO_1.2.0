@@ -311,7 +311,7 @@ namespace com.mirle.ibg3k0.sc
             get { return BATTERYCAPACITY; }
             set
             {
-                if (BATTERYCAPACITY != value)
+                //if (BATTERYCAPACITY != value)
                 {
                     BATTERYCAPACITY = value;
                     if (BATTERYCAPACITY >= BATTERYLEVELVALUE_FULL) BatteryLevel = BatteryLevel.Full;
