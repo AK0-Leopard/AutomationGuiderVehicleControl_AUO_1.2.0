@@ -669,7 +669,7 @@ namespace com.mirle.ibg3k0.sc.Service
             //    ModeChangeRequest(vh_id, OperatingVHMode.OperatingAuto);
             //}
         }
-        public bool VehicleStatusRequest(string vh_id, bool isSync = false)
+        public virtual bool VehicleStatusRequest(string vh_id, bool isSync = false)
         {
             bool isSuccess = false;
             string reason = string.Empty;
@@ -3190,7 +3190,7 @@ namespace com.mirle.ibg3k0.sc.Service
             //vh.NotifyVhStatusChange();
         }
         [ClassAOPAspect]
-        public void StatusReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_144_STATUS_CHANGE_REP recive_str, int seq_num)
+        public virtual void StatusReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_144_STATUS_CHANGE_REP recive_str, int seq_num)
         {
             if (scApp.getEQObjCacheManager().getLine().ServerPreStop)
                 return;

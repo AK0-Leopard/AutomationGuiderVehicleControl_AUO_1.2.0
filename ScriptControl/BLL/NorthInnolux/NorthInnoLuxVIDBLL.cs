@@ -143,7 +143,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccess;
         }
 
-        public bool upDateVIDCarrierID(string vhID, string carrierID)
+        public override bool upDateVIDCarrierID(string vhID, string carrierID)
         {
             bool isSuccess = true;
             using (DBConnection_EF con = DBConnection_EF.GetUContext())

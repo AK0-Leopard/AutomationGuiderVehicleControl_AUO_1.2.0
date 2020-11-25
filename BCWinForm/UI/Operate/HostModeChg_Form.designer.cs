@@ -129,7 +129,6 @@
             this.butLcsAuto.TabIndex = 4;
             this.butLcsAuto.Text = "Auto";
             this.butLcsAuto.UseVisualStyleBackColor = true;
-            this.butLcsAuto.Visible = false;
             this.butLcsAuto.Click += new System.EventHandler(this.butLcsAuto_Click);
             // 
             // lblLCSStatusValue

@@ -124,7 +124,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             }
             else
             {
-                butLcsAuto.Visible = false;
+                button1.Visible = false;
             }
         }
 

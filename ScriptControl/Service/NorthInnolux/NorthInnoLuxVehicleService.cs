@@ -564,7 +564,7 @@ namespace com.mirle.ibg3k0.sc.Service
             //    ModeChangeRequest(vh_id, OperatingVHMode.OperatingAuto);
             //}
         }
-        public bool VehicleStatusRequest(string vh_id, bool isSync = false)
+        public override bool VehicleStatusRequest(string vh_id, bool isSync = false)
         {
             bool isSuccess = false;
             string reason = string.Empty;
@@ -576,7 +576,8 @@ namespace com.mirle.ibg3k0.sc.Service
             SCUtility.RecodeReportInfo(vh.VEHICLE_ID, 0, send_gpp);
             isSuccess = vh.send_S43(send_gpp, out receive_gpp);
             SCUtility.RecodeReportInfo(vh.VEHICLE_ID, 0, receive_gpp, isSuccess.ToString());
-            if (isSync && isSuccess)
+            //if (isSync && isSuccess)
+            if (isSuccess)
             {
                 string cst_id = receive_gpp.CSTID;
                 uint batteryCapacity = receive_gpp.BatteryCapacity;
@@ -2356,6 +2357,11 @@ namespace com.mirle.ibg3k0.sc.Service
                     replyTranEventReport(bcfApp, eventType, eqpt, seqNum);
                     break;
             }
+
+            List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
+            scApp.ReportBLL.newReportCarrierIDReadReport(eqpt.VEHICLE_ID, reportqueues);
+            scApp.ReportBLL.insertMCSReport(reportqueues);
+            scApp.ReportBLL.newSendMCSMessage(reportqueues);
         }
 
 
@@ -3269,7 +3275,7 @@ namespace com.mirle.ibg3k0.sc.Service
             //vh.NotifyVhStatusChange();
         }
         [ClassAOPAspect]
-        public void StatusReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_144_STATUS_CHANGE_REP recive_str, int seq_num)
+        public override void StatusReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_144_STATUS_CHANGE_REP recive_str, int seq_num)
         {
             if (scApp.getEQObjCacheManager().getLine().ServerPreStop)
                 return;
