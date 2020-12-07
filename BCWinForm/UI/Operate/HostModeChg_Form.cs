@@ -117,14 +117,34 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             MainForm = _mainForm;
             scApp = MainForm.BCApp.SCApplication;
             timer1.Enabled = true;
-            if(scApp.BC_ID == "NORTH_INNOLUX"||scApp.BC_ID=="NORTH_INNOLUX_Test_Site"|| scApp.BC_ID == "SOUTH_INNOLUX")
+            if (CanOnlineLocal(scApp.BC_ID))
             {
                 butLcsAuto.Visible = true;
                 button1.Visible = true;
             }
             else
             {
-                butLcsAuto.Visible = false;
+                button1.Visible = false;
+            }
+        }
+
+        private bool CanOnlineLocal(string BC_ID)
+        {
+            switch (BC_ID)
+            {
+                case "NORTH_INNOLUX":
+                case "NORTH_INNOLUX_Test_Site":
+                case "SOUTH_INNOLUX":
+                case "UMTC_Test_Site":
+                    return true;
+                case "AUO_CAAGV100":
+                case "AUO_CAAGV200":
+                case "AUO_CAAGVC00":
+                case "AGVC_CAAGV4F":
+                case "AUO_FAXAGV03":
+                case "AUO_4F":
+                default:
+                    return false;
             }
         }
 

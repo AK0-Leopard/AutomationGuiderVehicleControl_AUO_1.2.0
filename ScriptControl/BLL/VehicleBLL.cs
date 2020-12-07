@@ -1493,7 +1493,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             //}
         }
         //public void doTransferCommandFinish(Equipment eqpt)
-        public bool doTransferCommandFinish(string vh_id, string cmd_id, CompleteStatus completeStatus, int total_cmd_dis)
+        public virtual bool doTransferCommandFinish(string vh_id, string cmd_id, CompleteStatus completeStatus, int total_cmd_dis)
         {
             bool isSuccess = true;
             //1.

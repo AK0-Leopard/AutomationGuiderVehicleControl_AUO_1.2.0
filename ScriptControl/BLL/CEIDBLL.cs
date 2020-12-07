@@ -27,7 +27,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
 
 
-        public bool buildCEIDAndReportID(Dictionary<string, string[]> reportItem)
+        public virtual bool buildCEIDAndReportID(Dictionary<string, string[]> reportItem)
         {
             using (DBConnection_EF con = DBConnection_EF.GetUContext())
             {
@@ -111,7 +111,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return dicRptidAndVid;
         }
 
-        public bool buildReportIDAndVid(Dictionary<string, string[]> reportItems)
+        public virtual bool buildReportIDAndVid(Dictionary<string, string[]> reportItems)
         {
             using (DBConnection_EF con = DBConnection_EF.GetUContext())
             {

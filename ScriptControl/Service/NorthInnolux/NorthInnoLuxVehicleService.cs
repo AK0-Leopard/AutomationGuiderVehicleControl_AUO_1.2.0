@@ -564,7 +564,7 @@ namespace com.mirle.ibg3k0.sc.Service
             //    ModeChangeRequest(vh_id, OperatingVHMode.OperatingAuto);
             //}
         }
-        public bool VehicleStatusRequest(string vh_id, bool isSync = false)
+        public override bool VehicleStatusRequest(string vh_id, bool isSync = false)
         {
             bool isSuccess = false;
             string reason = string.Empty;
@@ -576,7 +576,8 @@ namespace com.mirle.ibg3k0.sc.Service
             SCUtility.RecodeReportInfo(vh.VEHICLE_ID, 0, send_gpp);
             isSuccess = vh.send_S43(send_gpp, out receive_gpp);
             SCUtility.RecodeReportInfo(vh.VEHICLE_ID, 0, receive_gpp, isSuccess.ToString());
-            if (isSync && isSuccess)
+            //if (isSync && isSuccess)
+            if (isSuccess)
             {
                 string cst_id = receive_gpp.CSTID;
                 uint batteryCapacity = receive_gpp.BatteryCapacity;
@@ -2334,7 +2335,7 @@ namespace com.mirle.ibg3k0.sc.Service
                        VehicleID: eqpt.VEHICLE_ID,
                        CarrierID: eqpt.CST_ID);
 
-                    replyTranEventReport(bcfApp, eventType, eqpt, seqNum);
+                    replyTranEventReport(bcfApp, eventType, eqpt, seqNum, cancelType: CMDCancelType.CmdCancelIdMismatch);
                     scApp.VIDBLL.upDateVIDCarrierID(eqpt.VEHICLE_ID, readCarrierID);
 
                     break;
@@ -2345,17 +2346,21 @@ namespace com.mirle.ibg3k0.sc.Service
                        CarrierID: eqpt.CST_ID);
 
                     AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(eqpt.VEHICLE_ID);
-                    //string new_carrier_id =
-                    //    $"ERR-{eqpt.Real_ID.Trim()}-{vid_info.CARRIER_INSTALLED_TIME?.ToString(SCAppConstants.TimestampFormat_16)}";
-                    replyTranEventReport(bcfApp, eventType, eqpt, seqNum);
-                    //scApp.VIDBLL.upDateVIDCarrierID(eqpt.VEHICLE_ID, new_carrier_id);
-
+                    string new_carrier_id =
+                        $"NR-{eqpt.Real_ID.Trim()}-{vid_info.CARRIER_INSTALLED_TIME?.ToString(SCAppConstants.TimestampFormat_16)}";
+                    replyTranEventReport(bcfApp, eventType, eqpt, seqNum, cancelType: CMDCancelType.CmdCancelIdReadFailed);
+                    scApp.VIDBLL.upDateVIDCarrierID(eqpt.VEHICLE_ID, new_carrier_id);
 
                     break;
                 case BCRReadResult.BcrNormal:
                     replyTranEventReport(bcfApp, eventType, eqpt, seqNum);
                     break;
             }
+
+            List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
+            scApp.ReportBLL.newReportCarrierIDReadReport(eqpt.VEHICLE_ID, reportqueues);
+            scApp.ReportBLL.insertMCSReport(reportqueues);
+            scApp.ReportBLL.newSendMCSMessage(reportqueues);
         }
 
 
@@ -3269,7 +3274,7 @@ namespace com.mirle.ibg3k0.sc.Service
             //vh.NotifyVhStatusChange();
         }
         [ClassAOPAspect]
-        public void StatusReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_144_STATUS_CHANGE_REP recive_str, int seq_num)
+        public override void StatusReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_144_STATUS_CHANGE_REP recive_str, int seq_num)
         {
             if (scApp.getEQObjCacheManager().getLine().ServerPreStop)
                 return;
@@ -3414,7 +3419,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             case CompleteStatus.CmpStatusLoadunload:
                             case CompleteStatus.CmpStatusIdmisMatch:
                             case CompleteStatus.CmpStatusIdreadFailed:
-                            case CompleteStatus.CmpStatusVehicleAbort:
+                            //case CompleteStatus.CmpStatusVehicleAbort:    //20201030 removed
                                 isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
                                 break;
                             case CompleteStatus.CmpStatusInterlockError:
@@ -3438,6 +3443,10 @@ namespace com.mirle.ibg3k0.sc.Service
                             case CompleteStatus.CmpStatusSystemIn:
                             case CompleteStatus.CmpStatusTechingMove:
                                 //Nothing...
+                                break;
+                            case CompleteStatus.CmpStatusVehicleAbort: //20201030 added
+                                //just add new ohtc command...
+                                WaitingRetryMCSCMDList.Add(vh.VEHICLE_ID, finish_mcs_cmd);
                                 break;
                             default:
                                 logger.Info($"Proc func:CommandCompleteReport, but completeStatus:{completeStatus} notimplemented ");
@@ -3515,21 +3524,24 @@ namespace com.mirle.ibg3k0.sc.Service
 
             //加入Transaction控制，防止在同一筆命令ID下來時，還沒有處裡完。
             //(在北群創會有在命令結束後，MCS會再派送同樣CMD ID來繼續進行原來的搬送)
-            Boolean resp_cmp = false;
-            using (TransactionScope tx = SCUtility.getTransactionScope())
-            {
-                using (DBConnection_EF con = DBConnection_EF.GetUContext())
-                {
-                    if (!SCUtility.isEmpty(finish_mcs_cmd))
-                    {
-                        scApp.CMDBLL.MoveACMD_MCSToHCMD_MCS(finish_mcs_cmd);
-                    }
-                    resp_cmp = vh.sendMessage(wrapper, true);
-                    if (reportqueues != null && reportqueues.Count > 0)
-                        scApp.ReportBLL.newSendMCSMessage(reportqueues);
-                    tx.Complete();
-                }
-            }
+            //Boolean resp_cmp = false;
+            //using (TransactionScope tx = SCUtility.getTransactionScope())
+            //{
+            //    using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            //    {
+            //        if (!SCUtility.isEmpty(finish_mcs_cmd) && completeStatus != CompleteStatus.CmpStatusVehicleAbort)
+            //        {
+            //            scApp.CMDBLL.MoveACMD_MCSToHCMD_MCS(finish_mcs_cmd);
+            //        }
+            //        resp_cmp = vh.sendMessage(wrapper, true);
+            //        if (reportqueues != null && reportqueues.Count > 0)
+            //            scApp.ReportBLL.newSendMCSMessage(reportqueues);
+            //        tx.Complete();
+            //    }
+            //}
+            Boolean resp_cmp = vh.sendMessage(wrapper, true);
+            if (reportqueues != null && reportqueues.Count > 0)
+                scApp.ReportBLL.newSendMCSMessage(reportqueues);
 
             SCUtility.RecodeReportInfo(vh.VEHICLE_ID, seq_num, send_str, finish_ohxc_cmd, finish_mcs_cmd, resp_cmp.ToString());
             vh.NotifyVhExcuteCMDStatusChange();

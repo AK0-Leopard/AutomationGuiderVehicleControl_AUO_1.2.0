@@ -35,8 +35,20 @@ namespace com.mirle.ibg3k0.sc.Data.DAO.EntityFramework
             return query.ToDictionary(grp => grp.Key.Trim(), grp => grp.OrderBy(ceid=>ceid.ORDER_NUM).Select(ceid => ceid.RPTID.Trim()).ToList());
         }
 
-       
+        public List<ACEID> getAllRPTIDByCEID(DBConnection_EF con, String ceid_id)
+        {
+            var query = from ceid in con.ACEID
+                        where ceid.CEID == ceid_id.Trim()
+                        select ceid;
+            return query.ToList();
+        }
 
+        public void RemoveByBatch(DBConnection_EF con, List<ACEID> ceids)
+        {
+            ceids.ForEach(entity => con.Entry(entity).State = EntityState.Deleted);
+            con.ACEID.RemoveRange(ceids);
+            con.SaveChanges();
+        }
     }
 
 }
