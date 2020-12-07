@@ -277,7 +277,8 @@ namespace com.mirle.ibg3k0.sc.Service
             }
             scApp.CMDBLL.removeAlreadyPassedSection(vh.VEHICLE_ID, e.LeaveSection);
 
-            Task.Run(() => tryDriveAwayInWTOIdleVh(vh));
+            if (DebugParameter.AdvanceDriveAway)
+                Task.Run(() => tryDriveAwayInWTOIdleVh(vh));
 
         }
         private void tryDriveAwayInWTOIdleVh(AVEHICLE movingVh)

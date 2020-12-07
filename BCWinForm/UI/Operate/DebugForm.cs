@@ -48,6 +48,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             cb_FroceBlockPass.Checked = DebugParameter.isForcedRejectBlockControl;
             numer_num_of_avoid_seg.Value = DebugParameter.NumberOfAvoidanceSegment;
             checkBox_host_offline.Checked = DebugParameter.UseHostOffline;
+            cb_advanceDriveAway.Checked = DebugParameter.AdvanceDriveAway;
 
             List<string> lstVh = new List<string>();
             lstVh.Add(string.Empty);
@@ -1542,6 +1543,11 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             var report_event = sc.ProtocolFormat.OHTMessage.EventType.RePosition;
             McsReportEventTest(report_event);
+        }
+
+        private void cb_advanceDriveAway_CheckedChanged(object sender, EventArgs e)
+        {
+            DebugParameter.AdvanceDriveAway = cb_advanceDriveAway.Checked;
         }
     }
 }
