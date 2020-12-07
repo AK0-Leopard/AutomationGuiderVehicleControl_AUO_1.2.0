@@ -2335,7 +2335,7 @@ namespace com.mirle.ibg3k0.sc.Service
                        VehicleID: eqpt.VEHICLE_ID,
                        CarrierID: eqpt.CST_ID);
 
-                    replyTranEventReport(bcfApp, eventType, eqpt, seqNum);
+                    replyTranEventReport(bcfApp, eventType, eqpt, seqNum, cancelType: CMDCancelType.CmdCancelIdMismatch);
                     scApp.VIDBLL.upDateVIDCarrierID(eqpt.VEHICLE_ID, readCarrierID);
 
                     break;
@@ -2348,7 +2348,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(eqpt.VEHICLE_ID);
                     string new_carrier_id =
                         $"NR-{eqpt.Real_ID.Trim()}-{vid_info.CARRIER_INSTALLED_TIME?.ToString(SCAppConstants.TimestampFormat_16)}";
-                    replyTranEventReport(bcfApp, eventType, eqpt, seqNum);
+                    replyTranEventReport(bcfApp, eventType, eqpt, seqNum, cancelType: CMDCancelType.CmdCancelIdReadFailed);
                     scApp.VIDBLL.upDateVIDCarrierID(eqpt.VEHICLE_ID, new_carrier_id);
 
                     break;
