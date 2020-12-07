@@ -1807,12 +1807,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ScriptControl\ScriptControl.csproj">
-      <Project>{34f0d133-fc32-4219-bca9-9d0bc9a74ad6}</Project>
-      <Name>ScriptControl</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Doc\Config Modify Note.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -1873,6 +1867,12 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ScriptControl\ScriptControl.csproj">
+      <Project>{34f0d133-fc32-4219-bca9-9d0bc9a74ad6}</Project>
+      <Name>ScriptControl</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
