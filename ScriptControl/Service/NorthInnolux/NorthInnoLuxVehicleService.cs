@@ -2345,11 +2345,11 @@ namespace com.mirle.ibg3k0.sc.Service
                        VehicleID: eqpt.VEHICLE_ID,
                        CarrierID: eqpt.CST_ID);
 
-                    AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(eqpt.VEHICLE_ID);
-                    string new_carrier_id =
-                        $"NR-{eqpt.Real_ID.Trim()}-{vid_info.CARRIER_INSTALLED_TIME?.ToString(SCAppConstants.TimestampFormat_16)}";
+                    //AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(eqpt.VEHICLE_ID);
+                    //string new_carrier_id =
+                    //    $"NR-{eqpt.Real_ID.Trim()}-{vid_info.CARRIER_INSTALLED_TIME?.ToString(SCAppConstants.TimestampFormat_16)}";
                     replyTranEventReport(bcfApp, eventType, eqpt, seqNum, cancelType: CMDCancelType.CmdCancelIdReadFailed);
-                    scApp.VIDBLL.upDateVIDCarrierID(eqpt.VEHICLE_ID, new_carrier_id);
+                    //scApp.VIDBLL.upDateVIDCarrierID(eqpt.VEHICLE_ID, new_carrier_id);
 
                     break;
                 case BCRReadResult.BcrNormal:
@@ -3082,7 +3082,9 @@ namespace com.mirle.ibg3k0.sc.Service
                         AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(vh.VEHICLE_ID);
                     if (carrier_id.StartsWith("ERROR"))
                     {
-                        scApp.VIDBLL.upDateVIDCarrierID(vh.VEHICLE_ID, string.Empty);//讀不到ID的話，更新為空白
+                        string new_carrier_id =
+                            $"NR-{vh.Real_ID.Trim()}-{vid_info.CARRIER_INSTALLED_TIME?.ToString(SCAppConstants.TimestampFormat_16)}";
+                        scApp.VIDBLL.upDateVIDCarrierID(vh.VEHICLE_ID, new_carrier_id);//讀不到ID的話，更新為"NR-xxxx"
                         bCRReadResult = BCRReadResult.BcrReadFail;
                     }
                     else if(!SCUtility.isMatche( carrier_id , vid_info.MCS_CARRIER_ID))
@@ -3096,14 +3098,6 @@ namespace com.mirle.ibg3k0.sc.Service
                         bCRReadResult = BCRReadResult.BcrNormal;
                     }
                     scApp.VehicleBLL.updateVehicleBCRReadResult(vh, bCRReadResult);//因為已經要上報MCS Bcrcode Read Report，要先更新BCRReadResult
-
-
-
-
-
-
-
-
                     //scApp.PortBLL.OperateCatch.ClearAllPortStationCSTExistToEmpty();
                     break;
                 case EventType.UnloadComplete:
