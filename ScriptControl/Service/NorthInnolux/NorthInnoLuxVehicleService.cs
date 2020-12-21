@@ -2357,10 +2357,11 @@ namespace com.mirle.ibg3k0.sc.Service
                     break;
             }
 
-            List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
-            scApp.ReportBLL.newReportCarrierIDReadReport(eqpt.VEHICLE_ID, reportqueues);
-            scApp.ReportBLL.insertMCSReport(reportqueues);
-            scApp.ReportBLL.newSendMCSMessage(reportqueues);
+            //2020/12/21 Hsinyu Chang: 北群創不需要報CEID 151，包含的資訊已經用2880取代了
+            //List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
+            //scApp.ReportBLL.newReportCarrierIDReadReport(eqpt.VEHICLE_ID, reportqueues);
+            //scApp.ReportBLL.insertMCSReport(reportqueues);
+            //scApp.ReportBLL.newSendMCSMessage(reportqueues);
         }
 
 
