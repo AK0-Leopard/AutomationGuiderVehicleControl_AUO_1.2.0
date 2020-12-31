@@ -3827,7 +3827,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             vid_collection.VID_54_CarrierID.CARRIER_ID = vid_info.MCS_CARRIER_ID;
 
             //VID_55_CarrierInfo
-            vid_collection.VID_55_CarrierInfo.CARRIER_ID = vid_info.CARRIER_ID;
+            vid_collection.VID_55_CarrierInfo.CARRIER_ID = vid_info.MCS_CARRIER_ID;
             vid_collection.VID_55_CarrierInfo.VEHICLE_ID = vh.Real_ID;
             if (vh.HAS_CST==1)
             {
