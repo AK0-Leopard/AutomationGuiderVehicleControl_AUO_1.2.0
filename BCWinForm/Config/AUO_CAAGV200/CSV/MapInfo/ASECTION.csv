@@ -39,8 +39,8 @@ Id,FromAddress,ToAddress,Speed,Type,PermitDirection
 0162,16018,16042,600,Horizontal,Forward
 0163,16042,16043,600,Horizontal,Forward
 0164,16043,16019,600,Horizontal,Forward
-0165,16019,48016,138,R2000,Forward
-0171,48015,16020,138,R2000,Forward
+0165,16019,48016,138,R2000B,Forward
+0171,48015,16020,138,R2000B,Forward
 0172,16020,48021,600,Horizontal,Forward
 0181,16022,48021,400,Vertical,Forward
 0161,48021,16018,400,Vertical,Forward
