@@ -25,438 +25,515 @@ AGV_NODE,23,1,Load address unmatch current command load address.
 AGV_NODE,24,1,ToUnloadSections is empty.
 AGV_NODE,25,1,ToLoadSections is empty.
 AGV_NODE,26,1,Exception happened in override-check.
-AGV_NODE,27,1,Vehicle can not pause.
+AGV_NODE,27,2,Fork not home reject transfer command.
 AGV_NODE,28,1,Carrier ID is mismatch after load finished.
 AGV_NODE,29,1,Carrier ID read reply is timeout
-AGV_NODE,30,1,Vehicle has 2 cannot do transfer command.
+AGV_NODE,30,1,Vehicle has alarm cannot do transfer command.
 AGV_NODE,31,1,MoveControl status is not idle cannot switch to auto mode.
 AGV_NODE,32,1,Real position is null cannot switch to auto mode.
 AGV_NODE,33,1,Vehicle is not in transfer reject avoid.
 AGV_NODE,34,1,Vehicle is not in moving-step reject avoid.
 AGV_NODE,35,1,Vehicle is not pause by reserve reject avoid.
 AGV_NODE,36,1,Exception happened in avoid-check.
-AGV_NODE,100000,2,Elmo connection failed
-AGV_NODE,100001,2,Elmo Config read failed
-AGV_NODE,100002,2,Elmo Config path error
-AGV_NODE,101000,2,SR2000-L connection failed
-AGV_NODE,101001,2,SR2000-L data format error
-AGV_NODE,101100,2,SR2000-R connection failed
-AGV_NODE,101101,2,SR2000-R data format error
-AGV_NODE,110000,2,Reject the Middler move command: the program is closed
-AGV_NODE,110001,2,Reject the Middler move command: AGV is moving
-AGV_NODE,110002,2,Reject the Middler move command:Charging
-AGV_NODE,110003,2,Reject the Middler move command:Fork not Home
-AGV_NODE,110004,2,Reject the Middler move command: the starting point error is too large
-AGV_NODE,110005,2,拒絕Middler移動命令:AGV迷航中
-AGV_NODE,110006,2,拒絕Middler移動命令:命令分解失敗
-AGV_NODE,130000,2,出彎後過久沒讀到Barcode
-AGV_NODE,130001,2,直線過久沒讀到Barcode
-AGV_NODE,130002,2,和Section角度偏差過大
-AGV_NODE,130003,2,和Section軌道偏差過大
-AGV_NODE,130009,2,沒讀取到該讀取的Barcode
-AGV_NODE,140000,2,走行中Fork不再Home點上
-AGV_NODE,142000,2,Axis Error:XFL
-AGV_NODE,142001,2,走行中XFR異常
-AGV_NODE,142002,2,走行中XRL異常
-AGV_NODE,142003,2,走行中XRR異常
-AGV_NODE,142004,2,走行中TFL異常
-AGV_NODE,142005,2,走行中TFR異常
-AGV_NODE,142006,2,走行中TRL異常
-AGV_NODE,142007,2,走行中TRR異常
-AGV_NODE,142100,2,走行中VXFL異常
-AGV_NODE,142101,2,走行中VXFR異常
-AGV_NODE,142102,2,走行中VXRL異常
-AGV_NODE,142103,2,走行中VXRR異常
-AGV_NODE,142104,2,走行中VTFL異常
-AGV_NODE,142105,2,走行中VTFR異常
-AGV_NODE,142106,2,走行中VTRL異常
-AGV_NODE,142107,2,走行中VTRR異常
-AGV_NODE,150000,2,MoveControl主Thread Excption
-AGV_NODE,150001,2,移動前旋轉轉向軸旋轉不到位
-AGV_NODE,150002,2,超過命令觸發區間
-AGV_NODE,150003,2,AGV莫停
-AGV_NODE,151000,2,降速指令降速速度異常
-AGV_NODE,152000,2,TR入彎超速
-AGV_NODE,152001,2,與預計路徑差異過大
-AGV_NODE,152002,1,TR瞬間GT Moving
-AGV_NODE,152003,2,四輪角度差異過大
-AGV_NODE,153000,2,R2000入彎超速
-AGV_NODE,153001,1,R2000入彎過慢
-AGV_NODE,153002,2,R2000異常停止
-AGV_NODE,154000,2,角度偏差過大
-AGV_NODE,154001,2,軌道偏差過大
-AGV_NODE,155000,2,SlowStop Timeout
-AGV_NODE,155001,2,Stop Timeout
-AGV_NODE,155002,2,StopAndClear Timeout
-AGV_NODE,156000,2,二修timeout
-AGV_NODE,156001,2,啟動二修timeout
-AGV_NODE,159998,2,程式觸發不應該觸發的地方
-AGV_NODE,159999,2,觸發到未實作功能
-AGV_NODE,270001,2,Fork Command Format Error. Clear Fork Command for Continue!
-AGV_NODE,270002,2,Fork Command PLC Read Error. Clear Fork Command for Continue!
-AGV_NODE,270003,2,Fork Start Send out but Busy not on timeout. Please check PLC.
-AGV_NODE,270004,2,Fork Command Executing timeout.
+AGV_NODE,37,2,Get EMS from AGVC.
+AGV_NODE,38,1,Interlock error when loadunload and retry count = 0.
+AGV_NODE,40,1,SendWaitTimeout
+AGV_NODE,100000,2,MoveControl Exception
+AGV_NODE,100001,1,Send PLC to Stop AGV
+AGV_NODE,100002,2,Command out of trigger range
+AGV_NODE,100100,2,Move : Initail Wheel Angle Timeout
+AGV_NODE,100101,2,Move : Enable allAxis Timeout
+AGV_NODE,100200,2,Reserve : Get Reserve with MoveControl Idle
+AGV_NODE,100201,2,Reserve : Get Reserve position not math
+AGV_NODE,100202,1,Reserve : Command's Reserve out of ReserveList's Range
+AGV_NODE,100300,1,SlowStop : Timeout
+AGV_NODE,100400,2,STurn : AGV turning too fast
+AGV_NODE,100401,2,STurn : AGV turning too slow
+AGV_NODE,100402,2,STurn : AGV turning with GroupTurn not Ready
+AGV_NODE,100403,2,STurn : AGV turning with wrong path
+AGV_NODE,100404,2,STurn : one of wheels turning too slow
+AGV_NODE,100405,2,STurn : stop in STurn feature distable
+AGV_NODE,100406,2,STurn : continue in STurn feature distable
+AGV_NODE,100500,2,RTurn : AGV turning too fast
+AGV_NODE,100501,2,RTurn : AGV turning too slow
+AGV_NODE,100502,2,RTurn : Virtual Axis not Link
+AGV_NODE,100503,2,RTurn : Turn direction format error
+AGV_NODE,100504,2,RTurn : stop in RTurn feature distable
+AGV_NODE,100505,2,RTurn : RTurn Control timeout
+AGV_NODE,100506,2,RTurn : stop in can't continue step
+AGV_NODE,100507,2,RTurn : continue in RTurn feature distable
+AGV_NODE,100600,2,StopAndClear : Timeout
+AGV_NODE,100700,2,SecondCorrection : Timeout
+AGV_NODE,100701,2,SecondCorrection : Disable Timeout
+AGV_NODE,101000,2,MoveMethod Initail Fail
+AGV_NODE,101001,2,MoveMethod Driver Command Fail
+AGV_NODE,101100,2,MotionDriver_Elmo Initail Fail
+AGV_NODE,101101,2,MotionDriver_Elmo Connect Fail
+AGV_NODE,101102,2,MotionDriver_Elmo Axis Setting format error
+AGV_NODE,101103,2,MotionDriver_Elmo Bulk Exception
+AGV_NODE,101104,2,MotionDriver_Elmo Disconnect : IPC witch controler
+AGV_NODE,101105,2,MotionDriver_Elmo Disconnect : controler witch driver
+AGV_NODE,101110,1,MotionDriver Axis Error
+AGV_NODE,101111,1,MotionDriver Axis XFL Error
+AGV_NODE,101112,1,MotionDriver Axis XFR Error
+AGV_NODE,101113,1,MotionDriver Axis XRL Error
+AGV_NODE,101114,1,MotionDriver Axis XRR Error
+AGV_NODE,101115,1,MotionDriver Axis TFL Error
+AGV_NODE,101116,1,MotionDriver Axis TFR Error
+AGV_NODE,101117,1,MotionDriver Axis TRL Error
+AGV_NODE,101118,1,MotionDriver Axis TRR Error
+AGV_NODE,101119,1,MotionDriver Axis VXFL Error
+AGV_NODE,101120,1,MotionDriver Axis VXFR Error
+AGV_NODE,101121,1,MotionDriver Axis VXRL Error
+AGV_NODE,101122,1,MotionDriver Axis VXRR Error
+AGV_NODE,101123,1,MotionDriver Axis VTFL Error
+AGV_NODE,101124,1,MotionDriver Axis VTFR Error
+AGV_NODE,101125,1,MotionDriver Axis VTRL Error
+AGV_NODE,101126,1,MotionDriver Axis VTRR Error
+AGV_NODE,101127,1,MotionDriver Axis XFL Error
+AGV_NODE,101128,1,MotionDriver Axis XFL Error
+AGV_NODE,102000,2,LocateControl Initail Fail
+AGV_NODE,102100,2,LocateDriver_BarcodeMapSystem Initail Fail
+AGV_NODE,102101,2,LocateDriver_BarcodeMapSystem Connect Fail
+AGV_NODE,102102,2,LocateDriver_BarcodeMapSystem data format error
+AGV_NODE,102103,1,LocateDriver_BarcodeMapSystem LON Exception
+AGV_NODE,102104,1,LocateDriver_BarcodeMapSystem Error
+AGV_NODE,102200,2,LocateDriver_SLAM_Sick Initail Fail
+AGV_NODE,102201,2,LocateDriver_SLAM_Sick Connect Fail
+AGV_NODE,102202,2,LocateDriver_SLAM_Sick data format error
+AGV_NODE,102203,1,LocateDriver_SLAM_Sick wrong locate
+AGV_NODE,103000,1,CreateMoveCommandList Fail
+AGV_NODE,103100,1,Can't Override : Can't Pause now
+AGV_NODE,103101,2,Can't Override : Override Timeout
+AGV_NODE,104000,1,Can't Auto : MoveControl Status is not Idle
+AGV_NODE,104001,1,Can't Auto : Motion Driver Disconnect
+AGV_NODE,104002,1,Can't Auto : MoveCommandControl Intail Fail
+AGV_NODE,104003,1,Can't Auto : Closing program
+AGV_NODE,104004,1,Can't Auto : Axis Error
+AGV_NODE,104005,1,Can't Auto : Wait ResetAlarm Finish
+AGV_NODE,104006,1,Can't Auto : JogPitch Action
+AGV_NODE,104007,1,Can't Auto : LocateControl Intail Fail
+AGV_NODE,104008,1,Can't Auto : Locate Driver Disconnect
+AGV_NODE,104009,1,Can't Auto : Locate Driver Error
+AGV_NODE,104010,1,Can't Auto : AutoAction Fail
+AGV_NODE,104100,1,Reject Move Command : MovecmdInfo data error
+AGV_NODE,104101,1,Reject Move Command : Closing Program
+AGV_NODE,104102,1,Reject Move Command : MoveControl Status is not Idle
+AGV_NODE,104103,1,Reject Move Command : Charging
+AGV_NODE,104104,1,Reject Move Command : Fork isn't in home Status
+AGV_NODE,104105,1,Reject Move Command : MoveControl driver disconnect
+AGV_NODE,104106,1,Reject Move Command : No current coordinates
+AGV_NODE,104107,1,Reject Move Command : Not is start position
+AGV_NODE,104108,1,Reject Move Command : Not is start AGV angle
+AGV_NODE,104109,1,Reject Move Command : in cancel flow
+AGV_NODE,104110,1,Reject Move Command : in AutoRetry flow
+AGV_NODE,104200,2,SafetyStop : Fork isn't in home Status
+AGV_NODE,104201,2,SafetyStop : Charging
+AGV_NODE,104202,2,SafetyStop : Excessive angular deviation
+AGV_NODE,104203,2,SafetyStop : Excessive section deviation
+AGV_NODE,104204,2,SafetyStop : Too long not read barcode (turn)
+AGV_NODE,104205,2,SafetyStop : Too long not read barcode (line)
+AGV_NODE,104206,2,SafetyStop : AGV Stop without reason
+AGV_NODE,104207,2,SafetyStop : Velocity change error
+AGV_NODE,104208,2,SafetyStop : Axis error
+AGV_NODE,104209,2,SafetyStop : LocateControl Error
+AGV_NODE,104210,2,SafetyStop : Stop Request
+AGV_NODE,104211,2,SafetyStop : Bumper Stop
+AGV_NODE,104212,2,SafetyStop : EMO Stop
+AGV_NODE,104213,2,SafetyStop : Delta update value error
+AGV_NODE,104300,1,Can't Reset Alarm : Main Flow Exception
+AGV_NODE,104301,1,Can't Reset Alarm : stop in turn flow
+AGV_NODE,104302,1,Can't Reset Alarm : vehicle not in section
+AGV_NODE,104303,1,Can't Reset Alarm : Locate Control Error
+AGV_NODE,104304,1,Can't Reset Alarm : Motion Control Error
+AGV_NODE,104400,1,Can't AutoReset : Special Alarm
+AGV_NODE,104500,2,Can't AutoRetry : AutoRetry Count more than config
+AGV_NODE,104501,2,Can't AutoRetry : AutoReset fail
+AGV_NODE,104502,2,Can't AutoRetry : Create Retry MoveCmdInfo fail
+AGV_NODE,104600,2,BeamSensor singal on Timeout
+AGV_NODE,270001,2,Fork Command Format NG
+AGV_NODE,270002,2,Fork Command Read timeout
+AGV_NODE,270003,2,Fork Not Busy timeout
+AGV_NODE,270004,1,Fork Command Executing timeout
 AGV_NODE,270005,2,Batterys Charging Time Out
-AGV_NODE,200001,2,Safety Not Ready
-AGV_NODE,200002,2,MC Not Ready(100)
-AGV_NODE,200003,2,MC Not Ready(284V Power Supply)
-AGV_NODE,200010,2,Main box emergency stop
-AGV_NODE,200011,2,Emergency stop(Teach Box)
-AGV_NODE,200012,2,Emergency stop(FR)
-AGV_NODE,200013,2,Emergency stop(FC)
-AGV_NODE,200014,2,Emergency stop(FL)
-AGV_NODE,200015,2,Emergency stop(BR)
-AGV_NODE,200016,2,Emergency stop(BC)
-AGV_NODE,200017,2,Emergency stop(BL)
-AGV_NODE,200018,2,Emergency stop(IPC Command)
-AGV_NODE,200045,2,284V Power Supply1 Start 2
-AGV_NODE,200046,2,284V Power Supply2 Start 2
-AGV_NODE,200047,2,284V Power Supply3 Start 2
-AGV_NODE,200048,2,284V Power Supply1 FAN 2
-AGV_NODE,200049,2,284V Power Supply2 FAN 2
-AGV_NODE,200050,2,284V Power Supply3 FAN 2
-AGV_NODE,200051,2,284V Power Supply1 Overcurrent 2
-AGV_NODE,200052,2,284V Power Supply2 Overcurrent 2
-AGV_NODE,200053,2,284V Power Supply1 Temperature 2
-AGV_NODE,200054,2,284V Power Supply2 Temperature 2
-AGV_NODE,200060,2,Bump_F 2
-AGV_NODE,200061,2,Bump_F 2(No Setup)
-AGV_NODE,200066,2,Bump_B 2
-AGV_NODE,200067,2,Bump_B 2(No Setup)
-AGV_NODE,200072,2,Bump_L 2
-AGV_NODE,200073,2,Bump_L 2(No Setup)
-AGV_NODE,200074,2,Bump_R 2
-AGV_NODE,200075,2,Bump_R 2(No Setup)
-AGV_NODE,200090,1,Charger Timeout(R)
-AGV_NODE,200091,1,Charger Timeout(L)
-AGV_NODE,200092,1,Charger Signal Off(R)
-AGV_NODE,200093,1,Charger Signal Off(L)
-AGV_NODE,200094,1,Charger Confirm Sensor Off(R)
-AGV_NODE,200095,1,Charger Confirm Sensor Off(L)
-AGV_NODE,200100,2,Vehicle BAT Overheating_F 2
-AGV_NODE,200101,2,Vehicle BAT Overheating_B 2
-AGV_NODE,200102,2,Vehicle BMS Low Battery 2
-AGV_NODE,200103,2,Vehicle BAT Temperature 2
-AGV_NODE,200104,2,Vehicle BAT-F FAN1 2
-AGV_NODE,200105,2,Vehicle BAT-F FAN2 2
-AGV_NODE,200106,2,Vehicle BAT-B FAN1 2
-AGV_NODE,200107,2,Vehicle BAT-B FAN2 2
-AGV_NODE,200120,2,Fork Command Timeout
-AGV_NODE,200121,2,Stage Command NG
-AGV_NODE,200122,2,Command Type NG
-AGV_NODE,200123,2,置物二重格判斷異常(Double Storage)
-AGV_NODE,200124,2,置物二重格判斷異常(Double Storage)
-AGV_NODE,200125,2,取物二重格判斷異常(Empty Retrieval)
-AGV_NODE,200126,2,取物二重格判斷異常(Empty Retrieval)
-AGV_NODE,200127,2,Vehicle Direction NG
-AGV_NODE,200128,2,Vehicle Home NG
-AGV_NODE,200129,2,Fork Home NG
-AGV_NODE,200130,2,Fork Servo NG
-AGV_NODE,200131,2,Fork Command Signal NG
-AGV_NODE,200132,2,Fork Busy Signal NG
-AGV_NODE,200133,2,Fork Speed NG
-AGV_NODE,200134,2,Spare NG
-AGV_NODE,200135,2,System Status NG
-AGV_NODE,200140,2,Fork Alignment NG
-AGV_NODE,200141,2,Fork Alignment Value NG(P Max)
-AGV_NODE,200142,2,Fork Alignment Value NG(P Min)
-AGV_NODE,200143,2,Fork Alignment Value NG(Y Max)
-AGV_NODE,200144,2,Fork Alignment Value NG(Y Min)
-AGV_NODE,200145,2,Fork Alignment Value NG(? Max)
-AGV_NODE,200146,2,Fork Alignment Value NG(? Min)
-AGV_NODE,200150,2,GOTECH BAT Cell Voltage 2(Internal))
-AGV_NODE,200151,2,GOTECH BAT MOSFET Temperature 1 2(Internal)
-AGV_NODE,200152,2,GOTECH BAT Cell Temperature 2 2(Internal)
-AGV_NODE,200153,2,GOTECH BAT MCU Temperature 3 2(Internal)
-AGV_NODE,200154,2,GOTECH BAT Over Voltage 2(Internal)
-AGV_NODE,200155,2,GOTECH BAT Under Voltage 2(Internal)
-AGV_NODE,200156,2,GOTECH BAT Over Current 2(Internal)
-AGV_NODE,200157,2,GOTECH BAT Over Voltage 2(Communication)
-AGV_NODE,200158,2,GOTECH BAT Under Voltage 2(Communication)
-AGV_NODE,200159,2,GOTECH BAT Over Temperature 2(Communication)
-AGV_NODE,200160,2,GOTECH BAT Under Temperature 2(Communication)
-AGV_NODE,200161,2,GOTECH BAT Unbalance 2(Communication)
-AGV_NODE,200162,2,GOTECH BAT Over Current 2(Communication)
-AGV_NODE,200201,2,緊急停止  
-AGV_NODE,200202,2,伺服命令位址異常
-AGV_NODE,200203,2,伺服輸入儲位資料錯誤
-AGV_NODE,200204,2,PLC code 異常
-AGV_NODE,200205,2,Port二重格無物
-AGV_NODE,200206,2,Port二重格有物
-AGV_NODE,200207,2,PLC code 異常
-AGV_NODE,200208,2,PLC code 異常
-AGV_NODE,200209,2,PLC code 異常
-AGV_NODE,200210,2,手臂荷有檢知異常(取)
-AGV_NODE,200211,2,手臂荷有檢知異常(置)
-AGV_NODE,200212,2,手臂荷有檢知異常(手臂移動中)
-AGV_NODE,200213,2,置物後手臂有物
-AGV_NODE,200214,2,PLC code 異常
-AGV_NODE,200215,2,手臂運轉前檢查到命令異常 
-AGV_NODE,200216,2,手臂檢查到命令異常 
-AGV_NODE,200217,2,PLC code 異常
-AGV_NODE,200218,2,PLC code 異常
-AGV_NODE,200219,2,PLC code 異常
-AGV_NODE,200220,2,動作命令運轉超時
-AGV_NODE,200221,2,PLC code 異常
-AGV_NODE,200222,2,PLC code 異常
-AGV_NODE,200223,2,PLC code 異常
-AGV_NODE,200224,2,PLC code 異常
-AGV_NODE,200225,2,PLC code 異常
-AGV_NODE,200226,2,PLC code 異常
-AGV_NODE,200227,2,PLC code 異常
-AGV_NODE,200228,2,PLC code 異常
-AGV_NODE,200229,2,PLC code 異常
-AGV_NODE,200230,2,AGV 異常
-AGV_NODE,200231,2,PLC code 異常
-AGV_NODE,200232,2,PLC code 異常
-AGV_NODE,200233,2,PLC code 異常
-AGV_NODE,200234,2,PLC code 異常
-AGV_NODE,200235,2,原點迷失
-AGV_NODE,200236,2,走行原點迷失
-AGV_NODE,200237,2,昇降原點迷失
-AGV_NODE,200238,2,回轉原點迷失
-AGV_NODE,200239,2,叉臂原點迷失
-AGV_NODE,200240,2,走行動作中-叉臂位置錯誤
-AGV_NODE,200241,2,走行原點復歸超時
-AGV_NODE,200242,2,走行動作中超時
-AGV_NODE,200243,2,走行驅動器異常
-AGV_NODE,200244,2,走行驅動器異常
-AGV_NODE,200245,2,走行驅動器異常
-AGV_NODE,200246,2,走行HP原點光電檢測異常
-AGV_NODE,200247,2,走行HP光電檢測異常
-AGV_NODE,200248,2,走行HP側極限光電異常
-AGV_NODE,200249,2,走行 EN 超過 HP 極限
-AGV_NODE,200250,2,走行OP原點光電檢測異常
-AGV_NODE,200251,2,走行OP光電檢測異常
-AGV_NODE,200252,2,走行OP側極限光電異常
-AGV_NODE,200253,2,走行 EN 超過 OP 極限
-AGV_NODE,200254,2,PLC code 異常
-AGV_NODE,200255,2,PLC code 異常
-AGV_NODE,200256,2,PLC code 異常
-AGV_NODE,200257,2,PLC code 異常
-AGV_NODE,200258,2,PLC code 異常
-AGV_NODE,200259,2,PLC code 異常
-AGV_NODE,200260,2,升降動作中-叉臂動作
-AGV_NODE,200261,2,升降原點復歸超時
-AGV_NODE,200262,2,升降動作中超時
-AGV_NODE,200263,2,升降驅動器異常
-AGV_NODE,200264,2,升降驅動器異常
-AGV_NODE,200265,2,升降驅動器異常
-AGV_NODE,200266,2,升降HP原點光電檢測異常
-AGV_NODE,200267,2,升降上定位光電檢測異常
-AGV_NODE,200268,2,升降上極限光電異常
-AGV_NODE,200269,2,升降 EN 超過上極限
-AGV_NODE,200270,2,升降OP原點光電檢測異常
-AGV_NODE,200271,2,升降下定位光電檢測異常
-AGV_NODE,200272,2,升降下極限光電異常
-AGV_NODE,200273,2,升降 EN 超過下極限
-AGV_NODE,200274,2,升降台傾斜檢知
-AGV_NODE,200275,2,PLC code 異常
-AGV_NODE,200276,2,PLC code 異常
-AGV_NODE,200277,2,PLC code 異常
-AGV_NODE,200278,2,PLC code 異常
-AGV_NODE,200279,2,PLC code 異常
-AGV_NODE,200280,2,叉臂動作中-走行升降迴轉動作
-AGV_NODE,200281,2,叉臂原點復歸超時
-AGV_NODE,200282,2,叉臂動作中超時
-AGV_NODE,200283,2,叉臂驅動器異常
-AGV_NODE,200284,2,叉臂驅動器異常
-AGV_NODE,200285,2,叉臂驅動器異常
-AGV_NODE,200286,2,叉臂HP原點光電檢測異常
-AGV_NODE,200287,2,叉臂HP光電檢測異常
-AGV_NODE,200288,2,叉臂HP側極限光電異常
-AGV_NODE,200289,2,叉臂 EN 超過 HP 極限
-AGV_NODE,200290,2,叉臂OP原點光電檢測異常
-AGV_NODE,200291,2,叉臂OP光電檢測異常
-AGV_NODE,200292,2,叉臂OP側極限光電異常
-AGV_NODE,200293,2,叉臂 EN 超過 OP 極限
-AGV_NODE,200294,2,叉臂不在HP(初始位置)
-AGV_NODE,200295,2,叉臂動作中異常
-AGV_NODE,200296,2,PLC code 異常
-AGV_NODE,200297,2,PLC code 異常
-AGV_NODE,200298,2,PLC code 異常
-AGV_NODE,200299,2,PLC code 異常
-AGV_NODE,200300,2,迴轉超時-定位
-AGV_NODE,200301,2,迴轉原點復歸超時
-AGV_NODE,200302,2,迴轉動作中超時
-AGV_NODE,200303,2,迴轉驅動器異常
-AGV_NODE,200304,2,迴轉驅動器異常
-AGV_NODE,200305,2,迴轉驅動器異常
-AGV_NODE,200306,2,迴轉0度原點光電檢測異常
-AGV_NODE,200307,2,迴轉0度光電檢測異常
-AGV_NODE,200308,2,迴轉0度側極限光電異常
-AGV_NODE,200309,2,迴轉 EN 超過 0度極限
-AGV_NODE,200310,2,迴轉180度原點光電檢測異常
-AGV_NODE,200311,2,迴轉180度光電檢測異常
-AGV_NODE,200312,2,迴轉180度側極限光電異常
-AGV_NODE,200313,2,迴轉 EN 超過 180度極限
-AGV_NODE,200314,2,PLC code 異常
-AGV_NODE,200315,2,迴轉90度光電檢測異常
-AGV_NODE,200316,2,迴轉位置異常
-AGV_NODE,200317,2,迴轉無光電檢測異常
-AGV_NODE,200400,2,暫停模式-非自動
-AGV_NODE,200401,2,動作中-強制手動(需初始化)
-AGV_NODE,200402,2,PLC code 異常
-AGV_NODE,200403,2,PLC code 異常
-AGV_NODE,200404,2,PLC code 異常
-AGV_NODE,200405,2,手臂運轉前檢查到命令異常 
-AGV_NODE,200406,2,手臂檢查到命令異常 
-AGV_NODE,200407,2,PLC code 異常
-AGV_NODE,201001,2,Maintain Mode
-AGV_NODE,201002,2,IPC Not Ready
-AGV_NODE,201003,2,PLC code 異常
-AGV_NODE,201004,2,PLC code 異常
-AGV_NODE,201005,2,Notification preparation and maintenance
-AGV_NODE,201006,2,Driver Battery Low
-AGV_NODE,201007,2,PLC Battery Low
-AGV_NODE,201008,2,CC-Link Master
-AGV_NODE,201009,2,PLC code 異常
-AGV_NODE,201010,2,Fork Command NG
-AGV_NODE,201011,2,Fork Command Idle
-AGV_NODE,201012,2,PLC code 異常
-AGV_NODE,201013,2,PLC code 異常
-AGV_NODE,201014,2,PLC code 異常
-AGV_NODE,201015,2,PLC code 異常
-AGV_NODE,201016,2,PLC code 異常
-AGV_NODE,201017,2,PLC code 異常
-AGV_NODE,201018,2,PLC code 異常
-AGV_NODE,201019,2,ET2 Fork Teaching Report
-AGV_NODE,201020,2,ET2 Index Timeout
-AGV_NODE,201021,2,ET3 Vehicle Teaching Report
-AGV_NODE,201022,2,ET3 Index Timeout
-AGV_NODE,201023,2,ET4 Fork Alignment Teching Report
-AGV_NODE,201024,2,ET4 Index Timeout
-AGV_NODE,201025,2,PLC code 異常
-AGV_NODE,201026,2,ES3 Index Timeout
-AGV_NODE,201040,2,Vehicle Battery Setting status(None)
-AGV_NODE,201041,2,Vehicle BMS High Battery 1ning
-AGV_NODE,201042,2,Vehicle BMS Low Battery 1ning
-AGV_NODE,201043,2,PLC code 異常
-AGV_NODE,201044,2,PLC code 異常
-AGV_NODE,201045,2,PLC code 異常
-AGV_NODE,201046,2,PLC code 異常
-AGV_NODE,201047,2,PLC code 異常
-AGV_NODE,201048,2,PLC code 異常
-AGV_NODE,201049,2,PLC code 異常
-AGV_NODE,201050,1,Alignment Disable
-AGV_NODE,201051,1,Stage Sensor Disable
-AGV_NODE,201052,1,Fork Sensor Disable
-AGV_NODE,201053,1,Fork Sensor(二重格)L Side Disable
-AGV_NODE,201054,1,Fork Sensor(二重格)R Side Disable
-AGV_NODE,201055,1,Bump Disable
-AGV_NODE,201056,2,PLC code 異常
-AGV_NODE,201057,1,IPC Stop Command Disable
-AGV_NODE,201058,2,PLC code 異常
-AGV_NODE,201059,2,PLC code 異常
-AGV_NODE,201060,2,PLC code 異常
-AGV_NODE,201061,2,PLC code 異常
-AGV_NODE,201062,2,PLC code 異常
-AGV_NODE,201063,2,PLC code 異常
-AGV_NODE,201064,2,PLC code 異常
-AGV_NODE,201065,2,PLC code 異常
-AGV_NODE,201066,2,PLC code 異常
-AGV_NODE,201067,2,PLC code 異常
-AGV_NODE,201068,2,PLC code 異常
-AGV_NODE,201069,2,PLC code 異常
-AGV_NODE,201070,1,Beam Sensor_FUR 1ning
-AGV_NODE,201071,1,Beam Sensor_FUL 1ning
-AGV_NODE,201072,1,Beam Sensor_FDR 1ning
-AGV_NODE,201073,1,Beam Sensor_FDC 1ning
-AGV_NODE,201074,1,Beam Sensor_FDL 1ning
-AGV_NODE,201075,1,Beam Sensor_BUR 1ning
-AGV_NODE,201076,1,Beam Sensor_BUL 1ning
-AGV_NODE,201077,1,Beam Sensor_BDR 1ning
-AGV_NODE,201078,1,Beam Sensor_BDC 1ning
-AGV_NODE,201079,1,Beam Sensor_BDL 1ning
-AGV_NODE,201080,1,Beam Sensor_LUR 1ning
-AGV_NODE,201081,1,Beam Sensor_LUL 1ning
-AGV_NODE,201082,1,Beam Sensor_LDR 1ning
-AGV_NODE,201083,1,Beam Sensor_LDL 1ning
-AGV_NODE,201084,1,Beam Sensor_LUC 1ning
-AGV_NODE,201085,1,Beam Sensor_RUR 1ning
-AGV_NODE,201086,1,Beam Sensor_RUL 1ning
-AGV_NODE,201087,1,Beam Sensor_RDR 1ning
-AGV_NODE,201088,1,Beam Sensor_RDL 1ning
-AGV_NODE,201089,1,Beam Sensor_RUC 1ning
-AGV_NODE,201090,2,PLC code 異常
-AGV_NODE,201091,2,PLC code 異常
-AGV_NODE,201092,2,PLC code 異常
-AGV_NODE,201093,2,PLC code 異常
-AGV_NODE,201094,2,PLC code 異常
-AGV_NODE,201095,2,PLC code 異常
-AGV_NODE,201096,2,PLC code 異常
-AGV_NODE,201097,2,PLC code 異常
-AGV_NODE,201098,2,PLC code 異常
-AGV_NODE,201099,2,PLC code 異常
-AGV_NODE,201100,2,Teach_box _FU 1ning
-AGV_NODE,201101,2,Teach_box _BU 1ning
-AGV_NODE,201102,2,Brake release _FU 1ning
-AGV_NODE,201103,2,Brake release _BU 1ning
-AGV_NODE,201104,2,PLC code 異常
-AGV_NODE,201105,2,PLC code 異常
-AGV_NODE,201106,2,PLC code 異常
-AGV_NODE,201107,2,PLC code 異常
-AGV_NODE,201108,2,PLC code 異常
-AGV_NODE,201109,2,PLC code 異常
-AGV_NODE,201110,2,Meter Communication Timeout
-AGV_NODE,201111,2,Meter Communication Error
-AGV_NODE,201112,2,PLC code 異常
-AGV_NODE,201113,2,PLC code 異常
-AGV_NODE,201114,2,PLC code 異常
-AGV_NODE,201115,2,GOTECH Battery Communication Timeout
-AGV_NODE,201116,2,GOTECH Battery Communication NG
-AGV_NODE,201117,2,PLC code 異常
-AGV_NODE,201118,2,PLC code 異常
-AGV_NODE,201119,2,PLC code 異常
-AGV_NODE,201120,2,PLC code 異常
-AGV_NODE,201121,2,PLC code 異常
-AGV_NODE,201122,2,PLC code 異常
-AGV_NODE,201123,2,PLC code 異常
-AGV_NODE,201124,2,PLC code 異常
-AGV_NODE,201125,2,PLC code 異常
-AGV_NODE,201126,2,PLC code 異常
-AGV_NODE,201127,2,PLC code 異常
-AGV_NODE,201128,2,PLC code 異常
-AGV_NODE,201129,2,PLC code 異常
-AGV_NODE,201130,2,PLC code 異常
-AGV_NODE,201131,2,PLC code 異常
-AGV_NODE,201132,2,PLC code 異常
-AGV_NODE,201133,2,PLC code 異常
-AGV_NODE,201134,2,PLC code 異常
-AGV_NODE,201135,1,LiDAR_F 2
-AGV_NODE,201136,1,LiDAR_F Fault
-AGV_NODE,201137,1,LiDAR_B 2
-AGV_NODE,201138,1,LiDAR_B Fault
-AGV_NODE,201139,2,PLC code 異常
-AGV_NODE,201140,2,PLC code 異常
-AGV_NODE,201141,2,PLC code 異常
-AGV_NODE,201142,2,PLC code 異常
-AGV_NODE,201143,2,PLC code 異常
-AGV_NODE,201144,2,PLC code 異常
-AGV_NODE,201145,2,PLC code 異常
-AGV_NODE,201146,2,PLC code 異常
-AGV_NODE,201147,2,PLC code 異常
-AGV_NODE,201148,2,PLC code 異常
-AGV_NODE,201149,2,PLC code 異常
-AGV_NODE,201150,2,Interface T1 Timeout(L Side)
-AGV_NODE,201151,2,Interface T2 Timeout(L Side)
-AGV_NODE,201152,2,Interface T3 Timeout(L Side)
-AGV_NODE,201153,2,Interface T4 Timeout(L Side)
-AGV_NODE,201154,2,Interface T5 Timeout(L Side)
-AGV_NODE,201155,2,Interface T6 Timeout(L Side)
-AGV_NODE,201156,2,Interface T7 Timeout(L Side)
-AGV_NODE,201157,2,Interface T8 Timeout(L Side)
-AGV_NODE,201158,2,Interface Signal On(L Side)
-AGV_NODE,201159,2,Ready Signal Off(L Side)
-AGV_NODE,201160,2,Interface T1 Timeout(R Side)
-AGV_NODE,201161,2,Interface T2 Timeout(R Side)
-AGV_NODE,201162,2,Interface T3 Timeout(R Side)
-AGV_NODE,201163,2,Interface T4 Timeout(R Side)
-AGV_NODE,201164,2,Interface T5 Timeout(R Side)
-AGV_NODE,201165,2,Interface T6 Timeout(R Side)
-AGV_NODE,201166,2,Interface T7 Timeout(R Side)
-AGV_NODE,201167,2,Interface T8 Timeout(R Side)
-AGV_NODE,201168,2,Interface Signal On(R Side)
-AGV_NODE,201169,2,Ready Signal Off(R Side)
+AGV_NODE,270007,2,Fork Home Flag Waiting timeout
+AGV_NODE,200001,2,Emergency Stop(FR Side)[X013A]
+AGV_NODE,200002,2,Emergency Stop(FL Side)[X013C]
+AGV_NODE,200003,2,Emergency Stop(BR Side)[X013D]
+AGV_NODE,200004,2,Emergency Stop(BL Side)[X013F]
+AGV_NODE,200005,2,Emergency Stop(Handheld Touch Panel)
+AGV_NODE,200006,2,Emergency Stop(xxxxSide)
+AGV_NODE,200007,2,Emergency Stop(xxxxSide)
+AGV_NODE,200008,2,System No Power On
+AGV_NODE,200009,2,284V No Power On
+AGV_NODE,200010,2,284V Power Supply No Start
+AGV_NODE,200011,2,284VSupply FAN Error
+AGV_NODE,200012,2,284VSupply Overflow Error
+AGV_NODE,200013,2,284VSupply Overtemperature Error
+AGV_NODE,200014,2,Safety Relay Not Ready(EMO System)
+AGV_NODE,200015,2, Battery Voltage Not Enough
+AGV_NODE,200016,2,Walker Wheel Motor Error(FR Side)
+AGV_NODE,200017,2,Walker Wheel Motor Error(FL Side)
+AGV_NODE,200018,2,Walker Wheel Motor Error(BR Side)
+AGV_NODE,200019,2,Walker Wheel Motor Error(BL Side)
+AGV_NODE,200020,2,Hand Servo Motor No Power On
+AGV_NODE,200021,2,Car Charging Action Time Out(R Side)
+AGV_NODE,200022,2,Car Charging Action Time Out(L Side)
+AGV_NODE,200023,2,Coupler_R Side Handshake Signal Off In Charging
+AGV_NODE,200024,2,Coupler_L Side Handshake Signal Off In Charging
+AGV_NODE,200027,2,Execute IPC Get/Put Command Time Out
+AGV_NODE,200028,2,Vehicle Battery Voltage Too Low Error
+AGV_NODE,200029,2,Vehicle Battery Voltage Too High Error
+AGV_NODE,200030,2,Vehicle Battery Temperature Too High Error
+AGV_NODE,200040,2,Bump Sensor Error(F side)[X0114]
+AGV_NODE,200041,2,Bump Sensor Error(B side)[X011A]
+AGV_NODE,200042,2,Bump Sensor Error(L side)[X0134]
+AGV_NODE,200043,2,Bump Sensor Error(R side)[X0136]
+AGV_NODE,200050,2,FFU Monitor Error
+AGV_NODE,200077,2,Charge Position Error
+AGV_NODE,200200,2,CST Detect Sensor Error[X01AC][X0217][X021B]
+AGV_NODE,200201,2,CST Detect Sensor Error[X0217][X021B]
+AGV_NODE,200202,2,Shutter Door R Side FLS Sensor Error[X020B]
+AGV_NODE,200203,2,Shutter Door R Side RLS Sensor Error[X020D]
+AGV_NODE,200204,2,Shutter Door L Side FLS Sensor Error[X020E]
+AGV_NODE,200205,2,Shutter Door L Side RLS Sensor Error[X020F]
+AGV_NODE,200206,2,Hand Check Out Error[X0201][X0205]
+AGV_NODE,200207,2,Hand Forward/Back Axis RLSSensor Error
+AGV_NODE,200208,2,Hand Forward/Back Axis FLSSensor Error
+AGV_NODE,200209,2,Hand Forward/Back Axis Error
+AGV_NODE,200210,2,Hand Forward/Back Axis Servo Action Time Out
+AGV_NODE,200211,2,Hand Up/Down Axis RLS Sensor Error
+AGV_NODE,200212,2,Hand Up/Down Axis FLS Sensor Error
+AGV_NODE,200213,2,Hand Up/Down Axis Servo Error
+AGV_NODE,200214,2,Hand Up/Down Axis Servo Action Time Out
+AGV_NODE,200215,2,Hand Slide Axis RLS Sensor Error
+AGV_NODE,200216,2,Hand Slide Axis FLS Sensor Error
+AGV_NODE,200217,2,Hand Slide Axis Servo Error
+AGV_NODE,200218,2,Hand Slide Axis Servo Action Time Out
+AGV_NODE,200219,2,Hand Turn Axis RLS Sensor Error
+AGV_NODE,200220,2,Hand Turn Axis FLS Sensor Error
+AGV_NODE,200221,2,Hand Turn Axis Servo Error
+AGV_NODE,200222,2,Hand Turn Axis Servo Action Time Out
+AGV_NODE,200223,2,R Side Shutter Door Servo Controller Error
+AGV_NODE,200224,2,L Side Shutter Door Servo Controller Error
+AGV_NODE,200225,2,Hand Back End Sensor Is Not On[Dog]
+AGV_NODE,200226,2,Hand Down End Sensor Is Not On[X0219]
+AGV_NODE,200227,2,Hand Rising End Sensor Is Not On[X0218]
+AGV_NODE,200228,2,Hand Turn Axis 90 Degrees Sensor Is Not On[X020A]
+AGV_NODE,200229,2,Hand Forward/Back Axis Servo Is Not In Back Position
+AGV_NODE,200230,2,Hand Up/Down Axis Servo Is Not In Get CST Position
+AGV_NODE,200231,2,Hand Slide Axis Servo Is Not In Get/Put CST Position
+AGV_NODE,200232,2,Hand Turn Axis Servo Is Not In GetCST Position
+AGV_NODE,200233,2,Hand Get CST Action Time Out
+AGV_NODE,200234,2,Hand Put CST Action Time Out
+AGV_NODE,200235,2,Hand Is Not Execute Get Cassette Action
+AGV_NODE,200236,2,Hand Is Not Execute Put Cassette Action
+AGV_NODE,200237,2,Hand Forward/Back Axis And Turn Axis Servo Home Return Time Out
+AGV_NODE,200238,2,Hand Up/Down Axis Servo Home Return Time Out
+AGV_NODE,200239,2,Hand Slide Axis Servo Home Return Time Out
+AGV_NODE,200240,2,Hand Back To Work Home Action Time Out(Nothing)
+AGV_NODE,200241,2,Hand Back To Work Home Action Time Out(Something)
+AGV_NODE,200242,2,Hand GetEQ CST Action Time Out(L Side)
+AGV_NODE,200243,2,Hand Put EQ CST Action Time Out(L Side)
+AGV_NODE,200244,2,Hand GetEQ CST Action Time Out(R Side)
+AGV_NODE,200245,2,Hand Put EQ CST Action Time Out(R Side)
+AGV_NODE,200246,2,Shutter Door Fall Action Time Out(L Side)
+AGV_NODE,200247,2,Shutter Door Fall Action Time Out(R Side)
+AGV_NODE,200248,2,Hand Servo Off Action Time Out
+AGV_NODE,200249,2,Hand Servo On Action Time Out
+AGV_NODE,200250,2,Shutter Door R Side Rise Action Time Out
+AGV_NODE,200251,2,Shutter Door R Side Fall Action Time Out
+AGV_NODE,200253,2,"AGV Car And EQ Handshake,TA4 Time out (L Side)"
+AGV_NODE,200254,2,"EQ ES Signal Off , Hand Stop Action(L Side)"
+AGV_NODE,200255,2,Shutter Door L Side Rise Action Time Out
+AGV_NODE,200256,2,Shutter Door L Side Fall Action Time Out
+AGV_NODE,200258,2,"AGV Car And EQ Handshake,TA4 Time out (R Side)"
+AGV_NODE,200259,2,"EQ ES Signal Off , Hand Stop Action(R Side)"
+AGV_NODE,200260,2,"Hand Get CST,Hand Detect Sensor Detect Nothing[X0201]"
+AGV_NODE,200261,2,"Hand Get CST,Hand Detect Sensor Detect Nothing[X0205]"
+AGV_NODE,200262,2,"Hand Put CST,Hand Detect Sensor Detect Nothing[X0201]"
+AGV_NODE,200263,2,"Hand Put CST,Hand Detect Sensor Detect Nothing[X0205]"
+AGV_NODE,200264,2,"Hand Put CST,But Hand Detect Sensor Detect Something[X0201]"
+AGV_NODE,200265,2,"Hand Put CST,But Hand Detect Sensor Detect Something[X0205]"
+AGV_NODE,200270,2,"Hand Get/Put CST,Hand Detect Sensor error[X0201]"
+AGV_NODE,200271,2,"Hand Get/Put CST,Hand Detect Sensor  error[X0205]"
+AGV_NODE,200280,2,"Move,Hand Forward/Back Axis Servo Is Not In Back Position"
+AGV_NODE,200281,2,"Move,Hand Up/Down Axis Servo Is Not In Get CST Position"
+AGV_NODE,200282,2,"Move,Hand Slide Axis Servo Is Not In Get/Put CST Position"
+AGV_NODE,200283,2,"Move,Hand Turn Axis Servo Is Not In GetCST Position"
+AGV_NODE,200284,2,"Move,L Side Shutter Axis Servo Is Not In Down Position"
+AGV_NODE,200285,2,"Move,R Side Shutter Axis Servo Is Not In Down Position"
+AGV_NODE,200700,2,StopChargeTimeout
+AGV_NODE,200701,2,ForkNotHome
+AGV_NODE,200702,2,AgvcCallEms
+AGV_NODE,200703,2,MoveControl Exception
+AGV_NODE,200704,2,Command out of trigger range
+AGV_NODE,200705,2,Move : Initail Wheel Angle Timeout
+AGV_NODE,200706,2,Move : Enable allAxis Timeout
+AGV_NODE,200707,2,Reserve : Command's Reserve out of ReserveList's Range
+AGV_NODE,200708,2,SlowStop : Timeout
+AGV_NODE,200709,2,STurn : AGV turning too fast
+AGV_NODE,200710,2,STurn : AGV turning too slow
+AGV_NODE,200711,2,STurn : AGV turning with wrong path
+AGV_NODE,200712,2,STurn : one of wheels turning too slow
+AGV_NODE,200713,2,STurn : stop in STurn feature distable
+AGV_NODE,200714,2,STurn : continue in STurn feature distable
+AGV_NODE,200715,2,RTurn : AGV turning too fast
+AGV_NODE,200716,2,RTurn : AGV turning too slow
+AGV_NODE,200717,2,RTurn : Virtual Axis not Link
+AGV_NODE,200718,2,RTurn : Turn direction format error
+AGV_NODE,200719,2,RTurn : stop in RTurn feature distable
+AGV_NODE,200720,2,RTurn : RTurn Control timeout
+AGV_NODE,200721,2,RTurn : stop in can't continue step
+AGV_NODE,200722,2,RTurn : continue in RTurn feature distable
+AGV_NODE,200723,2,StopAndClear : Timeout
+AGV_NODE,200724,2,SecondCorrection : Timeout
+AGV_NODE,200725,2,SecondCorrection : Disable Timeout
+AGV_NODE,200726,2,MoveMethod level Initail Fail
+AGV_NODE,200727,2,MoveMethod level Driver Command Fail
+AGV_NODE,200728,2,MotionDriver_Elmo Initail Fail
+AGV_NODE,200729,2,MotionDriver_Elmo Connect Fail
+AGV_NODE,200730,2,MotionDriver_Elmo Axis Setting format error
+AGV_NODE,200731,2,MotionDriver_Elmo Bulk Exception
+AGV_NODE,200732,2,LocateControl Initail Fail
+AGV_NODE,200733,2,LocateDriver_SR2000 Initail Fail
+AGV_NODE,200734,2,LocateDriver_SR2000 Connect Fail
+AGV_NODE,200735,2,LocateDriver_SR2000 data format error
+AGV_NODE,200736,2,LocateDriver_SLAM_Sick Initail Fail
+AGV_NODE,200737,2,LocateDriver_SLAM_Sick Connect Fail
+AGV_NODE,200738,2,LocateDriver_SLAM_Sick data format error
+AGV_NODE,200739,2,Can't Override : Override Timeout
+AGV_NODE,200740,2,SafetyStop : Fork isn't in home Status
+AGV_NODE,200741,2,SafetyStop : Charging
+AGV_NODE,200742,2,SafetyStop : Excessive angular deviation
+AGV_NODE,200743,2,SafetyStop : Excessive section deviation
+AGV_NODE,200744,2,SafetyStop : Too long not read barcode (turn)
+AGV_NODE,200745,2,SafetyStop : Too long not read barcode (line)
+AGV_NODE,200746,2,SafetyStop : AGV Stop without reason
+AGV_NODE,200747,2,SafetyStop : Velocity change error
+AGV_NODE,200748,2,SafetyStop : Axis error
+AGV_NODE,200749,2,SafetyStop : LocateControl Error
+AGV_NODE,200750,2,SafetyStop : Stop Request
+AGV_NODE,200751,2,SafetyStop : Bumper Stop
+AGV_NODE,200752,2,SafetyStop : EMO Stop
+AGV_NODE,200753,2,Can't AutoRetry : AutoRetry Count more than config
+AGV_NODE,200754,2,Can't AutoRetry : AutoReset fail
+AGV_NODE,200755,2,Can't AutoRetry : Create Retry MoveCmdInfo fail
+AGV_NODE,200756,2,Fork Command Format NG
+AGV_NODE,200757,2,Fork Command Read timeout
+AGV_NODE,200758,2,Fork Not Busy timeout
+AGV_NODE,200759,2,Fork Command Executing timeout
+AGV_NODE,200760,2,Fork Home Flag Waiting timeout
+AGV_NODE,201040,1,【PLC】Battery Power (Low) Latch
+AGV_NODE,201041,1,F Side Brake Release Button Enable
+AGV_NODE,201042,1,B Side Brake Release Button Enable
+AGV_NODE,201043,1,Beam Sensor Detect Something(F Side)
+AGV_NODE,201044,1,Beam Sensor Detect Something(B Side)
+AGV_NODE,201045,1,Beam Sensor Detect Something(LR Side)
+AGV_NODE,201046,1,Beam Sensor Detect Something(LL Side)
+AGV_NODE,201047,1,Beam Sensor Detect Something(RR Side)
+AGV_NODE,201048,1,Beam Sensor Detect Something(RL Side)
+AGV_NODE,201051,1,IPC Not Ready
+AGV_NODE,201052,1,"Put CST To EQ,Double Check Sensor Error(L Side)"
+AGV_NODE,201053,1,"From EQ Get CST,Double Check Sensor Error(L Side)"
+AGV_NODE,201054,1,"Put CST To EQ,Double Check Sensor Error(R Side)"
+AGV_NODE,201055,1,"From EQ Get CST,Double Check Sensor Error(R Side)"
+AGV_NODE,201056,1,"From EQ Get CST,Double Check Sensor Error"
+AGV_NODE,201057,1,"Put CST To EQ,Double Check Sensor Error"
+AGV_NODE,201060,1,Double Check Sensor Error(To IPC)
+AGV_NODE,201061,1,Hand Post PIO Fail(To IPC)
+AGV_NODE,201062,1,Hand Busy Fail(To IPC)
+AGV_NODE,201063,1,Hand PrePIO Fail(To IPC)
+AGV_NODE,201064,1,Hand Command NG(From IPC)
+AGV_NODE,201065,1,Double Check Sensor Function Not Use(L Side)
+AGV_NODE,201066,1,Double Check Sensor Function Not Use(R Side)
+AGV_NODE,201067,1,Hand Check Function Not Use
+AGV_NODE,201068,1,Stage Check Function Not Use
+AGV_NODE,201069,1,[Confirm Stage Car  Position] Function Use
+AGV_NODE,201070,1,Shutter Door Not Use
+AGV_NODE,201071,1,Correct Mode Not Use
+AGV_NODE,201072,1,Power Saving Mode Enable
+AGV_NODE,201073,1,Enforce With EQ Handshake Function Use
+AGV_NODE,201074,1,Enforce Close Bump Sensor Function
+AGV_NODE,201075,1,AGVC Enforce End Charge(R Side)
+AGV_NODE,201076,1,Charger Error(R Side)
+AGV_NODE,201077,1,"In Charge,Charger Sensor Error(R Side)"
+AGV_NODE,201078,1,AGVC Enforce End Charge(L Side)
+AGV_NODE,201079,1,Charger Error(L Side)
+AGV_NODE,201080,1,"In Charge,Charger Sensor Error(L Side)"
+AGV_NODE,201081,1,Hand Forward/Back Axis Home Return Ask On
+AGV_NODE,201082,1,Hand Up/Down Axis Home Return Ask On
+AGV_NODE,201083,1,Hand Slide Axis Home Return Ask On
+AGV_NODE,201084,1,Hand Turn Axis Home Return Ask On
+AGV_NODE,201085,1,Charge Over Setting Time(R Side)
+AGV_NODE,201086,1,Charge Over Setting Time(L Side)
+AGV_NODE,201087,1,"System Has Action,Can Not Turn Manual"
+AGV_NODE,201088,1,"System Has Error,Can Not Turn Auto"
+AGV_NODE,201089,1,"Brake Release Has Action,Can Not Turn Auto"
+AGV_NODE,201090,1,Beam Sensor Shielded(F Side)
+AGV_NODE,201091,1,Beam Sensor Shielded(B Side)
+AGV_NODE,201092,1,Beam Sensor Shielded(LR Side)
+AGV_NODE,201093,1,Beam Sensor Shielded(LL Side)
+AGV_NODE,201094,1,Beam Sensor Shielded(RR Side)
+AGV_NODE,201095,1,Beam Sensor Shielded(RL Side)
+AGV_NODE,201096,1,Vehicle To Charger Action Time Out(R Side)
+AGV_NODE,201097,1,Vehicle To Charger Action Time Out(L Side)
+AGV_NODE,201098,1,Corrector Read Action Time Out
+AGV_NODE,201099,1,Servo Enter Power Saving Mode
+AGV_NODE,201100,1,"EQ HO_AVBL Signal OFF, Cancel Handshake(L Side)"
+AGV_NODE,201101,1,"EQ HO_AVBL Signal OFF, Cancel Handshake(R Side)"
+AGV_NODE,201102,1,"EQ ES Signal Is Not On,Hand Can Not Action(L Side)"
+AGV_NODE,201103,1,"EQ ES Signal Is Not On,Hand Can Not Action(R Side)"
+AGV_NODE,201104,1,Charger Station Error
+AGV_NODE,201105,1,Battery Brand Is Not Setting
+AGV_NODE,201106,1,Vehicle Battery Voltage Too High Warning
+AGV_NODE,201107,1,Vehicle Battery Voltage Too Low Warning
+AGV_NODE,201108,1,IPC Stop Command Invalid
+AGV_NODE,201109,1,"AGV Car And EQ Handshake,TA1 Timeout (L Side)"
+AGV_NODE,201110,1,"AGV Car And EQ Handshake,TA2 Timeout (L Side)"
+AGV_NODE,201111,1,"AGV Car And EQ Handshake,TA3 Timeout (L Side)"
+AGV_NODE,201112,1,"AGV Car And EQ Handshake,TA1 Timeout (R Side)"
+AGV_NODE,201113,1,"AGV Car And EQ Handshake,TA2 Timeout (R Side)"
+AGV_NODE,201114,1,"AGV Car And EQ Handshake,TA3 Timeout (R Side)"
+AGV_NODE,201115,1,Corrector Function Confirm NG
+AGV_NODE,201116,1,IPC Is Not Ask Corrector Function Confirm
+AGV_NODE,201117,1,"Coupler_R Side Receive Charge Command,Sensor Off"
+AGV_NODE,201118,1,"Coupler_L Side Receive Charge Command,Sensor Off"
+AGV_NODE,201119,1,Master CC-Link Module Error Or Warning
+AGV_NODE,201120,1,Electric Meter Communication Over Time
+AGV_NODE,201121,1,IPC Get/Put CommanDownG(StageCode)
+AGV_NODE,201122,1,IPC Get/Put CommanDownG( ActionCode)
+AGV_NODE,201123,1,"Stage Has CST,Can Not Execute Get Command(L Side)"
+AGV_NODE,201124,1,"EQ Port No CST,Can Not Execute Get Command(L Side)"
+AGV_NODE,201125,1,"Stage Has CST,Can Not Execute Get Command(R Side)"
+AGV_NODE,201126,1,"EQ Port No CST,Can Not Execute Get Command(R Side)"
+AGV_NODE,201127,1,"Stage No CST,Can Not Execute Put Command(L Side)"
+AGV_NODE,201128,1,"EQ Port Has CST,Can Not Execute Put Command(L Side)"
+AGV_NODE,201129,1,"Stage No CST,Can Not Execute Put Command(R Side)"
+AGV_NODE,201130,1,"EQ Port Has CST,Can Not Execute Put Command(R Side)"
+AGV_NODE,201131,1,IPC Get/Put Comman NG (Direction Code)
+AGV_NODE,201132,1,"Vehicle Is Not Position,Can Not Accept IPC Command"
+AGV_NODE,201133,1,"Hand Is Not In Work Home,Can Not Accept IPC Command"
+AGV_NODE,201134,1,"Servo On/Off Status Not Complete,Can Not Accept IPC Command"
+AGV_NODE,201135,1,"IPC Command Signal Residual,Can Not Accept New Command"
+AGV_NODE,201136,1,"Hand Action,Can Not Accept IPC Command"
+AGV_NODE,201137,1,IPC Get/Put Comman NG (Speed Code)
+AGV_NODE,201138,1,"System Is Not Ready,Can Not Accept IPC Command"
+AGV_NODE,201139,1,"Hand Is Manual Mode,Can Not Accept IPC Command"
+AGV_NODE,201140,1,"Hand Home Return,Can Not Accept IPC Command"
+AGV_NODE,201141,1,"Alarm Report,T1 TimeOut"
+AGV_NODE,201142,1,"Hand Teaching Report,T1 TimeOut"
+AGV_NODE,201143,1,"Vehicle Teaching Report,T1 TimeOut"
+AGV_NODE,201144,1,"Hand Alignment Teching Report,T1 TimeOut"
+AGV_NODE,201145,1,Trun Wheel Motor Servo Off(FR Side)
+AGV_NODE,201146,1,Trun Wheel Motor Servo Off(FL Side)
+AGV_NODE,201147,1,Trun Wheel Motor Servo Off(BR Side)
+AGV_NODE,201148,1,Trun Wheel Motor Servo Off(BL Side)
+AGV_NODE,201149,1,Walker Wheel Motor Servo Off(FR Side)
+AGV_NODE,201150,1,Walker Wheel Motor Servo Off(FL Side)
+AGV_NODE,201151,1,Walker Wheel Motor Servo Off(BR Side)
+AGV_NODE,201152,1,Walker Wheel Motor Servo Off(BL Side)
+AGV_NODE,201153,1,IPC Order Car Wheel Servo Off
+AGV_NODE,201154,1,Hand Pause
+AGV_NODE,201155,1,Hand Decomposed Action Mode Use
+AGV_NODE,201156,1,Stage And Direction Number Are Different
+AGV_NODE,201160,1,Hand Correct Amount Too Much(Positive Degrees)
+AGV_NODE,201161,1,Hand Correct Amount Too Much(Negative Degrees)
+AGV_NODE,201162,1,Hand Correct Amount Too Much(Positive Direction)(Slide)
+AGV_NODE,201163,1,Hand Correct Amount Too Much(Negative Direction)(Slide)
+AGV_NODE,201164,1,Hand Correct Amount Too Much(Positive Direction)(FR/BK)
+AGV_NODE,201165,1,Hand Correct Amount Too Much(Negative Direction)(FR/BK)
+AGV_NODE,201166,1,Electric Meter Communication Error
+AGV_NODE,201167,1,Execute IPC Get/Put Command Time Out
+AGV_NODE,201700,1,AlreadyHaveCmd
+AGV_NODE,201701,1,LowPowerCharging
+AGV_NODE,201702,1,LoadingOff
+AGV_NODE,201703,1,CarrierIdReadFail
+AGV_NODE,201704,1,CarrierIdIsError
+AGV_NODE,201705,1,MoveFinishFail
+AGV_NODE,201706,1,LoadingOn
+AGV_NODE,201707,1,ForkCommandExist
+AGV_NODE,201708,1,VehicleCannotUnload
+AGV_NODE,201709,1,ForkCommandExist
+AGV_NODE,201710,1,PositionLostWithCmd
+AGV_NODE,201711,1,ChargeDirectionError
+AGV_NODE,201712,1,StartChargeTimeout
+AGV_NODE,201713,1,VehicleCannotload
+AGV_NODE,201714,1,AlreadyHaveCst
+AGV_NODE,201715,1,NoCstToUnload
+AGV_NODE,201716,1,MapCheckFail
+AGV_NODE,201717,1,IsNotTransferCannotOverride
+AGV_NODE,201718,1,IsNotMoveStepCannotOverride
+AGV_NODE,201719,1,IsNotPauseCannotOverride
+AGV_NODE,201720,1,OverrideUnloadAddressUnmatch
+AGV_NODE,201721,1,OverrideLoadAddressUnmatch
+AGV_NODE,201722,1,OverrideToUnloadIsEmpty
+AGV_NODE,201723,1,OverrideToLoadIsEmpty
+AGV_NODE,201724,1,CheckOverrideException
+AGV_NODE,201725,1,CarrierIdMisMatch
+AGV_NODE,201726,1,IsCarrierIdReadReplyTimeout
+AGV_NODE,201727,1,VehicleHasAlarm
+AGV_NODE,201728,1,ManualToAutoFail
+AGV_NODE,201729,1,ManualToAutoFail
+AGV_NODE,201730,1,IsNotTransferCannotAvoid
+AGV_NODE,201731,1,IsNotMoveStepCannotAvoid
+AGV_NODE,201732,1,IsNotPauseCannotAvoid
+AGV_NODE,201733,1,CheckAvoidException
+AGV_NODE,201734,1,Send PLC to Stop AGV
+AGV_NODE,201735,1,Reserve : Get Reserve with MoveControl Idle
+AGV_NODE,201736,1,Reserve : Get Reserve position not math
+AGV_NODE,201737,1,STurn : AGV turning with GroupTurn not Ready
+AGV_NODE,201738,1,MotionDriver Axis Error
+AGV_NODE,201739,1,MotionDriver Axis XFL Error
+AGV_NODE,201740,1,MotionDriver Axis XFR Error
+AGV_NODE,201741,1,MotionDriver Axis XRL Error
+AGV_NODE,201742,1,MotionDriver Axis XRR Error
+AGV_NODE,201743,1,MotionDriver Axis TFL Error
+AGV_NODE,201744,1,MotionDriver Axis TFR Error
+AGV_NODE,201745,1,MotionDriver Axis TRL Error
+AGV_NODE,201746,1,MotionDriver Axis TRR Error
+AGV_NODE,201747,1,MotionDriver Axis VXFL Error
+AGV_NODE,201748,1,MotionDriver Axis VXFR Error
+AGV_NODE,201749,1,MotionDriver Axis VXRL Error
+AGV_NODE,201750,1,MotionDriver Axis VXRR Error
+AGV_NODE,201751,1,MotionDriver Axis VTFL Error
+AGV_NODE,201752,1,MotionDriver Axis VTFR Error
+AGV_NODE,201753,1,MotionDriver Axis VTRL Error
+AGV_NODE,201754,1,MotionDriver Axis VTRR Error
+AGV_NODE,201755,1,MotionDriver Axis GX Error
+AGV_NODE,201756,1,MotionDriver Axis GT Error
+AGV_NODE,201757,1,LocateDriver_SR2000 LON Exception
+AGV_NODE,201758,1,LocateDriver_SLAM_Sick wrong locate
+AGV_NODE,201759,1,CreateMoveCommandList Fail
+AGV_NODE,201760,1,Can't Override : Can't Pause now
+AGV_NODE,201761,1,Can't Auto : MoveControl Status is not Idle
+AGV_NODE,201762,1,Can't Auto : Motion Driver Disconnect
+AGV_NODE,201763,1,Can't Auto : MoveCommandControl Intail Fail
+AGV_NODE,201764,1,Can't Auto : Closing program
+AGV_NODE,201765,1,Can't Auto : Axis Error
+AGV_NODE,201766,1,Can't Auto : Wait ResetAlarm Finish
+AGV_NODE,201767,1,Can't Auto : JogPitch Action
+AGV_NODE,201768,1,Can't Auto : LocateControl Intail Fail
+AGV_NODE,201769,1,Can't Auto : Locate Driver Disconnect
+AGV_NODE,201770,1,Can't Auto : Locate Driver Error
+AGV_NODE,201771,1,Can't Auto : AutoAction Fail
+AGV_NODE,201772,1,Reject Move Command : MovecmdInfo data error
+AGV_NODE,201773,1,Reject Move Command : Closing Program
+AGV_NODE,201774,1,Reject Move Command : MoveControl Status is not Idle
+AGV_NODE,201775,1,Reject Move Command : Charging
+AGV_NODE,201776,1,Reject Move Command : Fork isn't in home Status
+AGV_NODE,201777,1,Reject Move Command : MoveControl driver disconnect
+AGV_NODE,201778,1,Reject Move Commandmiddler : No current coordinates
+AGV_NODE,201779,1,Reject Move Command : Not is start position
+AGV_NODE,201780,1,Reject Move Command : Not is start AGV angle
+AGV_NODE,201781,1,Reject Move Command : in cancel flow
+AGV_NODE,201782,1,Reject Move Command : in AutoRetry flow
+AGV_NODE,201783,1,Can't Reset Alarm : Main Flow Exception
+AGV_NODE,201784,1,Can't Reset Alarm : stop in turn flow
+AGV_NODE,201785,1,Can't Reset Alarm : vehicle not in section
+AGV_NODE,201786,1,Can't Reset Alarm : Locate Control Error
+AGV_NODE,201787,1,Can't Reset Alarm : Motion Control Error
+AGV_NODE,201788,1,Can't AutoReset : Special Alarm
+AGV_NODE,201789,1,Batterys Charging Time Out
 AGV_NODE,10000,1,Long time inaction
 AGV_NODE,10001,2,Can not service
