@@ -236,7 +236,10 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         public bool IsR2000Address(string adrID)
         {
-            var hlt_r2000_section_objs = mapAPI.HltMapSections.Where(sec => SCUtility.isMatche(sec.Type, HtlSectionType.R2000.ToString())).ToList();
+            //var hlt_r2000_section_objs = mapAPI.HltMapSections.Where(sec => SCUtility.isMatche(sec.Type, HtlSectionType.R2000.ToString())).ToList();
+            var hlt_r2000_section_objs = mapAPI.HltMapSections.Where(sec => !SCUtility.isEmpty(sec.Type) &&
+                                                                             sec.Type.Contains(HtlSectionType.R2000.ToString())).
+                                                               ToList();
             bool is_r2000_address = hlt_r2000_section_objs.Where(sec => SCUtility.isMatche(sec.StartAddressID, adrID) || SCUtility.isMatche(sec.EndAddressID, adrID))
                                                           .Count() > 0;
             return is_r2000_address;
@@ -244,7 +247,8 @@ namespace com.mirle.ibg3k0.sc.BLL
         public bool IsR2000Section(string sectionID)
         {
             var hlt_section_obj = mapAPI.HltMapSections.Where(sec => SCUtility.isMatche(sec.ID, sectionID)).FirstOrDefault();
-            return SCUtility.isMatche(hlt_section_obj.Type, HtlSectionType.R2000.ToString());
+            //return SCUtility.isMatche(hlt_section_obj.Type, HtlSectionType.R2000.ToString());
+            return !SCUtility.isEmpty(hlt_section_obj.Type) && hlt_section_obj.Type.Contains(HtlSectionType.R2000.ToString());
         }
 
         enum HtlSectionType
