@@ -2522,7 +2522,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     }
                 }
                 //確認ReserveEnhance的Section是否都可以預約到
-                var reserve_enhance_check_result = IsReserveBlockSuccess(vh, reserve_section_id);
+                //var reserve_enhance_check_result = IsReserveBlockSuccess(vh, reserve_section_id);
+                var reserve_enhance_check_result = IsReserveBlockSuccessNew(vh, reserve_section_id);
                 //var reserve_enhance_check_result = IsReserveBlockSuccessNew(vh, reserve_section_id, drive_dirction);
                 if (!reserve_enhance_check_result.isSuccess)
                 {
@@ -2653,6 +2654,61 @@ namespace com.mirle.ibg3k0.sc.Service
                     }
                 }
             }
+            return (true, "");
+        }
+        private (bool isSuccess, string reservedVhID) IsReserveBlockSuccessNew(AVEHICLE vh, string reserveSectionID)
+        {
+            string vh_id = vh.VEHICLE_ID;
+            string cur_sec_id = SCUtility.Trim(vh.CUR_SEC_ID, true);
+
+            var block_control_check_result = scApp.getCommObjCacheManager().IsBlockControlSection(reserveSectionID);
+            if (block_control_check_result.isBlockControlSec)
+            {
+                var current_vh_section_is_in_req_block_control_check_result =
+                    scApp.getCommObjCacheManager().IsBlockControlSection(block_control_check_result.enhanceInfo.BlockID, cur_sec_id);
+                if (current_vh_section_is_in_req_block_control_check_result.isBlockControlSec)
+                {
+                    return (true, "");
+                }
+
+                List<string> reserve_enhance_sections = block_control_check_result.enhanceInfo.EnhanceControlSections.ToList();
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                   Data: $"reserve section:{reserveSectionID} is reserve enhance section, group:{string.Join(",", reserve_enhance_sections)}",
+                   VehicleID: vh_id);
+
+
+                bool reserve_sec_is_r2000 = scApp.ReserveBLL.IsR2000Section(reserveSectionID);
+                //if (!reserve_sec_is_r2000)
+                if (SCUtility.isMatche(reserveSectionID, "0102"))
+                {
+                    bool has_r2000_section = willPassSectionHasR2000(vh);
+                    if (!has_r2000_section)
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                           Data: $"vh:{vh_id} reserve section:{reserveSectionID} it is reserve enhance section, but will pass section not include r2000," +
+                                 $"return true.",
+                           VehicleID: vh_id);
+                        return (true, "");
+                    }
+                }
+
+                foreach (var enhance_section in reserve_enhance_sections)
+                {
+                    var check_one_direct_result = scApp.ReserveBLL.TryAddReservedSection(vh_id, enhance_section,
+                                                                    sensorDir: HltDirection.ForwardReverse,
+                                                                    isAsk: true);
+                    if (!check_one_direct_result.OK)
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                           Data: $"vh:{vh_id} Try add reserve section:{reserveSectionID} , it is reserve enhance section" +
+                                 $"try to reserve section:{reserveSectionID} fail,result:{check_one_direct_result}.",
+                           VehicleID: vh_id);
+                        return (false, check_one_direct_result.VehicleID);
+                    }
+                }
+            }
+
+
             return (true, "");
         }
         //private (bool isSuccess, string reservedVhID) IsReserveBlockSuccessNew(AVEHICLE vh, string reserveSectionID, DriveDirction driveDirction)

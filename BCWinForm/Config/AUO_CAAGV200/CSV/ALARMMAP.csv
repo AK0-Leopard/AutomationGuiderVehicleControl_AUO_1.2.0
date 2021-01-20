@@ -1027,4 +1027,3 @@ AGV_NODE,201168,1, Interface Signal On (R Side)
 AGV_NODE,201169,2, Ready Signal Off (R Side)
 AGV_NODE,10000,2,Long time inaction
 AGV_NODE,10001,2,Can not service
-AGV_NODE,10002,2,Carrier long time installed in vh
