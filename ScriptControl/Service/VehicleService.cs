@@ -2485,7 +2485,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 if (reserveInfos == null || reserveInfos.Count == 0) return (false, string.Empty, string.Empty);
                 string reserve_section_id = reserveInfos[0].ReserveSectionID;
                 //DriveDirction drive_dirction = reserveInfos[0].DriveDirction;
-                DriveDirction drive_dirction = scApp.VehicleBLL.getDrivingDirection(reserve_section_id, vh.sWillPassAddressID);
+                //DriveDirction drive_dirction = scApp.VehicleBLL.getDrivingDirection(reserve_section_id, vh.sWillPassAddressID);
+                DriveDirction drive_dirction = scApp.VehicleBLL.getDrivingDirection(reserve_section_id, vh.WillPassAddressID);
                 //HltDirection sensor_direction = HltDirection.ForwardReverse;
                 HltDirection sensor_direction = decideReserveDirection(vh, reserve_section_id);
 
@@ -2565,7 +2566,8 @@ namespace com.mirle.ibg3k0.sc.Service
             }
             else
             {
-                return HltDirection.ForwardReverse;
+                //return HltDirection.ForwardReverse;
+                return HltDirection.Forward;
                 //在R2000的路段上，預約方向要帶入
                 //if (scApp.ReserveBLL.IsR2000Section(reserveSectionID))
                 //{
@@ -3294,6 +3296,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
             try
             {
+                string to_adr = SCUtility.Trim(avoidVh.ToAdr, true);
                 //在一開始的時候就先Set一台虛擬車在相同位置，防止找到鄰近的Address
                 //不然可能移動完成以後，還是無法讓出路徑讓另外一台車通過
                 var hlt_vh_obj = scApp.ReserveBLL.GetHltVehicle(avoidVh.VEHICLE_ID);
@@ -3451,6 +3454,14 @@ namespace com.mirle.ibg3k0.sc.Service
                             {
                                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                                    Data: $"sec id:{SCUtility.Trim(sec.SEC_ID)} of orther end point:{orther_end_point} is not can avoid address, continue find next address{orther_end_point}",
+                                   VehicleID: avoidVh.VEHICLE_ID);
+                                next_search_address_temp.Add((orther_end_point, sec));
+                                continue;
+                            }
+                            if (SCUtility.isMatche(to_adr, orther_end_point))
+                            {
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                   Data: $"sec id:{SCUtility.Trim(sec.SEC_ID)} of orther end point:{orther_end_point} is not can avoid address,this address and command of [to adr] is same, continue find next address{orther_end_point}",
                                    VehicleID: avoidVh.VEHICLE_ID);
                                 next_search_address_temp.Add((orther_end_point, sec));
                                 continue;

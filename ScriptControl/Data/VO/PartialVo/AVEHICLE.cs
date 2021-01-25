@@ -474,7 +474,34 @@ namespace com.mirle.ibg3k0.sc
         }
 
         public virtual List<string> WillPassSectionID { get; set; }
-        public virtual List<string> WillPassAddressID { get; set; }
+        //public virtual List<string> WillPassAddressID { get; set; }
+        public virtual List<string> WillPassAddressID
+        {
+            get
+            {
+                switch (CmdType)
+                {
+                    case E_CMD_TYPE.Move:
+                    case E_CMD_TYPE.Move_Charger:
+                    case E_CMD_TYPE.Move_Park:
+                    case E_CMD_TYPE.Unload:
+                        return PredictAddressesToDesination;
+                    case E_CMD_TYPE.LoadUnload:
+                        if (HAS_CST == 1)
+                        {
+                            return PredictAddressesToDesination;
+                        }
+                        else
+                        {
+                            return PredictAddressesStartToLoad;
+                        }
+                    case E_CMD_TYPE.Load:
+                        return PredictAddressesStartToLoad;
+                    default:
+                        return new List<string>();
+                }
+            }
+        }
         public virtual string sWillPassAddressID { get; set; }
 
         private int procprogress_percen;

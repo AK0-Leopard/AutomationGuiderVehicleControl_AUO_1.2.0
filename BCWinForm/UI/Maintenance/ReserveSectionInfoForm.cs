@@ -90,9 +90,9 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             Enum.TryParse<HltDirection>(cmb_fork_dir.SelectedValue.ToString(), out fork_dir);
             HltDirection sensor_dir;
             Enum.TryParse<HltDirection>(cmb_sensor_dir.SelectedValue.ToString(), out sensor_dir);
-
+            sc.ProtocolFormat.OHTMessage.DriveDirction driveDirction = sc.ProtocolFormat.OHTMessage.DriveDirction.DriveDirForward;
             HltResult result = null;
-            await Task.Run(() => result = bcApp.SCApplication.ReserveBLL.TryAddReservedSection(vh_id, sec_id, sensor_dir, fork_dir));
+            await Task.Run(() => result = bcApp.SCApplication.ReserveBLL.TryAddReservedSection(vh_id, sec_id, sensor_dir, fork_dir, driveDirection: driveDirction));
 
             //await Task.Run(() =>
             //{

@@ -2318,7 +2318,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             vh.PredictSections = min_section_seq;
             vh.PredictAddresses = willPassAddressIDs;
             vh.WillPassSectionID = min_section_seq?.ToList();
-            vh.WillPassAddressID = willPassAddressIDs?.ToList();
+            //vh.WillPassAddressID = willPassAddressIDs?.ToList();
             vh.vh_CMD_Status = E_CMD_STATUS.Execution;
             vh.Action();
             vh.NotifyVhExcuteCMDStatusChange();

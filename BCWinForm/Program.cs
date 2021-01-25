@@ -125,6 +125,7 @@ namespace com.mirle.ibg3k0.bc.winform
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
+                
                 Application.Run(new BCMainForm(args[0], args[1]));
                 SCUtility.SystemEventLog("Close BC System!!", EventLogEntryType.Information);
                 Application.ExitThread();

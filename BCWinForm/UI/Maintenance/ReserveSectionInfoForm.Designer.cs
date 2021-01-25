@@ -74,7 +74,7 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1249, 558);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1249, 610);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // panel1
@@ -107,7 +107,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(1103, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(143, 552);
+            this.panel1.Size = new System.Drawing.Size(143, 604);
             this.panel1.TabIndex = 0;
             // 
             // num_vh_angle
@@ -287,7 +287,7 @@
             // 
             // btn_reserve_section
             // 
-            this.btn_reserve_section.Location = new System.Drawing.Point(13, 514);
+            this.btn_reserve_section.Location = new System.Drawing.Point(15, 556);
             this.btn_reserve_section.Name = "btn_reserve_section";
             this.btn_reserve_section.Size = new System.Drawing.Size(121, 23);
             this.btn_reserve_section.TabIndex = 5;
@@ -344,7 +344,7 @@
             this.elementHost1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.elementHost1.Location = new System.Drawing.Point(3, 3);
             this.elementHost1.Name = "elementHost1";
-            this.elementHost1.Size = new System.Drawing.Size(1094, 552);
+            this.elementHost1.Size = new System.Drawing.Size(1094, 604);
             this.elementHost1.TabIndex = 1;
             this.elementHost1.Text = "elementHost1";
             this.elementHost1.Child = this.uctlReserveSectionView1;
@@ -353,7 +353,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1249, 558);
+            this.ClientSize = new System.Drawing.Size(1249, 610);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "ReserveSectionInfoForm";
             this.Text = "ReserveSectionInfo";

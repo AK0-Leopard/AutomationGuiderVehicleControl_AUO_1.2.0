@@ -2475,7 +2475,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             vh.PredictAddressesToDesination = guideAddressesToDestination;
 
             vh.PredictAddresses = willPassAddressIDs;
-            vh.WillPassAddressID = willPassAddressIDs?.ToList();
+            //vh.WillPassAddressID = willPassAddressIDs?.ToList();
             if (guideSectionStartToLoad != null && guideSectionStartToLoad.Count > 0)
             {
                 setWillPassSectionInfo(acmd_ohtc.VH_ID, guideSectionStartToLoad);
@@ -2517,7 +2517,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             vh.PredictAddressesToDesination = new List<string>();
 
             vh.PredictAddresses = new string[0];
-            vh.WillPassAddressID = new List<string>();
+            //vh.WillPassAddressID = new List<string>();
             removeAllWillPassSection(vhID);
             removeAllWillPassAddresses(vhID);
             vh.vh_CMD_Status = E_CMD_STATUS.NormalEnd;
