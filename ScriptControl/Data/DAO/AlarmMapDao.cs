@@ -127,7 +127,9 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
         /// <returns></returns>
         private E_ALARM_LVL convertALARM_LVL2Enum(string s_lvl)
         {
-            int i_lvl = int.Parse(s_lvl);
+            int i_lvl = 0;
+            //int.Parse(s_lvl);
+            int.TryParse(s_lvl, out i_lvl);
             return (E_ALARM_LVL)i_lvl;
         }
 
