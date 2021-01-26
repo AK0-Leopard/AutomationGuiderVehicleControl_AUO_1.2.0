@@ -3827,7 +3827,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             vid_collection.VID_54_CarrierID.CARRIER_ID = vid_info.MCS_CARRIER_ID;
 
             //VID_55_CarrierInfo
-            vid_collection.VID_55_CarrierInfo.CARRIER_ID = vid_info.CARRIER_ID;
+            vid_collection.VID_55_CarrierInfo.CARRIER_ID = vid_info.MCS_CARRIER_ID;
             vid_collection.VID_55_CarrierInfo.VEHICLE_ID = vh.Real_ID;
             if (vh.HAS_CST==1)
             {
@@ -3894,7 +3894,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             vid_collection.VID_70_VehicleID.VEHICLE_ID = vh.Real_ID;
             vid_collection.VID_317_ReadIDInfo.ID_RESULT_CODE = SECSConst.NorthInnoluxBarcodeReadReultMap( vh.BCRReadResult);
             //vid_collection.VID_317_ReadIDInfo.READ_CARRRIER_ID = vh.CST_ID;
-            vid_collection.VID_317_ReadIDInfo.READ_CARRRIER_ID = vid_info.CARRIER_ID;
+            //2020/12/21 Hsinyu Chang: read fail時，此處帶空值，其餘狀況帶實際讀到的值
+            vid_collection.VID_317_ReadIDInfo.READ_CARRRIER_ID = 
+                (vh.BCRReadResult == ProtocolFormat.OHTMessage.BCRReadResult.BcrReadFail) ? "" : vid_info.CARRIER_ID;
             //VID_901_AlarmText
             vid_collection.VID_1060_AlarmText.ALARM_TEXT = vid_info.ALARM_TEXT;
 
