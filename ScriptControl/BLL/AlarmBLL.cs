@@ -214,6 +214,16 @@ namespace com.mirle.ibg3k0.sc.BLL
             return alarms;
         }
 
+        public List<ALARM> getCurrentSeriousAlarms()
+        {
+            List<ALARM> alarms = new List<ALARM>();
+            //using (DBConnection_EF con = new DBConnection_EF())
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                alarms = alarmDao.loadSetSeriousAlarm(con);
+            }
+            return alarms;
+        }
 
         public ALARM resetAlarmReport(string eq_id, string error_code)
         {

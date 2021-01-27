@@ -358,7 +358,10 @@ namespace com.mirle.ibg3k0.sc.BLL
             bool isSuccsess = true;
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleAcquireCompleted(vhID, reportqueues);
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierInstalledWithIDRead(vhID, reportqueues);//北群創要等到AcquireCompleted之後才能報CarrierInstalled
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleDeparted(vhID, reportqueues);
+            if(bcrReadResult== BCRReadResult.BcrNormal)
+            {
+                isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleDeparted(vhID, reportqueues);
+            }
             return isSuccsess;
         }
 
@@ -458,6 +461,18 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferAbortCompleted(vhID, reportqueues);
             return isSuccsess;
         }
+
+        public override bool newReportTransferCommandAbortFinish(ACMD_MCS CMD_MCS, AVEHICLE vh, string resultCode, List<AMCSREPORTQUEUE> reportqueues)
+        {
+            bool isSuccsess = true;
+            if (vh != null)
+            {
+                isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleUnassinged(vh.VEHICLE_ID, reportqueues);
+            }
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferAbortCompleted(CMD_MCS, vh, resultCode, reportqueues, vh.Real_ID+"-01");
+            return isSuccsess;
+        }
+
         public override bool ReportAlarmSet()
         {
             bool isSuccsess = true;

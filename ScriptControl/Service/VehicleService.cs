@@ -60,12 +60,29 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         public const string DEVICE_NAME_AGV = "AGV";
         public int repositionDistance = 5000;
+        public string parkAdr = "";
         Logger logger = LogManager.GetCurrentClassLogger();
         protected SCApplication scApp = null;
 
         public event EventHandler<DeadLockEventArgs> DeadLockProcessFail;
-        public Dictionary<string, string> WaitingRetryMCSCMDList { get; set; } = new Dictionary<string, string>();
-
+        private Dictionary<string, string> WaitingRetryMCSCMDList { get; set; } = new Dictionary<string, string>();
+        private object WaitingRetryMCSCMDListLock = new object();
+        public virtual void addCMDToWaitingRetryMCSCMDList(string vh_id,string cmd)
+        {
+            return;
+        }
+        public virtual void removeCMDToWaitingRetryMCSCMDList(string vh_id)
+        {
+            return;
+        }
+        public virtual void CreateCMDFromWaitingRetryMCSCMDList()
+        {
+            return;
+        }
+        public virtual bool isWaitingRetryMCSCMDListContainKey(string vh_id)
+        {
+            return false;
+        }
         public VehicleService()
         {
 
@@ -653,7 +670,7 @@ namespace com.mirle.ibg3k0.sc.Service
         /// 與Vehicle進行資料同步。(通常使用剛與Vehicle連線時)
         /// </summary>
         /// <param name="vh_id"></param>
-        public void VehicleInfoSynchronize(string vh_id)
+        public virtual void VehicleInfoSynchronize(string vh_id)
         {
             /*與Vehicle進行狀態同步*/
             VehicleStatusRequest(vh_id, true);
@@ -1666,19 +1683,35 @@ namespace com.mirle.ibg3k0.sc.Service
             try
             {
                 assign_vh = scApp.VehicleBLL.getVehicleByExcuteMCS_CMD_ID(mcsCmdID);
-                string ohtc_cmd_id = assign_vh.OHTC_CMD;
-                switch (actType)
+                if(assign_vh != null)
                 {
-                    case CMDCancelType.CmdAbort:
-                        if (assign_vh.VhRecentTranEvent == EventType.Vhunloading) return false;
-                        scApp.CMDBLL.updateCMD_MCS_TranStatus2Aborting(mcsCmdID);
-                        break;
-                    case CMDCancelType.CmdCancel:
-                        if (assign_vh.VhRecentTranEvent == EventType.Vhloading) return false;
-                        scApp.CMDBLL.updateCMD_MCS_TranStatus2Canceling(mcsCmdID);
-                        break;
+                    string ohtc_cmd_id = assign_vh.OHTC_CMD;
+                    switch (actType)
+                    {
+                        case CMDCancelType.CmdAbort:
+                            if (assign_vh.VhRecentTranEvent == EventType.Vhunloading) return false;
+                            scApp.CMDBLL.updateCMD_MCS_TranStatus2Aborting(mcsCmdID);
+                            break;
+                        case CMDCancelType.CmdCancel:
+                            if (assign_vh.VhRecentTranEvent == EventType.Vhloading) return false;
+                            scApp.CMDBLL.updateCMD_MCS_TranStatus2Canceling(mcsCmdID);
+                            break;
+                    }
+                    isSuccess = doAbortCommand(assign_vh, ohtc_cmd_id, actType);
                 }
-                isSuccess = doAbortCommand(assign_vh, ohtc_cmd_id, actType);
+                else
+                {
+                    switch (actType)
+                    {
+                        case CMDCancelType.CmdAbort:
+                            scApp.CMDBLL.updateCMD_MCS_TranStatus2Aborting(mcsCmdID);
+                            break;
+                        case CMDCancelType.CmdCancel:
+                            scApp.CMDBLL.updateCMD_MCS_TranStatus2Canceling(mcsCmdID);
+                            break;
+                    }
+                }
+
             }
             catch (Exception ex)
             {
@@ -1950,8 +1983,12 @@ namespace com.mirle.ibg3k0.sc.Service
             }
             else if (mcs_cmd.TRANSFERSTATE >= E_TRAN_STATUS.Queue)
             {
+                //AVEHICLE assign_vh = scApp.VehicleBLL.getVehicleByCarrierID(oldCarrierID);
+
                 AVEHICLE assign_vh = scApp.VehicleBLL.getVehicleByExcuteMCS_CMD_ID(cmd_id);
-                isSuccess = CarrierIDRenameRequset(assign_vh.VEHICLE_ID, newCarrierID, oldCarrierID);
+
+                //isSuccess = CarrierIDRenameRequset(assign_vh.VEHICLE_ID, newCarrierID, oldCarrierID);
+                isSuccess = CarrierIDRenameRequset(assign_vh.VEHICLE_ID, newCarrierID, assign_vh.CST_ID);
                 if (isSuccess)
                 {
                     scApp.CMDBLL.updateCMD_MCS_CarrierID(cmd_id, newCarrierID);
@@ -3999,7 +4036,7 @@ namespace com.mirle.ibg3k0.sc.Service
         #endregion Vehicle Change The Path
         #region Vh connection / disconnention
         [ClassAOPAspect]
-        public void Connection(BCFApplication bcfApp, AVEHICLE vh)
+        public virtual void Connection(BCFApplication bcfApp, AVEHICLE vh)
         {
             //scApp.getEQObjCacheManager().refreshVh(eqpt.VEHICLE_ID);
             vh.VhRecentTranEvent = EventType.AdrPass;

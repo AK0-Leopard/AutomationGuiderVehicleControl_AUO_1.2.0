@@ -47,9 +47,10 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
         public List<ACMD_OHTC> loadAllQueue_Auto(DBConnection_EF con)
         {
             string sGen_type = ((int)(App.SCAppConstants.GenOHxCCommandType.Auto)).ToString();
+            string sGen_type_retry = ((int)(App.SCAppConstants.GenOHxCCommandType.Retry)).ToString();
             var query = from cmd in con.ACMD_OHTC.AsNoTracking()
                         where (cmd.CMD_STAUS == E_CMD_STATUS.Queue) &&
-                              cmd.CMD_ID.StartsWith(sGen_type)
+                              (cmd.CMD_ID.StartsWith(sGen_type)|| cmd.CMD_ID.StartsWith(sGen_type_retry))
                         //orderby cmd.CMD_START_TIME
                         orderby cmd.CMD_ID
                         select cmd;
