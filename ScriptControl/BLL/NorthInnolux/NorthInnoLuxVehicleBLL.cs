@@ -916,7 +916,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return best_vh;
         }
 
-        public void filterVh(ref List<AVEHICLE> vhs, E_VH_TYPE vh_type)
+        public override void filterVh(ref List<AVEHICLE> vhs, E_VH_TYPE vh_type, bool checkCst = true)
         {
             if (vh_type != E_VH_TYPE.None)
             {
@@ -985,18 +985,22 @@ namespace com.mirle.ibg3k0.sc.BLL
                        CarrierID: vh.CST_ID);
                 }
             }
-            foreach (AVEHICLE vh in vhs.ToList())
+            if (checkCst)
             {
-                if (vh.HAS_CST == 1)
+                foreach (AVEHICLE vh in vhs.ToList())
                 {
-                    vhs.Remove(vh);
-                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
-                       Data: $"vh id:{vh.VEHICLE_ID} has carry cst,carrier id:{SCUtility.Trim(vh.CST_ID, true)}," +
-                             $"so filter it out",
-                       VehicleID: vh.VEHICLE_ID,
-                       CarrierID: vh.CST_ID);
+                    if (vh.HAS_CST == 1)
+                    {
+                        vhs.Remove(vh);
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
+                           Data: $"vh id:{vh.VEHICLE_ID} has carry cst,carrier id:{SCUtility.Trim(vh.CST_ID, true)}," +
+                                 $"so filter it out",
+                           VehicleID: vh.VEHICLE_ID,
+                           CarrierID: vh.CST_ID);
+                    }
                 }
             }
+
             foreach (AVEHICLE vh in vhs.ToList())
             {
                 if (vh.MODE_STATUS != VHModeStatus.AutoRemote)
@@ -1510,7 +1514,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                 if (!SCUtility.isEmpty(mcs_cmd_id))
                 {
-                    if (completeStatus == CompleteStatus.CmpStatusVehicleAbort) //20201030 added
+                    if (completeStatus == CompleteStatus.CmpStatusVehicleAbort|| completeStatus == CompleteStatus.CmpStatusInterlockError) //20201030 added
                     {
                         //do nothing...
                     }

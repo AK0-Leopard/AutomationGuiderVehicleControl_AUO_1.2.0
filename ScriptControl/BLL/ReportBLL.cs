@@ -523,7 +523,16 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferAbortCompleted(vhID, reportqueues);
             return isSuccsess;
         }
-
+        public virtual bool newReportTransferCommandAbortFinish(ACMD_MCS CMD_MCS, AVEHICLE vh, string resultCode, List<AMCSREPORTQUEUE> reportqueues)
+        {
+            bool isSuccsess = true;
+            if (vh != null)
+            {
+                isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleUnassinged(vh.VEHICLE_ID, reportqueues);
+            }
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferAbortCompleted(CMD_MCS, vh, resultCode, reportqueues, vh.Real_ID);
+            return isSuccsess;
+        }
 
 
         public bool newReportUnitAlarmSet(string unitID, string alarmID, string alarmTest, List<AMCSREPORTQUEUE> reportqueues)

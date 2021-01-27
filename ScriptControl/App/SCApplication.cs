@@ -492,7 +492,7 @@ namespace com.mirle.ibg3k0.sc.App
 
             initialReserveSectionAPI();
             setRePositionInfo();
-
+            setParkAdr();
             startBLL();
             initWIF();      //Initial WIF   //A0.01
             initialCatchDataFromDB();
@@ -569,12 +569,27 @@ namespace com.mirle.ibg3k0.sc.App
 
         private void setHltVehicleInfo()
         {
-            int vh_highi = getInt("VehicleHeight", 1800);
-            int vh_width = getInt("VehicleWidth", 3200);
-            int vh_sensor_wlength = getInt("SensorWLength", 1200);
-            reserveSectionAPI.VehicleHeight = vh_highi;
-            reserveSectionAPI.VehicleWidth = vh_width;
-            reserveSectionAPI.SensorLength = vh_sensor_wlength;
+
+            if(BC_ID != "NORTH_INNOLUX")
+            {
+                int vh_highi = getInt("VehicleHeight", 1800);
+                int vh_width = getInt("VehicleWidth", 3200);
+                int vh_sensor_wlength = getInt("SensorWLength", 1200);
+                reserveSectionAPI.VehicleHeight = vh_highi;
+                reserveSectionAPI.VehicleWidth = vh_width;
+                reserveSectionAPI.SensorLength = vh_sensor_wlength;
+            }
+            else
+            {
+                int vh_highi = getInt("VehicleHeight", 1380);
+                int vh_width = getInt("VehicleWidth", 2750);
+                int vh_sensor_wlength = getInt("SensorWLength", 300);
+                reserveSectionAPI.VehicleHeight = vh_highi;
+                reserveSectionAPI.VehicleWidth = vh_width;
+                reserveSectionAPI.SensorLength = vh_sensor_wlength;
+            }
+
+
         }
 
         private void setRePositionInfo()
@@ -582,6 +597,13 @@ namespace com.mirle.ibg3k0.sc.App
             int RePositionDistance = getInt("RePositionDistance", 5000);
             vehicleService.repositionDistance = RePositionDistance;
         }
+
+        private void setParkAdr()
+        {
+            string ParkAdr = getString("ParkAdr", "");
+            vehicleService.parkAdr = ParkAdr;
+        }
+
 
         private void LoadMapFiles(string addressPath = null, string sectionPath = null)
         {
