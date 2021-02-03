@@ -2077,7 +2077,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //}
             return false;
         }
-        public bool S6F11SendAlarmEvent(string eq_id,string ceid, string alid,string cmd_id, string altx,string alarmLvl,List<AMCSREPORTQUEUE> reportQueues = null)
+        public virtual bool S6F11SendAlarmEvent(string eq_id,string ceid, string alid,string cmd_id, string altx,string alarmLvl,List<AMCSREPORTQUEUE> reportQueues = null)
         {
             //try
             //{
@@ -2197,7 +2197,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //}
             return false;
         }
-        public override AMCSREPORTQUEUE S6F11BulibMessage(string ceid, object vidCollection)
+        public override AMCSREPORTQUEUE S6F11BulibMessage(string ceid, object vidCollection, List<string> rptids = null)
         {
             try
             {

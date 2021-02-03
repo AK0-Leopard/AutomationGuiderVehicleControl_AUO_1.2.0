@@ -1171,17 +1171,38 @@ namespace com.mirle.ibg3k0.sc.BLL
                                 //當前沒有MCS命令待執行，又有車輛處於Idle狀態則下命令使其前往設定好的等待點
                                 List<AVEHICLE> vhs = scApp.VehicleBLL.cache.loadAllVh().ToList();
                                 scApp.VehicleBLL.filterVh(ref vhs, E_VH_TYPE.None);
-                                string park_adr = scApp.VehicleService.parkAdr;
-                                if (!string.IsNullOrWhiteSpace(park_adr))
+
+                                foreach (AVEHICLE v in vhs)
                                 {
-                                    foreach (AVEHICLE v in vhs)
+                                    if (v.VEHICLE_ID == "AGV01")
                                     {
-                                        doCreatTransferCommand(v.VEHICLE_ID, string.Empty, string.Empty,
-                                          E_CMD_TYPE.Move,
-                                         string.Empty,
-                                         park_adr, 0, 0);
+                                        string park_adr = scApp.VehicleService.parkAdr1;
+                                        if (!string.IsNullOrWhiteSpace(park_adr))
+                                        {
+                                            doCreatTransferCommand(v.VEHICLE_ID, string.Empty, string.Empty,
+                                              E_CMD_TYPE.Move,
+                                             string.Empty,
+                                             park_adr, 0, 0);
+                                        }
                                     }
+                                    else if (v.VEHICLE_ID == "AGV02")
+                                    {
+                                        string park_adr = scApp.VehicleService.parkAdr2;
+                                        if (!string.IsNullOrWhiteSpace(park_adr))
+                                        {
+                                            doCreatTransferCommand(v.VEHICLE_ID, string.Empty, string.Empty,
+                                              E_CMD_TYPE.Move,
+                                             string.Empty,
+                                             park_adr, 0, 0);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //donothing
+                                    }
+
                                 }
+
 
                             }
 
@@ -2183,7 +2204,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         //}
 
         private long ohxc_cmd_SyncPoint = 0;
-        public void checkOHxC_TransferCommand()
+        public override void checkOHxC_TransferCommand()
         {
             if (System.Threading.Interlocked.Exchange(ref ohxc_cmd_SyncPoint, 1) == 0)
             {
@@ -2197,7 +2218,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                         return;
                     foreach (ACMD_OHTC cmd in CMD_OHTC_Queues)
                     {
-
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(CMDBLL), Device: string.Empty,
                            Data: $"Start process ohxc of command ,id:{SCUtility.Trim(cmd.CMD_ID)},vh id:{SCUtility.Trim(cmd.VH_ID)},from:{SCUtility.Trim(cmd.SOURCE)},to:{SCUtility.Trim(cmd.DESTINATION)}");
 
@@ -2209,8 +2229,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                             {
                                 continue;
                             }
-
-                            scApp.VehicleService.doSendCommandToVh(assignVH, cmd);
+                            scApp.VehicleService.doSendCommandToVh(assignVH, cmd);//定時檢查發送
                         }
                         //else
                         //{
