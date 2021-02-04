@@ -2499,6 +2499,18 @@ namespace com.mirle.ibg3k0.sc.BLL
             vh.NotifyVhExcuteCMDStatusChange();
             //_vhCatchObject.VID_Collection.VID_58_CommandID.COMMAND_ID = acmd_ohtc.CMD_ID_MCS;
         }
+        public void setVhAvoidCmdToShow(AVEHICLE vh,
+                                         List<string> guideSectionToDestination,
+                                         List<string> guideAddressesToDestination)
+        {
+            vh.PredictSegment = guideSectionToDestination;
+            vh.PredictSectionsStartToLoad = new List<string>();
+            vh.PredictSectionsToDesination = guideSectionToDestination;
+            vh.PredictAddressesStartToLoad = new List<string>();
+            vh.PredictAddressesToDesination = guideAddressesToDestination;
+            vh.PredictAddresses = new string[0];
+            vh.NotifyVhExcuteCMDStatusChange();
+        }
         public void setInitialVhExcuteCmdToShow(string vhID)
         {
             AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vhID);

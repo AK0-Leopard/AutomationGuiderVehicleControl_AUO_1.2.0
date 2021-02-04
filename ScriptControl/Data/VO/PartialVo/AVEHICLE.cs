@@ -278,6 +278,7 @@ namespace com.mirle.ibg3k0.sc
         public virtual List<string> Alarms { get; set; }
         [JsonIgnore]
         public virtual bool IsPrepareAvoid { get; set; }
+        public virtual bool IsAvoiding { get; set; }
 
 
 
@@ -479,26 +480,31 @@ namespace com.mirle.ibg3k0.sc
         {
             get
             {
-                switch (CmdType)
+                if (IsAvoiding)
+                    return PredictAddressesToDesination;
+                else
                 {
-                    case E_CMD_TYPE.Move:
-                    case E_CMD_TYPE.Move_Charger:
-                    case E_CMD_TYPE.Move_Park:
-                    case E_CMD_TYPE.Unload:
-                        return PredictAddressesToDesination;
-                    case E_CMD_TYPE.LoadUnload:
-                        if (HAS_CST == 1)
-                        {
+                    switch (CmdType)
+                    {
+                        case E_CMD_TYPE.Move:
+                        case E_CMD_TYPE.Move_Charger:
+                        case E_CMD_TYPE.Move_Park:
+                        case E_CMD_TYPE.Unload:
                             return PredictAddressesToDesination;
-                        }
-                        else
-                        {
+                        case E_CMD_TYPE.LoadUnload:
+                            if (HAS_CST == 1)
+                            {
+                                return PredictAddressesToDesination;
+                            }
+                            else
+                            {
+                                return PredictAddressesStartToLoad;
+                            }
+                        case E_CMD_TYPE.Load:
                             return PredictAddressesStartToLoad;
-                        }
-                    case E_CMD_TYPE.Load:
-                        return PredictAddressesStartToLoad;
-                    default:
-                        return new List<string>();
+                        default:
+                            return new List<string>();
+                    }
                 }
             }
         }

@@ -248,7 +248,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             var hlt_section_obj = mapAPI.HltMapSections.Where(sec => SCUtility.isMatche(sec.ID, sectionID)).FirstOrDefault();
             //return SCUtility.isMatche(hlt_section_obj.Type, HtlSectionType.R2000.ToString());
-            return !SCUtility.isEmpty(hlt_section_obj.Type) && hlt_section_obj.Type.Contains(HtlSectionType.R2000.ToString());
+            return hlt_section_obj != null && !SCUtility.isEmpty(hlt_section_obj.Type) && hlt_section_obj.Type.Contains(HtlSectionType.R2000.ToString());
         }
 
         enum HtlSectionType

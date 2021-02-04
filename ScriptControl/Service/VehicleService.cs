@@ -2163,6 +2163,8 @@ namespace com.mirle.ibg3k0.sc.Service
                             }
                         }
                         vh.IsPrepareAvoid = true;
+
+                        scApp.CMDBLL.setVhAvoidCmdToShow(vh, guide_section_ids, guide_address_ids);
                         is_success = AvoidRequest(vh_id, avoidAddress, guide_section_ids.ToArray(), guide_address_ids.ToArray());
                         if (!is_success)
                         {
@@ -2170,6 +2172,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                         else
                         {
+                            vh.IsAvoiding = true;
                             scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(vh_id);
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                                Data: $"Avoid success remove vh:{vh_id} all reserved section.",
@@ -3847,6 +3850,7 @@ namespace com.mirle.ibg3k0.sc.Service
         {
             if (scApp.getEQObjCacheManager().getLine().ServerPreStop)
                 return;
+            vh.IsAvoiding = false;
             //ID_32_TRANS_COMPLETE_RESPONSE send_str = null;
             SCUtility.RecodeReportInfo(vh.VEHICLE_ID, seq_num, recive_str);
             string finish_ohxc_cmd = vh.OHTC_CMD;
@@ -4706,7 +4710,7 @@ namespace com.mirle.ibg3k0.sc.Service
                Data: $"Process Avoid complete report.vh current address:{vh.CUR_ADR_ID}, current section:{vh.CUR_SEC_ID}",
                VehicleID: vh.VEHICLE_ID,
                CarrierID: vh.CST_ID);
-
+            vh.IsAvoiding = false;
             bool is_avoid_complete = recive_str.CmpStatus == 0;
             string current_adr = recive_str.CurrentAdrID;
             string current_sec = recive_str.CurrentSecID;
