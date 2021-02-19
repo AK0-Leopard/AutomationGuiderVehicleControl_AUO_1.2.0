@@ -494,6 +494,9 @@ namespace com.mirle.ibg3k0.sc.App
             setRePositionInfo();
             setParkAdr1();
             setParkAdr2();
+            setTrafficPassTime();
+            setTrafficLight1Section();
+            setTrafficLight2Section();
             startBLL();
             initWIF();      //Initial WIF   //A0.01
             initialCatchDataFromDB();
@@ -610,6 +613,27 @@ namespace com.mirle.ibg3k0.sc.App
             string ParkAdr2 = getString("ParkAdr2", "");
             vehicleService.parkAdr2 = ParkAdr2;
         }
+
+
+        private void setTrafficPassTime()
+        {
+            int trafficPassTime = getInt("TrafficPassTime", 20);
+            lineService.trafficPassTime = trafficPassTime;
+        }
+
+        private void setTrafficLight1Section()
+        {
+            string trafficLight1Section = getString("TrafficLight1Section", "");
+            lineService.trafficLight1Section = trafficLight1Section;
+        }
+
+
+        private void setTrafficLight2Section()
+        {
+            string trafficLight2Section = getString("TrafficLight2Section", "");
+            lineService.trafficLight2Section = trafficLight2Section;
+        }
+
 
         private void LoadMapFiles(string addressPath = null, string sectionPath = null)
         {
@@ -963,6 +987,7 @@ namespace com.mirle.ibg3k0.sc.App
                 loadCSVToDataset(ohxcConfig, "VEHICLEMAP");
                 loadCSVToDataset(ohxcConfig, "COUPLERINFO");
                 loadCSVToDataset(ohxcConfig, "FIREDOORSEGMENT");
+                //loadCSVToDataset(ohxcConfig, "TAFFIICLIGHTSECTION");
                 loadCSVToDataset(ohxcConfig, "RESERVEENHANCEINFO");
                 loadCSVToDataset(ohxcConfig, "TRAFFICCONTROLINFO");
                 loadCSVToDataset(ohxcConfig, "ALARMCONVERTINFO");

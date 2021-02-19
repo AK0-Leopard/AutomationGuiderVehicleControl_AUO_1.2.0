@@ -4,6 +4,7 @@ using com.mirle.ibg3k0.bcf.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.bcf.Data.VO;
 using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.Data.SECS;
+using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.sc.Data.VO.Interface;
 using com.mirle.ibg3k0.sc.ObjectRelay;
@@ -210,6 +211,80 @@ namespace com.mirle.ibg3k0.sc
             }
         }
         #endregion FireReport
+
+        #region TrafficLight
+        public bool passRequest { get; set; }
+        public bool passGranted { get; set; }
+        public DateTime? passGrantedTime { get; set; }
+        object traffic_light_lock = new object();
+        public void setTrafficLight(bool red_signal, bool yellow_signal, bool green_signal, bool buzzer_signal, bool force_on_signal)
+        {
+            lock (traffic_light_lock)
+            {
+                TrafficLightValueDefMapAction mapAction =
+                    getMapActionByIdentityKey(nameof(TrafficLightValueDefMapAction)) as TrafficLightValueDefMapAction;
+                mapAction.sendTrafficLightSignal(red_signal, yellow_signal, green_signal, buzzer_signal, force_on_signal);
+            }
+        }
+
+        #endregion TrafficLight
+
+
+        //Color Light
+        #region Color Light
+
+
+        object color_light_lock = new object();
+
+        public void setColorLight( bool red_signal, bool yellow_signal, bool green_signal, bool blue_signal, bool buzzer_signal, bool force_on_signal)
+        {
+            lock (color_light_lock)
+            {
+                ColorLightValueDefMapAction mapAction =
+                    getMapActionByIdentityKey(nameof(ColorLightValueDefMapAction)) as ColorLightValueDefMapAction;
+                //mapAction.sendFourColorLightRedWithBuzzerSignal(buzzer_signal, light_signal);
+                mapAction.sendColorLightSignal(red_signal, yellow_signal, green_signal, blue_signal, buzzer_signal, force_on_signal);
+            }
+        }
+
+        public void setColorLightRedWithBuzzer(bool buzzer_signal, bool light_signal)
+        {
+            lock (color_light_lock)
+            {
+                ColorLightValueDefMapAction mapAction =
+                    getMapActionByIdentityKey(nameof(ColorLightValueDefMapAction)) as ColorLightValueDefMapAction;
+                //mapAction.sendFourColorLightRedWithBuzzerSignal(buzzer_signal, light_signal);
+                mapAction.sendColorLightRedWithBuzzerSignal(buzzer_signal, light_signal);
+            }
+        }
+        public void setColorLightYellow(bool signal)
+        {
+            lock (color_light_lock)
+            {
+                ColorLightValueDefMapAction mapAction =
+                    getMapActionByIdentityKey(nameof(ColorLightValueDefMapAction)) as ColorLightValueDefMapAction;
+                mapAction.sendColorLightYellowSignal(signal);
+            }
+        }
+        public void setColorLightGreen(bool signal)
+        {
+            lock (color_light_lock)
+            {
+                ColorLightValueDefMapAction mapAction =
+                    getMapActionByIdentityKey(nameof(ColorLightValueDefMapAction)) as ColorLightValueDefMapAction;
+                mapAction.sendColorLightGreenSignal(signal);
+            }
+        }
+        public void setColorLightBlue(bool signal)
+        {
+            lock (color_light_lock)
+            {
+                ColorLightValueDefMapAction mapAction =
+                    getMapActionByIdentityKey(nameof(ColorLightValueDefMapAction)) as ColorLightValueDefMapAction;
+                mapAction.sendColorLightBlueSignal(signal);
+            }
+        }
+        #endregion Four Color Light
     }
 
 }

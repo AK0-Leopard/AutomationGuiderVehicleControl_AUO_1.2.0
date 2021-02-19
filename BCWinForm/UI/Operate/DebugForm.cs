@@ -1555,5 +1555,43 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             DebugParameter.isPassCouplerHPSafetySignal = cb_passCouplerHPSafetySingnal.Checked;
         }
+
+
+        private void btnLighthouse_Click(object sender, EventArgs e)
+        {
+            var Lighthouse = bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID("ColorLight");
+            if (sender == btn_lighthouse_red_set)
+            {
+                Lighthouse.setColorLightRedWithBuzzer(true, true);
+            }
+            else if (sender == btn_lighthouse_green_set)
+            {
+                Lighthouse.setColorLightGreen(true);
+            }
+            else if (sender == btn_lighthouse_blue_set)
+            {
+                Lighthouse.setColorLightBlue(true);
+            }
+            else if (sender == btn_lighthouse_orange_set)
+            {
+                Lighthouse.setColorLightYellow(true);
+            }
+            else if (sender == btn_lighthouse_red_reset)
+            {
+                Lighthouse.setColorLightRedWithBuzzer(false, false);
+            }
+            else if (sender == btn_lighthouse_green_reset)
+            {
+                Lighthouse.setColorLightGreen(false);
+            }
+            else if (sender == btn_lighthouse_blue_reset)
+            {
+                Lighthouse.setColorLightBlue(false);
+            }
+            else if (sender == btn_lighthouse_orange_reset)
+            {
+                Lighthouse.setColorLightYellow(false);
+            }
+        }
     }
 }
