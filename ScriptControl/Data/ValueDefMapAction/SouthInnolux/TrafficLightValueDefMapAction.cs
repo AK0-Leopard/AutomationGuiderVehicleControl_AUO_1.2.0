@@ -69,9 +69,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 {
                     case BCFAppConstants.RUN_LEVEL.ZERO:
                         DEVICE_NAME_TRAFFIC_LIGHT = eqpt.EQPT_ID;
-                        sendTrafficLightSignal(true,false,false,false,true);
+                        sendTrafficLightSignal(false, true, false, false, false, true);
                         initTrafficLight();
-                        addVirtualVehicle();
+                        //addVirtualVehicle();
                         //initFireDoorData();
                         break;
                     case BCFAppConstants.RUN_LEVEL.ONE:
@@ -112,10 +112,15 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 //3.logical (include db save)
                 if (function.workButtonSignal)
                 {
-                    eqpt.passRequest = true;
+                    if (scApp.LineService.passRequest)
+                    {
+                        scApp.LineService.passRequestCancel = true;
+                    }
+                    scApp.LineService.passRequest = true;
+                    //eqpt.passRequest = true;
                 }
-                sendTrafficLightWorkSignal(function.workButtonSignal);
-
+                //sendTrafficLightWorkSignal(function.workButtonSignal);
+                scApp.LineService.CheckTrafficLight();
                 //
             }
             catch (Exception ex)
@@ -144,9 +149,15 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 //3.logical (include db save)
                 if (function.workButtonSignal)
                 {
-                    eqpt.passRequest = true;
+                    if (scApp.LineService.passRequest)
+                    {
+                        scApp.LineService.passRequestCancel = true;
+                    }
+                    scApp.LineService.passRequest = true;
+                    //eqpt.passRequest = true;
                 }
-                sendTrafficLightWorkSignal(function.workButtonSignal);
+                //sendTrafficLightWorkSignal(function.workButtonSignal);
+                scApp.LineService.CheckTrafficLight();
 
             }
             catch (Exception ex)
@@ -159,7 +170,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
         }
 
-        public void sendTrafficLightSignal(bool red_signal, bool yellow_signal, bool green_signal, bool buzzer_signal, bool force_on_signal)
+        public void sendTrafficLightSignal(bool work_signal,bool red_signal, bool yellow_signal, bool green_signal, bool buzzer_signal, bool force_on_signal)
         {
             var function =
                 scApp.getFunBaseObj<TrafficLightSignal>(eqpt.EQPT_ID) as TrafficLightSignal;
@@ -167,6 +178,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
 
                 //1.建立各個Function物件
+                function.workSignal = work_signal;
                 function.redSignal = red_signal;
                 function.yellowSignal = yellow_signal;
                 function.greenSignal = green_signal;
@@ -218,7 +230,32 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
         }
 
+        public void sendTrafficLightYellowSignal(bool yellow_signal)
+        {
+            var function =
+                scApp.getFunBaseObj<TrafficLightYellowSignal>(eqpt.EQPT_ID) as TrafficLightYellowSignal;
+            try
+            {
 
+                //1.建立各個Function物件
+                function.yellowSignal = yellow_signal;
+                function.Write(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
+                //2.紀錄發送資料的Log
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(TrafficLightValueDefMapAction), Device: DEVICE_NAME_TRAFFIC_LIGHT,
+                         Data: function.ToString(),
+                         VehicleID: eqpt.EQPT_ID);
+                //3.logical (include db save)
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+            }
+            finally
+            {
+                scApp.putFunBaseObj<TrafficLightYellowSignal>(function);
+            }
+        }
 
         string event_id = string.Empty;
         /// <summary>

@@ -22,7 +22,15 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
         private static Logger logger = LogManager.GetCurrentClassLogger();
         protected SCApplication scApp = null;
         protected MPLCSMControl smControl;
+        private DateTime? lastCheckTime = null;
+        private DateTime? lastWorkFlashTime = null;
 
+        private DateTime? lastYellowFlashTime = null;
+        private bool pre_work_signal = false;
+        private bool pre_yellow_signal = false;
+        const int check_interval = 1000;
+        const int work_flash_interval = 500;
+        const int yellow_flash_interval = 500;
 
         public TrafficLightTimerAction(string name, long intervalMilliSec)
             : base(name, intervalMilliSec)
@@ -45,7 +53,50 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                 {
                     try
                     {
-                        scApp.LineService.CheckTrafficLight();
+                        if(lastCheckTime == null|| lastCheckTime.Value.AddMilliseconds(check_interval)< DateTime.Now)
+                        {
+                            lastCheckTime = DateTime.Now;
+                            scApp.LineService.CheckTrafficLight();
+                        }
+
+                        if (scApp.LineService.traffic_work_light_on && scApp.LineService.traffic_work_light_flash)
+                        {
+                            if (lastWorkFlashTime == null || lastWorkFlashTime.Value.AddMilliseconds(work_flash_interval) < DateTime.Now)
+                            {
+                                lastWorkFlashTime = DateTime.Now;
+                                pre_work_signal = !pre_work_signal;
+                                var trafficLight1 = scApp.getEQObjCacheManager().getEquipmentByEQPTID("TrafficLight1");
+                                var trafficLight2 = scApp.getEQObjCacheManager().getEquipmentByEQPTID("TrafficLight2");
+                                trafficLight1.setTrafficWorkSignal(pre_work_signal);
+                                trafficLight2.setTrafficWorkSignal(pre_work_signal);
+                            }
+                        }
+                        else
+                        {
+                            lastWorkFlashTime = null;
+                            pre_work_signal = false;
+                        }
+
+
+
+                        if (scApp.LineService.traffic_yellow_light_on && scApp.LineService.traffic_yellow_light_flash)
+                        {
+                            if (lastYellowFlashTime == null || lastYellowFlashTime.Value.AddMilliseconds(yellow_flash_interval) < DateTime.Now)
+                            {
+                                lastYellowFlashTime = DateTime.Now;
+                                pre_yellow_signal = !pre_yellow_signal;
+                                var trafficLight1 = scApp.getEQObjCacheManager().getEquipmentByEQPTID("TrafficLight1");
+                                var trafficLight2 = scApp.getEQObjCacheManager().getEquipmentByEQPTID("TrafficLight2");
+                                trafficLight1.setTrafficYellowSignal(pre_work_signal);
+                                trafficLight2.setTrafficYellowSignal(pre_work_signal);
+                            }
+                        }
+                        else
+                        {
+                            lastYellowFlashTime = null;
+                            pre_yellow_signal = false;
+                        }
+
                     }
                     catch (Exception ex)
                     {
