@@ -48,6 +48,9 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             cb_FroceBlockPass.Checked = DebugParameter.isForcedRejectBlockControl;
             numer_num_of_avoid_seg.Value = DebugParameter.NumberOfAvoidanceSegment;
             checkBox_host_offline.Checked = DebugParameter.UseHostOffline;
+            cb_reserve_reject.Checked = DebugParameter.isForcedRejectReserve;
+            cb_reserve_pass.Checked = DebugParameter.isForcedPassReserve;
+
 
             List<string> lstVh = new List<string>();
             lstVh.Add(string.Empty);
@@ -463,6 +466,9 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             TrunOffAllVhPLCControl();
             DebugParameter.IsDebugMode = false;
             DebugParameter.IsCycleRun = false;
+            DebugParameter.isForcedPassReserve = false;
+            DebugParameter.isForcedRejectReserve = false;
+
             timer1.Stop();
             unregisterEvent();
             mainForm.removeForm(typeof(DebugForm).Name);
