@@ -255,8 +255,8 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                                     AVEHICLE pass_vh = avoid_vh == vh_active ? vh_passive : vh_active;
 
 
-                                    var key_blocked_vh = findTheKeyBlockVhID(avoid_vh, pass_vh);
-                                    if (key_blocked_vh == null) continue;
+                                    //var key_blocked_vh = findTheKeyBlockVhID(avoid_vh, pass_vh);
+                                    //if (key_blocked_vh == null) continue;
                                     if (avoid_vh.isTcpIpConnect)
                                     {
                                         ACMD_OHTC cmd_ohtc = scApp.CMDBLL.GetCMD_OHTCByID(avoid_vh.OHTC_CMD);
@@ -265,7 +265,8 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                                            VehicleID: avoid_vh.VEHICLE_ID,
                                            CarrierID: avoid_vh.CST_ID);
 
-                                        bool is_override_success = scApp.VehicleService.trydoAvoidCommandToVh(avoid_vh, key_blocked_vh);
+                                        //bool is_override_success = scApp.VehicleService.trydoAvoidCommandToVh(avoid_vh, key_blocked_vh);
+                                        bool is_override_success = scApp.VehicleService.trydoAvoidCommandToVh(avoid_vh, pass_vh);
                                         if (is_override_success)
                                         {
                                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
@@ -336,6 +337,18 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                    Data: $"dead lock happend ,find key block fail. over find times:{findCount}",
                    VehicleID: avoidVh.VEHICLE_ID,
                    CarrierID: avoidVh.CST_ID);
+                return null;
+            }
+            if (avoidVh == null)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
+                   Data: $"dead lock happend ,but avoid vh is null");
+                return null;
+            }
+            if (reservedVh == null)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
+                   Data: $"dead lock happend ,but reserved vh is null");
                 return null;
             }
             if (SCUtility.isMatche(avoidVh.VEHICLE_ID, reservedVh.VEHICLE_ID))
