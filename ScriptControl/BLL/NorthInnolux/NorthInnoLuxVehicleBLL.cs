@@ -1818,7 +1818,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             throw new NotImplementedException();
         }
 
-        public void setAndPublishPositionReportInfo2Redis(string vh_id, ID_134_TRANS_EVENT_REP report_obj)
+        public override void setAndPublishPositionReportInfo2Redis(string vh_id, ID_134_TRANS_EVENT_REP report_obj)
         {
             setPositionReportInfo2Redis(vh_id, report_obj);
             //PublishPositionReportInfo2Redis(vh_id, report_obj);
@@ -1969,15 +1969,18 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         private Mirle.Hlts.Utils.HltDirection decideReserveDirection(double vhAngle)
         {
-            if (vhAngle == 90
-                || vhAngle == -90
-                || vhAngle == -270
-                || vhAngle == 270)
-                return Mirle.Hlts.Utils.HltDirection.NS;
-            else
-            {
-                return Mirle.Hlts.Utils.HltDirection.EW;
-            }
+            //if (vhAngle == 90
+            //    || vhAngle == -90
+            //    || vhAngle == -270
+            //    || vhAngle == 270)
+            //    return Mirle.Hlts.Utils.HltDirection.NS;
+            //else
+            //{
+            //    return Mirle.Hlts.Utils.HltDirection.EW;
+            //}
+
+            return Mirle.Hlts.Utils.HltDirection.Forward;
+
         }
         #region Vehicle Object Info
 

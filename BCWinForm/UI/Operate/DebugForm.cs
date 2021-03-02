@@ -49,6 +49,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             numer_num_of_avoid_seg.Value = DebugParameter.NumberOfAvoidanceSegment;
             checkBox_host_offline.Checked = DebugParameter.UseHostOffline;
             cb_advanceDriveAway.Checked = DebugParameter.AdvanceDriveAway;
+            cb_passCouplerHPSafetySingnal.Checked = DebugParameter.isPassCouplerHPSafetySignal;
 
             List<string> lstVh = new List<string>();
             lstVh.Add(string.Empty);
@@ -1376,7 +1377,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
         private void btn_alarmtSet_Click(object sender, EventArgs e)
         {
-            string error_code = "12288";
+            string error_code = "100001";
             var error_status = sc.ProtocolFormat.OHTMessage.ErrorStatus.ErrSet;
             AVEHICLE test_report_vh = bcApp.SCApplication.VehicleBLL.cache.getVehicle(cmb_mcsReportTestVHID.Text);
             Task.Run(() => bcApp.SCApplication.VehicleService.ProcessAlarmReport(test_report_vh, error_code, error_status, ""));
@@ -1384,7 +1385,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
         private void btn_alarmClear_Click(object sender, EventArgs e)
         {
-            string error_code = "12288";
+            string error_code = "100001";
             var error_status = sc.ProtocolFormat.OHTMessage.ErrorStatus.ErrReset;
             AVEHICLE test_report_vh = bcApp.SCApplication.VehicleBLL.cache.getVehicle(cmb_mcsReportTestVHID.Text);
             Task.Run(() => bcApp.SCApplication.VehicleService.ProcessAlarmReport(test_report_vh, error_code, error_status, ""));
@@ -1548,6 +1549,49 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         private void cb_advanceDriveAway_CheckedChanged(object sender, EventArgs e)
         {
             DebugParameter.AdvanceDriveAway = cb_advanceDriveAway.Checked;
+        }
+
+        private void cb_passCouplerHPSafetySingnal_CheckedChanged(object sender, EventArgs e)
+        {
+            DebugParameter.isPassCouplerHPSafetySignal = cb_passCouplerHPSafetySingnal.Checked;
+        }
+
+
+        private void btnLighthouse_Click(object sender, EventArgs e)
+        {
+            var Lighthouse = bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID("ColorLight");
+            if (sender == btn_lighthouse_red_set)
+            {
+                Lighthouse.setColorLightRedWithBuzzer(true, true);
+            }
+            else if (sender == btn_lighthouse_green_set)
+            {
+                Lighthouse.setColorLightGreen(true);
+            }
+            else if (sender == btn_lighthouse_blue_set)
+            {
+                Lighthouse.setColorLightBlue(true);
+            }
+            else if (sender == btn_lighthouse_orange_set)
+            {
+                Lighthouse.setColorLightYellow(true);
+            }
+            else if (sender == btn_lighthouse_red_reset)
+            {
+                Lighthouse.setColorLightRedWithBuzzer(false, false);
+            }
+            else if (sender == btn_lighthouse_green_reset)
+            {
+                Lighthouse.setColorLightGreen(false);
+            }
+            else if (sender == btn_lighthouse_blue_reset)
+            {
+                Lighthouse.setColorLightBlue(false);
+            }
+            else if (sender == btn_lighthouse_orange_reset)
+            {
+                Lighthouse.setColorLightYellow(false);
+            }
         }
     }
 }

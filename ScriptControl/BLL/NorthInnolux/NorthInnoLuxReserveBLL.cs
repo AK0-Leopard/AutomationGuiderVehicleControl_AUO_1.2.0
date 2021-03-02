@@ -209,7 +209,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             onReserveStatusChange();
         }
 
-        public ReserveCheckResult TryAddReservedSection(string vhID, string sectionID, HltDirection sensorDir = HltDirection.None, HltDirection forkDir = HltDirection.None, bool isAsk = false)
+        public ReserveCheckResult TryAddReservedSectionNew(string vhID, string sectionID, HltDirection sensorDir = HltDirection.None, HltDirection forkDir = HltDirection.None, bool isAsk = false)
         {
             //int sec_id = 0;
             //int.TryParse(sectionID, out sec_id);
@@ -221,6 +221,18 @@ namespace com.mirle.ibg3k0.sc.BLL
             return result;
         }
 
+
+        public override HltResult TryAddReservedSection(string vhID, string sectionID, HltDirection sensorDir = HltDirection.NESW, HltDirection forkDir = HltDirection.None, bool isAsk = false)
+        {
+            //int sec_id = 0;
+            //int.TryParse(sectionID, out sec_id);
+            string sec_id = SCUtility.Trim(sectionID);
+
+            HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, isAsk);
+            onReserveStatusChange();
+
+            return result;
+        }
 
         private (bool isSuccess, string reservedVhID) IsReserveBlockSuccess(SCApplication scApp, string vhID, string reserveSectionID)
         {
@@ -245,7 +257,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                 foreach (var enhance_section in reserve_enhance_sections)
                 {
-                    var check_one_direct_result = TryAddReservedSection(vh_id, enhance_section,
+                    var check_one_direct_result = TryAddReservedSectionNew(vh_id, enhance_section,
                                                         sensorDir: HltDirection.None,
                                                         isAsk: true);
                     if (!check_one_direct_result.OK)
@@ -310,11 +322,14 @@ namespace com.mirle.ibg3k0.sc.BLL
                         break;
                     }
 
-                    Mirle.Hlts.Utils.HltDirection hltDirection = Mirle.Hlts.Utils.HltDirection.None;
-                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
-                       Data: $"vh:{vhID} Try add(Only ask) reserve section:{reserve_section_id} ,hlt dir:{hltDirection}...",
-                       VehicleID: vhID);
-                    result = TryAddReservedSection(vhID, reserve_section_id,
+                    Mirle.Hlts.Utils.HltDirection hltDirection = Mirle.Hlts.Utils.HltDirection.NS;
+                    //Mirle.Hlts.Utils.HltDirection hltDirection = decideReserveDirection(vh, reserve_section_id);
+                    //AVEHICLE vh = scApp.VehicleBLL.cache.getVehicle(vhID);
+                    //Mirle.Hlts.Utils.HltDirection hltDirection = scApp.ReserveBLL.DecideReserveDirection(scApp.SectionBLL, vh, reserve_section_id);
+                    //LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
+                    //   Data: $"vh:{vhID} Try add(Only ask) reserve section:{reserve_section_id} ,hlt dir:{hltDirection}...",
+                    //   VehicleID: vhID);
+                    result = TryAddReservedSectionNew(vhID, reserve_section_id,
                                                    sensorDir: hltDirection,
                                                    isAsk: isAsk);
                     if (result.OK)

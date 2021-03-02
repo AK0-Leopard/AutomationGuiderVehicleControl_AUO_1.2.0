@@ -19,6 +19,7 @@ namespace com.mirle.ibg3k0.sc
     public partial class AUNIT : BaseUnitObject
     {
         private AlarmHisList alarmHisList = new AlarmHisList();
+        public event EventHandler<SCAppConstants.CouplerHPSafety> CouplerHPSafetyChaged;
         #region charger 
 
 
@@ -186,6 +187,7 @@ namespace com.mirle.ibg3k0.sc
                 if (coupler1hpsafety != value)
                 {
                     coupler1hpsafety = value;
+                    onCouplerHPSafetyChaged(value);
                 }
             }
         }
@@ -198,6 +200,7 @@ namespace com.mirle.ibg3k0.sc
                 if (coupler2hpsafety != value)
                 {
                     coupler2hpsafety = value;
+                    //onCouplerHPSafetyChaged();
                 }
             }
         }
@@ -210,9 +213,11 @@ namespace com.mirle.ibg3k0.sc
                 if (coupler3hpsafety != value)
                 {
                     coupler3hpsafety = value;
+                    //onCouplerHPSafetyChaged();
                 }
             }
         }
+
 
 
         public float chargerOutputVoltage;
@@ -235,7 +240,10 @@ namespace com.mirle.ibg3k0.sc
             public string signal1;
             public string signal2;
         }
-
+        public void onCouplerHPSafetyChaged(SCAppConstants.CouplerHPSafety couplerHPSafety)
+        {
+            CouplerHPSafetyChaged?.Invoke(this, couplerHPSafety);
+        }
 
         #endregion charger
 

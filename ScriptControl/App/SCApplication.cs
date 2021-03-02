@@ -492,7 +492,11 @@ namespace com.mirle.ibg3k0.sc.App
 
             initialReserveSectionAPI();
             setRePositionInfo();
-            setParkAdr();
+            setParkAdr1();
+            setParkAdr2();
+            setTrafficPassTime();
+            setTrafficLight1Section();
+            setTrafficLight2Section();
             startBLL();
             initWIF();      //Initial WIF   //A0.01
             initialCatchDataFromDB();
@@ -598,10 +602,36 @@ namespace com.mirle.ibg3k0.sc.App
             vehicleService.repositionDistance = RePositionDistance;
         }
 
-        private void setParkAdr()
+        private void setParkAdr1()
         {
-            string ParkAdr = getString("ParkAdr", "");
-            vehicleService.parkAdr = ParkAdr;
+            string ParkAdr1 = getString("ParkAdr1", "");
+            vehicleService.parkAdr1 = ParkAdr1;
+        }
+
+        private void setParkAdr2()
+        {
+            string ParkAdr2 = getString("ParkAdr2", "");
+            vehicleService.parkAdr2 = ParkAdr2;
+        }
+
+
+        private void setTrafficPassTime()
+        {
+            int trafficPassTime = getInt("TrafficPassTime", 20);
+            lineService.trafficPassTime = trafficPassTime;
+        }
+
+        private void setTrafficLight1Section()
+        {
+            string trafficLight1Section = getString("TrafficLight1Section", "");
+            lineService.trafficLight1Section = trafficLight1Section;
+        }
+
+
+        private void setTrafficLight2Section()
+        {
+            string trafficLight2Section = getString("TrafficLight2Section", "");
+            lineService.trafficLight2Section = trafficLight2Section;
         }
 
 
@@ -957,6 +987,7 @@ namespace com.mirle.ibg3k0.sc.App
                 loadCSVToDataset(ohxcConfig, "VEHICLEMAP");
                 loadCSVToDataset(ohxcConfig, "COUPLERINFO");
                 loadCSVToDataset(ohxcConfig, "FIREDOORSEGMENT");
+                //loadCSVToDataset(ohxcConfig, "TAFFIICLIGHTSECTION");
                 loadCSVToDataset(ohxcConfig, "RESERVEENHANCEINFO");
                 loadCSVToDataset(ohxcConfig, "TRAFFICCONTROLINFO");
                 loadCSVToDataset(ohxcConfig, "ALARMCONVERTINFO");
@@ -2018,6 +2049,7 @@ namespace com.mirle.ibg3k0.sc.App
 
         public static int NumberOfAvoidanceSegment = 3;
         public static Boolean AdvanceDriveAway = true;
+        public static Boolean isPassCouplerHPSafetySignal = false;
 
     }
 }

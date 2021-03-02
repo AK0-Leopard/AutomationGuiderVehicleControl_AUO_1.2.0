@@ -25,7 +25,7 @@ namespace com.mirle.ibg3k0.sc.Service
         {
 
         }
-        public void start(SCApplication _app)
+        public override void start(SCApplication _app)
         {
             scApp = _app;
             reportBLL = _app.ReportBLL;
@@ -50,6 +50,7 @@ namespace com.mirle.ibg3k0.sc.Service
             //line.addEventHandler(nameof(LineService), nameof(line.CurrntHostCommandTransferStatueWaitingCounr), PublishLineInfo);
             line.LineStatusChange += Line_LineStatusChange;
 
+            addVirtualVehicle();
             line.LongTimeNoCommuncation += Line_LongTimeNoCommuncation;
             line.TimerActionStart();
             //Section 的事務處理

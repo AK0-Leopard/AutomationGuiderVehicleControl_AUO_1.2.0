@@ -3531,6 +3531,12 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     scApp.ReportBLL.ReportAlarmCleared(vh_id);
                 }
+                bool processAfterHasErrorExist = scApp.AlarmBLL.hasAlarmErrorExist();
+                scApp.getEQObjCacheManager().getLine().HasSeriousAlarmHappend = processAfterHasErrorExist;
+
+                bool processAfterHasWarningExist = scApp.AlarmBLL.hasAlarmWarningExist();
+                scApp.getEQObjCacheManager().getLine().HasWarningHappend = processAfterHasWarningExist;
+                
                 //}
             }
             catch (Exception ex)

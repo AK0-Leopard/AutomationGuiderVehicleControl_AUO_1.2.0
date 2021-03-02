@@ -26,6 +26,7 @@ using com.mirle.ibg3k0.sc.Data.SECSDriver;
 using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.stc.Common;
 using com.mirle.ibg3k0.stc.Data.SecsData;
+//using ExcelDataReader.Log;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -378,7 +379,17 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             foreach (ALARMRPTCOND aLARMRPTCOND in aLARMRPTCONDs)
             {
                 index++;
-                viditem_03.ALIDs[index] = aLARMRPTCOND.ALAM_CODE;
+                AlarmConvertInfo alarmConvertInfo = scApp.AlarmBLL.getAlarmConvertInfo(aLARMRPTCOND.ALAM_CODE);
+                if(alarmConvertInfo != null)
+                {
+                    viditem_03.ALIDs[index] = alarmConvertInfo.ALID;
+                }
+                else
+                {
+                    logger.Error("NorthInnoluxMCSDefaultMapAction has Error[Line Name:{0}],[Error method:{1}], AlarmConvertInfo not found",
+                     line.LINE_ID, "buildEnabledAlarmVIDItem");
+                    viditem_03.ALIDs[index] = "";
+                }
             }
             return viditem_03;
         }
@@ -392,7 +403,18 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             foreach (ALARM alarm in alarms)
             {
                 index++;
-                viditem_04.ALIDs[index] = alarm.ALAM_CODE;
+                AlarmConvertInfo alarmConvertInfo = scApp.AlarmBLL.getAlarmConvertInfo(alarm.ALAM_CODE);
+                if (alarmConvertInfo != null)
+                {
+                    viditem_04.ALIDs[index] = alarmConvertInfo.ALID;
+                }
+                else
+                {
+                    logger.Error("NorthInnoluxMCSDefaultMapAction has Error[Line Name:{0}],[Error method:{1}], AlarmConvertInfo not found",
+                     line.LINE_ID, "buildSettedAlarmVIDItem");
+                    viditem_04.ALIDs[index] = "";
+                }
+
             }
             return viditem_04;
         }
@@ -2218,6 +2240,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             try
             {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(NorthInnoluxMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+   Data: $"enter S6F11SendAlarmEvent eq_id:{eq_id} ceid{ceid} alid{alid} cmd_id{cmd_id} altx{altx} alarmLvl{alarmLvl} ");
                 VIDCollection Vids = new VIDCollection();
                 Vids.VID_05_Clock.CLOCK = DateTime.Now.ToString(SCAppConstants.TimestampFormat_14).PadRight(16, '0');
                 Vids.VID_01_AlarmID.ALID = alid;
@@ -2228,7 +2252,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 Vids.VID_1001_AlarmLevel.ALARM_LEVEL = alarmLvl;
                 Vids.VID_1002_FlagForAlarmReport.FLAG_FOR_ALARM_REPORT = "0";
                 Vids.VID_1003_Classification.CLASSIFICATION = "0";
-                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(ceid, Vids);
+                List<string> rptids = new List<string>();
+                rptids.Add("902");
+                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(ceid, Vids, rptids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 if (reportQueues == null)
                 {
@@ -2242,7 +2268,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(NorthInnoluxMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -3404,8 +3430,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //}
             return false;
         }
+        
 
-        public override AMCSREPORTQUEUE S6F11BulibMessage(string ceid, object vidCollection)
+
+
+
+        public override AMCSREPORTQUEUE S6F11BulibMessage(string ceid, object vidCollection, List<string> rptids = null)
         {
             try
             {
@@ -3425,7 +3455,15 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 {
                     tempceid = ceid.TrimStart('0');
                 }
-                List<string> RPTIDs = SECSConst.DicCEIDAndRPTID[tempceid];
+                List<string> RPTIDs = null;
+                if (rptids == null)
+                {
+                    RPTIDs = SECSConst.DicCEIDAndRPTID[tempceid];
+                }
+                else
+                {
+                    RPTIDs = rptids;
+                }
                 s6f11.INFO.ITEM = new S6F11.RPTINFO.RPTITEM[RPTIDs.Count];
 
                 for (int i = 0; i < RPTIDs.Count; i++)
