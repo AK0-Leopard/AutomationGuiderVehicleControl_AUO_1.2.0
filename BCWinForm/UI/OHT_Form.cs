@@ -55,6 +55,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             dgv_vhStatus.DataSource = bindingSource;
             scApp.getEQObjCacheManager().CommonInfo.ObjectToShow_list.Clear();
 
+            
             uctl_Map.BackColor = Color.FromArgb(29, 36, 60);
             dgv_TransferCommand.AutoGenerateColumns = false;
 
