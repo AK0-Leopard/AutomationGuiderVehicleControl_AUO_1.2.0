@@ -1343,7 +1343,8 @@ namespace com.mirle.ibg3k0.sc.Service
                                     {
                                         //如果有則要嘗試去預約，如果等了20秒還是沒有釋放出來則嘗試別條路徑
                                         string before_block_section_id = assignVH.VhAvoidInfo.BlockedSectionID;
-                                        if (!SpinWait.SpinUntil(() => scApp.ReserveBLL.TryAddReservedSection(vh_id, before_block_section_id, isAsk: true).OK, 20000))
+                                        //if (!SpinWait.SpinUntil(() => scApp.ReserveBLL.TryAddReservedSection(vh_id, before_block_section_id, isAsk: true).OK, 20000))
+                                        if (!SpinWait.SpinUntil(() => checkWillPassSectionIsClear(vh_id, before_block_section_id), 20000))
                                         {
                                             isSuccess = false;
                                             //need_by_pass_sec_ids.Add(next_walk_section);
@@ -1548,6 +1549,12 @@ namespace com.mirle.ibg3k0.sc.Service
             }
             return isSuccess;
         }
+        private bool checkWillPassSectionIsClear(string vhID, string beforeBlockSectionID)
+        {
+            SpinWait.SpinUntil(() => false, 1000);
+            return scApp.ReserveBLL.TryAddReservedSection(vhID, beforeBlockSectionID, isAsk: true).OK;
+        }
+
 
         public bool trydoAvoidCommandToVh(AVEHICLE avoidVh, AVEHICLE passVh)
         {
