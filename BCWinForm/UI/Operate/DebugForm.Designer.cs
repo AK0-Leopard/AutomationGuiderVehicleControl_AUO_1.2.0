@@ -318,6 +318,7 @@
             this.label33 = new System.Windows.Forms.Label();
             this.comboBox_port11 = new System.Windows.Forms.ComboBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.btn_ForceResetAlarm = new System.Windows.Forms.Button();
             this.btn_online = new System.Windows.Forms.Button();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.button_set_ECID = new System.Windows.Forms.Button();
@@ -3441,6 +3442,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.btn_ForceResetAlarm);
             this.tabPage2.Controls.Add(this.btn_online);
             this.tabPage2.Location = new System.Drawing.Point(4, 31);
             this.tabPage2.Name = "tabPage2";
@@ -3450,9 +3452,19 @@
             this.tabPage2.Text = "ON-LINE";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // btn_ForceResetAlarm
+            // 
+            this.btn_ForceResetAlarm.Location = new System.Drawing.Point(51, 101);
+            this.btn_ForceResetAlarm.Name = "btn_ForceResetAlarm";
+            this.btn_ForceResetAlarm.Size = new System.Drawing.Size(234, 32);
+            this.btn_ForceResetAlarm.TabIndex = 2;
+            this.btn_ForceResetAlarm.Text = "Force Reset All Alarm";
+            this.btn_ForceResetAlarm.UseVisualStyleBackColor = true;
+            this.btn_ForceResetAlarm.Click += new System.EventHandler(this.btn_ForceResetAlarm_Click);
+            // 
             // btn_online
             // 
-            this.btn_online.Location = new System.Drawing.Point(39, 33);
+            this.btn_online.Location = new System.Drawing.Point(51, 250);
             this.btn_online.Name = "btn_online";
             this.btn_online.Size = new System.Drawing.Size(210, 32);
             this.btn_online.TabIndex = 1;
@@ -4194,5 +4206,6 @@
         private System.Windows.Forms.Label label84;
         private System.Windows.Forms.Label label85;
         private System.Windows.Forms.Label label86;
+        private System.Windows.Forms.Button btn_ForceResetAlarm;
     }
 }

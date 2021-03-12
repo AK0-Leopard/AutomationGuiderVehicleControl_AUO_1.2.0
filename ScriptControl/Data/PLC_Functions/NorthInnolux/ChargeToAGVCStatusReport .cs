@@ -33,11 +33,11 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions.NorthInnolux
         [PLCElement(ValueName = "CHARGERX_TO_AGVC_CHARGER_STATUS_REPORT_RS485_STATUS")]
         public RS485StatusType RS485Status;
         [PLCElement(ValueName = "CHARGERX_TO_AGVC_CHARGER_STATUS_REPORT_COUPLER1_STATUS")]
-        public SCAppConstants.CpuplerStatus_SOUTH_INNOLUX Coupler1Status;
+        public SCAppConstants.CouplerStatus_NORTH_INNOLUX Coupler1Status;
         [PLCElement(ValueName = "CHARGERX_TO_AGVC_CHARGER_STATUS_REPORT_COUPLER2_STATUS")]
-        public SCAppConstants.CpuplerStatus_SOUTH_INNOLUX Coupler2Status;
+        public SCAppConstants.CouplerStatus_NORTH_INNOLUX Coupler2Status;
         [PLCElement(ValueName = "CHARGERX_TO_AGVC_CHARGER_STATUS_REPORT_COUPLER3_STATUS")]
-        public SCAppConstants.CpuplerStatus_SOUTH_INNOLUX Coupler3Status;
+        public SCAppConstants.CouplerStatus_NORTH_INNOLUX Coupler3Status;
         [PLCElement(ValueName = "CHARGERX_TO_AGVC_CHARGER_STATUS_REPORT_COUPLER1_POSITION")]
         public SCAppConstants.CouplerHPSafety Coupler1Position;
         [PLCElement(ValueName = "CHARGERX_TO_AGVC_CHARGER_STATUS_REPORT_COUPLER2_POSITION")]
