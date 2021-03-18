@@ -4029,7 +4029,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     //    scApp.ReportBLL.ReportAlarmSet();
                     //}
                     if (status == ErrorStatus.ErrSet &&
-                        !scApp.AlarmBLL.hasAlarmExist() && alarm_map.ALARM_LVL == E_ALARM_LVL.Error)
+                        !scApp.AlarmBLL.hasAlarmErrorExist() && alarm_map.ALARM_LVL == E_ALARM_LVL.Error)
                     {
                         scApp.ReportBLL.ReportAlarmSet();
                     }

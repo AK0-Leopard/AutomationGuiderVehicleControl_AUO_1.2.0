@@ -764,7 +764,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             int totalHour = 24;
 #pragma warning restore CS0219 // 已指派變數 'totalHour'，但是從未使用過它的值。
             ck_montor_vh.Checked = false;
-            uctl_Map.entryMonitorMode();
+            //uctl_Map.entryMonitorMode();
             foreach (KeyValuePair<string, int> keyValue in dicSecIDAndThroughTimes)
             {
                 //int2colorTranfer(keyValue.Value);
@@ -848,7 +848,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         public void LeaveMonitorMode_SectionThroughTimes()
         {
             ck_montor_vh.Checked = true;
-            uctl_Map.LeaveMonitorMode();
+            //uctl_Map.LeaveMonitorMode();
             resetSpecifyRail();
             //uctl_Map1.DisplaySectionLables(false);
         }

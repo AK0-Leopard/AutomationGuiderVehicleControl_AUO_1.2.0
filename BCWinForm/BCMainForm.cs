@@ -1067,10 +1067,10 @@ namespace com.mirle.ibg3k0.bc.winform
             openForm(typeof(MPCInfoMsgDialog).Name, true, false);
         }
 
-        private void hostConnectionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            openForm(typeof(HostModeChg_Form).Name);
-        }
+        //private void hostConnectionToolStripMenuItem_Click(object sender, EventArgs e)
+        //{
+        //    openForm(typeof(HostModeChg_Form).Name);
+        //}
 
         private void transferCommandToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1102,5 +1102,12 @@ namespace com.mirle.ibg3k0.bc.winform
         {
 
         }
+
+        private void hostConnectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openForm(typeof(HostModeChg_Form).Name);
+
+        }
+
     }
 }

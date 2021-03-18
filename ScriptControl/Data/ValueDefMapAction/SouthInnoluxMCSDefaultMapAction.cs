@@ -2738,6 +2738,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 Vids.VID_01_AlarmID.ALID = alid;
                 Vids.VID_901_AlarmText.ALARM_TEXT = altx;
                 Vids.VID_904_UnitID.UNIT_ID = eq_id;
+
+                //Vids.VID_903_ErrorCode.ERROR_CODE = alid + error_code;//errorcode要加前綴
                 Vids.VID_903_ErrorCode.ERROR_CODE = error_code;
                 Vids.VID_905_ErrorText.ERROR_TEXT = desc;
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Unit_Error_Set, Vids);
