@@ -1270,6 +1270,8 @@ namespace com.mirle.ibg3k0.sc.BLL
         private void checkOnTheWayAfterCommandExcuteInOneCommandGroup(ref List<ACMD_MCS> InQueueACMD_MCSs, List<AVEHICLE> idleVhs)
         {
             List<AGROUPPORTSTATION> group_port_stations = scApp.GroupPortStationBLL.OperateCatch.loadAllGroupPortStation();
+            if (group_port_stations == null || group_port_stations.Count == 0)
+                return;
             foreach (var group_port_station in group_port_stations)
             {
                 if (group_port_station.TYPE != GroupPortType.OnTheWayAfter) continue;
@@ -2544,7 +2546,10 @@ namespace com.mirle.ibg3k0.sc.BLL
         public void setWillPassAddressesInfo(string vhID, List<string> willPassAddresses)
         {
             AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vhID);
-            vh.sWillPassAddressID = string.Join(",", willPassAddresses);
+            if (willPassAddresses == null)
+                vh.sWillPassAddressID = "";
+            else
+                vh.sWillPassAddressID = string.Join(",", willPassAddresses);
         }
         public void removeAlreadyPassedSection(string vhID, string sectionID)
         {
