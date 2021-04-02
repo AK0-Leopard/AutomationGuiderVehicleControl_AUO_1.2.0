@@ -171,7 +171,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
             return result;
         }
-        private int getVehicleDirection(DriveDirction driveDirction)
+        private  int getVehicleDirection(DriveDirction driveDirction)
         {
             switch (driveDirction)
             {
@@ -234,7 +234,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
 
 
-        public bool IsR2000Address(string adrID)
+        public virtual bool IsR2000Address(string adrID)
         {
             //var hlt_r2000_section_objs = mapAPI.HltMapSections.Where(sec => SCUtility.isMatche(sec.Type, HtlSectionType.R2000.ToString())).ToList();
             var hlt_r2000_section_objs = mapAPI.HltMapSections.Where(sec => !SCUtility.isEmpty(sec.Type) &&
@@ -244,7 +244,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                                                           .Count() > 0;
             return is_r2000_address;
         }
-        public bool IsR2000Section(string sectionID)
+        public virtual bool IsR2000Section(string sectionID)
         {
             var hlt_section_obj = mapAPI.HltMapSections.Where(sec => SCUtility.isMatche(sec.ID, sectionID)).FirstOrDefault();
             //return SCUtility.isMatche(hlt_section_obj.Type, HtlSectionType.R2000.ToString());
@@ -261,60 +261,79 @@ namespace com.mirle.ibg3k0.sc.BLL
 
     public class ReserveBLLForByPass : ReserveBLL
     {
+
+        public override (double x, double y, bool isTR50) GetHltMapAddress(string adrID)
+        {
+            return (0, 0, false);
+        }
+        public override HltMapSection GetHltMapSections(string secID)
+        {
+            return new HltMapSection();
+        }
+        public override HltResult TryAddVehicleOrUpdateResetSensorForkDir(string vhID)
+        {
+            return new HltResult(true);
+        }
+        public override HltResult TryAddVehicleOrUpdate(string vhID, string currentSectionID, double vehicleX, double vehicleY, float vehicleAngle, double speedMmPerSecond,
+                                           HltDirection sensorDir, HltDirection forkDir)
+        {
+            return new HltResult(true);
+        }
+        public override HltResult TryAddVehicleOrUpdate(string vhID, string adrID, float angle = 0)
+        {
+            return new HltResult(true);
+        }
+
+        public override void RemoveManyReservedSectionsByVIDSID(string vhID, string sectionID)
+        {
+        }
+
+        public override void RemoveVehicle(string vhID)
+        {
+        }
+
         public override string GetCurrentReserveSection()
         {
-            return "";
+            return string.Empty;
         }
         public override HltVehicle GetHltVehicle(string vhID)
         {
             return new HltVehicle();
         }
-        public override (double x, double y, bool isTR50) GetHltMapAddress(string adrID)
-        {
-            return (0, 0, false);
-        }
-        public override void RemoveAllReservedSections()
-        {
-            //not thing...
-        }
-        public override HltResult RemoveAllReservedSectionsBySectionID(string sectionID)
-        {
-            return new HltResult(true, "By Pass Reserve");
-        }
-        public override void RemoveAllReservedSectionsByVehicleID(string vhID)
-        {
-            //not thing...
-        }
-        public override void RemoveManyReservedSectionsByVIDSID(string vhID, string sectionID)
-        {
-            //not thing...
-        }
-        public override void RemoveVehicle(string vhID)
-        {
-            //not thing...
-        }
-        public virtual HltResult TryAddReservedSection(string vhID, string sectionID,
+
+        public override HltResult TryAddReservedSection(string vhID, string sectionID,
             HltDirection sensorDir = HltDirection.ForwardReverse, HltDirection forkDir = HltDirection.None,
             DriveDirction driveDirection = DriveDirction.DriveDirNone, bool isAsk = false)
         {
-            return new HltResult(true, "By Pass Reserve");
+            return new HltResult(true);
         }
-        public override HltResult TryAddVehicleOrUpdate(string vhID, string adrID, float angle = 0)
+
+        public override HltResult RemoveAllReservedSectionsBySectionID(string sectionID)
         {
-            return new HltResult(true, "By Pass Reserve");
+            return new HltResult(true);
         }
-        public override HltResult TryAddVehicleOrUpdate(string vhID, string currentSectionID, double vehicleX, double vehicleY, float vehicleAngle, double speedMmPerSecond, HltDirection sensorDir, HltDirection forkDir)
+
+        public override void RemoveAllReservedSectionsByVehicleID(string vhID)
         {
-            return new HltResult(true, "By Pass Reserve");
+
         }
-        public override HltResult TryAddVehicleOrUpdateResetSensorForkDir(string vhID)
+        public override void RemoveAllReservedSections()
         {
-            return new HltResult(true, "By Pass Reserve");
+
         }
         public override HltDirection DecideReserveDirection(SectionBLL sectionBLL, AVEHICLE reserveVh, string reserveSectionID)
         {
-            return HltDirection.None;
+            return HltDirection.Forward;
         }
 
+
+        public override bool IsR2000Address(string adrID)
+        {
+            return false;
+        }
+        public override bool IsR2000Section(string sectionID)
+        {
+            return false;
+        }
     }
 }
