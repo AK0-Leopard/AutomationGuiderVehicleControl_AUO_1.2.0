@@ -2900,7 +2900,17 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             return cmd_ohtc;
         }
-        
+
+        public List<HCMD_OHTC> GetHisOHTCCMDsBySetTimeClearTime(DateTime insertTime, DateTime endTime)
+        {
+            List<HCMD_OHTC> cmds = null;
+            //using (DBConnection_EF con = new DBConnection_EF())
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                cmds = hcmd_ohtcDao.loadByInsertTimeEndTime(con, insertTime, endTime);
+            }
+            return cmds;
+        }
 
         #endregion HCMD_OHTC
 

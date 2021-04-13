@@ -243,7 +243,16 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
             }
         }
-
+        public List<ALARM> GetALARMsBySetTimeClearTime(DateTime set_time, DateTime clear_time)
+        {
+            List<ALARM> alarms = null;
+            //using (DBConnection_EF con = new DBConnection_EF())
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                alarms = alarmDao.loadAllAlarmByStartTimeEndTime(con, set_time, clear_time);
+            }
+            return alarms;
+        }
         public virtual void resetAlarmReport2Redis(ALARM alarm)
         {
             if (alarm == null) return;

@@ -1109,5 +1109,10 @@ namespace com.mirle.ibg3k0.bc.winform
 
         }
 
+        private void staticsChartToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openForm(typeof(ChartPopupForm).Name, true, false);
+
+        }
     }
 }

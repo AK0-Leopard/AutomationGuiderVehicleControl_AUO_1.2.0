@@ -76,6 +76,7 @@ namespace com.mirle.ibg3k0.bc.winform
             this.stopConnectionToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.sEToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hostConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.operatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logInToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -108,7 +109,7 @@ namespace com.mirle.ibg3k0.bc.winform
             this.transferCommandHistoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.alarmToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.hostConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.staticsChartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.CMS_OnLineMode.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -294,6 +295,12 @@ namespace com.mirle.ibg3k0.bc.winform
             this.dToolStripMenuItem.Name = "dToolStripMenuItem";
             resources.ApplyResources(this.dToolStripMenuItem, "dToolStripMenuItem");
             // 
+            // hostConnectionToolStripMenuItem
+            // 
+            this.hostConnectionToolStripMenuItem.Name = "hostConnectionToolStripMenuItem";
+            resources.ApplyResources(this.hostConnectionToolStripMenuItem, "hostConnectionToolStripMenuItem");
+            this.hostConnectionToolStripMenuItem.Click += new System.EventHandler(this.hostConnectionToolStripMenuItem_Click);
+            // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -394,7 +401,8 @@ namespace com.mirle.ibg3k0.bc.winform
             this.mataToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.changePasswordToolStripMenuItem,
             this.uASToolStripMenuItem,
-            this.reserveSectionInfoToolStripMenuItem});
+            this.reserveSectionInfoToolStripMenuItem,
+            this.staticsChartToolStripMenuItem});
             this.mataToolStripMenuItem.Name = "mataToolStripMenuItem";
             resources.ApplyResources(this.mataToolStripMenuItem, "mataToolStripMenuItem");
             this.mataToolStripMenuItem.Click += new System.EventHandler(this.mataToolStripMenuItem_Click);
@@ -508,11 +516,11 @@ namespace com.mirle.ibg3k0.bc.winform
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // hostConnectionToolStripMenuItem
+            // staticsChartToolStripMenuItem
             // 
-            this.hostConnectionToolStripMenuItem.Name = "hostConnectionToolStripMenuItem";
-            resources.ApplyResources(this.hostConnectionToolStripMenuItem, "hostConnectionToolStripMenuItem");
-            this.hostConnectionToolStripMenuItem.Click += new System.EventHandler(this.hostConnectionToolStripMenuItem_Click);
+            this.staticsChartToolStripMenuItem.Name = "staticsChartToolStripMenuItem";
+            resources.ApplyResources(this.staticsChartToolStripMenuItem, "staticsChartToolStripMenuItem");
+            this.staticsChartToolStripMenuItem.Click += new System.EventHandler(this.staticsChartToolStripMenuItem_Click);
             // 
             // BCMainForm
             // 
@@ -671,6 +679,7 @@ namespace com.mirle.ibg3k0.bc.winform
         private System.Windows.Forms.ToolStripMenuItem alarmToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem reserveSectionInfoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hostConnectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem staticsChartToolStripMenuItem;
     }
 
     /// <summary>
