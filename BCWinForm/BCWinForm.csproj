@@ -347,6 +347,12 @@
     <Compile Include="UI\Components\MyUserControl\uc_ControlData.Designer.cs">
       <DependentUpon>uc_ControlData.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Components\MyUserControl\uc_StatusTreeViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Components\MyUserControl\uc_StatusTreeViewer.Designer.cs">
+      <DependentUpon>uc_StatusTreeViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Components\MyUserControl\uc_TravelBaseData.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -422,6 +428,12 @@
     <Compile Include="UI\Components\WPFComponents\uctlReserveSectionView.xaml.cs">
       <DependentUpon>uctlReserveSectionView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Maintenance\CarrierMaintenanceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Maintenance\CarrierMaintenanceForm.Designer.cs">
+      <DependentUpon>CarrierMaintenanceForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Maintenance\ChartPopupForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -475,6 +487,12 @@
     </Compile>
     <Compile Include="UI\Operate\VehicleDataSettingForm.Designer.cs">
       <DependentUpon>VehicleDataSettingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Query\CarrierLocationChooseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Query\CarrierLocationChooseForm.Designer.cs">
+      <DependentUpon>CarrierLocationChooseForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Query\HistoryAlarmsForm.cs">
       <SubType>Form</SubType>
@@ -1666,6 +1684,9 @@
     <EmbeddedResource Include="UI\Components\MyUserControl\uc_ControlData.resx">
       <DependentUpon>uc_ControlData.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Components\MyUserControl\uc_StatusTreeViewer.resx">
+      <DependentUpon>uc_StatusTreeViewer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Components\MyUserControl\uc_TravelBaseData.resx">
       <DependentUpon>uc_TravelBaseData.cs</DependentUpon>
     </EmbeddedResource>
@@ -1699,6 +1720,9 @@
     <EmbeddedResource Include="UI\Components\VhOfPLCInfo.resx">
       <DependentUpon>VhOfPLCInfo.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Maintenance\CarrierMaintenanceForm.resx">
+      <DependentUpon>CarrierMaintenanceForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Maintenance\ChartPopupForm.resx">
       <DependentUpon>ChartPopupForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -1725,6 +1749,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Operate\VehicleDataSettingForm.resx">
       <DependentUpon>VehicleDataSettingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Query\CarrierLocationChooseForm.resx">
+      <DependentUpon>CarrierLocationChooseForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Query\HistoryAlarmsForm.resx">
       <DependentUpon>HistoryAlarmsForm.cs</DependentUpon>

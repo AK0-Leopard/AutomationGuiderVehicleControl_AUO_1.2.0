@@ -1114,5 +1114,10 @@ namespace com.mirle.ibg3k0.bc.winform
             openForm(typeof(ChartPopupForm).Name, true, false);
 
         }
+
+        private void carrierInstalledRemoveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openForm(typeof(CarrierMaintenanceForm).Name, true, false);
+        }
     }
 }

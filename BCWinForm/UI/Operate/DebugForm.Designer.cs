@@ -351,6 +351,7 @@
             this.label85 = new System.Windows.Forms.Label();
             this.label86 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.ck_isMaunalReportFinishWhenLoadingUnloading = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1357,6 +1358,7 @@
             // tabPage1
             // 
             this.tabPage1.AutoScroll = true;
+            this.tabPage1.Controls.Add(this.ck_isMaunalReportFinishWhenLoadingUnloading);
             this.tabPage1.Controls.Add(this.cb_advanceDriveAway);
             this.tabPage1.Controls.Add(this.grb_Reserve);
             this.tabPage1.Controls.Add(this.groupBox7);
@@ -1422,7 +1424,7 @@
             this.groupBox7.Controls.Add(this.btn_portInServeice);
             this.groupBox7.Controls.Add(this.label18);
             this.groupBox7.Controls.Add(this.cb_PortID);
-            this.groupBox7.Location = new System.Drawing.Point(1128, 422);
+            this.groupBox7.Location = new System.Drawing.Point(1128, 487);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Size = new System.Drawing.Size(257, 177);
             this.groupBox7.TabIndex = 25;
@@ -1576,7 +1578,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 8);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 3);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(164, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -3791,6 +3793,17 @@
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // ck_isMaunalReportFinishWhenLoadingUnloading
+            // 
+            this.ck_isMaunalReportFinishWhenLoadingUnloading.AutoSize = true;
+            this.ck_isMaunalReportFinishWhenLoadingUnloading.Location = new System.Drawing.Point(1153, 378);
+            this.ck_isMaunalReportFinishWhenLoadingUnloading.Name = "ck_isMaunalReportFinishWhenLoadingUnloading";
+            this.ck_isMaunalReportFinishWhenLoadingUnloading.Size = new System.Drawing.Size(259, 26);
+            this.ck_isMaunalReportFinishWhenLoadingUnloading.TabIndex = 28;
+            this.ck_isMaunalReportFinishWhenLoadingUnloading.Text = "Is Manual Report Finish";
+            this.ck_isMaunalReportFinishWhenLoadingUnloading.UseVisualStyleBackColor = true;
+            this.ck_isMaunalReportFinishWhenLoadingUnloading.CheckedChanged += new System.EventHandler(this.ck_isMaunalReportFinishWhenLoadingUnloading_CheckedChanged);
+            // 
             // DebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 22F);
@@ -4207,5 +4220,6 @@
         private System.Windows.Forms.Label label85;
         private System.Windows.Forms.Label label86;
         private System.Windows.Forms.Button btn_ForceResetAlarm;
+        private System.Windows.Forms.CheckBox ck_isMaunalReportFinishWhenLoadingUnloading;
     }
 }

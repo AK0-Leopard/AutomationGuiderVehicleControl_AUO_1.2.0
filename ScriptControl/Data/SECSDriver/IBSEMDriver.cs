@@ -50,14 +50,17 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         public abstract bool S6F11SendVehicleDepositCompleted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendVehicleDepositFailed(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierInstalled(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendCarrierInstalled(string vhID, string carrierID, string carrierLoc, string cmdID, List<AMCSREPORTQUEUE> reportQueues = null);
+
         public abstract bool S6F11SendCarrierInstalledWithIDRead(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierRemoved(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendVehicleUnassinged(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendTransferCompleted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
-        public abstract bool S6F11SendTransferCompleted(ACMD_MCS CMD_MCS,AVEHICLE vh, string resultCode, List<AMCSREPORTQUEUE> reportQueues = null);
-        public abstract bool S6F11SendTransferAbortCompleted(ACMD_MCS CMD_MCS,AVEHICLE vh, string resultCode, List<AMCSREPORTQUEUE> reportQueues = null,string _carrier_loc =null);
-        
+        public abstract bool S6F11SendTransferCompleted(ACMD_MCS CMD_MCS, AVEHICLE vh, string resultCode, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendTransferAbortCompleted(ACMD_MCS CMD_MCS, AVEHICLE vh, string resultCode, List<AMCSREPORTQUEUE> reportQueues = null, string _carrier_loc = null);
+
         public abstract bool S6F11SendVehicleInstalled(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendCarrierRemoved(string vhID, string carrierID, string cmdID, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendVehicleRemoved(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
         #endregion Transfer Event
         #region Port Event
@@ -83,7 +86,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         #endregion Charge Event
 
         #region Operator Event
-        public abstract bool S6F11SendOperatorInitiatedAction(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
+        public abstract bool S6F11SendOperatorInitiatedAction(ACMD_MCS mcsCmd, List<AMCSREPORTQUEUE> reportQueues = null);
         #endregion Operator Event
 
         #endregion Send

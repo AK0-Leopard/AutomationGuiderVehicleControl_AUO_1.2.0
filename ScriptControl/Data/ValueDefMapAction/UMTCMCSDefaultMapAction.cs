@@ -340,7 +340,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 if (!isSuccess)
                 {
                     s2f34.DRACK = "4";
-                } 
+                }
                 else
                 {
                     s2f34.DRACK = "0";
@@ -2313,7 +2313,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //}
             return false;
         }
-        public bool S6F11SendAlarmEvent(string eq_id,string ceid, string alid,string cmd_id, string altx,string alarmLvl,List<AMCSREPORTQUEUE> reportQueues = null)
+        public bool S6F11SendAlarmEvent(string eq_id, string ceid, string alid, string cmd_id, string altx, string alarmLvl, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             //try
             //{
@@ -2339,7 +2339,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //}
             return false;
         }
-        public override bool S6F11SendOperatorInitiatedAction(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
+        public override bool S6F11SendOperatorInitiatedAction(ACMD_MCS mcsCmd, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             //try
             //{
@@ -3152,5 +3152,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //}
         }
 
+        public override bool S6F11SendCarrierRemoved(string vhID,string carrierID, string cmdID, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool S6F11SendCarrierInstalled(string vhID, string carrierID, string carrierLoc, string cmdID, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

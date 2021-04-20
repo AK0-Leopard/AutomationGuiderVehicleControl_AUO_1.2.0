@@ -184,13 +184,14 @@ namespace com.mirle.ibg3k0.sc
         {
             switch (bcID)
             {
+                //case "SOUTH_INNOLUX":
+                //    if (coupler1Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.None) return SCAppConstants.CouplerStatus.Disable;
+                //    else if (coupler1Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Manual) return SCAppConstants.CouplerStatus.Disable;
+                //    else if (coupler1Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Auto) return SCAppConstants.CouplerStatus.Enable;
+                //    else if (coupler1Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Charging) return SCAppConstants.CouplerStatus.Charging;
+                //    else if (coupler1Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Error) return SCAppConstants.CouplerStatus.Error;
+                //    else return SCAppConstants.CouplerStatus.Error;
                 case "SOUTH_INNOLUX":
-                    if (coupler1Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.None) return SCAppConstants.CouplerStatus.Disable;
-                    else if (coupler1Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Manual) return SCAppConstants.CouplerStatus.Disable;
-                    else if (coupler1Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Auto) return SCAppConstants.CouplerStatus.Enable;
-                    else if (coupler1Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Charging) return SCAppConstants.CouplerStatus.Charging;
-                    else if (coupler1Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Error) return SCAppConstants.CouplerStatus.Error;
-                    else return SCAppConstants.CouplerStatus.Error;
                 case "NORTH_INNOLUX":
                     if (coupler1Status_NORTH_INNOLUX == SCAppConstants.CouplerStatus_NORTH_INNOLUX.None) return SCAppConstants.CouplerStatus.Disable;
                     else if (coupler1Status_NORTH_INNOLUX == SCAppConstants.CouplerStatus_NORTH_INNOLUX.Manual) return SCAppConstants.CouplerStatus.Disable;
@@ -206,13 +207,14 @@ namespace com.mirle.ibg3k0.sc
         {
             switch (bcID)
             {
+                //case "SOUTH_INNOLUX":
+                //    if (coupler2Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.None) return SCAppConstants.CouplerStatus.Disable;
+                //    else if (coupler2Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Manual) return SCAppConstants.CouplerStatus.Disable;
+                //    else if (coupler2Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Auto) return SCAppConstants.CouplerStatus.Enable;
+                //    else if (coupler2Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Charging) return SCAppConstants.CouplerStatus.Charging;
+                //    else if (coupler2Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Error) return SCAppConstants.CouplerStatus.Error;
+                //    else return SCAppConstants.CouplerStatus.Error;
                 case "SOUTH_INNOLUX":
-                    if (coupler2Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.None) return SCAppConstants.CouplerStatus.Disable;
-                    else if (coupler2Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Manual) return SCAppConstants.CouplerStatus.Disable;
-                    else if (coupler2Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Auto) return SCAppConstants.CouplerStatus.Enable;
-                    else if (coupler2Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Charging) return SCAppConstants.CouplerStatus.Charging;
-                    else if (coupler2Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Error) return SCAppConstants.CouplerStatus.Error;
-                    else return SCAppConstants.CouplerStatus.Error;
                 case "NORTH_INNOLUX":
                     if (coupler2Status_NORTH_INNOLUX == SCAppConstants.CouplerStatus_NORTH_INNOLUX.None) return SCAppConstants.CouplerStatus.Disable;
                     else if (coupler2Status_NORTH_INNOLUX == SCAppConstants.CouplerStatus_NORTH_INNOLUX.Manual) return SCAppConstants.CouplerStatus.Disable;
@@ -228,13 +230,14 @@ namespace com.mirle.ibg3k0.sc
         {
             switch (bcID)
             {
+                //case "SOUTH_INNOLUX":
+                //    if (coupler3Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.None) return SCAppConstants.CouplerStatus.Disable;
+                //    else if (coupler3Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Manual) return SCAppConstants.CouplerStatus.Disable;
+                //    else if (coupler3Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Auto) return SCAppConstants.CouplerStatus.Enable;
+                //    else if (coupler3Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Charging) return SCAppConstants.CouplerStatus.Charging;
+                //    else if (coupler3Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Error) return SCAppConstants.CouplerStatus.Error;
+                //    else return SCAppConstants.CouplerStatus.Error;
                 case "SOUTH_INNOLUX":
-                    if (coupler3Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.None) return SCAppConstants.CouplerStatus.Disable;
-                    else if (coupler3Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Manual) return SCAppConstants.CouplerStatus.Disable;
-                    else if (coupler3Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Auto) return SCAppConstants.CouplerStatus.Enable;
-                    else if (coupler3Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Charging) return SCAppConstants.CouplerStatus.Charging;
-                    else if (coupler3Status_SOUTH_INNOLUX == SCAppConstants.CouplerStatus_SOUTH_INNOLUX.Error) return SCAppConstants.CouplerStatus.Error;
-                    else return SCAppConstants.CouplerStatus.Error;
                 case "NORTH_INNOLUX":
                     if (coupler3Status_NORTH_INNOLUX == SCAppConstants.CouplerStatus_NORTH_INNOLUX.None) return SCAppConstants.CouplerStatus.Disable;
                     else if (coupler3Status_NORTH_INNOLUX == SCAppConstants.CouplerStatus_NORTH_INNOLUX.Manual) return SCAppConstants.CouplerStatus.Disable;

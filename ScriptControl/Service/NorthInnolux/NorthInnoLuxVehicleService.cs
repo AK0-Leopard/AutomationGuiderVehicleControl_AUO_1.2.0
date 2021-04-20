@@ -55,7 +55,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         WaitingRetryMCSCMDList.Add(vh_id, cmd);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     logger.Error(ex, "Exception:");
                 }
@@ -100,7 +100,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     logger.Error(ex, "Exception:");
                 }
@@ -188,7 +188,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 //要再上報Alamr Rerport給MCS
                 //北群創不需要報這個 
-                    if (vh.IS_INSTALLED) ProcessAlarmReport(vh, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrSet, $"vehicle cannot service");
+                if (vh.IS_INSTALLED) ProcessAlarmReport(vh, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrSet, $"vehicle cannot service");
             }
             catch (Exception ex)
             {
@@ -1003,7 +1003,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(vh_id, cmd.CMD_ID, E_CMD_STATUS.Sending);
                 if (!string.IsNullOrEmpty(cmd.CMD_ID_MCS))
                 {
-                    if(!cmd.CMD_ID.StartsWith(((int)GenOHxCCommandType.Retry).ToString()))
+                    if (!cmd.CMD_ID.StartsWith(((int)GenOHxCCommandType.Retry).ToString()))
                     {
                         isSuccess &= scApp.ReportBLL.newReportTransferInitial(cmd.CMD_ID_MCS, null);
                     }
@@ -1553,7 +1553,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                XID: cancel_abort_mcs_cmd_id);
                             AVEHICLE assign_vh = scApp.VehicleBLL.getVehicleByExcuteMCS_CMD_ID(cancel_abort_mcs_cmd_id);
                             scApp.CMDBLL.updateCMD_MCS_TranStatus2Aborting(cancel_abort_mcs_cmd_id);
-                            is_success = scApp.ReportBLL.newReportTransferCommandAbortFinish(mcs_cmd, assign_vh,"8", null);
+                            is_success = scApp.ReportBLL.newReportTransferCommandAbortFinish(mcs_cmd, assign_vh, "8", null);
                             if (is_success)
                             {
                                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
@@ -2263,7 +2263,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 bool is_find = false;
 
-                while(!is_find)
+                while (!is_find)
                 {
                     List<string> destAdrList = RepositionPathList.Select(p => p.destinationAdr).Distinct().ToList();
                     List<RepositionPath> newRepositionPathList = new List<RepositionPath>();
@@ -2278,7 +2278,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             bool needsTurn = scApp.ReserveBLL.IsR2000Section(sec.SEC_ID);
                             double cost = sec.SEC_DIS;
                             foreach (RepositionPath repositionPath in
-                                RepositionPathList.Where(p =>SCUtility.isMatche(p.destinationAdr,destAdr)).ToList())
+                                RepositionPathList.Where(p => SCUtility.isMatche(p.destinationAdr, destAdr)).ToList())
                             {
                                 if (repositionPath.guide_sections.Contains(sec.SEC_ID)) continue;
                                 RepositionPath newRepositionPath = new RepositionPath();
@@ -2301,7 +2301,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                     RepositionPathList = newRepositionPathList.ToList();
 
-                    if (RepositionPathList.Count == 0) 
+                    if (RepositionPathList.Count == 0)
                     {
                         if (currentBestRepositionPath != null)
                         {
@@ -2320,7 +2320,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         if (isRepositionPathQualified(path, repositionDistance))
                         {
-                            if(isBetterRepositionPath(currentBestRepositionPath, path))
+                            if (isBetterRepositionPath(currentBestRepositionPath, path))
                             {
                                 currentBestRepositionPath = path;
                             }
@@ -2385,7 +2385,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                     }
                 }
-                
+
                 return finalRepositionPath;
 
 
@@ -2401,9 +2401,9 @@ namespace com.mirle.ibg3k0.sc.Service
 
         }
 
-        bool isRepositionPathQualified(RepositionPath path ,int cost)
+        bool isRepositionPathQualified(RepositionPath path, int cost)
         {
-            if(path.cost> cost)
+            if (path.cost > cost)
             {
                 return true;
             }
@@ -2455,7 +2455,7 @@ namespace com.mirle.ibg3k0.sc.Service
             public double cost = 0;
             public List<string> guide_sections = new List<string>();
             public List<string> guide_addresses = new List<string>();
-            public int turnCount = 0; 
+            public int turnCount = 0;
 
 
         }
@@ -2593,7 +2593,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     Task.Run(() => tryNotifyVhAvoid_New(eqpt.VEHICLE_ID, ReserveResult.reservedVhID));
                 }
                 //replyTranEventReport(bcfApp, EventType.ReserveReq, eqpt, seqNum, reserveSuccess: ReserveResult.isSuccess, reserveInfos: reserveInfos);
-                replyTranEventReport(bcfApp, EventType.ReserveReq, eqpt, seqNum, 
+                replyTranEventReport(bcfApp, EventType.ReserveReq, eqpt, seqNum,
                      reserveSuccess: ReserveResult.isSuccess,
                      reserveInfos: ReserveResult.reserveSuccessInfos);
             }
@@ -3224,7 +3224,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     scApp.MapBLL.getPortID(vh.CUR_ADR_ID, out port_id);
                     scApp.PortBLL.OperateCatch.updatePortStationCSTExistStatus(port_id, string.Empty);
                     BCRReadResult bCRReadResult = BCRReadResult.BcrNormal;
-                        AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(vh.VEHICLE_ID);
+                    AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(vh.VEHICLE_ID);
                     if (carrier_id.StartsWith("ERROR"))
                     {
                         string new_carrier_id =
@@ -3233,7 +3233,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         bCRReadResult = BCRReadResult.BcrReadFail;
                         scApp.CMDBLL.updateCMD_MCS_CmdState2BCRFail(vh.MCS_CMD);
                     }
-                    else if(!SCUtility.isMatche( carrier_id , vid_info.MCS_CARRIER_ID))
+                    else if (!SCUtility.isMatche(carrier_id, vid_info.MCS_CARRIER_ID))
                     {
                         scApp.VIDBLL.upDateVIDCarrierID(vh.VEHICLE_ID, carrier_id);
                         bCRReadResult = BCRReadResult.BcrMisMatch;
@@ -3617,7 +3617,7 @@ namespace com.mirle.ibg3k0.sc.Service
             //tryReleaseReservedControl(vh_id, cur_sec_id);
             string start_adr = vh.startAdr;
             scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(vh.VEHICLE_ID);
-            if(completeStatus != CompleteStatus.CmpStatusIdmisMatch&& completeStatus != CompleteStatus.CmpStatusIdreadFailed)
+            if (completeStatus != CompleteStatus.CmpStatusIdmisMatch && completeStatus != CompleteStatus.CmpStatusIdreadFailed)
             {
                 using (TransactionScope tx = SCUtility.getTransactionScope())
                 {
@@ -3711,7 +3711,7 @@ namespace com.mirle.ibg3k0.sc.Service
             //adr1_obj?.Release(vh.VEHICLE_ID);
             //adr2_obj?.Release(vh.VEHICLE_ID);
             //current_section?.ReleaseSectionReservation(vh.VEHICLE_ID);
-            
+
             sendCommandCompleteEventToNats(vh.VEHICLE_ID, recive_str);
 
             if (DebugParameter.IsDebugMode && DebugParameter.IsCycleRun)

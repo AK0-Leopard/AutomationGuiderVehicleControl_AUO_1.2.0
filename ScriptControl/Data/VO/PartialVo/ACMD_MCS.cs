@@ -17,6 +17,23 @@ namespace com.mirle.ibg3k0.sc
 {
     public partial class ACMD_MCS
     {
+        public string ManualSelectedFinishCarrierLoc = "";
+        /// <summary>
+        /// 1 2 4 8 16 32 64 128
+        /// 1 1 1 1 1  1  1  1
+        /// 1 0 0 0 ...
+        /// 1 1 0 0 ....
+        /// 1 1 1 0 ....
+        /// </summary>
+        public const int COMMAND_STATUS_BIT_INDEX_ENROUTE = 1;
+        public const int COMMAND_STATUS_BIT_INDEX_LOAD_ARRIVE = 2;
+        public const int COMMAND_STATUS_BIT_INDEX_LOADING = 4;
+        public const int COMMAND_STATUS_BIT_INDEX_LOAD_COMPLETE = 8;
+        public const int COMMAND_STATUS_BIT_INDEX_UNLOAD_ARRIVE = 16;
+        public const int COMMAND_STATUS_BIT_INDEX_UNLOADING = 32;
+        public const int COMMAND_STATUS_BIT_INDEX_UNLOAD_COMPLETE = 64;
+        public const int COMMAND_STATUS_BIT_INDEX_COMMNAD_FINISH = 128;
+
         public HCMD_MCS ToHCMD_MCS()
         {
             return new HCMD_MCS()
@@ -65,7 +82,23 @@ namespace com.mirle.ibg3k0.sc
                 return group_name;
             }
         }
+        public bool isLoading
+        {
+            get
+            {
+                COMMANDSTATE = COMMANDSTATE & 252;
+                return COMMANDSTATE == COMMAND_STATUS_BIT_INDEX_LOADING;
+            }
+        }
+        public bool isUnloading
+        {
 
+            get
+            {
+                COMMANDSTATE = COMMANDSTATE & 224;
+                return COMMANDSTATE == COMMAND_STATUS_BIT_INDEX_UNLOADING;
+            }
+        }
     }
 
 }

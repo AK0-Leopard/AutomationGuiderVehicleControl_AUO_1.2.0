@@ -928,7 +928,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return best_vh;
         }
 
-        public virtual void filterVh(ref List<AVEHICLE> vhs, E_VH_TYPE vh_type,bool checkCst=true)
+        public virtual void filterVh(ref List<AVEHICLE> vhs, E_VH_TYPE vh_type, bool checkCst = true)
         {
             if (vh_type != E_VH_TYPE.None)
             {
@@ -1538,6 +1538,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                         SCUtility.TrimAllParameter(quality);
                         LogManager.GetLogger("SysExcuteQuality").Info(quality.ToString());
                     }
+
                 }
                 //isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByVhID(vh_id, E_CMD_STATUS.NormalEnd);
                 //updateVehicleExcuteCMD(vh_id, string.Empty, string.Empty);
