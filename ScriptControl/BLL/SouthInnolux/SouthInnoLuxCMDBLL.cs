@@ -260,6 +260,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             {
                 ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmd_id);
                 cmd.TRANSFERSTATE = E_TRAN_STATUS.Transferring;
+                cmd.COMMANDSTATE = cmd.COMMANDSTATE | ACMD_MCS.COMMAND_STATUS_BIT_INDEX_ENROUTE;
                 cmd.COMMANDSTATE = cmd.COMMANDSTATE | ACMD_MCS.COMMAND_STATUS_BIT_INDEX_LOAD_COMPLETE;
                 if (cmd.CMD_START_TIME == null)
                     cmd.CMD_START_TIME = DateTime.Now;
@@ -561,6 +562,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             return cmd_mcs;
         }
+    
 
         public VACMD_MCS getVCMD_MCSByID(string cmd_id)
         {

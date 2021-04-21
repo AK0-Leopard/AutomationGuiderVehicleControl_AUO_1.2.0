@@ -223,13 +223,17 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.SouthInnolux
 
         #region CMD Result Code
         public const string CMD_Result_Successful = "0";
-        public const string CMD_Result_Unsuccessful = "1";
+        public const string CMD_Result_AGV_Offline = "1";
         public const string CMD_Result_DisableUnload = "2";
         public const string CMD_Result_DisableLoad = "3";
         public const string CMD_Result_BCRError = "4";
         public const string CMD_Result_CarrierIDUnmach = "5";
-        public const string CMD_Result_InterlockError = "8";
-        public static string convert2MCS(AVEHICLE.VehicleState vehicleState, ProtocolFormat.OHTMessage.CompleteStatus tran_cmp_status)
+        public const string CMD_Result_UnloadTimeout = "6";
+        public const string CMD_Result_UnloadError = "7";
+        public const string CMD_Result_LoadTimeout = "8";
+        public const string CMD_Result_LoadError = "9";
+        public const string CMD_Result_Unsuccessful = "100";
+        public static string convert2MCS(AVEHICLE.VehicleState vehicleState, ACMD_MCS cmd_mcs, ProtocolFormat.OHTMessage.CompleteStatus tran_cmp_status)
         {
             switch (tran_cmp_status)
             {
@@ -257,19 +261,25 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.SouthInnolux
                 case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusIdmisMatch:
                     return CMD_Result_CarrierIDUnmach;
                 case ProtocolFormat.OHTMessage.CompleteStatus.CmpStatusInterlockError:
-                    //if (vehicleState == AVEHICLE.VehicleState.ACQUIRING)
-                    //{
-                    //    return CMD_Result_DisableLoad;
-                    //}
-                    //else if (vehicleState == AVEHICLE.VehicleState.DEPOSITING)
-                    //{
-                    //    return CMD_Result_DisableUnload;
-                    //}
-                    //else
-                    //{
-                    //    return CMD_Result_Unsuccessful;
-                    //}
-                    return CMD_Result_InterlockError;
+                    if (cmd_mcs == null)
+                    {
+                        return CMD_Result_Unsuccessful;
+                    }
+                    else
+                    {
+                        if (cmd_mcs.isLoading)
+                        {
+                            return CMD_Result_UnloadError;
+                        }
+                        else if (cmd_mcs.isUnloading)
+                        {
+                            return CMD_Result_LoadError;
+                        }
+                        else
+                        {
+                            return CMD_Result_Unsuccessful;
+                        }
+                    }
                 default:
                     throw new Exception("參數錯誤"); //TODO 要帶入正確的Exception。
             }
@@ -288,15 +298,15 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.SouthInnolux
 
         public class AlarmStatus
         {
-            public static string convert2MCS(ProtocolFormat.OHTMessage.ErrorStatus alarm_status,E_ALARM_LVL alarm_lvl)
+            public static string convert2MCS(ProtocolFormat.OHTMessage.ErrorStatus alarm_status, E_ALARM_LVL alarm_lvl)
             {
                 switch (alarm_status)
                 {
                     case ProtocolFormat.OHTMessage.ErrorStatus.ErrSet:
-                        if(alarm_lvl== E_ALARM_LVL.Error)
+                        if (alarm_lvl == E_ALARM_LVL.Error)
                             return ALCD_Alarm_Set_Heavy;
                         else
-                        return ALCD_Alarm_Set_Light;
+                            return ALCD_Alarm_Set_Light;
                     case ProtocolFormat.OHTMessage.ErrorStatus.ErrReset:
                         if (alarm_lvl == E_ALARM_LVL.Error)
                             return ALCD_Alarm_Clear_Heavy;

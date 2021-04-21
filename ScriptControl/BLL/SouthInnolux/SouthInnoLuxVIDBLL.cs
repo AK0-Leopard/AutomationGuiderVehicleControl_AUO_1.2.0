@@ -25,7 +25,7 @@ using System.Linq;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
-    public class SouthInnoLuxVIDBLL: VIDBLL
+    public class SouthInnoLuxVIDBLL : VIDBLL
     {
         //VIDINFODao vidIvfoDAO = null;
         //private SCApplication scApp = null;
@@ -328,18 +328,19 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccess;
         }
 
-        public bool upDateVIDResultCode(string eq_id, AVEHICLE.VehicleState vehicleState, CompleteStatus cmp_status)
+        public override bool upDateVIDResultCode(string eq_id, AVEHICLE.VehicleState vehicleState, CompleteStatus cmp_status)
         {
 
             bool isSuccess = true;
             try
             {
-                string result_code = SECSConst.convert2MCS(vehicleState, cmp_status);
                 using (DBConnection_EF con = DBConnection_EF.GetUContext())
                 {
                     AVIDINFO vid_info = vidIvfoDAO.getByID(con, eq_id);
                     if (vid_info != null)
                     {
+                        ACMD_MCS cmd_mcs = scApp.CMDBLL.getCMD_MCSByID(vid_info.COMMAND_ID);
+                        string result_code = Data.SECS.SouthInnolux.SECSConst.convert2MCS(vehicleState, cmd_mcs, cmp_status);
                         vid_info.RESULT_CODE = int.Parse(result_code); //TODO 這樣 Parse 的方式好嗎?
                         vidIvfoDAO.update(con);
                         //con.Commit();

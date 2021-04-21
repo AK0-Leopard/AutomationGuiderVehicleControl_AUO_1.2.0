@@ -334,12 +334,12 @@ namespace com.mirle.ibg3k0.sc.BLL
             bool isSuccess = true;
             try
             {
-                string result_code = SECSConst.convert2MCS(vehicleState, cmp_status);
                 using (DBConnection_EF con = DBConnection_EF.GetUContext())
                 {
                     AVIDINFO vid_info = vidIvfoDAO.getByID(con, eq_id);
                     if (vid_info != null)
                     {
+                        string result_code = SECSConst.convert2MCS(vehicleState, cmp_status);
                         vid_info.RESULT_CODE = int.Parse(result_code); //TODO 這樣 Parse 的方式好嗎?
                         vidIvfoDAO.update(con);
                         //con.Commit();

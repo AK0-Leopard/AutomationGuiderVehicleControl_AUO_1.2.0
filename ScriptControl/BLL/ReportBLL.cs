@@ -481,7 +481,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleDepositStarted(vhID, reportqueues);
             return isSuccsess;
         }
-        public bool newReportTransferCommandFinish(string vhID, List<AMCSREPORTQUEUE> reportqueues)
+        public bool newReportTransferCommandFinish(string vhID, List<AMCSREPORTQUEUE> reportqueues, bool isKeepMCSCmdFinish = false)
         {
             bool isSuccsess = true;
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleUnassinged(vhID, reportqueues);
