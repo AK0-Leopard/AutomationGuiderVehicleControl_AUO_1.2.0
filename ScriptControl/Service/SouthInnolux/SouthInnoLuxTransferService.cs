@@ -301,7 +301,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 var check_result = doCheckManualMCSCommand(source_port_or_vh_id, dest_port, carrier_id);
                 if (check_result.isSuccess)
                 {
-                    string cmd_id = $"MANUAL{ManualCommandSeqNum++}";
+                    string cmd_id = $"MANUAL{ManualCommandSeqNum++.ToString("000000")}";
                     var creat_resule = scApp.CMDBLL.doCreatMCSCommandForManual(cmd_id, "10", "", carrier_id, source_port_or_vh_id, dest_port, "4");
                     check_result.isSuccess = creat_resule.isSuccess;
                     if (check_result.isSuccess)

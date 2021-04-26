@@ -267,18 +267,26 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.SouthInnolux
                     }
                     else
                     {
-                        if (cmd_mcs.isLoading)
+                        if(cmd_mcs.TRANSFERSTATE < E_TRAN_STATUS.Transferring)
                         {
                             return CMD_Result_UnloadError;
                         }
-                        else if (cmd_mcs.isUnloading)
+                        else
                         {
                             return CMD_Result_LoadError;
                         }
-                        else
-                        {
-                            return CMD_Result_Unsuccessful;
-                        }
+                        //if (cmd_mcs.isLoading)
+                        //{
+                        //    return CMD_Result_UnloadError;
+                        //}
+                        //else if (cmd_mcs.isUnloading)
+                        //{
+                        //    return CMD_Result_LoadError;
+                        //}
+                        //else
+                        //{
+                        //    return CMD_Result_Unsuccessful;
+                        //}
                     }
                 default:
                     throw new Exception("參數錯誤"); //TODO 要帶入正確的Exception。

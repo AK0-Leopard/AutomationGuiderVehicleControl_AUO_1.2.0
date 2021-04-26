@@ -117,7 +117,19 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                             mainform.BCApp.SCApplication.VIDBLL.initialVIDCommandInfo(excute_cmd_of_vh.VEHICLE_ID);
                         }
                         mainform.BCApp.SCApplication.CMDBLL.updateCMD_MCS_TranStatus2Complete(mcs_cmd.CMD_ID, E_TRAN_STATUS.Canceled);
-                        mainform.BCApp.SCApplication.ReportBLL.newReportTransferCommandFinish(mcs_cmd.cmd_mcs, excute_cmd_of_vh, sc.Data.SECS.AGVC.SECSConst.CMD_Result_Unsuccessful, null);
+                        bool isloading = mcs_cmd.isLoading;
+                        string result_code = sc.Data.SECS.SouthInnolux.SECSConst.CMD_Result_Unsuccessful;
+                        if (mcs_cmd.TRANSFERSTATE < E_TRAN_STATUS.Transferring)
+                        {
+                            result_code = sc.Data.SECS.SouthInnolux.SECSConst.CMD_Result_UnloadError;
+                        }
+                        else
+                        {
+                            result_code = sc.Data.SECS.SouthInnolux.SECSConst.CMD_Result_LoadError;
+                        }
+
+                        //mainform.BCApp.SCApplication.ReportBLL.newReportTransferCommandFinish(mcs_cmd.cmd_mcs, excute_cmd_of_vh, sc.Data.SECS.AGVC.SECSConst.CMD_Result_Unsuccessful, null);
+                        mainform.BCApp.SCApplication.ReportBLL.newReportTransferCommandFinish(mcs_cmd.cmd_mcs, excute_cmd_of_vh, result_code, null);
                     }
                     catch { }
                 }

@@ -930,8 +930,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 SCUtility.TrimAllParameter(cmd);
                 //scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(cmd.CMD_ID, E_CMD_STATUS.Sending);
                 scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(vh_id, cmd.CMD_ID, E_CMD_STATUS.Sending);
-                if (!string.IsNullOrEmpty(cmd.CMD_ID_MCS))
-                    isSuccess &= scApp.ReportBLL.newReportTransferInitial(cmd.CMD_ID_MCS, null);
+                //if (!string.IsNullOrEmpty(cmd.CMD_ID_MCS))
+                //    isSuccess &= scApp.ReportBLL.newReportTransferInitial(cmd.CMD_ID_MCS, null);
                 isSuccess = ProcSendTransferCommandToVh(cmd, assignVH, active_type,
                  guide_start_to_from_segment_ids?.ToArray(), guide_start_to_from_section_ids?.ToArray(), guide_start_to_from_address_ids?.ToArray(),
                  guide_to_dest_segment_ids?.ToArray(), guide_to_dest_section_ids?.ToArray(), guide_to_dest_address_ids?.ToArray());

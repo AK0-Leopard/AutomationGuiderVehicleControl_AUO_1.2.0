@@ -550,7 +550,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             string altx = SECSConst.ALTX.convert2MCS(alarm_lvl);
 
 
-            return iBSEMDriver.S5F1SendAlarmReport(alcd, alid, altx);
+            return iBSEMDriver.S5F1SendAlarmReport(alcd, alid, desc);
         }
 
         public override bool newReportUnitAlarmSet(string eq_id, ErrorStatus alarm_status, E_ALARM_LVL alarm_lvl, string error_code, string desc, List<AMCSREPORTQUEUE> reportqueues)
