@@ -4028,40 +4028,44 @@ namespace com.mirle.ibg3k0.sc.Service
             vh.onCommandComplete(completeStatus);
             //命令結束後就先找一次命令確認沒有命令要給該VH後 在執行是否要退出單行道的流程
             scApp.CMDBLL.checkMCSTransferCommand_New();
-            //SpinWait.SpinUntil(() => false, 2000);
-            //if (scApp.GuideBLL.isOneDirectPathSection(cur_sec_id))
-            //{
-            //    AADDRESS current_adr = scApp.AddressesBLL.cache.GetAddress(cur_adr_id);
-            //    if (current_adr is ICpuplerType)
-            //    {
-            //        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-            //           Data: $"Current adr:{cur_adr_id} is ICpuplerType pass one direct avoid.",
-            //           VehicleID: vh.VEHICLE_ID);
-            //        return;
-            //    }
-            //    var one_direct_path_sections = scApp.GuideBLL.getOneDirectPathBySectionID(cur_sec_id);
-            //    List<string> one_direct_path_section_ids = one_direct_path_sections.Select(sec => SCUtility.Trim(sec.SEC_ID, true)).ToList();
-            //    var find_result = findAvoidAddress(vh);
-            //    string avoid_address = find_result.avoidAdr;
 
-            //    if (!SCUtility.isEmpty(avoid_address))
-            //    {
-            //        bool is_success = scApp.CMDBLL.doCreatTransferCommand(vh.VEHICLE_ID, string.Empty, string.Empty,
-            //                                            E_CMD_TYPE.Move,
-            //                                            string.Empty,
-            //                                            avoid_address);
-            //        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-            //           Data: $"Try to notify vh:{vh.VEHICLE_ID} avoid in one direct ,current section id:{cur_sec_id}. avoid to adr:{avoid_address}",
-            //           VehicleID: vh.VEHICLE_ID);
-            //    }
-            //    else
-            //    {
-            //        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-            //           Data: $"Try to notify vh:{vh.VEHICLE_ID} avoid in one direct ,current section id:{cur_sec_id}. no find avoid address.",
-            //           VehicleID: vh.VEHICLE_ID);
-            //    }
-            //}
+            //為AUO_4F加入單行道功能，避免擋到門口的進出
+            if (SCUtility.isMatche("AUO_FAXAGV03", scApp.BC_ID))
+            {
+                SpinWait.SpinUntil(() => false, 2000);
+                if (scApp.GuideBLL.isOneDirectPathSection(cur_sec_id))
+                {
+                    AADDRESS current_adr = scApp.AddressesBLL.cache.GetAddress(cur_adr_id);
+                    if (current_adr is ICpuplerType)
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                           Data: $"Current adr:{cur_adr_id} is ICpuplerType pass one direct avoid.",
+                           VehicleID: vh.VEHICLE_ID);
+                        return;
+                    }
+                    var one_direct_path_sections = scApp.GuideBLL.getOneDirectPathBySectionID(cur_sec_id);
+                    List<string> one_direct_path_section_ids = one_direct_path_sections.Select(sec => SCUtility.Trim(sec.SEC_ID, true)).ToList();
+                    var find_result = findAvoidAddress(vh);
+                    string avoid_address = find_result.avoidAdr;
 
+                    if (!SCUtility.isEmpty(avoid_address))
+                    {
+                        bool is_success = scApp.CMDBLL.doCreatTransferCommand(vh.VEHICLE_ID, string.Empty, string.Empty,
+                                                            E_CMD_TYPE.Move,
+                                                            string.Empty,
+                                                            avoid_address);
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                           Data: $"Try to notify vh:{vh.VEHICLE_ID} avoid in one direct ,current section id:{cur_sec_id}. avoid to adr:{avoid_address}",
+                           VehicleID: vh.VEHICLE_ID);
+                    }
+                    else
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                           Data: $"Try to notify vh:{vh.VEHICLE_ID} avoid in one direct ,current section id:{cur_sec_id}. no find avoid address.",
+                           VehicleID: vh.VEHICLE_ID);
+                    }
+                }
+            }
             if (scApp.getEQObjCacheManager().getLine().SCStats == ALINE.TSCState.PAUSING)
             {
                 List<ACMD_MCS> cmd_mcs_lst = scApp.CMDBLL.loadACMD_MCSIsUnfinished();
