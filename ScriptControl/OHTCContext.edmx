@@ -2372,7 +2372,7 @@
           <Property Name="SEC_COST_To2From" Type="Int32" Nullable="false" />
           <Property Name="ISBANEND_From2To" Type="Boolean" Nullable="false" />
           <Property Name="ISBANEND_To2From" Type="Boolean" Nullable="false" />
-          <Property Name="STATUS" Type="Int32" Nullable="false" />
+          <Property Name="STATUS" Type="OHTC_DevModel.E_SEG_STATUS" Nullable="false" />
           <Property Name="NOTE" Type="String" MaxLength="40" FixedLength="true" Unicode="true" />
           <Property Name="PRE_DISABLE_FLAG" Type="Boolean" Nullable="false" />
           <Property Name="PRE_DISABLE_TIME" Type="DateTime" Precision="3" />
@@ -2549,7 +2549,7 @@
           </Key>
           <Property Name="CMD_ID" Type="String" Nullable="false" MaxLength="64" FixedLength="true" Unicode="false" />
           <Property Name="CARRIER_ID" Type="String" Nullable="false" MaxLength="64" FixedLength="true" Unicode="false" />
-          <Property Name="TRANSFERSTATE" Type="Int32" Nullable="false" />
+          <Property Name="TRANSFERSTATE" Type="OHTC_DevModel.E_TRAN_STATUS" Nullable="false" />
           <Property Name="COMMANDSTATE" Type="Int32" Nullable="false" />
           <Property Name="HOSTSOURCE" Type="String" MaxLength="64" FixedLength="true" Unicode="false" />
           <Property Name="HOSTDESTINATION" Type="String" Nullable="false" MaxLength="64" FixedLength="true" Unicode="false" />

@@ -1970,7 +1970,7 @@ namespace com.mirle.ibg3k0.sc.Service
         #endregion Position Report
         #region Transfer Report
         [ClassAOPAspect]
-        public void TranEventReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_136_TRANS_EVENT_REP recive_str, int seq_num)
+        public override void TranEventReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_136_TRANS_EVENT_REP recive_str, int seq_num)
         {
             if (scApp.getEQObjCacheManager().getLine().ServerPreStop)
                 return;
@@ -2039,20 +2039,40 @@ namespace com.mirle.ibg3k0.sc.Service
                 string cmd_mcs_id = SCUtility.Trim(eqpt.MCS_CMD, true);
                 if (!SCUtility.isEmpty(cmd_mcs_id))
                 {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: $"Process report {eventType},have mcs cmd:{cmd_mcs_id} not finish, start check final finish result...",
+                       VehicleID: eqpt.VEHICLE_ID,
+                       CarrierID: eqpt.CST_ID);
                     bool is_cst_on_vh = !SCUtility.isEmpty(cstID);
                     ACMD_MCS cmd_mcs = scApp.CMDBLL.getCMD_MCSByID(cmd_mcs_id);
                     if (cmd_mcs != null)
                     {
+                        if (cmd_mcs.TRANSFERSTATE >= E_TRAN_STATUS.Canceled)
+                        {
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                               Data: $"mcs cmd:{cmd_mcs_id} is finish ready,return process.",
+                               VehicleID: eqpt.VEHICLE_ID,
+                               CarrierID: eqpt.CST_ID);
+                            return;
+                        }
                         if (cmd_mcs.isLoading && !is_cst_on_vh)
                         {
                             if (is_cst_on_vh)
                             {
-                                cmd_mcs.ManualSelectedFinishCarrierLoc = cstID;
+                                cmd_mcs.ManualSelectedFinishCarrierLoc = eqpt.Real_ID;
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                   Data: $"mcs cmd:{cmd_mcs_id} is finish on :{cmd_mcs.ManualSelectedFinishCarrierLoc} .",
+                                   VehicleID: eqpt.VEHICLE_ID,
+                                   CarrierID: eqpt.CST_ID);
                                 finishCmdForInitial(eqpt, cmd_mcs, E_TRAN_STATUS.Aborted, sc.Data.SECS.SouthInnolux.SECSConst.CMD_Result_UnloadError);
                             }
                             else
                             {
                                 cmd_mcs.ManualSelectedFinishCarrierLoc = cmd_mcs.HOSTSOURCE;
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                   Data: $"mcs cmd:{cmd_mcs_id} is finish on :{cmd_mcs.ManualSelectedFinishCarrierLoc} .",
+                                   VehicleID: eqpt.VEHICLE_ID,
+                                   CarrierID: eqpt.CST_ID);
                                 finishCmdForInitial(eqpt, cmd_mcs, E_TRAN_STATUS.Canceled, sc.Data.SECS.SouthInnolux.SECSConst.CMD_Result_UnloadError);
                             }
                         }
@@ -2060,17 +2080,30 @@ namespace com.mirle.ibg3k0.sc.Service
                         {
                             if (is_cst_on_vh)
                             {
-                                cmd_mcs.ManualSelectedFinishCarrierLoc = cstID;
+                                cmd_mcs.ManualSelectedFinishCarrierLoc = eqpt.Real_ID;
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                   Data: $"mcs cmd:{cmd_mcs_id} is finish on :{cmd_mcs.ManualSelectedFinishCarrierLoc} .",
+                                   VehicleID: eqpt.VEHICLE_ID,
+                                   CarrierID: eqpt.CST_ID);
+
                                 finishCmdForInitial(eqpt, cmd_mcs, E_TRAN_STATUS.Aborted, sc.Data.SECS.SouthInnolux.SECSConst.CMD_Result_LoadError);
                             }
                             else
                             {
                                 cmd_mcs.ManualSelectedFinishCarrierLoc = cmd_mcs.HOSTDESTINATION;
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                   Data: $"mcs cmd:{cmd_mcs_id} is finish on :{cmd_mcs.ManualSelectedFinishCarrierLoc} .",
+                                   VehicleID: eqpt.VEHICLE_ID,
+                                   CarrierID: eqpt.CST_ID);
                                 finishCmdForInitial(eqpt, cmd_mcs, E_TRAN_STATUS.Aborted, sc.Data.SECS.SouthInnolux.SECSConst.CMD_Result_LoadError);
                             }
                         }
                         else
                         {
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                               Data: $"mcs cmd:{cmd_mcs_id} is finish  .",
+                               VehicleID: eqpt.VEHICLE_ID,
+                               CarrierID: eqpt.CST_ID);
                             finishCmdForInitial(eqpt, cmd_mcs, E_TRAN_STATUS.Canceled, sc.Data.SECS.SouthInnolux.SECSConst.CMD_Result_Unsuccessful);
                         }
                     }
@@ -2089,7 +2122,6 @@ namespace com.mirle.ibg3k0.sc.Service
             string vh_id = SCUtility.Trim(eqpt.VEHICLE_ID, true);
             string ohtc_cmd = SCUtility.Trim(eqpt.OHTC_CMD, true);
             string cmd_mcs_id = SCUtility.Trim(eqpt.MCS_CMD, true);
-
             scApp.VehicleBLL.doTransferCommandFinish(vh_id, ohtc_cmd, CompleteStatus.CmpStatusForceFinishByOp, 0);
             scApp.VIDBLL.initialVIDCommandInfo(vh_id);
             scApp.CMDBLL.updateCMD_MCS_TranStatus2Complete(cmd_mcs_id, finish_tran_status);

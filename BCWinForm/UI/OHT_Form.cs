@@ -864,9 +864,17 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             uctl_Map.changeSpecifyRailColorBySegNum(seg_num, set_color);
         }
+        public void SetSpecifySectionSelected(string secID, Color set_color)
+        {
+            uctl_Map.changeSpecifyRailColor(secID, set_color);
+        }
         public void ResetSpecifySegmentSelected(string seg_num)
         {
             uctl_Map.resetRailColor(seg_num);
+        }
+        public void ResetSpecifySectionSelected(string secID)
+        {
+            uctl_Map.resetRailColorBySection(secID);
         }
 
         public void ResetAllSegment()

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
-    public class SouthInnoLuxGuideBLL: GuideBLL
+    public class SouthInnoLuxGuideBLL : GuideBLL
     {
         //SCApplication scApp;
         Logger logger = LogManager.GetCurrentClassLogger();
@@ -1075,6 +1075,19 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
             }
             return (null, null, null);
+        }
+
+        public override void initialUnbanRoute()
+        {
+            scApp.NewRouteGuide.resetBanRoute();
+            var sections = scApp.SectionBLL.cache.GetSections();
+            foreach (ASECTION sec in sections)
+            {
+                if (sec.STATUS == E_SEG_STATUS.Closed)
+                {
+                    scApp.NewRouteGuide.banRouteTwoDirect(sec.SEC_ID);
+                }
+            }
         }
 
     }

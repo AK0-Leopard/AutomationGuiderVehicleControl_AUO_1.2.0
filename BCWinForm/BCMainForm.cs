@@ -967,7 +967,14 @@ namespace com.mirle.ibg3k0.bc.winform
 
         private void roadControlToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            openForm(typeof(RoadControlForm).Name, true, false);
+            if (BCFUtility.isMatche(bcApp.SCApplication.BC_ID, SCAppConstants.WorkVersion.VERSION_NAME_SOUTH_INNOLUX))
+            {
+                openForm(typeof(RoadControlBySectionForm).Name, true, false);
+            }
+            else
+            {
+                openForm(typeof(RoadControlForm).Name, true, false);
+            }
         }
 
         private void zhTwToolStripMenuItem_Click(object sender, EventArgs e)

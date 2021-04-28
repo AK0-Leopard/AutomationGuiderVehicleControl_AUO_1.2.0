@@ -476,6 +476,12 @@
     <Compile Include="UI\Operate\HostModeChg_Form.designer.cs">
       <DependentUpon>HostModeChg_Form.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Operate\RoadControlBySectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Operate\RoadControlBySectionForm.Designer.cs">
+      <DependentUpon>RoadControlBySectionForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Operate\RoadControlForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1743,6 +1749,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Operate\HostModeChg_Form.resx">
       <DependentUpon>HostModeChg_Form.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Operate\RoadControlBySectionForm.resx">
+      <DependentUpon>RoadControlBySectionForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Operate\RoadControlForm.resx">
       <DependentUpon>RoadControlForm.cs</DependentUpon>

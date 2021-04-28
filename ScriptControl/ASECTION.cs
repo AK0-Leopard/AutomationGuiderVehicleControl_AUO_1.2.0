@@ -11,7 +11,7 @@ namespace com.mirle.ibg3k0.sc
 {
     using System;
     using System.Collections.Generic;
-    
+
     public partial class ASECTION
     {
         public string SEC_ID { get; set; }
@@ -45,7 +45,7 @@ namespace com.mirle.ibg3k0.sc
         public int SEC_COST_To2From { get; set; }
         public bool ISBANEND_From2To { get; set; }
         public bool ISBANEND_To2From { get; set; }
-        public int STATUS { get; set; }
+        public E_SEG_STATUS STATUS { get; set; }
         public string NOTE { get; set; }
         public bool PRE_DISABLE_FLAG { get; set; }
         public Nullable<System.DateTime> PRE_DISABLE_TIME { get; set; }

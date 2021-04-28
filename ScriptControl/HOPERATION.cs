@@ -19,6 +19,6 @@ namespace com.mirle.ibg3k0.sc
         public string USER_ID { get; set; }
         public string FORM_NAME { get; set; }
         public string ACTION { get; set; }
-        public Nullable<System.DateTime> INSERT_TIME { get; set; }
+        public System.DateTime INSERT_TIME { get; set; }
     }
 }
