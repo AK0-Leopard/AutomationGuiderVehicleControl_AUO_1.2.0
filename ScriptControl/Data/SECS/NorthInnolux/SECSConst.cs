@@ -316,12 +316,12 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.NorthInnolux
             {
                 case BCRReadResult.BcrNormal:
                     return ((int)NorthInnoluxBarcodeReadReult.Normal).ToString();
-                case BCRReadResult.BcrMisMatch: //北群創Mismatch也報Normal給MCS -> 2020/12/21 Hsinyu Chang: mismatch報error
-                    return ((int)NorthInnoluxBarcodeReadReult.Error).ToString();
+                case BCRReadResult.BcrMisMatch: //北群創Mismatch也報Normal給MCS
+                    return ((int)NorthInnoluxBarcodeReadReult.Normal).ToString();
                 case BCRReadResult.BcrReadFail:
-                    return ((int)NorthInnoluxBarcodeReadReult.NoBarcode).ToString();
+                    return ((int)NorthInnoluxBarcodeReadReult.Error).ToString();
                 default:
-                    return ((int)NorthInnoluxBarcodeReadReult.NoResponse).ToString();
+                    return ((int)NorthInnoluxBarcodeReadReult.Error).ToString();
             }
         }
 
