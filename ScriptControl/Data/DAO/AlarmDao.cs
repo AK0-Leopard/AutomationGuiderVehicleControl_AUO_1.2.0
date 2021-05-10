@@ -220,8 +220,7 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
             {
                 var alarm = from a in conn.ALARM
                             where ((a.ALAM_STAT == ProtocolFormat.OHTMessage.ErrorStatus.ErrReset && (a.RPT_DATE_TIME > set_time && a.CLEAR_DATE_TIME < clear_time))
-                            || (a.ALAM_STAT == ProtocolFormat.OHTMessage.ErrorStatus.ErrSet && (a.RPT_DATE_TIME > set_time)))&&
-                            (a.ALAM_LVL == E_ALARM_LVL.Error||a.ALAM_CODE== "10000"|| a.ALAM_CODE == "10001")
+                            || (a.ALAM_STAT == ProtocolFormat.OHTMessage.ErrorStatus.ErrSet && (a.RPT_DATE_TIME > set_time)))&&(a.ALAM_LVL == E_ALARM_LVL.Error)
                             select a;
                 return alarm.ToList();
             }

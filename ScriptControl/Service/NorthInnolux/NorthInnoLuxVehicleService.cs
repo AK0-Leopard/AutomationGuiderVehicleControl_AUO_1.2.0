@@ -156,13 +156,11 @@ namespace com.mirle.ibg3k0.sc.Service
                     e == VHModeStatus.AutoLocal ||
                     e == VHModeStatus.AutoRemote)
                 {
-                    //北群創不需要報這個 
-                    ProcessAlarmReport(vh, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrReset, $"vehicle cannot service");
+                    //北群創不需要報這個 ProcessAlarmReport(vh, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrReset, $"vehicle cannot service");
                 }
                 else
                 {
-                    //北群創不需要報這個 
-                    if (vh.IS_INSTALLED) ProcessAlarmReport(vh, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrSet, $"vehicle cannot service");
+                    //北群創不需要報這個 if (vh.IS_INSTALLED) ProcessAlarmReport(vh, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrSet, $"vehicle cannot service");
                 }
             }
             catch (Exception ex)
@@ -187,8 +185,7 @@ namespace com.mirle.ibg3k0.sc.Service
                    CarrierID: vh.CST_ID);
 
                 //要再上報Alamr Rerport給MCS
-                //北群創不需要報這個 
-                    if (vh.IS_INSTALLED) ProcessAlarmReport(vh, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrSet, $"vehicle cannot service");
+                //北群創不需要報這個 if (vh.IS_INSTALLED)ProcessAlarmReport(vh, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrSet, $"vehicle cannot service");
             }
             catch (Exception ex)
             {
@@ -4339,8 +4336,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 is_success = is_success && scApp.VehicleBLL.updataVehicleInstall(vhID);
                 if (vh_vo.MODE_STATUS == VHModeStatus.Manual)
                 {
-                    //北群創不需要報這個 
-                    ProcessAlarmReport(vh_vo, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrSet, $"vehicle cannot service");
+                    //北群創不需要報這個 ProcessAlarmReport(vh_vo, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrSet, $"vehicle cannot service");
                 }
                 List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
                 is_success = is_success && scApp.ReportBLL.newReportVehicleInstalled(vh_vo.Real_ID, reportqueues);
@@ -4383,8 +4379,7 @@ namespace com.mirle.ibg3k0.sc.Service
                        Data: $"vh id:{vhID} remove success. start release reserved control...",
                        VehicleID: vhID);
                     scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(vh_vo.VEHICLE_ID);
-                    //北群創不需要報這個 
-                    ProcessAlarmReport(vh_vo, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrReset, $"vehicle cannot service");
+                    //北群創不需要報這個 ProcessAlarmReport(vh_vo, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrReset, $"vehicle cannot service");
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                        Data: $"vh id:{vhID} remove success. end release reserved control.",
                        VehicleID: vhID);
