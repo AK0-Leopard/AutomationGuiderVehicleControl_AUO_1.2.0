@@ -4,7 +4,6 @@ using com.mirle.ibg3k0.sc.Data;
 using com.mirle.ibg3k0.sc.Data.DAO;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using com.mirle.ibg3k0.sc.RouteKit;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,8 +15,6 @@ namespace com.mirle.ibg3k0.sc.BLL
 {
     public class SectionBLL
     {
-        static Logger logger = LogManager.GetCurrentClassLogger();
-
         public SCApplication scApp;
         public Database dataBase { get; private set; }
         public Cache cache { get; private set; }
@@ -117,55 +114,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
 
             }
-
-            public ASECTION DisableSection(string secNum)
-            {
-                ASECTION section = null;
-                try
-                {
-                    using (DBConnection_EF con = DBConnection_EF.GetUContext())
-                    {
-                        section = SectionDao.getByID(con, secNum);
-                        if (section != null)
-                        {
-                            section.PRE_DISABLE_FLAG = false;
-                            section.PRE_DISABLE_TIME = null;
-                            section.DISABLE_TIME = DateTime.Now;
-                            section.STATUS = E_SEG_STATUS.Closed;
-                            SectionDao.update(con, section);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex, "Exception");
-                }
-                return section;
-            }
-            public ASECTION EnableSection(string secNum)
-            {
-                ASECTION section = null;
-                try
-                {
-                    using (DBConnection_EF con = DBConnection_EF.GetUContext())
-                    {
-                        section = SectionDao.getByID(con, secNum);
-                        if (section != null)
-                        {
-                            section.PRE_DISABLE_FLAG = false;
-                            section.PRE_DISABLE_TIME = null;
-                            section.DISABLE_TIME = null;
-                            section.STATUS = E_SEG_STATUS.Active;
-                        }
-                        SectionDao.update(con, section);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex, "Exception");
-                }
-                return section;
-            }
         }
         public class Cache
         {
@@ -240,26 +188,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                                                  ToList();
                 return result_sections.Sum(sec => sec.SEC_DIS);
             }
-            public void EnableSection(string secID)
-            {
-                ASECTION section = CommObjCacheManager.getSections().Where(s => s.SEC_ID.Trim() == secID.Trim())
-                                                  .FirstOrDefault();
-                section.PRE_DISABLE_FLAG = false;
-                section.PRE_DISABLE_TIME = null;
-                section.DISABLE_TIME = null;
-                section.STATUS = E_SEG_STATUS.Active;
-            }
-
-            public void DisableSection(string secID)
-            {
-                ASECTION section = CommObjCacheManager.getSections().Where(s => s.SEC_ID.Trim() == secID.Trim())
-                                                  .FirstOrDefault();
-                section.PRE_DISABLE_FLAG = false;
-                section.PRE_DISABLE_TIME = null;
-                section.DISABLE_TIME = DateTime.Now;
-                section.STATUS = E_SEG_STATUS.Closed;
-            }
-
         }
     }
 }

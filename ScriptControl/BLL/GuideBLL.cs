@@ -581,29 +581,6 @@ namespace com.mirle.ibg3k0.sc.BLL
             return segment;
         }
 
-        public ASECTION unbanRouteTwoDirectBySection(string sectionID)
-        {
-            ASECTION section_do = null;
-            ASECTION section_vo = scApp.SectionBLL.cache.GetSection(sectionID);
-            if (section_vo != null)
-            {
-                scApp.NewRouteGuide.unbanRouteTwoDirect(section_vo.SEC_ID);
-            }
-            section_do = scApp.SectionBLL.dataBase.EnableSection(sectionID);
-            return section_do;
-        }
-        public ASECTION banRouteTwoDirectBySection(string segmentID)
-        {
-            ASECTION segment = null;
-            ASECTION segment_vo = scApp.SectionBLL.cache.GetSection(segmentID);
-            if (segment_vo != null)
-            {
-                scApp.NewRouteGuide.banRouteTwoDirect(segment_vo.SEC_ID);
-            }
-            segment = scApp.SectionBLL.dataBase.DisableSection(segmentID);
-            return segment;
-        }
-
 
 
 

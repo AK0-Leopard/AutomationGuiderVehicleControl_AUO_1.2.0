@@ -34,7 +34,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -4415,44 +4414,6 @@ namespace com.mirle.ibg3k0.sc.Service
                 logger.Error(ex, "Exception:");
             }
             return (segment != null, segment);
-        }
-        public (bool isSuccess, ASECTION section) doEnableDisableSection(string sectionID, E_PORT_STATUS port_status, [CallerMemberName] string Method = "")
-        {
-            ASECTION section = null;
-            try
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                   Data: $"Start enable/disable sec id:{sectionID}, Action:{port_status} call member:{Method}....");
-                bool is_success = false;
-                using (TransactionScope tx = SCUtility.getTransactionScope())
-                {
-                    using (DBConnection_EF con = DBConnection_EF.GetUContext())
-                    {
-
-                        switch (port_status)
-                        {
-                            case E_PORT_STATUS.InService:
-                                section = scApp.GuideBLL.unbanRouteTwoDirectBySection(sectionID);
-                                scApp.SectionBLL.cache.EnableSection(sectionID);
-                                break;
-                            case E_PORT_STATUS.OutOfService:
-                                section = scApp.GuideBLL.banRouteTwoDirectBySection(sectionID);
-                                scApp.SectionBLL.cache.DisableSection(sectionID);
-                                break;
-                        }
-                        tx.Complete();
-                        is_success = true;
-                    }
-                }
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                   Data: $"Start enable/disable sec id:{sectionID}, Action:{port_status} call member:{Method},result:{is_success}");
-                oneDirectPath();
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Exception:");
-            }
-            return (section != null, section);
         }
         private void oneDirectPath()
         {

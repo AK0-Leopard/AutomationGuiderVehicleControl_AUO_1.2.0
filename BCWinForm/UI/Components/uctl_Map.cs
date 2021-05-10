@@ -368,7 +368,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
                         m_objItemAddr[index].p_SizeW = (int)point.WIDTH;
                         m_objItemAddr[index].p_SizeH = (int)point.HEIGHT;
                         m_objItemAddr[index].p_Color = BCUtility.ConvStr2Color(point.COLOR);
-
+                        
                         if (adr.IsCoupler)
                         {
                             m_objItemAddr[index].p_Color = Color.LawnGreen;
@@ -873,15 +873,6 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
                 }
             }
         }
-        public void resetRailColorBySection(string sectionSection)
-        {
-            if (!BCFUtility.isEmpty(sectionSection))
-            {
-                string section_id = SCUtility.Trim(sectionSection, true);
-                if (m_DicSectionGroupRails.ContainsKey(section_id))
-                    m_DicSectionGroupRails[section_id].GroupColorChange(RailOriginalColor);
-            }
-        }
         public void resetRailColor(string[] lstSec)
         {
             if (!BCFUtility.isEmpty(lstSec))
@@ -946,10 +937,9 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
         {
             if (SCUtility.isEmpty(section))
                 return;
-            string section_id = SCUtility.Trim(section, true);
-            if (m_DicSectionGroupRails.ContainsKey(section_id))
+            if (m_DicSectionGroupRails.ContainsKey(section))
             {
-                GroupRails groupRails = m_DicSectionGroupRails[section_id];
+                GroupRails groupRails = m_DicSectionGroupRails[section];
                 groupRails.GroupColorChange(rail_color);
             }
         }

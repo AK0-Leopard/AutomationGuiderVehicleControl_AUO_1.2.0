@@ -1507,7 +1507,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                 //isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(cmd_id, E_CMD_STATUS.NormalEnd);
                 //isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(cmd_id, ohtc_cmd_status);
-                //isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(vh_id, cmd_id, ohtc_cmd_status);
+                isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(vh_id, cmd_id, ohtc_cmd_status);
 
                 if (!SCUtility.isEmpty(mcs_cmd_id))
                 {
@@ -1521,7 +1521,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                     }
                     else
                     {
-                        isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(vh_id, cmd_id, ohtc_cmd_status);
                         if (completeStatus != CompleteStatus.CmpStatusAbort && completeStatus != CompleteStatus.CmpStatusCancel &&
                             acmd_mcs != null && acmd_mcs.TRANSFERSTATE < E_TRAN_STATUS.Transferring)
                         {
@@ -1542,10 +1541,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                             }
                         }
                     }
-                }
-                else
-                {
-                    isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(vh_id, cmd_id, ohtc_cmd_status);
                 }
                 //isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByVhID(vh_id, E_CMD_STATUS.NormalEnd);
                 //updateVehicleExcuteCMD(vh_id, string.Empty, string.Empty);

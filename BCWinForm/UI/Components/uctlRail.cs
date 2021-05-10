@@ -716,8 +716,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
             if (RailSelected != null)
             {
                 SelectedRailEventArgs arge = new SelectedRailEventArgs()
-                { Segment_Num = this.m_SegNum.ToString(), 
-                  Section_Num = this.m_sSectionID };
+                { Segment_Num = this.m_SegNum.ToString() };
                 RailSelected(this, arge);
             }
         }
@@ -1361,7 +1360,6 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
     public class SelectedRailEventArgs : EventArgs
     {
         public string Segment_Num { get; set; }
-        public string Section_Num { get; set; }
     }
 
 
