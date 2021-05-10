@@ -941,14 +941,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     if (!SCUtility.isEmpty(cmd.CMD_ID_MCS))
                     {
                         //在設備確定接收該筆命令，把它從PreInitial改成Initial狀態並上報給MCS
-                        if (cmd.CMD_TPYE == E_CMD_TYPE.Unload)
-                        {
-                            isSuccess &= scApp.CMDBLL.updateCMD_MCS_TranStatus2Transferring(cmd.CMD_ID_MCS);
-                        }
-                        else
-                        {
-                            isSuccess &= scApp.CMDBLL.updateCMD_MCS_TranStatus2Initial(cmd.CMD_ID_MCS);
-                        }
+                        isSuccess &= scApp.CMDBLL.updateCMD_MCS_TranStatus2Initial(cmd.CMD_ID_MCS);
                         //TODO 在進行命令的改派後SysExecQity的資料要重新判斷一下要怎樣計算
                         //scApp.SysExcuteQualityBLL.updateSysExecQity_PassSecInfo(cmd.CMD_ID_MCS, assignVH.VEHICLE_ID, assignVH.CUR_SEC_ID,
                         //                        guide_to_dest_section_ids?.ToArray(), guide_to_dest_address_ids?.ToArray());
@@ -1735,7 +1728,7 @@ namespace com.mirle.ibg3k0.sc.Service
         }
 
 
-        public bool TeachingRequest(string vh_id, string from_adr, string to_adr)
+    public bool TeachingRequest(string vh_id, string from_adr, string to_adr)
         {
             bool isSuccess = false;
             AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vh_id);
@@ -2023,9 +2016,7 @@ namespace com.mirle.ibg3k0.sc.Service
                VehicleID: eqpt.VEHICLE_ID,
                CarrierID: eqpt.CST_ID);
 
-            string mcs_cmd_id = eqpt.MCS_CMD;
-            bool is_mcs_cmd = !SCUtility.isEmpty(mcs_cmd_id);
-            if (is_mcs_cmd)
+            if (!SCUtility.isEmpty(eqpt.MCS_CMD))
             {
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                    Data: $"do report {eventType} to mcs.",
@@ -2069,12 +2060,8 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 case EventType.Vhloading:
                     scApp.VehicleBLL.doLoading(eqpt.VEHICLE_ID);
-                    if (is_mcs_cmd)
-                        scApp.CMDBLL.updateTranStatus2Loading(mcs_cmd_id);
                     break;
                 case EventType.Vhunloading:
-                    if (is_mcs_cmd)
-                        scApp.CMDBLL.updateTranStatus2Unloading(mcs_cmd_id);
                     scApp.VehicleBLL.doUnloading(eqpt.VEHICLE_ID);
                     scApp.MapBLL.getPortID(eqpt.CUR_ADR_ID, out string port_id);
                     scApp.PortBLL.OperateCatch.updatePortStationCSTExistStatus(port_id, eqpt.CST_ID);
@@ -2708,6 +2695,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     break;
                 case EventType.LoadComplete:
                     //scApp.VIDBLL.upDateVIDCarrierLocInfo(eqpt.VEHICLE_ID, eqpt.Real_ID);
+                    if (!SCUtility.isEmpty(vh.MCS_CMD))
+                        scApp.CMDBLL.updateCMD_MCS_TranStatus2Transferring(vh.MCS_CMD);
                     scApp.MapBLL.getPortID(vh.CUR_ADR_ID, out port_id);
                     scApp.PortBLL.OperateCatch.updatePortStationCSTExistStatus(port_id, string.Empty);
                     //scApp.PortBLL.OperateCatch.ClearAllPortStationCSTExistToEmpty();
@@ -2726,15 +2715,13 @@ namespace com.mirle.ibg3k0.sc.Service
                     break;
             }
 
-            string mcs_cmd_id = vh.MCS_CMD;
-            bool is_mcs_cmd = !SCUtility.isEmpty(mcs_cmd_id);
+
             List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
             using (TransactionScope tx = SCUtility.getTransactionScope())
             {
                 using (DBConnection_EF con = DBConnection_EF.GetUContext())
                 {
-                    //if (!SCUtility.isEmpty(vh.MCS_CMD))
-                    if (is_mcs_cmd)
+                    if (!SCUtility.isEmpty(vh.MCS_CMD))
                     {
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                            Data: $"do report {eventType} to mcs.",
@@ -2785,24 +2772,16 @@ namespace com.mirle.ibg3k0.sc.Service
                 case EventType.LoadArrivals:
                     scApp.VehicleBLL.doLoadArrivals(vh.VEHICLE_ID, current_adr_id, current_sec_id);
                     scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(vh.VEHICLE_ID);
-                    if (is_mcs_cmd)
-                        scApp.CMDBLL.updateTranStatus2LoadArrivals(mcs_cmd_id);
                     break;
                 case EventType.LoadComplete:
                     scApp.VehicleBLL.doLoadComplete(vh.VEHICLE_ID, current_adr_id, current_sec_id, carrier_id);
-                    if (is_mcs_cmd)
-                        scApp.CMDBLL.updateCMD_MCS_TranStatus2Transferring(mcs_cmd_id);
                     break;
                 case EventType.UnloadArrivals:
                     scApp.VehicleBLL.doUnloadArrivals(vh.VEHICLE_ID, current_adr_id, current_sec_id);
                     scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(vh.VEHICLE_ID);
-                    if (is_mcs_cmd)
-                        scApp.CMDBLL.updateTranStatus2UnloadArrive(mcs_cmd_id);
                     break;
                 case EventType.UnloadComplete:
                     scApp.VehicleBLL.doUnloadComplete(vh.VEHICLE_ID);
-                    if (is_mcs_cmd)
-                        scApp.CMDBLL.updateTranStatus2UnloadComplete(mcs_cmd_id);
                     break;
             }
         }
@@ -2812,7 +2791,6 @@ namespace com.mirle.ibg3k0.sc.Service
         {
             scApp.VehicleBLL.updateVehicleBCRReadResult(eqpt, bCRReadResult);
             scApp.VIDBLL.upDateVIDCarrierLocInfo(eqpt.VEHICLE_ID, eqpt.Real_ID);
-            AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(eqpt.VEHICLE_ID);
             switch (bCRReadResult)
             {
                 case BCRReadResult.BcrMisMatch:
@@ -2824,8 +2802,6 @@ namespace com.mirle.ibg3k0.sc.Service
                         renameCarrierID: readCarrierID,
                         cancelType: CMDCancelType.CmdCancelIdMismatch);
                     // Task.Run(() => doAbortCommand(eqpt, eqpt.OHTC_CMD, CMDCancelType.CmdCancelIdMismatch));
-                    scApp.ReportBLL.newReportCarrierRemoved(eqpt.Real_ID, vid_info.CARRIER_ID, vid_info.COMMAND_ID, null);
-
                     scApp.VIDBLL.upDateVIDCarrierID(eqpt.VEHICLE_ID, readCarrierID);
 
                     break;
@@ -2835,13 +2811,11 @@ namespace com.mirle.ibg3k0.sc.Service
                        VehicleID: eqpt.VEHICLE_ID,
                        CarrierID: eqpt.CST_ID);
 
-
+                    AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(eqpt.VEHICLE_ID);
                     string new_carrier_id =
-                        $"UNKNOWN-{eqpt.Real_ID.Trim()}-{vid_info.CARRIER_INSTALLED_TIME?.ToString(SCAppConstants.TimestampFormat_13)}";
+                        $"UNKNOWN-{eqpt.Real_ID.Trim()}-{vid_info.CARRIER_INSTALLED_TIME?.ToString("YYMMDDhhmmsss")}";
                     replyTranEventReport(bcfApp, eventType, eqpt, seqNum,
                         renameCarrierID: new_carrier_id, cancelType: CMDCancelType.CmdCancelIdReadFailed);
-                    scApp.ReportBLL.newReportCarrierRemoved(eqpt.Real_ID,vid_info.CARRIER_ID, vid_info.COMMAND_ID, null);
-
                     scApp.VIDBLL.upDateVIDCarrierID(eqpt.VEHICLE_ID, new_carrier_id);
 
 
@@ -2889,7 +2863,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 ReplyCode = 0,
                 RenameCarrierID = renameCarrierID,
                 ReplyActiveType = cancelType,
-                ExtensionMessage = null
+                ExtensionMessage =null
             };
             if (reserveInfos != null)
             {
@@ -3023,7 +2997,7 @@ namespace com.mirle.ibg3k0.sc.Service
         #endregion Status Report
         #region Command Complete Report
         [ClassAOPAspect]
-        public override void CommandCompleteReport(string tcpipAgentName, BCFApplication bcfApp, AVEHICLE vh, ID_132_TRANS_COMPLETE_REPORT recive_str, int seq_num)
+        public void CommandCompleteReport(string tcpipAgentName, BCFApplication bcfApp, AVEHICLE vh, ID_132_TRANS_COMPLETE_REPORT recive_str, int seq_num)
         {
             if (scApp.getEQObjCacheManager().getLine().ServerPreStop)
                 return;
@@ -3056,8 +3030,6 @@ namespace com.mirle.ibg3k0.sc.Service
             List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
             if (!SCUtility.isEmpty(finish_mcs_cmd))
             {
-                ACMD_MCS acmd_mcs = scApp.CMDBLL.getCMD_MCSByID(finish_mcs_cmd);
-                bool is_keep_mcs_cmd_finish = acmd_mcs != null && acmd_mcs.TRANSFERSTATE < E_TRAN_STATUS.Transferring;
                 //List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
                 using (TransactionScope tx = SCUtility.getTransactionScope())
                 {
@@ -3078,8 +3050,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             case CompleteStatus.CmpStatusIdreadFailed:
                             case CompleteStatus.CmpStatusVehicleAbort:
                             case CompleteStatus.CmpStatusInterlockError:
-                                if (!is_keep_mcs_cmd_finish)
-                                    isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
+                                isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
                                 break;
                             case CompleteStatus.CmpStatusMove:
                             case CompleteStatus.CmpStatusHome:
@@ -3370,7 +3341,7 @@ namespace com.mirle.ibg3k0.sc.Service
         }
 
 
-        private void TestCycleRun(AVEHICLE vh, string cmd_id, string start_adr)
+        private void TestCycleRun(AVEHICLE vh, string cmd_id,string start_adr)
         {
             //HCMD_OHTC cmd = scApp.CMDBLL.getHCmd_OHTCByCMDID(cmd_id);
             ACMD_OHTC cmd = scApp.CMDBLL.GetCMD_OHTCByID(cmd_id);
@@ -3494,7 +3465,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 }
 
-                List<ALARM> alarms = null;
+                    List<ALARM> alarms = null;
 
 
 
@@ -3552,7 +3523,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
                         if (report_alarm.ALAM_STAT == ErrorStatus.ErrSet)
                         {
-                            scApp.ReportBLL.ReportAlarmHappend(report_alarm.ALAM_STAT, report_alarm.ALAM_LVL, alarm_code, report_alarm.ALAM_DESC);
+                            scApp.ReportBLL.ReportAlarmHappend(report_alarm.ALAM_STAT,report_alarm.ALAM_LVL, alarm_code, report_alarm.ALAM_DESC);
                             scApp.ReportBLL.newReportUnitAlarmSet(eqpt.Real_ID, report_alarm.ALAM_STAT, report_alarm.ALAM_LVL, alarm_code, report_alarm.ALAM_DESC, reportqueues);
                         }
                         else
@@ -3586,7 +3557,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 bool processAfterHasWarningExist = scApp.AlarmBLL.hasAlarmWarningExist();
                 scApp.getEQObjCacheManager().getLine().HasWarningHappend = processAfterHasWarningExist;
-
+                
                 //}
             }
             catch (Exception ex)

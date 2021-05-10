@@ -574,7 +574,7 @@ namespace com.mirle.ibg3k0.sc.App
         private void setHltVehicleInfo()
         {
 
-            if (BC_ID != "NORTH_INNOLUX")
+            if(BC_ID != "NORTH_INNOLUX")
             {
                 int vh_highi = getInt("VehicleHeight", 1800);
                 int vh_width = getInt("VehicleWidth", 3200);
@@ -2050,7 +2050,6 @@ namespace com.mirle.ibg3k0.sc.App
         public static int NumberOfAvoidanceSegment = 3;
         public static Boolean AdvanceDriveAway = true;
         public static Boolean isPassCouplerHPSafetySignal = false;
-        public static Boolean isManualReportCommandFinishWhenLoadingUnloading = true;
 
     }
 }

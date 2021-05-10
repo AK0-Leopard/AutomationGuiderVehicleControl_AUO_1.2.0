@@ -78,14 +78,6 @@ namespace com.mirle.ibg3k0.sc.ObjectRelay
         public Nullable<System.DateTime> CMD_START_TIME { get { return cmd_mcs.CMD_START_TIME; } }
         public Nullable<System.DateTime> CMD_FINISH_TIME { get { return cmd_mcs.CMD_FINISH_TIME; } }
         public int REPLACE { get { return cmd_mcs.REPLACE; } }
-        public bool isLoading
-        {
-            get { return (cmd_mcs.isLoading); }
-        }
-        public bool isUnloading
-        {
-            get { return (cmd_mcs.isUnloading); }
-        }
 
     }
     public class HCMD_MCSObjToShow
@@ -128,7 +120,6 @@ namespace com.mirle.ibg3k0.sc.ObjectRelay
         public Nullable<System.DateTime> CMD_START_TIME { get { return cmd_mcs.CMD_START_TIME; } }
         public Nullable<System.DateTime> CMD_FINISH_TIME { get { return cmd_mcs.CMD_FINISH_TIME; } }
         public int REPLACE { get { return cmd_mcs.REPLACE; } }
-
 
     }
 }

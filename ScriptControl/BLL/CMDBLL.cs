@@ -111,51 +111,10 @@ namespace com.mirle.ibg3k0.sc.BLL
                 //}
                 return isSuccess;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 logger.Error(ex, "Exection:");
                 return false;
-            }
-
-
-        }
-        public virtual (bool isSuccess, ACMD_MCS mcsCmd) doCreatMCSCommandForManual(string command_id, string Priority, string replace, string carrier_id, string HostSource, string HostDestination, string checkcode)
-        {
-            try
-            {
-                bool isSuccess = true;
-                int ipriority = 0;
-                if (!int.TryParse(Priority, out ipriority))
-                {
-                    logger.Warn("command id :{0} of priority parse fail. priority valus:{1}"
-                                , command_id
-                                , Priority);
-                }
-                int ireplace = 0;
-                if (!int.TryParse(replace, out ireplace))
-                {
-                    logger.Warn("command id :{0} of priority parse fail. priority valus:{1}"
-                                , command_id
-                                , ireplace);
-                }
-
-
-                //ACMD_MCS mcs_com = creatCommand_MCS(command_id, ipriority, carrier_id, HostSource, HostDestination, checkcode);
-                ACMD_MCS cmd_mcs = creatCommand_MCS(command_id, ipriority, ireplace, carrier_id, HostSource, HostDestination, checkcode);
-                //if (mcs_com != null)
-                //{
-                //    isSuccess = true;
-                //    scApp.SysExcuteQualityBLL.creatSysExcuteQuality(mcs_com);
-                //    //mcsDefaultMapAction.sendS6F11_TranInit(command_id);
-                //    scApp.ReportBLL.doReportTransferInitial(command_id);
-                //    checkMCS_TransferCommand();
-                //}
-                return (cmd_mcs != null, cmd_mcs);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Exection:");
-                return (false, null);
             }
 
 
@@ -247,7 +206,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccess;
         }
 
-        public virtual bool updateCMD_MCS_TranStatus2Initial(string cmd_id)
+        public bool updateCMD_MCS_TranStatus2Initial(string cmd_id)
         {
             bool isSuccess = true;
             //using (DBConnection_EF con = new DBConnection_EF())
@@ -292,71 +251,13 @@ namespace com.mirle.ibg3k0.sc.BLL
 
 
 
-        public virtual bool updateCMD_MCS_TranStatus2Transferring(string cmd_id)
+        public bool updateCMD_MCS_TranStatus2Transferring(string cmd_id)
         {
             bool isSuccess = true;
             using (DBConnection_EF con = DBConnection_EF.GetUContext())
             {
                 ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmd_id);
                 cmd.TRANSFERSTATE = E_TRAN_STATUS.Transferring;
-                if (cmd.CMD_START_TIME == null)
-                    cmd.CMD_START_TIME = DateTime.Now;
-                cmd_mcsDao.update(con, cmd);
-            }
-            return isSuccess;
-        }
-        public virtual bool updateTranStatus2LoadArrivals(string cmdID)
-        {
-            bool isSuccess = true;
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            {
-                ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmdID);
-                cmd.COMMANDSTATE = cmd.COMMANDSTATE | ACMD_MCS.COMMAND_STATUS_BIT_INDEX_LOAD_ARRIVE;
-                cmd_mcsDao.update(con, cmd);
-            }
-            return isSuccess;
-        }
-        public virtual bool updateTranStatus2Loading(string cmdID)
-        {
-            bool isSuccess = true;
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            {
-                ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmdID);
-                cmd.COMMANDSTATE = cmd.COMMANDSTATE | ACMD_MCS.COMMAND_STATUS_BIT_INDEX_LOADING;
-                cmd_mcsDao.update(con, cmd);
-            }
-            return isSuccess;
-        }
-
-        public virtual bool updateTranStatus2UnloadArrive(string cmdID)
-        {
-            bool isSuccess = true;
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            {
-                ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmdID);
-                cmd.COMMANDSTATE = cmd.COMMANDSTATE | ACMD_MCS.COMMAND_STATUS_BIT_INDEX_UNLOAD_ARRIVE;
-                cmd_mcsDao.update(con, cmd);
-            }
-            return isSuccess;
-        }
-        public virtual bool updateTranStatus2Unloading(string cmdID)
-        {
-            bool isSuccess = true;
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            {
-                ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmdID);
-                cmd.COMMANDSTATE = cmd.COMMANDSTATE | ACMD_MCS.COMMAND_STATUS_BIT_INDEX_UNLOADING;
-                cmd_mcsDao.update(con, cmd);
-            }
-            return isSuccess;
-        }
-        public virtual bool updateTranStatus2UnloadComplete(string cmdID)
-        {
-            bool isSuccess = true;
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            {
-                ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmdID);
-                cmd.COMMANDSTATE = cmd.COMMANDSTATE | ACMD_MCS.COMMAND_STATUS_BIT_INDEX_UNLOAD_COMPLETE;
                 cmd_mcsDao.update(con, cmd);
             }
             return isSuccess;

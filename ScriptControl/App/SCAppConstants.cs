@@ -173,7 +173,6 @@ namespace com.mirle.ibg3k0.sc.App
         /// The timestamp format_14
         /// </summary>
         public static readonly string TimestampFormat_14 = "yyyyMMddHHmmss";
-        public static readonly string TimestampFormat_13 = "yyyyMMddHHmmsss";
         public static readonly string TimestampFormat_08 = "yyyyMMdd";
         /// <summary>
         /// The date time format_22

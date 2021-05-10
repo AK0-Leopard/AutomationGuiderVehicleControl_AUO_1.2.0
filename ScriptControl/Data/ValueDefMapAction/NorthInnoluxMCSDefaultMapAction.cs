@@ -68,7 +68,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 {
                     case BCFAppConstants.RUN_LEVEL.ZERO:
                         List<ALARMRPTCOND> aLARMRPTCONDs = scApp.AlarmBLL.loadAllAlarmReport();
-                        if (aLARMRPTCONDs == null || aLARMRPTCONDs.Count == 0)
+                        if (aLARMRPTCONDs == null|| aLARMRPTCONDs.Count == 0)
                         {
                             scApp.AlarmBLL.enableAllAlarmReport(true);
                         }
@@ -176,7 +176,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                         //line.CurrentPortStateChecked = true;
                         s1f4.SV[i] = buildClockVIDItem();
                     }
-
+                    
 
 
                     else if (s1f3.SVID[i] == SECSConst.VID_ControlState)
@@ -281,7 +281,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 {
                     CARRIER_ID = has_carry_vhs[j].CST_ID.Trim(),
                     VEHICLE_ID = has_carry_vhs[j].VEHICLE_ID.Trim(),
-                    CARRIER_LOC = has_carry_vhs[j].VEHICLE_ID.Trim() + "-01"//北群創的CARRIER_LOC一律都在車上的Crane
+                    CARRIER_LOC = has_carry_vhs[j].VEHICLE_ID.Trim()+ "-01"//北群創的CARRIER_LOC一律都在車上的Crane
                 };
             }
             return viditem_51;
@@ -358,7 +358,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 viditem_53.VEHICLEINFO[j] = new S6F11.RPTINFO.RPTITEM.VIDITEM_71()
                 {
-                    VEHICLE_ID = vhs[j].Real_ID,
+                    VEHICLE_ID  = vhs[j].Real_ID,
                     VEHICLE_STATE = ((int)vhs[j].State).ToString()
                 };
             }
@@ -375,7 +375,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 index++;
                 AlarmConvertInfo alarmConvertInfo = scApp.AlarmBLL.getAlarmConvertInfo(aLARMRPTCOND.ALAM_CODE);
-                if (alarmConvertInfo != null)
+                if(alarmConvertInfo != null)
                 {
                     viditem_03.ALIDs[index] = alarmConvertInfo.ALID;
                 }
@@ -428,17 +428,17 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         private S6F11.RPTINFO.RPTITEM.VIDITEM_07 buildEnabledEventVIDItem()
         {
-            List<AEVENTRPTCOND> CEIDs = scApp.EventBLL.LoadEnabledCEID();
+            List<AEVENTRPTCOND> CEIDs =  scApp.EventBLL.LoadEnabledCEID();
             S6F11.RPTINFO.RPTITEM.VIDITEM_07 viditem_07 = new S6F11.RPTINFO.RPTITEM.VIDITEM_07();
             viditem_07.CEIDs = new string[CEIDs.Count];
             int index = -1;
-            foreach (AEVENTRPTCOND ceid in CEIDs)
+            foreach(AEVENTRPTCOND ceid in CEIDs)
             {
                 index++;
                 viditem_07.CEIDs[index] = ceid.CEID;
             }
             return viditem_07;
-        }
+        }                                                                                               
         private S6F11.RPTINFO.RPTITEM.VIDITEM_1210 buildPriviousControlStateVIDItem()
         {
             string control_state = SCAppConstants.LineHostControlState.convert2MES(line.Privious_Host_Control_State);
@@ -476,10 +476,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             List<AVEHICLE> vhs = scApp.getEQObjCacheManager().getAllVehicle();
             bool isAvail = false;
-            foreach (AVEHICLE vh in vhs)
+            foreach(AVEHICLE vh in vhs)
             {
-                if (vh.IS_INSTALLED && (vh.MODE_STATUS == ProtocolFormat.OHTMessage.VHModeStatus.AutoRemote || vh.MODE_STATUS == ProtocolFormat.OHTMessage.VHModeStatus.AutoLocal
-                    || vh.MODE_STATUS == ProtocolFormat.OHTMessage.VHModeStatus.AutoCharging) && !vh.IsError)
+                if(vh.IS_INSTALLED&&(vh.MODE_STATUS == ProtocolFormat.OHTMessage.VHModeStatus.AutoRemote|| vh.MODE_STATUS == ProtocolFormat.OHTMessage.VHModeStatus.AutoLocal
+                    ||vh.MODE_STATUS == ProtocolFormat.OHTMessage.VHModeStatus.AutoCharging) && !vh.IsError)
                 {
                     isAvail = true;
                     break;
@@ -586,7 +586,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 viditem_74.PORT_INFO[eq_port_index] = new S6F11.RPTINFO.RPTITEM.VIDITEM_313();
                 viditem_74.PORT_INFO[eq_port_index].PORT_ID = port_station[j].PORT_ID;
                 string portTransferState = ((int)port_station[j].PORT_SERVICE_STATUS).ToString();
-                if (portTransferState == "0")
+                if(portTransferState == "0")
                 {
                     portTransferState = "1";
                 }
@@ -783,7 +783,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 }
                 else if (DebugParameter.UseHostOffline)
                 {
-                    if (line.Host_Control_State == SCAppConstants.LineHostControlState.HostControlState.Host_Offline)
+                    if(line.Host_Control_State == SCAppConstants.LineHostControlState.HostControlState.Host_Offline)
                     {
                         s1f18.ONLACK = SECSConst.ONLACK_Not_Accepted;
                     }
@@ -1058,7 +1058,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 if (!isProcess(s2f37)) { return; }
                 Boolean isValid = true;
                 //Boolean isEnable = SCUtility.isMatche(s2f37.CEED, SECSConst.CEED_Enable);
-                Boolean isEnable = s2f37.CEED[0] == 1 ? true : false;
+                Boolean isEnable = s2f37.CEED[0]==1?true:false;
                 int cnt = s2f37.CEIDS.Length;
                 if (cnt == 0)
                 {
@@ -1158,11 +1158,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                             using (DBConnection_EF con = DBConnection_EF.GetUContext())
                             {
                                 bool isCreatScuess = true;
-                                if (s2f50.HCACK != SECSConst.HCACK_Rejected && s2f50.HCACK != SECSConst.HCACK_Command_ID_Duplication && s2f50.HCACK != SECSConst.HCACK_Carrier_ID_Duplication)
+                                if (s2f50.HCACK != SECSConst.HCACK_Rejected&& s2f50.HCACK != SECSConst.HCACK_Command_ID_Duplication && s2f50.HCACK != SECSConst.HCACK_Carrier_ID_Duplication)
                                     isCreatScuess &= scApp.CMDBLL.doCreatMCSCommand(cmdID, priority, replace, cstID, source, dest, s2f50.HCACK);
                                 if (s2f50.HCACK == SECSConst.HCACK_Confirm)
                                     isCreatScuess &= scApp.SysExcuteQualityBLL.creatSysExcuteQuality(cmdID, cstID, source, dest);
-                                if (!isCreatScuess && s2f50.HCACK == SECSConst.HCACK_Confirm)//如果沒能成功建帳
+                                if (!isCreatScuess&& s2f50.HCACK == SECSConst.HCACK_Confirm)//如果沒能成功建帳
                                 {
                                     s2f50.HCACK = SECSConst.HCACK_Param_Invalid;
                                 }
@@ -1207,27 +1207,27 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                             BCFApplication.onWarningMsg(this, new bcf.Common.LogEventArgs(rtnStr, xid));
                         }
                         break;
-                        //case "STAGE":
-                        //    S2F49_STAGE s2f49_stage = ((S2F49_STAGE)e.secsHandler.Parse<S2F49_STAGE>(e));
+                    //case "STAGE":
+                    //    S2F49_STAGE s2f49_stage = ((S2F49_STAGE)e.secsHandler.Parse<S2F49_STAGE>(e));
 
-                        //    S2F50 s2f50_stage = new S2F50();
-                        //    s2f50_stage.SystemByte = s2f49_stage.SystemByte;
-                        //    s2f50_stage.SECSAgentName = scApp.EAPSecsAgentName;
-                        //    s2f50_stage.HCACK = SECSConst.HCACK_Confirm;
+                    //    S2F50 s2f50_stage = new S2F50();
+                    //    s2f50_stage.SystemByte = s2f49_stage.SystemByte;
+                    //    s2f50_stage.SECSAgentName = scApp.EAPSecsAgentName;
+                    //    s2f50_stage.HCACK = SECSConst.HCACK_Confirm;
 
-                        //    string source_port_id = s2f49_stage.REPITEMS.TRANSFERINFO.CPVALUE.SOURCEPORT_CP.CPVAL_ASCII;
-                        //    TrxSECS.ReturnCode rtnCode_stage = ISECSControl.replySECS(bcfApp, s2f50_stage);
-                        //    SCUtility.secsActionRecordMsg(scApp, false, s2f50_stage);
+                    //    string source_port_id = s2f49_stage.REPITEMS.TRANSFERINFO.CPVALUE.SOURCEPORT_CP.CPVAL_ASCII;
+                    //    TrxSECS.ReturnCode rtnCode_stage = ISECSControl.replySECS(bcfApp, s2f50_stage);
+                    //    SCUtility.secsActionRecordMsg(scApp, false, s2f50_stage);
 
-                        //    //TODO Stage
-                        //    //將收下來的Stage命令先放到Redis上
-                        //    //等待Timer發現後會將此命令取下來並下命令給車子去執行
-                        //    //(此處將再考慮是要透過Timer或是開Thread來監控這件事)
+                    //    //TODO Stage
+                    //    //將收下來的Stage命令先放到Redis上
+                    //    //等待Timer發現後會將此命令取下來並下命令給車子去執行
+                    //    //(此處將再考慮是要透過Timer或是開Thread來監控這件事)
 
-                        //    var port = scApp.MapBLL.getPortByPortID(source_port_id);
-                        //    AVEHICLE vh_test = scApp.VehicleBLL.findBestSuitableVhStepByStepFromAdr_New(port.ADR_ID, port.LD_VH_TYPE);
-                        //    scApp.VehicleBLL.callVehicleToMove(vh_test, port.ADR_ID);
-                        //    break;
+                    //    var port = scApp.MapBLL.getPortByPortID(source_port_id);
+                    //    AVEHICLE vh_test = scApp.VehicleBLL.findBestSuitableVhStepByStepFromAdr_New(port.ADR_ID, port.LD_VH_TYPE);
+                    //    scApp.VehicleBLL.callVehicleToMove(vh_test, port.ADR_ID);
+                    //    break;
                 }
                 line.CommunicationIntervalWithMCS.Restart();
 
@@ -1340,7 +1340,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             isSuccess &= checkPortID(s2F49_TRANSFER.COMMS[1].COMMAINFOVALUE.CPVAL3.CPNAME, dest_port);
 
             List<SXFY> cep_items = new List<SXFY>();
-            for (int i = 0; i < s2F49_TRANSFER.COMMS.Length; i++)
+            for(int i =0;i< s2F49_TRANSFER.COMMS.Length; i++)
             {
                 if (i == 0)
                 {
@@ -1556,7 +1556,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 string new_carrier_id = "";
                 string old_carrier_id = "";
                 string cancel_abort_cmd_id = string.Empty;
-                if (SCUtility.isMatche(s2f41.RCMD, SECSConst.RCMD_Resume))
+                if(SCUtility.isMatche( s2f41.RCMD, SECSConst.RCMD_Resume))
                 {
                     S2F42 s2f42 = null;
                     s2f42 = new S2F42();
@@ -1766,7 +1766,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
                 }
 
-
+                
             }
             catch (Exception ex)
             {
@@ -2036,7 +2036,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
         }
 
-
+        
 
         #endregion Receive 
 
@@ -2170,7 +2170,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 return false;
             }
         }
-        public override bool S6F11SendUnitAlarmSet(string eq_id, string cmd_id, string alid, string altx, string error_code, List<AMCSREPORTQUEUE> reportQueues = null)
+        public override bool S6F11SendUnitAlarmSet(string eq_id,string cmd_id, string alid, string altx, string error_code, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             try
             {
@@ -2660,7 +2660,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 VIDCollection Vids = new VIDCollection();
                 Vids.VID_61_EqpName.EQP_NAME = line.LINE_ID;
-                Vids.VID_201_TSAvail.TS_AVAIL = ((int)line.SCStats).ToString() == "2" ? "1" : "0";
+                Vids.VID_201_TSAvail.TS_AVAIL = ((int)line.SCStats).ToString()=="2"?"1":"0";
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TS_Avail_Changed, Vids);
                 if (reportQueues == null)
                 {
@@ -2808,7 +2808,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
         }
 
-
+        
         public override bool S6F11SendVehicleAssigned(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             try
@@ -3154,7 +3154,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
         }
 
-        public override bool S6F11SendTransferAbortCompleted(ACMD_MCS CMD_MCS, AVEHICLE vh, string resultCode, List<AMCSREPORTQUEUE> reportQueues = null, string _carrier_loc = null)
+        public override bool S6F11SendTransferAbortCompleted(ACMD_MCS CMD_MCS, AVEHICLE vh, string resultCode, List<AMCSREPORTQUEUE> reportQueues = null,string _carrier_loc =null)
         {
             try
             {
@@ -3181,7 +3181,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                     {
                         AVEHICLE carry_vh = scApp.VehicleBLL.cache.getVehicleByCSTID(CMD_MCS.CARRIER_ID);
                         if (carry_vh != null)
-                            carrier_loc = (carry_vh.Real_ID + "-01");
+                            carrier_loc = (carry_vh.Real_ID+"-01");
                     }
                     else
                     {
@@ -3332,7 +3332,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         //    }
         //    return true;
         //}
-        public override bool S6F11SendOperatorInitiatedAction(ACMD_MCS mcsCmd, List<AMCSREPORTQUEUE> reportQueues = null)
+        public override bool S6F11SendOperatorInitiatedAction(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             //try
             //{
@@ -3426,7 +3426,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //}
             return false;
         }
-
+        
 
 
 
@@ -3939,7 +3939,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //VID_55_CarrierInfo
             vid_collection.VID_55_CarrierInfo.CARRIER_ID = vid_info.MCS_CARRIER_ID;
             vid_collection.VID_55_CarrierInfo.VEHICLE_ID = vh.Real_ID;
-            if (vh.HAS_CST == 1)
+            if (vh.HAS_CST==1)
             {
                 vid_collection.VID_55_CarrierInfo.CARRIER_LOC = vh.Real_ID + "-01";//北群創的CARRIER_LOC一律都在車上的Crane
             }
@@ -4002,10 +4002,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
             //VID_70_VehicleID
             vid_collection.VID_70_VehicleID.VEHICLE_ID = vh.Real_ID;
-            vid_collection.VID_317_ReadIDInfo.ID_RESULT_CODE = SECSConst.NorthInnoluxBarcodeReadReultMap(vh.BCRReadResult);
+            vid_collection.VID_317_ReadIDInfo.ID_RESULT_CODE = SECSConst.NorthInnoluxBarcodeReadReultMap( vh.BCRReadResult);
             //vid_collection.VID_317_ReadIDInfo.READ_CARRRIER_ID = vh.CST_ID;
             //2020/12/21 Hsinyu Chang: read fail時，此處帶空值，其餘狀況帶實際讀到的值
-            vid_collection.VID_317_ReadIDInfo.READ_CARRRIER_ID =
+            vid_collection.VID_317_ReadIDInfo.READ_CARRRIER_ID = 
                 (vh.BCRReadResult == ProtocolFormat.OHTMessage.BCRReadResult.BcrReadFail) ? "" : vid_info.CARRIER_ID;
             //VID_901_AlarmText
             vid_collection.VID_1060_AlarmText.ALARM_TEXT = vid_info.ALARM_TEXT;
@@ -4301,16 +4301,6 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 reportQueues.Add(mcs_queue);
             }
             return true;
-        }
-
-        public override bool S6F11SendCarrierRemoved(string vhID, string carrierID, string cmdID, List<AMCSREPORTQUEUE> reportQueues = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool S6F11SendCarrierInstalled(string vhID, string carrierID, string carrierLoc, string cmdID, List<AMCSREPORTQUEUE> reportQueues = null)
-        {
-            throw new NotImplementedException();
         }
     }
 }

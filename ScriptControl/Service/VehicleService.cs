@@ -68,7 +68,7 @@ namespace com.mirle.ibg3k0.sc.Service
         public event EventHandler<DeadLockEventArgs> DeadLockProcessFail;
         private Dictionary<string, string> WaitingRetryMCSCMDList { get; set; } = new Dictionary<string, string>();
         private object WaitingRetryMCSCMDListLock = new object();
-        public virtual void addCMDToWaitingRetryMCSCMDList(string vh_id, string cmd)
+        public virtual void addCMDToWaitingRetryMCSCMDList(string vh_id,string cmd)
         {
             return;
         }
@@ -1076,14 +1076,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     if (!SCUtility.isEmpty(cmd.CMD_ID_MCS))
                     {
                         //在設備確定接收該筆命令，把它從PreInitial改成Initial狀態並上報給MCS
-                        if (cmd.CMD_TPYE == E_CMD_TYPE.Unload)
-                        {
-                            isSuccess &= scApp.CMDBLL.updateCMD_MCS_TranStatus2Transferring(cmd.CMD_ID_MCS);
-                        }
-                        else
-                        {
-                            isSuccess &= scApp.CMDBLL.updateCMD_MCS_TranStatus2Initial(cmd.CMD_ID_MCS);
-                        }
+                        isSuccess &= scApp.CMDBLL.updateCMD_MCS_TranStatus2Initial(cmd.CMD_ID_MCS);
                         isSuccess &= scApp.ReportBLL.newReportTransferInitial(cmd.CMD_ID_MCS, null);
                         //TODO 在進行命令的改派後SysExecQity的資料要重新判斷一下要怎樣計算
                         //scApp.SysExcuteQualityBLL.updateSysExecQity_PassSecInfo(cmd.CMD_ID_MCS, assignVH.VEHICLE_ID, assignVH.CUR_SEC_ID,
@@ -1698,7 +1691,7 @@ namespace com.mirle.ibg3k0.sc.Service
             try
             {
                 assign_vh = scApp.VehicleBLL.getVehicleByExcuteMCS_CMD_ID(mcsCmdID);
-                if (assign_vh != null)
+                if(assign_vh != null)
                 {
                     string ohtc_cmd_id = assign_vh.OHTC_CMD;
                     switch (actType)
@@ -2328,6 +2321,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     replyTranEventReport(bcfApp, eventType, eqpt, seqNum,
                         renameCarrierID: new_carrier_id, cancelType: CMDCancelType.CmdCancelIdReadFailed);
                     scApp.VIDBLL.upDateVIDCarrierID(eqpt.VEHICLE_ID, new_carrier_id);
+
+
                     //     Task.Run(() => doAbortCommand(eqpt, eqpt.OHTC_CMD, CMDCancelType.CmdCancelIdReadFailed));
                     break;
                 case BCRReadResult.BcrNormal:

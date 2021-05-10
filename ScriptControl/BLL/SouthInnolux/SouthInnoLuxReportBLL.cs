@@ -30,7 +30,7 @@ namespace com.mirle.ibg3k0.sc.BLL
     /// <summary>
     /// Class ReportBLL.
     /// </summary>
-    public class SouthInnoLuxReportBLL : ReportBLL
+    public class SouthInnoLuxReportBLL:ReportBLL
     {
         /// <summary>
         /// The sc application
@@ -394,18 +394,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccsess;
         }
 
-        public override bool newReportCarrierRemoved(string vhID, string carrierID, string cmdID, List<AMCSREPORTQUEUE> reportqueues)
-        {
-            bool isSuccsess = true;
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierRemoved(vhID, carrierID, cmdID, reportqueues);
-            return isSuccsess;
-        }
-        public override bool newReportCarrierInstalledReport(string vhID, string carrierID, string carrierLoc, List<AMCSREPORTQUEUE> reportqueues)
-        {
-            bool isSuccsess = true;
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierInstalled(vhID, carrierID, carrierLoc, "", reportqueues);
-            return isSuccsess;
-        }
+
 
 
         public override bool newReportUnloadComplete(string vhID, List<AMCSREPORTQUEUE> reportqueues)
@@ -533,14 +522,14 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         //public override bool ReportAlarmHappend(ErrorStatus alarm_status, string error_code, string desc)
         //{
-
+            
         //    string alcd = SECSConst.AlarmStatus.convert2MCS(alarm_status);
         //    string alid = error_code;
         //    string altx = desc;
         //    return iBSEMDriver.S5F1SendAlarmReport(alcd, alid, altx);
         //}
 
-        public override bool ReportAlarmHappend(ErrorStatus alarm_status, E_ALARM_LVL alarm_lvl, string error_code, string desc)
+        public override bool ReportAlarmHappend(ErrorStatus alarm_status,E_ALARM_LVL alarm_lvl, string error_code, string desc)
         {
 
             string alcd = SECSConst.AlarmStatus.convert2MCS(alarm_status, alarm_lvl);
@@ -569,7 +558,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             string alid = SECSConst.ALID.convert2MCS(alarm_lvl);
             string altx = SECSConst.ALTX.convert2MCS(alarm_lvl);
             bool isSuccsess = true;
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendUnitAlarmCleared(eq_id, alid, altx, error_code, desc, reportqueues);
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendUnitAlarmCleared(eq_id,alid, altx, error_code, desc, reportqueues);
             return false;
         }
 
@@ -657,7 +646,6 @@ namespace com.mirle.ibg3k0.sc.BLL
 
             return AMCSREPORTQUEUEs;
         }
-
         #endregion MCS SXFY Report
 
 

@@ -386,17 +386,11 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendAlarmCleared(vhid);
             return isSuccsess;
         }
+
         public bool newReportTransferInitial(string cmdID, List<AMCSREPORTQUEUE> reportqueues)
         {
             bool isSuccsess = true;
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferInitial(cmdID, reportqueues);
-            return isSuccsess;
-        }
-
-        public bool newReportS6F11SendOperatorInitiatedAction(ACMD_MCS mcsCmd, List<AMCSREPORTQUEUE> reportqueues)
-        {
-            bool isSuccsess = true;
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendOperatorInitiatedAction(mcsCmd, reportqueues);
             return isSuccsess;
         }
         public bool newReportBeginTransfer(string vhID, List<AMCSREPORTQUEUE> reportqueues)
@@ -427,12 +421,6 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleAcquireFailed(vhID, reportqueues);
             return isSuccsess;
         }
-        public virtual bool newReportCarrierInstalledReport(string vhID, string carrierID, string carrierLoc, List<AMCSREPORTQUEUE> reportqueues)
-        {
-            bool isSuccsess = true;
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierInstalled(vhID, carrierID, carrierLoc, "", reportqueues);
-            return isSuccsess;
-        }
         public bool newReportCarrierIDReadReport(string vhID, List<AMCSREPORTQUEUE> reportqueues)
         {
             bool isSuccsess = true;
@@ -447,14 +435,6 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleArrived(vhID, reportqueues);
             return isSuccsess;
         }
-
-        public virtual bool newReportCarrierRemoved(string vhID, string carrierID, string cmdID, List<AMCSREPORTQUEUE> reportqueues)
-        {
-            bool isSuccsess = true;
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierRemoved(vhID, carrierID, cmdID, reportqueues);
-            return isSuccsess;
-        }
-
         public virtual bool newReportUnloadComplete(string vhID, List<AMCSREPORTQUEUE> reportqueues)
         {
             bool isSuccsess = true;

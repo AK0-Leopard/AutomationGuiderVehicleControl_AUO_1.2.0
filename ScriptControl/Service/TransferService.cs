@@ -92,7 +92,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                 }
 
                                 tx.Complete();
-
+     
                             }
                             else if (linkStatus == SCAppConstants.LinkStatus.LinkFail.ToString())
                             {
@@ -126,7 +126,7 @@ namespace com.mirle.ibg3k0.sc.Service
         }
 
 
-        public bool doChangeHostMode(string host_mode, out string result)
+        public bool doChangeHostMode(string host_mode,out string result)
         {
             bool isSuccess = true;
             result = string.Empty;
@@ -138,7 +138,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         using (DBConnection_EF con = DBConnection_EF.GetUContext())
                         {
-                            if (host_mode == SCAppConstants.LineHostControlState.HostControlState.On_Line_Remote.ToString())
+                            if(host_mode == SCAppConstants.LineHostControlState.HostControlState.On_Line_Remote.ToString())
                             {
                                 if (!scApp.LineService.canOnlineWithHost())
                                 {
@@ -294,125 +294,6 @@ namespace com.mirle.ibg3k0.sc.Service
             return isSuccess;
         }
 
-        static int ManualCommandSeqNum = 1;
-        public virtual (bool isSuccess, string checkResult) tryToCreatManualMCSCommand(string source_port_or_vh_id, string dest_port, string carrier_id)
-        {
-            try
-            {
-                var check_result = doCheckManualMCSCommand(source_port_or_vh_id, dest_port, carrier_id);
-                if (check_result.isSuccess)
-                {
-                    string cmd_id = $"MANUAL{(ManualCommandSeqNum++).ToString("000000")}";
-                    var creat_resule = scApp.CMDBLL.doCreatMCSCommandForManual(cmd_id, "10", "", carrier_id, source_port_or_vh_id, dest_port, "4");
-                    check_result.isSuccess = creat_resule.isSuccess;
-                    if (check_result.isSuccess)
-                    {
-                        scApp.ReportBLL.newReportS6F11SendOperatorInitiatedAction(creat_resule.mcsCmd, null);
-                    }
-                    else
-                    {
-                        check_result.checkResult = $"Source:{source_port_or_vh_id} dest:{dest_port} cst:{carrier_id} creat to db fail.";
-                    }
-                }
-                return (check_result.isSuccess, check_result.checkResult);
-            }
-            catch (Exception ex)
-            {
-                return (false, ex.ToString());
-            }
-        }
-
-        public virtual (bool isSuccess, string checkResult) doCheckManualMCSCommand(string source_port_or_vh_id, string dest_port, string carrier_id)
-        {
-            bool isSuccess = true;
-            string check_result = "";
-
-            //確認是否有同一顆正在搬送的CST ID
-            if (isSuccess)
-            {
-                var cmd_obj = scApp.CMDBLL.getExcuteCMD_MCSByCarrierID(carrier_id);
-                if (cmd_obj != null)
-                {
-                    check_result = $"Want to creat manual mcs cmd ,but carrier id:{carrier_id} already excute by command id:{cmd_obj.CMD_ID.Trim()}";
-                    return (false, check_result);
-                }
-            }
-
-            //確認是否有在相同Load Port的Transfer Command且該命令狀態還沒有變成Transferring(代表還在Port上還沒搬走)
-            if (isSuccess)
-            {
-                //M0.02 var cmd_obj = scApp.CMDBLL.getWatingCMDByFromTo(source_port_or_vh_id, dest_port);
-                var cmd_obj = scApp.CMDBLL.getWatingCMD_MCSByFrom(source_port_or_vh_id);//M0.02 
-                if (cmd_obj != null)
-                {
-                    check_result = $"Want to creat manual mcs cmd ,but is same as orther mcs command id {cmd_obj.CMD_ID.Trim()} of load port.";//M0.02 
-                    //M0.02 check_result = $"MCS command id:{command_id} of transfer load port is same command id:{cmd_obj.CMD_ID.Trim()}";
-                    return (false, check_result);
-                }
-            }
-
-            //確認 Port是否存在
-            bool source_is_a_port = scApp.PortStationBLL.OperateCatch.IsExist(source_port_or_vh_id);
-            if (source_is_a_port)
-            {
-                isSuccess = true;
-            }
-            //如果不是PortID的話，則可能是VehicleID
-            else
-            {
-                isSuccess = scApp.VehicleBLL.cache.IsVehicleExistByRealID(source_port_or_vh_id);
-            }
-            if (!isSuccess)
-            {
-                check_result = $"Want to creat manual mcs cmd ,but source Port:{source_port_or_vh_id} not exist.{Environment.NewLine}please confirm the port name";
-                return (false, check_result);
-            }
-
-            isSuccess = scApp.PortStationBLL.OperateCatch.IsExist(dest_port);
-            if (!isSuccess)
-            {
-                check_result = $"Want to creat manual mcs cmd ,but destination Port:{dest_port} not exist.{Environment.NewLine}please confirm the port name";
-                return (false, check_result);
-            }
-
-            //如果Source是個Port才需要檢查
-            if (source_is_a_port)
-            {
-                ////確認是否有車子來可以搬送
-                //AVEHICLE vh = scApp.VehicleBLL.findBestSuitableVhStepByStepFromAdr(source_port_or_vh_id, E_VH_TYPE.None, isCheckHasVhCarry: true);
-                //isSuccess = vh != null;
-                //if (!isSuccess)
-                //{
-                //    check_result = $"No vehicle can reach mcs command id:{command_id} - source port:{source_port_or_vh_id}.{Environment.NewLine}please check the road traffic status.";
-                //    return SECSConst.HCACK_Cannot_Perform_Now;
-                //}
-                ////確認路徑是否可以行走
-                APORTSTATION source_port_station = scApp.PortStationBLL.OperateCatch.getPortStation(source_port_or_vh_id);
-                APORTSTATION dest_port_station = scApp.PortStationBLL.OperateCatch.getPortStation(dest_port);
-                isSuccess = scApp.GuideBLL.IsRoadWalkable(source_port_station.ADR_ID, dest_port_station.ADR_ID);
-                if (!isSuccess)
-                {
-                    check_result = $"Want to creat manual mcs cmd ,but source port:{source_port_or_vh_id} to destination port:{dest_port} no path to go{Environment.NewLine}," +
-                        $"please check the road traffic status.";
-                    return (false, check_result);
-                }
-            }
-            //如果不是Port(則為指定車號)，要檢查是否從該車位置可以到達放貨地點
-            else
-            {
-                AVEHICLE carry_vh = scApp.VehicleBLL.cache.getVehicleByRealID(source_port_or_vh_id);
-                APORTSTATION dest_port_station = scApp.PortStationBLL.OperateCatch.getPortStation(dest_port);
-                isSuccess = scApp.GuideBLL.IsRoadWalkable(carry_vh.CUR_ADR_ID, dest_port_station.ADR_ID);
-                if (!isSuccess)
-                {
-                    check_result = $"Want to creat manual mcs cmd ,but vh:{source_port_or_vh_id} current address:{carry_vh.CUR_ADR_ID} to destination port:{dest_port}:{dest_port_station.ADR_ID} no path to go{Environment.NewLine}," +
-                        $"please check the road traffic status.";
-                    return (false, check_result);
-                }
-            }
-
-            return (true, check_result);
-        }
 
 
 

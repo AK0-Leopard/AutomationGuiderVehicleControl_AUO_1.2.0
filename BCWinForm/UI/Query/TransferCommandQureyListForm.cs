@@ -95,17 +95,6 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 //                     MessageBoxIcon.Warning);
                 //    return;
                 //}
-                //如果是正在載貨中，發生異常 則可以選擇最後結束的位置在哪
-                if (sc.App.DebugParameter.isManualReportCommandFinishWhenLoadingUnloading && (mcs_cmd.isLoading || mcs_cmd.isUnloading))
-                //if (sc.App.DebugParameter.isManualReportCommandFinishWhenLoadingUnloading)
-                {
-                    CarrierLocationChooseForm carrierLocationChooseForm = new CarrierLocationChooseForm(mainform.BCApp.SCApplication, mcs_cmd.cmd_mcs);
-                    System.Windows.Forms.DialogResult result = carrierLocationChooseForm.ShowDialog(this);
-                    if (result != DialogResult.OK) return;
-                    string finial_carrier_location = carrierLocationChooseForm.GetChooseLocation();
-                    mcs_cmd.cmd_mcs.ManualSelectedFinishCarrierLoc = finial_carrier_location;
-                }
-
 
                 await Task.Run(() =>
                 {

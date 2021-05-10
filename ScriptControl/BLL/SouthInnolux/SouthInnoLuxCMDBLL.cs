@@ -19,7 +19,7 @@ using System.Transactions;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
-    public class SouthInnoLuxCMDBLL : CMDBLL
+    public class SouthInnoLuxCMDBLL:CMDBLL
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
         //CMD_OHTCDao cmd_ohtcDAO = null;
@@ -109,7 +109,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         }
 
-        public override ACMD_MCS creatCommand_MCS(string command_id, int Priority, int replace, string carrier_id, string HostSource, string HostDestination, string checkcode)
+        public ACMD_MCS creatCommand_MCS(string command_id, int Priority, int replace, string carrier_id, string HostSource, string HostDestination, string checkcode)
         {
             int port_priority = 0;
             if (!SCUtility.isEmpty(HostSource))
@@ -129,11 +129,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             if (SCUtility.isMatche(checkcode, com.mirle.ibg3k0.sc.Data.SECS.AGVC.SECSConst.HCACK_Confirm) ||
                 SCUtility.isMatche(checkcode, com.mirle.ibg3k0.sc.Data.SECS.AGVC.SECSConst.HCACK_Confirm_Executed))
             {
-                //bool is_in_vh = scApp.VehicleBLL.cache.IsVehicleExistByRealID(HostSource);
-                //if (is_in_vh)
-                //{
-                //    transfer_status = E_TRAN_STATUS.Transferring;
-                //}
+                //Not thing...
             }
             else
             {
@@ -209,7 +205,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccess;
         }
 
-        public override bool updateCMD_MCS_TranStatus2Initial(string cmd_id)
+        public bool updateCMD_MCS_TranStatus2Initial(string cmd_id)
         {
             bool isSuccess = true;
             //using (DBConnection_EF con = new DBConnection_EF())
@@ -219,7 +215,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                 {
                     ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmd_id);
                     cmd.TRANSFERSTATE = E_TRAN_STATUS.Initial;
-                    cmd.COMMANDSTATE = cmd.COMMANDSTATE | ACMD_MCS.COMMAND_STATUS_BIT_INDEX_ENROUTE;
                     cmd.CMD_START_TIME = DateTime.Now;
                     cmd_mcsDao.update(con, cmd);
                 }
@@ -253,72 +248,15 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccess;
         }
 
-        public override bool updateCMD_MCS_TranStatus2Transferring(string cmd_id)
+
+
+        public bool updateCMD_MCS_TranStatus2Transferring(string cmd_id)
         {
             bool isSuccess = true;
             using (DBConnection_EF con = DBConnection_EF.GetUContext())
             {
                 ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmd_id);
                 cmd.TRANSFERSTATE = E_TRAN_STATUS.Transferring;
-                cmd.COMMANDSTATE = cmd.COMMANDSTATE | ACMD_MCS.COMMAND_STATUS_BIT_INDEX_LOAD_COMPLETE;
-                if (cmd.CMD_START_TIME == null)
-                    cmd.CMD_START_TIME = DateTime.Now;
-                cmd_mcsDao.update(con, cmd);
-            }
-            return isSuccess;
-        }
-        public override bool updateTranStatus2LoadArrivals(string cmdID)
-        {
-            bool isSuccess = true;
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            {
-                ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmdID);
-                cmd.COMMANDSTATE = cmd.COMMANDSTATE | ACMD_MCS.COMMAND_STATUS_BIT_INDEX_LOAD_ARRIVE;
-                cmd_mcsDao.update(con, cmd);
-            }
-            return isSuccess;
-        }
-        public override bool updateTranStatus2Loading(string cmdID)
-        {
-            bool isSuccess = true;
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            {
-                ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmdID);
-                cmd.COMMANDSTATE = cmd.COMMANDSTATE | ACMD_MCS.COMMAND_STATUS_BIT_INDEX_LOADING;
-                cmd_mcsDao.update(con, cmd);
-            }
-            return isSuccess;
-        }
-
-        public override bool updateTranStatus2UnloadArrive(string cmdID)
-        {
-            bool isSuccess = true;
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            {
-                ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmdID);
-                cmd.COMMANDSTATE = cmd.COMMANDSTATE | ACMD_MCS.COMMAND_STATUS_BIT_INDEX_UNLOAD_ARRIVE;
-                cmd_mcsDao.update(con, cmd);
-            }
-            return isSuccess;
-        }
-        public override bool updateTranStatus2Unloading(string cmdID)
-        {
-            bool isSuccess = true;
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            {
-                ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmdID);
-                cmd.COMMANDSTATE = cmd.COMMANDSTATE | ACMD_MCS.COMMAND_STATUS_BIT_INDEX_UNLOADING;
-                cmd_mcsDao.update(con, cmd);
-            }
-            return isSuccess;
-        }
-        public override bool updateTranStatus2UnloadComplete(string cmdID)
-        {
-            bool isSuccess = true;
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            {
-                ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmdID);
-                cmd.COMMANDSTATE = cmd.COMMANDSTATE | ACMD_MCS.COMMAND_STATUS_BIT_INDEX_UNLOAD_COMPLETE;
                 cmd_mcsDao.update(con, cmd);
             }
             return isSuccess;
@@ -401,7 +339,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                 {
                     cmd.TRANSFERSTATE = tran_status;
                     cmd.CMD_FINISH_TIME = DateTime.Now;
-                    cmd.COMMANDSTATE = cmd.COMMANDSTATE | ACMD_MCS.COMMAND_STATUS_BIT_INDEX_COMMNAD_FINISH;
                     cmd_mcsDao.update(con, cmd);
                 }
                 else
@@ -1750,7 +1687,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             return isSuccess;
         }
-        public override bool updateCommand_OHTC_CarrierID(string cmd_id, string new_carrier_id)
+        public override bool updateCommand_OHTC_CarrierID(string cmd_id,string new_carrier_id)
         {
             bool isSuccess = false;
             //using (DBConnection_EF con = new DBConnection_EF())

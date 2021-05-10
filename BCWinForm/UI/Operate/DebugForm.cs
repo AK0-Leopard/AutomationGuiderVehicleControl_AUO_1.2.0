@@ -50,8 +50,6 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             checkBox_host_offline.Checked = DebugParameter.UseHostOffline;
             cb_advanceDriveAway.Checked = DebugParameter.AdvanceDriveAway;
             cb_passCouplerHPSafetySingnal.Checked = DebugParameter.isPassCouplerHPSafetySignal;
-            ck_isMaunalReportFinishWhenLoadingUnloading.Checked = DebugParameter.isManualReportCommandFinishWhenLoadingUnloading;
-
 
             List<string> lstVh = new List<string>();
             lstVh.Add(string.Empty);
@@ -387,10 +385,9 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             switch (bcApp.SCApplication.BC_ID)
             {
                 case "SOUTH_INNOLUX":
-                case "NORTH_INNOLUX":
-                    tb_CouplerStatus1.Text = unit.coupler1Status_NORTH_INNOLUX.ToString();
-                    tb_CouplerStatus2.Text = unit.coupler2Status_NORTH_INNOLUX.ToString();
-                    tb_CouplerStatus3.Text = unit.coupler3Status_NORTH_INNOLUX.ToString();
+                    tb_CouplerStatus1.Text = unit.coupler1Status_SOUTH_INNOLUX.ToString();
+                    tb_CouplerStatus2.Text = unit.coupler2Status_SOUTH_INNOLUX.ToString();
+                    tb_CouplerStatus3.Text = unit.coupler3Status_SOUTH_INNOLUX.ToString();
                     break;
                 default:
                     tb_CouplerStatus1.Text = unit.coupler1Status.ToString();
@@ -1604,11 +1601,6 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         private void btn_ForceResetAlarm_Click(object sender, EventArgs e)
         {
             SCApplication.getInstance().VehicleService.ProcessAlarmReport(noticeCar, "0", sc.ProtocolFormat.OHTMessage.ErrorStatus.ErrReset, "");
-        }
-
-        private void ck_isMaunalReportFinishWhenLoadingUnloading_CheckedChanged(object sender, EventArgs e)
-        {
-            DebugParameter.isManualReportCommandFinishWhenLoadingUnloading = ck_isMaunalReportFinishWhenLoadingUnloading.Checked;
         }
     }
 }

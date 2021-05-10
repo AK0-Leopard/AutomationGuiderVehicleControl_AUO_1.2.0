@@ -55,7 +55,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             dgv_vhStatus.DataSource = bindingSource;
             scApp.getEQObjCacheManager().CommonInfo.ObjectToShow_list.Clear();
 
-
+            
             uctl_Map.BackColor = Color.FromArgb(29, 36, 60);
             dgv_TransferCommand.AutoGenerateColumns = false;
 
@@ -76,7 +76,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             adjustmentDataGridViewWeight();
 
             initialEvent();
-            uc_StatusTreeViewer1.start(scApp);
+
         }
 
         private void initialEvent()
@@ -276,11 +276,11 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             cmb_cycRunZone.DataSource = allCycleRunZone;
 
 
-            //string[] allSec = scApp.MapBLL.loadAllSectionID().ToArray();
-            //cmb_fromSection.DataSource = allSec;
-            //cmb_fromSection.AutoCompleteCustomSource.AddRange(allSec);
-            //cmb_fromSection.AutoCompleteMode = AutoCompleteMode.Suggest;
-            //cmb_fromSection.AutoCompleteSource = AutoCompleteSource.ListItems;
+            string[] allSec = scApp.MapBLL.loadAllSectionID().ToArray();
+            cmb_fromSection.DataSource = allSec;
+            cmb_fromSection.AutoCompleteCustomSource.AddRange(allSec);
+            cmb_fromSection.AutoCompleteMode = AutoCompleteMode.Suggest;
+            cmb_fromSection.AutoCompleteSource = AutoCompleteSource.ListItems;
 
 
             List<string> lstVh = new List<string>();
@@ -298,7 +298,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
 
             List<string> park_zone_type = scApp.ParkBLL.loadAllParkZoneType();
-            //cb_parkZoneType.DataSource = park_zone_type;
+            cb_parkZoneType.DataSource = park_zone_type;
 
         }
 
@@ -347,6 +347,8 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
         private async void excuteLoadUnloadCommand()
         {
+            string fromSection = cmb_fromSection.Text;
+            ASECTION asection = scApp.MapBLL.getSectiontByID(fromSection);
 
             string hostsource = cmb_fromAddress.Text;
             string hostdest = cmb_toAddress.Text;
@@ -630,7 +632,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             SetHostControlState(line.Host_Control_State);
 
             updateTransferCommand();
-            uc_StatusTreeViewer1.refresh();
+
         }
         private void updateTransferCommand()
         {
@@ -1148,9 +1150,9 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
         private void btn_parkZoneTypeChange_Click(object sender, EventArgs e)
         {
-            //string selected_park_zone_type = cb_parkZoneType.SelectedItem as string;
-            //if (selected_park_zone_type == null) return;
-            //scApp.ParkBLL.doParkZoneTypeChange(selected_park_zone_type);
+            string selected_park_zone_type = cb_parkZoneType.SelectedItem as string;
+            if (selected_park_zone_type == null) return;
+            scApp.ParkBLL.doParkZoneTypeChange(selected_park_zone_type);
         }
 
 
@@ -1213,21 +1215,5 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             }, null);
         }
 
-        private async void btn_creatMCSCommandManual_Click(object sender, EventArgs e)
-        {
-            string hostsource = cmb_fromAddress.Text;
-            string hostdest = cmb_toAddress.Text;
-            string cst_id = txt_cst_id.Text;
-            (bool is_success, string check_result) result = (false, "");
-            await Task.Run(() => result = scApp.TransferService.tryToCreatManualMCSCommand(hostsource, hostdest, cst_id));
-            if (result.is_success)
-            {
-                MessageBox.Show("Creat Success.");
-            }
-            else
-            {
-                MessageBox.Show($"Creat fail,result:{result.check_result}.");
-            }
-        }
     }
 }

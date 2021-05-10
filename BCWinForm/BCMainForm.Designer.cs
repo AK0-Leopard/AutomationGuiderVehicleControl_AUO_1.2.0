@@ -95,7 +95,6 @@ namespace com.mirle.ibg3k0.bc.winform
             this.changePasswordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uASToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reserveSectionInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.staticsChartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.languageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.englishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.zh_twToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -110,7 +109,7 @@ namespace com.mirle.ibg3k0.bc.winform
             this.transferCommandHistoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.alarmToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.carrierInstalledRemoveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.staticsChartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.CMS_OnLineMode.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -317,8 +316,7 @@ namespace com.mirle.ibg3k0.bc.winform
             this.languageChangeToolStripMenuItem,
             this.editToolStripMenuItem,
             this.toolStripSeparator1,
-            this.transferCommandToolStripMenuItem,
-            this.carrierInstalledRemoveToolStripMenuItem});
+            this.transferCommandToolStripMenuItem});
             this.operatorToolStripMenuItem.Name = "operatorToolStripMenuItem";
             resources.ApplyResources(this.operatorToolStripMenuItem, "operatorToolStripMenuItem");
             // 
@@ -427,12 +425,6 @@ namespace com.mirle.ibg3k0.bc.winform
             resources.ApplyResources(this.reserveSectionInfoToolStripMenuItem, "reserveSectionInfoToolStripMenuItem");
             this.reserveSectionInfoToolStripMenuItem.Click += new System.EventHandler(this.reserveSectionInfoToolStripMenuItem_Click);
             // 
-            // staticsChartToolStripMenuItem
-            // 
-            this.staticsChartToolStripMenuItem.Name = "staticsChartToolStripMenuItem";
-            resources.ApplyResources(this.staticsChartToolStripMenuItem, "staticsChartToolStripMenuItem");
-            this.staticsChartToolStripMenuItem.Click += new System.EventHandler(this.staticsChartToolStripMenuItem_Click);
-            // 
             // languageToolStripMenuItem
             // 
             this.languageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -524,11 +516,11 @@ namespace com.mirle.ibg3k0.bc.winform
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // carrierInstalledRemoveToolStripMenuItem
+            // staticsChartToolStripMenuItem
             // 
-            this.carrierInstalledRemoveToolStripMenuItem.Name = "carrierInstalledRemoveToolStripMenuItem";
-            resources.ApplyResources(this.carrierInstalledRemoveToolStripMenuItem, "carrierInstalledRemoveToolStripMenuItem");
-            this.carrierInstalledRemoveToolStripMenuItem.Click += new System.EventHandler(this.carrierInstalledRemoveToolStripMenuItem_Click);
+            this.staticsChartToolStripMenuItem.Name = "staticsChartToolStripMenuItem";
+            resources.ApplyResources(this.staticsChartToolStripMenuItem, "staticsChartToolStripMenuItem");
+            this.staticsChartToolStripMenuItem.Click += new System.EventHandler(this.staticsChartToolStripMenuItem_Click);
             // 
             // BCMainForm
             // 
@@ -688,7 +680,6 @@ namespace com.mirle.ibg3k0.bc.winform
         private System.Windows.Forms.ToolStripMenuItem reserveSectionInfoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hostConnectionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem staticsChartToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem carrierInstalledRemoveToolStripMenuItem;
     }
 
     /// <summary>

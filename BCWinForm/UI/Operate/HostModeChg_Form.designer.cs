@@ -234,7 +234,7 @@
             // txtHostMode
             // 
             this.txtHostMode.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.txtHostMode.BackColor = System.Drawing.Color.Lime;
+            this.txtHostMode.BackColor = System.Drawing.Color.Red;
             this.txtHostMode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtHostMode.Cursor = System.Windows.Forms.Cursors.Default;
             this.txtHostMode.Font = new System.Drawing.Font("Arial", 14.25F);
@@ -245,7 +245,7 @@
             this.txtHostMode.ReadOnly = true;
             this.txtHostMode.Size = new System.Drawing.Size(187, 29);
             this.txtHostMode.TabIndex = 13;
-            this.txtHostMode.Text = "On-Line Remote";
+            this.txtHostMode.Text = "OffLine";
             this.txtHostMode.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // butOnlineRemote
