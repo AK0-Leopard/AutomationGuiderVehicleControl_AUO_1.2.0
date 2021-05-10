@@ -1969,17 +1969,17 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         private Mirle.Hlts.Utils.HltDirection decideReserveDirection(double vhAngle)
         {
-            //if (vhAngle == 90
-            //    || vhAngle == -90
-            //    || vhAngle == -270
-            //    || vhAngle == 270)
-            //    return Mirle.Hlts.Utils.HltDirection.NS;
-            //else
-            //{
-            //    return Mirle.Hlts.Utils.HltDirection.EW;
-            //}
+            if (vhAngle == 90
+                || vhAngle == -90
+                || vhAngle == -270
+                || vhAngle == 270)
+                return Mirle.Hlts.Utils.HltDirection.NS;
+            else
+            {
+                return Mirle.Hlts.Utils.HltDirection.EW;
+            }
 
-            return Mirle.Hlts.Utils.HltDirection.Forward;
+            //return Mirle.Hlts.Utils.HltDirection.NS;
 
         }
         #region Vehicle Object Info
