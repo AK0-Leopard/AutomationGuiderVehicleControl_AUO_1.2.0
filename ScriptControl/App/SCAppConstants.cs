@@ -214,8 +214,7 @@ namespace com.mirle.ibg3k0.sc.App
         {
             Auto = 1,
             Manual = 2,
-            Debug = 3,
-            Retry = 9
+            Debug = 3
         }
         public static readonly int COMMANDID_MANUAL_NUMBER_LENGTH = 4;     //0000 ~ 9999
         public static readonly int COMMANDID_MANUAL_NUMBER_MAX = 9999;
@@ -729,7 +728,6 @@ namespace com.mirle.ibg3k0.sc.App
             public static readonly int Force_Finish = 19;
             public static readonly int Force_Finish_CstIDMissMatch = 20;
             public static readonly int Force_Finish_LFCStart = 21;
-            public static readonly int BCRReadFail = 30;
             public static readonly int Null;
 
             public static string convert2String(int status)

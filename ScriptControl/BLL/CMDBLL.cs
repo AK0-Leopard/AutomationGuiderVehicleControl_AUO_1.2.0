@@ -78,59 +78,40 @@ namespace com.mirle.ibg3k0.sc.BLL
             return checkcode;
         }
 
-        public virtual bool doCreatMCSCommand(string command_id, string Priority, string replace, string carrier_id, string HostSource, string HostDestination, string checkcode)
-        {
-            try
-            {
-                bool isSuccess = true;
-                int ipriority = 0;
-                if (!int.TryParse(Priority, out ipriority))
-                {
-                    logger.Warn("command id :{0} of priority parse fail. priority valus:{1}"
-                                , command_id
-                                , Priority);
-                }
-                int ireplace = 0;
-                if (!int.TryParse(replace, out ireplace))
-                {
-                    logger.Warn("command id :{0} of priority parse fail. priority valus:{1}"
-                                , command_id
-                                , ireplace);
-                }
-
-
-                //ACMD_MCS mcs_com = creatCommand_MCS(command_id, ipriority, carrier_id, HostSource, HostDestination, checkcode);
-                creatCommand_MCS(command_id, ipriority, ireplace, carrier_id, HostSource, HostDestination, checkcode);
-                //if (mcs_com != null)
-                //{
-                //    isSuccess = true;
-                //    scApp.SysExcuteQualityBLL.creatSysExcuteQuality(mcs_com);
-                //    //mcsDefaultMapAction.sendS6F11_TranInit(command_id);
-                //    scApp.ReportBLL.doReportTransferInitial(command_id);
-                //    checkMCS_TransferCommand();
-                //}
-                return isSuccess;
-            }
-            catch(Exception ex)
-            {
-                logger.Error(ex, "Exection:");
-                return false;
-            }
-
-
-        }
-        public bool updateCMD_MCS_CmdState2BCRFail(string cmd_id)
+        public bool doCreatMCSCommand(string command_id, string Priority, string replace, string carrier_id, string HostSource, string HostDestination, string checkcode)
         {
             bool isSuccess = true;
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            int ipriority = 0;
+            if (!int.TryParse(Priority, out ipriority))
             {
-                ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmd_id);
-                cmd.COMMANDSTATE = SCAppConstants.TaskCmdStatus.BCRReadFail;
-                cmd_mcsDao.update(con, cmd);
+                logger.Warn("command id :{0} of priority parse fail. priority valus:{1}"
+                            , command_id
+                            , Priority);
             }
+            int ireplace = 0;
+            if (!int.TryParse(replace, out ireplace))
+            {
+                logger.Warn("command id :{0} of priority parse fail. priority valus:{1}"
+                            , command_id
+                            , ireplace);
+            }
+
+
+            //ACMD_MCS mcs_com = creatCommand_MCS(command_id, ipriority, carrier_id, HostSource, HostDestination, checkcode);
+            creatCommand_MCS(command_id, ipriority, ireplace, carrier_id, HostSource, HostDestination, checkcode);
+            //if (mcs_com != null)
+            //{
+            //    isSuccess = true;
+            //    scApp.SysExcuteQualityBLL.creatSysExcuteQuality(mcs_com);
+            //    //mcsDefaultMapAction.sendS6F11_TranInit(command_id);
+            //    scApp.ReportBLL.doReportTransferInitial(command_id);
+            //    checkMCS_TransferCommand();
+            //}
             return isSuccess;
+
         }
-        public virtual ACMD_MCS creatCommand_MCS(string command_id, int Priority, int replace, string carrier_id, string HostSource, string HostDestination, string checkcode)
+
+        public ACMD_MCS creatCommand_MCS(string command_id, int Priority, int replace, string carrier_id, string HostSource, string HostDestination, string checkcode)
         {
             int port_priority = 0;
             if (!SCUtility.isEmpty(HostSource))
@@ -143,6 +124,10 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
                 else
                 {
+                    if(scApp.BC_ID == "NORTH_INNOLUX")
+                    {
+                        HostSource = HostSource.Replace("-01", "");
+                    }
                     port_priority = source_portStation.PRIORITY;
                 }
             }
@@ -921,7 +906,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
 
         const string WTO_GROUP_NAME = "AAWTO400";
-        public virtual void checkMCSTransferCommand_New()
+        public void checkMCSTransferCommand_New()
         {
             if (System.Threading.Interlocked.Exchange(ref syncTranCmdPoint, 1) == 0)
             {
@@ -1189,7 +1174,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                                     }
                                 }
                             }
-
 
                             foreach (ACMD_MCS waitting_excute_mcs_cmd in ACMD_MCSs)
                             {
