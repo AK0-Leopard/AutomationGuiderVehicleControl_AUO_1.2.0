@@ -391,8 +391,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         private S6F11.RPTINFO.RPTITEM.VIDITEM_04 buildSettedAlarmVIDItem()
         {
-            List<ALARM> alarms = scApp.AlarmBLL.getCurrentSeriousAlarms();
-            //List<ALARM> alarms = scApp.AlarmBLL.getCurrentAlarms();
+            //List<ALARM> alarms = scApp.AlarmBLL.getCurrentSeriousAlarms();
+            List<ALARM> alarms = scApp.AlarmBLL.getCurrentAlarms();
             S6F11.RPTINFO.RPTITEM.VIDITEM_04 viditem_04 = new S6F11.RPTINFO.RPTITEM.VIDITEM_04();
             viditem_04.ALIDs = new string[alarms.Count];
             int index = -1;

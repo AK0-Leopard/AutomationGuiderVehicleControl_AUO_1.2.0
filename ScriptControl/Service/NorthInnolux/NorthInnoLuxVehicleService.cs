@@ -4006,36 +4006,32 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 string node_id = eqpt.NODE_ID;
                 string vh_id = eqpt.VEHICLE_ID;
+                //var alarm_map = scApp.AlarmBLL.GetAlarmMap(vh_id, err_code);
+                //if(alarm_map == null)
+                //{
+                //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
+                //       Data: $"Process vehicle alarm report,but can not found alarm map. alarm code:{err_code},alarm status{status},error desc:{errorDesc}",
+                //       VehicleID: eqpt.VEHICLE_ID,
+                //       CarrierID: eqpt.CST_ID);
+                //    return;
+                //}
+
                 bool is_all_alarm_clear = SCUtility.isMatche(err_code, "0") && status == ErrorStatus.ErrReset;
-                if (!is_all_alarm_clear)
-                {
-                    var alarm_map = scApp.AlarmBLL.GetAlarmMap(node_id, err_code);
-                    if (alarm_map == null)
-                    {
-                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
-                           Data: $"Process vehicle alarm report,but can not found alarm map. alarm code:{err_code},alarm status{status},error desc:{errorDesc}",
-                           VehicleID: eqpt.VEHICLE_ID,
-                           CarrierID: eqpt.CST_ID);
-                        return;
-                    }
-
-                    //if (is_all_alarm_clear ||
-                    //    (alarm_map != null && alarm_map.ALARM_LVL == E_ALARM_LVL.Error))
-                    //{
-                    //在設備上報Alarm時，如果是第一次上報(之前都沒有Alarm發生時，則要上報S6F11 CEID=52 Alarm Set)
-                    //if (status == ErrorStatus.ErrSet &&
-                    //    !scApp.AlarmBLL.hasAlarmExist())
-                    //{
-                    //    scApp.ReportBLL.ReportAlarmSet();
-                    //}
-                    if (status == ErrorStatus.ErrSet &&
-                        !scApp.AlarmBLL.hasAlarmExist() && alarm_map.ALARM_LVL == E_ALARM_LVL.Error)
-                    {
-                        scApp.ReportBLL.ReportAlarmSet();
-                    }
-                }
+                //if (is_all_alarm_clear ||
+                //    (alarm_map != null && alarm_map.ALARM_LVL == E_ALARM_LVL.Error))
+                //{
                 List<ALARM> alarms = null;
-
+                //在設備上報Alarm時，如果是第一次上報(之前都沒有Alarm發生時，則要上報S6F11 CEID=52 Alarm Set)
+                if (status == ErrorStatus.ErrSet &&
+                    !scApp.AlarmBLL.hasAlarmExist())
+                {
+                    scApp.ReportBLL.ReportAlarmSet();
+                }
+                //if (status == ErrorStatus.ErrSet &&
+                //    !scApp.AlarmBLL.hasAlarmExist() && alarm_map.ALARM_LVL == E_ALARM_LVL.Error )
+                //{
+                //    scApp.ReportBLL.ReportAlarmSet();
+                //}
                 scApp.getRedisCacheManager().BeginTransaction();
                 using (TransactionScope tx = SCUtility.getTransactionScope())
                 {
@@ -4081,7 +4077,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 foreach (ALARM report_alarm in alarms)
                 {
                     if (report_alarm == null) continue;
-                    if (report_alarm.ALAM_LVL != E_ALARM_LVL.Error) continue;
+                    //if (report_alarm.ALAM_LVL != E_ALARM_LVL.Error) continue;
                     //需判斷Alarm是否存在如果有的話則需再判斷MCS是否有Disable該Alarm的上報
                     if (scApp.AlarmBLL.IsReportToHost(report_alarm.ALAM_CODE))
                     {
@@ -4121,7 +4117,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 //在設備上報取消Alarm，如果已經沒有Alarm(Alarm都已經消除，則要上報S6F11 CEID=52 Alarm Clear)
                 if (status == ErrorStatus.ErrReset &&
-                    !scApp.AlarmBLL.hasAlarmErrorExist())
+                    !scApp.AlarmBLL.hasAlarmExist())
                 {
                     scApp.ReportBLL.ReportAlarmCleared();
                 }

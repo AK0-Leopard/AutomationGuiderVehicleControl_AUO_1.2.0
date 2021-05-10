@@ -309,9 +309,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction.NorthInnolux
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(SubChargerValueDefMapAction), Device: Service.VehicleService.DEVICE_NAME_AGV,
                                Data: $"The vehicles bumped coupler will happend. send pause to {update_result.VehicleID}",
                                VehicleID: update_result.VehicleID);
-                            scApp.VehicleService.doAbortCommand(will_bumped_vh, will_bumped_vh.OHTC_CMD, ProtocolFormat.OHTMessage.CMDCancelType.CmdEms);
-                            //doAbortCommand(assign_vh, ohtc_cmd_id, actType); ;
-                            //scApp.VehicleService.PauseRequest(will_bumped_vh.VEHICLE_ID, ProtocolFormat.OHTMessage.PauseEvent.Pause, SCAppConstants.OHxCPauseType.Safty);
+                            //scApp.VehicleService.doAbortCommand(will_bumped_vh, will_bumped_vh.OHTC_CMD, CMDCancelType.CmdEms);
+                            scApp.VehicleService.PauseRequest(will_bumped_vh.VEHICLE_ID, ProtocolFormat.OHTMessage.PauseEvent.Pause, SCAppConstants.OHxCPauseType.Safty);
                         }
                     }
 
