@@ -40,13 +40,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                              SingleOrDefault();
                 return unit;
             }
-            public List<AUNIT> loadUnits()
-            {
-                List<AUNIT> units = CacheManager.getAllUnit().
-                             Where(u => u.UNIT_ID.Contains("Charger")).
-                             ToList();
-                return units;
-            }
         }
     }
 }

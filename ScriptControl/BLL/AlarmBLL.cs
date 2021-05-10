@@ -125,7 +125,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
         #endregion AlarmConvertInfo
         object lock_obj_alarm = new object();
-        public virtual ALARM setAlarmReport(string nodeID, string eq_id, string error_code, string errorDesc)
+        public ALARM setAlarmReport(string nodeID, string eq_id, string error_code, string errorDesc)
         {
             lock (lock_obj_alarm)
             {
@@ -156,7 +156,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
         }
 
-        public virtual void setAlarmReport2Redis(ALARM alarm)
+        public void setAlarmReport2Redis(ALARM alarm)
         {
             if (alarm == null) return;
             string hash_field = $"{alarm.EQPT_ID}_{alarm.ALAM_CODE}";
@@ -225,7 +225,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return alarms;
         }
 
-        public virtual ALARM resetAlarmReport(string eq_id, string error_code)
+        public ALARM resetAlarmReport(string eq_id, string error_code)
         {
             lock (lock_obj_alarm)
             {
@@ -244,7 +244,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
         }
 
-        public virtual void resetAlarmReport2Redis(ALARM alarm)
+        public void resetAlarmReport2Redis(ALARM alarm)
         {
             if (alarm == null) return;
             string hash_field = $"{alarm.EQPT_ID.Trim()}_{alarm.ALAM_CODE.Trim()}";

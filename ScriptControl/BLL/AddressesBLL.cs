@@ -58,12 +58,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                 List<CouplerAddress> CouplerAddresses = CommObjCacheManager.getCouplerAddresses();
                 return CouplerAddresses;
             }
-            public List<CouplerAddress> LoadCouplerAddresses(string chargerID)
-            {
-                List<CouplerAddress> CouplerAddresses = CommObjCacheManager.getCouplerAddresses();
-                CouplerAddresses = CouplerAddresses.Where(coupler => SCUtility.isMatche(coupler.ChargerID, chargerID)).ToList();
-                return CouplerAddresses;
-            }
             public List<CouplerAddress> GetEnableCouplerAddresses(UnitBLL unitBLL)
             {
                 List<CouplerAddress> CouplerAddresses = CommObjCacheManager.getCouplerAddresses();

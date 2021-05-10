@@ -2589,10 +2589,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     scApp.VehicleBLL.cache.SetUnsuccessReserveInfo(eqpt.VEHICLE_ID, new AVEHICLE.ReserveUnsuccessInfo(ReserveResult.reservedVhID, "", reserve_fail_section));
                     Task.Run(() => tryNotifyVhAvoid_New(eqpt.VEHICLE_ID, ReserveResult.reservedVhID));
                 }
-                //replyTranEventReport(bcfApp, EventType.ReserveReq, eqpt, seqNum, reserveSuccess: ReserveResult.isSuccess, reserveInfos: reserveInfos);
-                replyTranEventReport(bcfApp, EventType.ReserveReq, eqpt, seqNum, 
-                     reserveSuccess: ReserveResult.isSuccess,
-                     reserveInfos: ReserveResult.reserveSuccessInfos);
+                replyTranEventReport(bcfApp, EventType.ReserveReq, eqpt, seqNum, reserveSuccess: ReserveResult.isSuccess, reserveInfos: reserveInfos);
             }
         }
 
@@ -3949,7 +3946,7 @@ namespace com.mirle.ibg3k0.sc.Service
         #region Alarm
 
         [ClassAOPAspect]
-        public override void AlarmReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_194_ALARM_REPORT recive_str, int seq_num)
+        public void AlarmReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_194_ALARM_REPORT recive_str, int seq_num)
         {
             SCUtility.RecodeReportInfo(eqpt.VEHICLE_ID, seq_num, recive_str);
             LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
@@ -4004,15 +4001,6 @@ namespace com.mirle.ibg3k0.sc.Service
                 string node_id = eqpt.NODE_ID;
                 string vh_id = eqpt.VEHICLE_ID;
                 //var alarm_map = scApp.AlarmBLL.GetAlarmMap(vh_id, err_code);
-                //if(alarm_map == null)
-                //{
-                //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
-                //       Data: $"Process vehicle alarm report,but can not found alarm map. alarm code:{err_code},alarm status{status},error desc:{errorDesc}",
-                //       VehicleID: eqpt.VEHICLE_ID,
-                //       CarrierID: eqpt.CST_ID);
-                //    return;
-                //}
-
                 bool is_all_alarm_clear = SCUtility.isMatche(err_code, "0") && status == ErrorStatus.ErrReset;
                 //if (is_all_alarm_clear ||
                 //    (alarm_map != null && alarm_map.ALARM_LVL == E_ALARM_LVL.Error))
@@ -4024,11 +4012,6 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     scApp.ReportBLL.ReportAlarmSet();
                 }
-                //if (status == ErrorStatus.ErrSet &&
-                //    !scApp.AlarmBLL.hasAlarmExist() && alarm_map.ALARM_LVL == E_ALARM_LVL.Error )
-                //{
-                //    scApp.ReportBLL.ReportAlarmSet();
-                //}
                 scApp.getRedisCacheManager().BeginTransaction();
                 using (TransactionScope tx = SCUtility.getTransactionScope())
                 {
@@ -4096,17 +4079,10 @@ namespace com.mirle.ibg3k0.sc.Service
                                 scApp.ReportBLL.newReportAlarmEvent(eqpt.Real_ID, alarmConvertInfo.CEIDClear, alarmConvertInfo.ALID, eqpt.MCS_CMD, alarmConvertInfo.ALTX, alarmConvertInfo.AlarmLevel, reportqueues);
                             }
                         }
-                        else
-                        {
-                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
-                           Data: $"can not found AlarmConvertInfo,alarm code:{err_code},alarm status{status}",
-                           VehicleID: eqpt.VEHICLE_ID,
-                           CarrierID: eqpt.CST_ID);
-                        }
 
                         scApp.ReportBLL.newSendMCSMessage(reportqueues);
 
-                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                            Data: $"do report alarm to mcs,alarm code:{err_code},alarm status{status}",
                            VehicleID: eqpt.VEHICLE_ID,
                            CarrierID: eqpt.CST_ID);

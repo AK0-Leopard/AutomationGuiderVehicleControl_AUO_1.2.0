@@ -60,8 +60,7 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         public const string DEVICE_NAME_AGV = "AGV";
         public int repositionDistance = 5000;
-        public string parkAdr1 = "";
-        public string parkAdr2 = "";
+        public string parkAdr = "";
         Logger logger = LogManager.GetCurrentClassLogger();
         protected SCApplication scApp = null;
 
@@ -3767,7 +3766,7 @@ namespace com.mirle.ibg3k0.sc.Service
         #region Alarm
 
         [ClassAOPAspect]
-        public virtual void AlarmReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_194_ALARM_REPORT recive_str, int seq_num)
+        public void AlarmReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_194_ALARM_REPORT recive_str, int seq_num)
         {
             //LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
             //  seq_num: seq_num, Data: recive_str,

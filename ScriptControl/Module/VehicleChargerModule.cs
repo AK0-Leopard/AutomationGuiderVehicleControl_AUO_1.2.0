@@ -16,7 +16,6 @@ namespace com.mirle.ibg3k0.sc.Module
         private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private VehicleBLL vehicleBLL = null;
         private Service.VehicleService vehicleService = null;
-        private Service.LineService lineService = null;
         private SegmentBLL segmentBLL = null;
         private AddressesBLL addressesBLL = null;
         private GuideBLL guideBLL = null;
@@ -38,107 +37,13 @@ namespace com.mirle.ibg3k0.sc.Module
             unitBLL = app.UnitBLL;
             commObjCacheManager = app.getCommObjCacheManager();
             var vhs = app.getEQObjCacheManager().getAllVehicle();
-            lineService = app.LineService;
             foreach (AVEHICLE vh in vhs)
             {
                 vh.CommandComplete += Vh_CommandComplete;
                 vh.BatteryLevelChange += Vh_BatteryLevelChange;
                 vh.BatteryCapacityChange += Vh_BatteryCapacityChange;
             }
-
-            //註冊各個Coupler的Status變化，在有其中一個有變化的時候要通知AGV目前所有coupler的狀態
-            List<AUNIT> chargers = unitBLL.OperateCatch.loadUnits();
-            foreach (AUNIT charger in chargers)
-            {
-                //charger.CouplerStatusChanged += Charger_CouplerStatusChanged;
-                charger.CouplerHPSafetyChaged += Charger_CouplerHPSafetyChaged;
-            }
         }
-
-        private void Charger_CouplerHPSafetyChaged(object sender, SCAppConstants.CouplerHPSafety e)
-        {
-            //try
-            //{
-            //    if (DebugParameter.isPassCouplerHPSafetySignal)
-            //    {
-            //        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleChargerModule), Device: DEVICE_NAME,
-            //           Data: $"pass coupler hp safey signal,flag:{DebugParameter.isPassCouplerHPSafetySignal}");
-            //        return;
-            //    }
-            //    AUNIT charger = sender as AUNIT;
-            //    if (charger == null)
-            //    {
-            //        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleChargerModule), Device: DEVICE_NAME,
-            //           Data: $"charger is null");
-            //        return;
-            //    }
-            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleChargerModule), Device: DEVICE_NAME,
-            //       Data: $"Coupler hp safyte has changed,charger id:{charger.UNIT_ID} hp safety:{e}");
-            //    var couplers = addressesBLL.cache.LoadCouplerAddresses(charger.UNIT_ID);
-            //    var vhs = vehicleBLL.cache.loadAllVh();
-            //    switch (e)
-            //    {
-            //        case SCAppConstants.CouplerHPSafety.NonSafety:
-            //            vehicleService.ProcessAlarmReport(charger.UNIT_ID, AlarmBLL.AGVC_CHARGER_HP_NOT_SAFETY, ErrorStatus.ErrSet, $"Coupler position not safety.");
-            //            break;
-            //        case SCAppConstants.CouplerHPSafety.Safyte:
-            //            vehicleService.ProcessAlarmReport(charger.UNIT_ID, AlarmBLL.AGVC_CHARGER_HP_NOT_SAFETY, ErrorStatus.ErrReset, $"Coupler position not safety.");
-            //            break;
-            //    }
-            //    foreach (var coupler in couplers)
-            //    {
-            //        string coupler_adr_id = coupler.ADR_ID;
-            //        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleChargerModule), Device: DEVICE_NAME,
-            //           Data: $"Coupler hp safyte has changed,coupler adr id:{coupler_adr_id}, start check has vh can pass...");
-            //        foreach (var vh in vhs)
-            //        {
-            //            if (vh.isTcpIpConnect &&
-            //                (vh.MODE_STATUS == VHModeStatus.AutoRemote ||
-            //                 vh.MODE_STATUS == VHModeStatus.AutoCharging ||
-            //                 vh.MODE_STATUS == VHModeStatus.AutoCharging)
-            //               )
-            //            {
-            //                string vh_cur_adr_id = vh.CUR_ADR_ID;
-            //                bool is_walkable = guideBLL.IsRoadWalkable(coupler_adr_id, vh_cur_adr_id);
-            //                if (is_walkable)
-            //                {
-            //                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleChargerModule), Device: DEVICE_NAME,
-            //                       Data: $"Coupler hp safyte has changed,coupler adr id:{coupler_adr_id} vh current adr:{vh_cur_adr_id}, is walkable start pause/continue action");
-            //                    string vh_id = vh.VEHICLE_ID;
-            //                    PauseType pauseType = PauseType.Normal;
-            //                    PauseEvent pauseEvent = PauseEvent.Pause;
-            //                    if (e == SCAppConstants.CouplerHPSafety.Safyte)
-            //                    {
-            //                        pauseEvent = PauseEvent.Continue;
-            //                    }
-            //                    else
-            //                    {
-            //                        pauseEvent = PauseEvent.Pause;
-            //                    }
-            //                    //Task.Run(() =>
-            //                    //{
-            //                    //    try
-            //                    //    {
-            //                    //        vehicleService.Send.Pause(vh_id, pauseEvent, pauseType);
-            //                    //    }
-            //                    //    catch (Exception ex)
-            //                    //    {
-            //                    //        logger.Error(ex, "Exception:");
-            //                    //    }
-            //                    //});
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    logger.Error(ex, "Exception:");
-            //}
-
-        }
-
-
         int URGENT_BATTERY_LEVEL = 30;
         private void Vh_BatteryCapacityChange(object sender, int batteryCapacity)
         {

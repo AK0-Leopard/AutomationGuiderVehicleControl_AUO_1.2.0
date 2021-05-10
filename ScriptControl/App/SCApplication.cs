@@ -492,8 +492,7 @@ namespace com.mirle.ibg3k0.sc.App
 
             initialReserveSectionAPI();
             setRePositionInfo();
-            setParkAdr1();
-            setParkAdr2();
+            setParkAdr();
             startBLL();
             initWIF();      //Initial WIF   //A0.01
             initialCatchDataFromDB();
@@ -599,17 +598,12 @@ namespace com.mirle.ibg3k0.sc.App
             vehicleService.repositionDistance = RePositionDistance;
         }
 
-        private void setParkAdr1()
+        private void setParkAdr()
         {
-            string ParkAdr1 = getString("ParkAdr1", "");
-            vehicleService.parkAdr1 = ParkAdr1;
+            string ParkAdr = getString("ParkAdr", "");
+            vehicleService.parkAdr = ParkAdr;
         }
 
-        private void setParkAdr2()
-        {
-            string ParkAdr2 = getString("ParkAdr2", "");
-            vehicleService.parkAdr2 = ParkAdr2;
-        }
 
         private void LoadMapFiles(string addressPath = null, string sectionPath = null)
         {
@@ -2024,7 +2018,6 @@ namespace com.mirle.ibg3k0.sc.App
 
         public static int NumberOfAvoidanceSegment = 3;
         public static Boolean AdvanceDriveAway = true;
-        public static Boolean isPassCouplerHPSafetySignal = false;
 
     }
 }

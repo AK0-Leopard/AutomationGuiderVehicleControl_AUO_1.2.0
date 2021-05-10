@@ -2433,7 +2433,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //}
             return false;
         }
-        public override AMCSREPORTQUEUE S6F11BulibMessage(string ceid, object vidCollection, List<string> rptids = null)
+        public override AMCSREPORTQUEUE S6F11BulibMessage(string ceid, object vidCollection)
         {
             try
             {

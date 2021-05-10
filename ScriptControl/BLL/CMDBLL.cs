@@ -2014,7 +2014,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         //}
 
         private long ohxc_cmd_SyncPoint = 0;
-        public virtual void checkOHxC_TransferCommand()
+        public void checkOHxC_TransferCommand()
         {
             if (System.Threading.Interlocked.Exchange(ref ohxc_cmd_SyncPoint, 1) == 0)
             {
@@ -2041,7 +2041,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                                 continue;
                             }
 
-                            scApp.VehicleService.doSendCommandToVh(assignVH, cmd);//定時檢查發送
+                            scApp.VehicleService.doSendCommandToVh(assignVH, cmd);
                         }
                         //else
                         //{
