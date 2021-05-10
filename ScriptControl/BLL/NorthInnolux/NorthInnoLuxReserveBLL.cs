@@ -322,13 +322,10 @@ namespace com.mirle.ibg3k0.sc.BLL
                         break;
                     }
 
-                    Mirle.Hlts.Utils.HltDirection hltDirection = Mirle.Hlts.Utils.HltDirection.NS;
-                    //Mirle.Hlts.Utils.HltDirection hltDirection = decideReserveDirection(vh, reserve_section_id);
-                    //AVEHICLE vh = scApp.VehicleBLL.cache.getVehicle(vhID);
-                    //Mirle.Hlts.Utils.HltDirection hltDirection = scApp.ReserveBLL.DecideReserveDirection(scApp.SectionBLL, vh, reserve_section_id);
-                    //LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
-                    //   Data: $"vh:{vhID} Try add(Only ask) reserve section:{reserve_section_id} ,hlt dir:{hltDirection}...",
-                    //   VehicleID: vhID);
+                    Mirle.Hlts.Utils.HltDirection hltDirection = Mirle.Hlts.Utils.HltDirection.None;
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
+                       Data: $"vh:{vhID} Try add(Only ask) reserve section:{reserve_section_id} ,hlt dir:{hltDirection}...",
+                       VehicleID: vhID);
                     result = TryAddReservedSectionNew(vhID, reserve_section_id,
                                                    sensorDir: hltDirection,
                                                    isAsk: isAsk);
