@@ -305,18 +305,6 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction.NorthInnolux
                         //如果發生碰撞或踩入別人預約的不是虛擬車的話，則就要對兩台車下達EMS
                         if (!update_result.VehicleID.StartsWith(Service.VehicleService.VehicleVirtualSymbol))
                         {
-                            //string cmd_id = will_bumped_vh.OHTC_CMD;
-                            //if (!string.IsNullOrWhiteSpace(cmd_id))
-                            //{
-                            //    ACMD_OHTC cmd = scApp.CMDBLL.GetCMD_OHTCByID(cmd_id);
-                            //    string cmdSourceAdr = cmd.SOURCE;
-                            //    if (!string.IsNullOrWhiteSpace(cmdSourceAdr))
-                            //    {
-                            //        if(SCUtility.isMatche( cmd_id, coupler_address.))
-                            //    }
-                            //}
-
-                            
                             bcf.App.BCFApplication.onErrorMsg(message);
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(SubChargerValueDefMapAction), Device: Service.VehicleService.DEVICE_NAME_AGV,
                                Data: $"The vehicles bumped coupler will happend. send pause to {update_result.VehicleID}",

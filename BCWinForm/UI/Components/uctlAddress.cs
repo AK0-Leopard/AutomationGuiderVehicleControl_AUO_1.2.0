@@ -351,22 +351,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
                 iArcWidth = p_SizeW;
                 iArcHeight = p_SizeH;
                 startAngle = 0;
-                if(p_PointType == E_POINT_TYPE.LoadUnload)
-                {
-                    RectangleF rectangleF = new RectangleF
-                    {
-                        X = iX,
-                        Y = iY,
-                         Height = iArcHeight,
-                          Width = iArcWidth
-                            
-                    };
-                    graphicsPath.AddRectangle(rectangleF);
-                }
-                else
-                {
-                    graphicsPath.AddArc(iX, iY, iArcWidth, iArcHeight, startAngle, 360);
-                }
+                graphicsPath.AddArc(iX, iY, iArcWidth, iArcHeight, startAngle, 360);
 
                 objRail.DrawPath(objPen, graphicsPath);
 
@@ -400,28 +385,13 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
         private void _SetAddrToolTip()
         {
 #if USED_EDITOR_MODE
-            //if(this.m_iPointType == E_POINT_TYPE.LoadUnload)
-            //{
-            //    this.ToolTip.SetToolTip(this,
-            //"Port ID : " + this.p + "\r\n" +
-            //"Address : " + this.m_sAddress + "\r\n" +
-            //"Location : " + this.m_iLocX.ToString() + ", " + this.m_iLocY.ToString() + "\r\n" +
-            //"Size : " + this.m_iSizeW.ToString() + ", " + this.m_iSizeH.ToString() + "\r\n" +
-            //"Color(RGB) : " + this.m_clrColor.R.ToString().PadLeft(3)
-            //            + "," + this.m_clrColor.G.ToString().PadLeft(3)
-            //            + "," + this.m_clrColor.B.ToString().PadLeft(3));
-            //}
-            //else
-            //{
-                this.ToolTip.SetToolTip(this,
-            "Address : " + this.m_sAddress + "\r\n" +
-            "Location : " + this.m_iLocX.ToString() + ", " + this.m_iLocY.ToString() + "\r\n" +
-            "Size : " + this.m_iSizeW.ToString() + ", " + this.m_iSizeH.ToString() + "\r\n" +
-            "Color(RGB) : " + this.m_clrColor.R.ToString().PadLeft(3)
-                        + "," + this.m_clrColor.G.ToString().PadLeft(3)
-                        + "," + this.m_clrColor.B.ToString().PadLeft(3));
-            //}
-
+            this.ToolTip.SetToolTip(this,
+                        "Address : " + this.m_sAddress + "\r\n" +
+                        "Location : " + this.m_iLocX.ToString() + ", " + this.m_iLocY.ToString() + "\r\n" +
+                        "Size : " + this.m_iSizeW.ToString() + ", " + this.m_iSizeH.ToString() + "\r\n" +
+                        "Color(RGB) : " + this.m_clrColor.R.ToString().PadLeft(3)
+                                    + "," + this.m_clrColor.G.ToString().PadLeft(3)
+                                    + "," + this.m_clrColor.B.ToString().PadLeft(3));
 #else
 			this.ToolTip.SetToolTip( this, 
 						"Address : " + this.m_sAddress + "\r\n" +
