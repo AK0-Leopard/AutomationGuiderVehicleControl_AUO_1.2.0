@@ -924,23 +924,6 @@ namespace com.mirle.ibg3k0.bc.winform
 
         private void BCMainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-
-            AEQPT fourColorLight = bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID("ColorLight");
-            if (fourColorLight != null)
-            {
-                fourColorLight.setColorLight(false,false,false,false,false,true);
-            }
-            AEQPT trafficLight1 = bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID("TrafficLight1");
-            if (trafficLight1 != null)
-            {
-                trafficLight1.setTrafficLight(true, false, false, false, true);
-            }
-            AEQPT trafficLight2 = bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID("TrafficLight2");
-            if (trafficLight2 != null)
-            {
-                trafficLight2.setTrafficLight(true, false, false, false, true);
-            }
-
             //bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID("Fire");
             List<AUNIT> units = bcApp.SCApplication.getEQObjCacheManager().getAllUnit();
             foreach (AUNIT unit in units)
@@ -951,7 +934,6 @@ namespace com.mirle.ibg3k0.bc.winform
                     mapAction.sendFireDoorCrossSignal(true);
                 }
             }
-
             System.Environment.Exit(0);
         }
 

@@ -322,34 +322,6 @@ namespace com.mirle.ibg3k0.sc.BLL
             return false;
         }
 
-        public bool hasAlarmErrorExist()
-        {
-            int count = 0;
-
-            lock (lock_obj_alarm)
-            {
-                using (DBConnection_EF con = DBConnection_EF.GetUContext())
-                {
-                    count = alarmDao.GetSetAlarmErrorCount(con);
-                }
-            }
-            return count != 0;
-        }
-
-        public bool hasAlarmWarningExist()
-        {
-            int count = 0;
-
-            lock (lock_obj_alarm)
-            {
-                using (DBConnection_EF con = DBConnection_EF.GetUContext())
-                {
-                    count = alarmDao.GetSetAlarmWaringCount(con);
-                }
-            }
-            return count != 0;
-        }
-
         public virtual bool hasAlarmExistByEQ(string eqid)
         {
 
