@@ -526,7 +526,6 @@
     <Compile Include="Data\PLC_Functions\SouthInnolux\ColorLightSignalBlue.cs" />
     <Compile Include="Data\PLC_Functions\SouthInnolux\ColorLightSignalGreenBlue.cs" />
     <Compile Include="Data\PLC_Functions\SouthInnolux\ColorLightYellow.cs" />
-    <Compile Include="Data\PLC_Functions\SouthInnolux\TrafficLightYellowSignal.cs" />
     <Compile Include="Data\PLC_Functions\SouthInnolux\TrafficLightWorkSignal.cs" />
     <Compile Include="Data\PLC_Functions\SouthInnolux\TrafficLightWorkTrigger.cs" />
     <Compile Include="Data\PLC_Functions\SouthInnolux\TrafficLightSignal.cs" />

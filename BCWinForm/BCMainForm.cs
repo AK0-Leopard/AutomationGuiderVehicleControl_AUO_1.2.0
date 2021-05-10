@@ -933,12 +933,12 @@ namespace com.mirle.ibg3k0.bc.winform
             AEQPT trafficLight1 = bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID("TrafficLight1");
             if (trafficLight1 != null)
             {
-                trafficLight1.setTrafficLight(false, true, false, false, false, true);
+                trafficLight1.setTrafficLight(true, false, false, false, true);
             }
             AEQPT trafficLight2 = bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID("TrafficLight2");
             if (trafficLight2 != null)
             {
-                trafficLight2.setTrafficLight(false, true, false, false, false, true);
+                trafficLight2.setTrafficLight(true, false, false, false, true);
             }
 
             //bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID("Fire");

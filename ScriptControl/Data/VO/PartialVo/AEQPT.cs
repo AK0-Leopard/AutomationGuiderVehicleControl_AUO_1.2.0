@@ -213,35 +213,17 @@ namespace com.mirle.ibg3k0.sc
         #endregion FireReport
 
         #region TrafficLight
-        //public bool passRequest { get; set; }
-        //public bool passGranted { get; set; }
-        //public DateTime? passGrantedTime { get; set; }
+        public bool passRequest { get; set; }
+        public bool passGranted { get; set; }
+        public DateTime? passGrantedTime { get; set; }
         object traffic_light_lock = new object();
-        public void setTrafficLight(bool work_signal,bool red_signal, bool yellow_signal, bool green_signal, bool buzzer_signal, bool force_on_signal)
+        public void setTrafficLight(bool red_signal, bool yellow_signal, bool green_signal, bool buzzer_signal, bool force_on_signal)
         {
             lock (traffic_light_lock)
             {
                 TrafficLightValueDefMapAction mapAction =
                     getMapActionByIdentityKey(nameof(TrafficLightValueDefMapAction)) as TrafficLightValueDefMapAction;
-                mapAction.sendTrafficLightSignal(work_signal, red_signal, yellow_signal, green_signal, buzzer_signal, force_on_signal);
-            }
-        }
-        public void setTrafficWorkSignal(bool work_signal)
-        {
-            lock (traffic_light_lock)
-            {
-                TrafficLightValueDefMapAction mapAction =
-                    getMapActionByIdentityKey(nameof(TrafficLightValueDefMapAction)) as TrafficLightValueDefMapAction;
-                mapAction.sendTrafficLightWorkSignal(work_signal);
-            }
-        }
-        public void setTrafficYellowSignal(bool yellow_signal)
-        {
-            lock (traffic_light_lock)
-            {
-                TrafficLightValueDefMapAction mapAction =
-                    getMapActionByIdentityKey(nameof(TrafficLightValueDefMapAction)) as TrafficLightValueDefMapAction;
-                mapAction.sendTrafficLightYellowSignal(yellow_signal);
+                mapAction.sendTrafficLightSignal(red_signal, yellow_signal, green_signal, buzzer_signal, force_on_signal);
             }
         }
 

@@ -28,7 +28,7 @@ namespace com.mirle.ibg3k0.sc.Service
         {
 
         }
-        public virtual void start(SCApplication _app)
+        public void start(SCApplication _app)
         {
             scApp = _app;
             reportBLL = _app.ReportBLL;
@@ -68,6 +68,7 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 address.VehicleRelease += AddressVehicleRelease;
             }
+
             var commonInfo = scApp.getEQObjCacheManager().CommonInfo;
             commonInfo.addEventHandler(nameof(LineService), BCFUtility.getPropertyName(() => commonInfo.MPCTipMsgList),
              PublishTipMessageInfo);
@@ -404,121 +405,108 @@ namespace com.mirle.ibg3k0.sc.Service
                     need_trun_on_blue_light, need_trun_on_buzzer, true));
             }
         }
-        #region Trafficlight Control
-        public bool traffic_work_light_on = false;
-        public bool traffic_red_light_on = false;
-        public bool traffic_yellow_light_on = false;
-        public bool traffic_green_light_on = false;
-
-        public bool traffic_work_light_flash = false;
-        public bool traffic_yellow_light_flash = false;
-
-        public bool passRequest = false;
-        public bool passRequestCancel = false;
-        public bool passGranted = false;
-        public DateTime? passGrantedTime;
 
         object check_traffic_lock = new object();
         public void CheckTrafficLight()
         {
-            //var trafficLight1 = scApp.getEQObjCacheManager().getEquipmentByEQPTID("TrafficLight1");
-            //var trafficLight2 = scApp.getEQObjCacheManager().getEquipmentByEQPTID("TrafficLight2");
+            var trafficLight1 = scApp.getEQObjCacheManager().getEquipmentByEQPTID("TrafficLight1");
+            var trafficLight2 = scApp.getEQObjCacheManager().getEquipmentByEQPTID("TrafficLight2");
             lock (check_traffic_lock)
             {
-                if (passRequest)
+                if (trafficLight1.passRequest)
                 {
-                    if(passGranted == false)
+                    if(trafficLight1.passGranted == false)
                     {
-                        passRequestCancel = false;
-                        string sec_id_1 = trafficLight1Section;
-                        string sec_id_2 = trafficLight2Section;
-                        //sc.ProtocolFormat.OHTMessage.DriveDirction driveDirction = DriveDirction.DriveDirForward;
+                        string sec_id = trafficLight1Section;
+                        sc.ProtocolFormat.OHTMessage.DriveDirction driveDirction = DriveDirction.DriveDirForward;
 
-                        //Google.Protobuf.Collections.RepeatedField<sc.ProtocolFormat.OHTMessage.ReserveInfo> reserves = new Google.Protobuf.Collections.RepeatedField<sc.ProtocolFormat.OHTMessage.ReserveInfo>();
-                        //if (!sc.Common.SCUtility.isEmpty(sec_id_1))
-                        //    reserves.Add(new sc.ProtocolFormat.OHTMessage.ReserveInfo()
-                        //    {
-                        //        ReserveSectionID = sec_id_1,
-                        //        DriveDirction = driveDirction
-                        //    });
+                        Google.Protobuf.Collections.RepeatedField<sc.ProtocolFormat.OHTMessage.ReserveInfo> reserves = new Google.Protobuf.Collections.RepeatedField<sc.ProtocolFormat.OHTMessage.ReserveInfo>();
+                        if (!sc.Common.SCUtility.isEmpty(sec_id))
+                            reserves.Add(new sc.ProtocolFormat.OHTMessage.ReserveInfo()
+                            {
+                                ReserveSectionID = sec_id,
+                                DriveDirction = driveDirction
+                            });
                         //var result = scApp.VehicleService.IsReserveSuccessTest(trafficLight1.EQPT_ID, reserves);
-                        var result1 = scApp.ReserveBLL.TryAddReservedSection("trafficlight_v_car", sec_id_1,
+                        var result = scApp.ReserveBLL.TryAddReservedSection(trafficLight1.EQPT_ID, sec_id,
                             sensorDir: Mirle.Hlts.Utils.HltDirection.None,
                             isAsk: false);
-                        var result2 = scApp.ReserveBLL.TryAddReservedSection("trafficlight_v_car", sec_id_2,
-                            sensorDir: Mirle.Hlts.Utils.HltDirection.None,
-                            isAsk: false);
-                        if (result1.OK&& result2.OK)
+                        if (result.OK)
                         {
-                            passGranted = true;
-                            passGrantedTime = DateTime.Now;
-                            setTrafficLight(true,false, false, true, false, true);
-                            //trafficLight1.setTrafficLight(false, false, true, false, true);
-                            //trafficLight2.setTrafficLight(false, false, true, false, true);
+                            trafficLight1.passGranted = true;
+                            trafficLight1.passGrantedTime = DateTime.Now;
+                            trafficLight1.setTrafficLight(false, false, true, false, true);
                         }
                         else
                         {
-                            scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID("trafficlight_v_car");
-                            setTrafficLight(true, false, true, false, false, true, true, true);
-                            //trafficLight1.setTrafficLight(true, true, false, false, true);
-                            //trafficLight2.setTrafficLight(true, true, false, false, true);
+                            trafficLight1.setTrafficLight(true, true, false, false, true);
                         }
 
                     }
-                    else if(passGrantedTime != null&& passGrantedTime.Value.AddSeconds(trafficPassTime) < DateTime.Now)
+                    else if(trafficLight1.passGrantedTime!=null&&trafficLight1.passGrantedTime.Value.AddSeconds(trafficPassTime) < DateTime.Now)
                     {
-                        scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID("trafficlight_v_car");
-                        passGranted = false;
-                        passGrantedTime = null;
-                        passRequest = false;
-                        passRequestCancel = false;
-                        setTrafficLight(false,true, false, false, false, true);
-                    }
-                    else if (passRequestCancel)
-                    {
-                        scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID("trafficlight_v_car");
-                        passGranted = false;
-                        passGrantedTime = null;
-                        passRequest = false;
-                        passRequestCancel = false;
-                        setTrafficLight(false, true, false, false, false, true);
-                        return;
+                        scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(trafficLight1.EQPT_ID);
+                        trafficLight1.passGranted = false;
+                        trafficLight1.passGrantedTime = null;
+                        trafficLight1.passRequest = false;
+                        trafficLight1.setTrafficLight(true, false, false, false, true);
                     }
 
                 }
 
 
 
+                if (trafficLight2.passRequest)
+                {
+                    if (trafficLight2.passGranted == false)
+                    {
+                        string sec_id = trafficLight2Section;
+                        sc.ProtocolFormat.OHTMessage.DriveDirction driveDirction = DriveDirction.DriveDirForward;
+
+                        Google.Protobuf.Collections.RepeatedField<sc.ProtocolFormat.OHTMessage.ReserveInfo> reserves = new Google.Protobuf.Collections.RepeatedField<sc.ProtocolFormat.OHTMessage.ReserveInfo>();
+                        if (!sc.Common.SCUtility.isEmpty(sec_id))
+                            reserves.Add(new sc.ProtocolFormat.OHTMessage.ReserveInfo()
+                            {
+                                ReserveSectionID = sec_id,
+                                DriveDirction = driveDirction
+                            });
+                        //var result = scApp.VehicleService.IsReserveSuccessTest(trafficLight2.EQPT_ID, reserves);
+                        var result = scApp.ReserveBLL.TryAddReservedSection(trafficLight2.EQPT_ID, sec_id,
+                                                    sensorDir: Mirle.Hlts.Utils.HltDirection.None,
+                                                    isAsk: false);
+                        if (result.OK)
+                        {
+                            trafficLight2.passGranted = true;
+                            trafficLight2.passGrantedTime = DateTime.Now;
+                            trafficLight2.setTrafficLight(false, false, true, false, true);
+                        }
+                        else
+                        {
+                            trafficLight2.setTrafficLight(true, true, false, false, true);
+                        }
+
+                    }
+                    else if (trafficLight2.passGrantedTime != null && trafficLight2.passGrantedTime.Value.AddSeconds(trafficPassTime) < DateTime.Now)
+                    {
+                        scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(trafficLight2.EQPT_ID);
+                        trafficLight2.passGranted = false;
+                        trafficLight2.passGrantedTime = null;
+                        trafficLight2.passRequest = false;
+                        trafficLight2.setTrafficLight(true, false, false, false, true);
+                    }
+
+                }
+                //bool need_trun_on_red_light = line.HasSeriousAlarmHappend;
+                //bool need_trun_on_buzzer = line.HasSeriousAlarmHappend;
+                //bool need_trun_on_yellow_light = line.HasWarningHappend;
+                //bool need_trun_on_green_light = !line.HasSeriousAlarmHappend && !line.HasWarningHappend;
+                //bool need_trun_on_blue_light = !line.HasSeriousAlarmHappend && !line.HasWarningHappend;
+
+                //Task.Run(() => Lighthouse?.setColorLight(
+                //    need_trun_on_red_light, need_trun_on_yellow_light, need_trun_on_green_light,
+                //    need_trun_on_blue_light, need_trun_on_buzzer, true));
             }
         }
 
-        object traffic_light_lock = new object();
-        public void setTrafficLight(bool work_signal,bool red_signal, bool yellow_signal, bool green_signal, bool buzzer_signal, bool force_on_signal,
-            bool work_signal_flash = false,bool yellow_signal_flash = false)
-        {
-            lock (traffic_light_lock)
-            {
-                traffic_work_light_on = work_signal;
-                traffic_red_light_on = red_signal;
-                traffic_yellow_light_on = yellow_signal;
-                traffic_green_light_on = green_signal;
-                traffic_work_light_flash = work_signal_flash;
-                traffic_yellow_light_flash = yellow_signal_flash;
-
-                var trafficLight1 = scApp.getEQObjCacheManager().getEquipmentByEQPTID("TrafficLight1");
-                var trafficLight2 = scApp.getEQObjCacheManager().getEquipmentByEQPTID("TrafficLight2");
-                trafficLight1.setTrafficLight(work_signal, red_signal, yellow_signal, green_signal, buzzer_signal, force_on_signal);
-                trafficLight2.setTrafficLight(work_signal,red_signal, yellow_signal, green_signal, buzzer_signal, force_on_signal);
-            }
-        }
-
-
-        public void addVirtualVehicle()
-        {
-            scApp.ReserveBLL.TryAddVehicleOrUpdate("trafficlight_v_car", "", 99999, 99999, 0, 0,
-        sensorDir: Mirle.Hlts.Utils.HltDirection.NS,
-          forkDir: Mirle.Hlts.Utils.HltDirection.None);
-        }
-        #endregion Trafficlight Control
     }
 }

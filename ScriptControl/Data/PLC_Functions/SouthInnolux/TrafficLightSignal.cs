@@ -12,8 +12,7 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions.SouthInnolux
     class TrafficLightSignal : PLC_FunBase
     {
         public DateTime Timestamp;
-        [PLCElement(ValueName = "TRAFFIC_LIGHT_WORK_SIGNAL")]
-        public bool workSignal;
+
         [PLCElement(ValueName = "TRAFFIC_LIGHT_RED_SIGNAL")]
         public bool redSignal;
         [PLCElement(ValueName = "TRAFFIC_LIGHT_YELLOW_SIGNAL")]
