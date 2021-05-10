@@ -554,7 +554,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
 
 
-        public  ACMD_MCS getCMD_MCSByID(string cmd_id)
+        public ACMD_MCS getCMD_MCSByID(string cmd_id)
         {
             ACMD_MCS cmd_mcs = null;
             //using (DBConnection_EF con = new DBConnection_EF())
@@ -564,19 +564,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             return cmd_mcs;
         }
-        public bool isTransferStatusReady(string cmdID, int status)
-        {
-            ACMD_MCS cmd = null;
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            {
-                cmd = cmd_mcsDao.getByID(con, cmdID);
-            }
 
-            if (cmd == null) return false;
-            int check_value = cmd.COMMANDSTATE & status;
-            bool is_status_ready = check_value == status;
-            return is_status_ready;
-        }
         public VACMD_MCS getVCMD_MCSByID(string cmd_id)
         {
             VACMD_MCS cmd_mcs = null;

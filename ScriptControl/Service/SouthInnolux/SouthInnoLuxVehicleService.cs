@@ -941,26 +941,19 @@ namespace com.mirle.ibg3k0.sc.Service
                     if (!SCUtility.isEmpty(cmd.CMD_ID_MCS))
                     {
                         //在設備確定接收該筆命令，把它從PreInitial改成Initial狀態並上報給MCS
-                        bool is_transfer_initial_ready =
-                             scApp.CMDBLL.isTransferStatusReady(cmd.CMD_ID_MCS, ACMD_MCS.COMMAND_STATUS_BIT_INDEX_ENROUTE);
-                        if (!is_transfer_initial_ready)
+                        if (cmd.CMD_TPYE == E_CMD_TYPE.Unload)
                         {
-                            if (cmd.CMD_TPYE == E_CMD_TYPE.Unload)
-                            {
-                                isSuccess &= scApp.CMDBLL.updateCMD_MCS_TranStatus2Transferring(cmd.CMD_ID_MCS);
-                            }
-                            else
-                            {
-                                isSuccess &= scApp.CMDBLL.updateCMD_MCS_TranStatus2Initial(cmd.CMD_ID_MCS);
-                            }
-
-                            isSuccess &= scApp.ReportBLL.newReportTransferInitial(cmd.CMD_ID_MCS, null);
-                            //TODO 在進行命令的改派後SysExecQity的資料要重新判斷一下要怎樣計算
-                            //scApp.SysExcuteQualityBLL.updateSysExecQity_PassSecInfo(cmd.CMD_ID_MCS, assignVH.VEHICLE_ID, assignVH.CUR_SEC_ID,
-                            //                        guide_to_dest_section_ids?.ToArray(), guide_to_dest_address_ids?.ToArray());
+                            isSuccess &= scApp.CMDBLL.updateCMD_MCS_TranStatus2Transferring(cmd.CMD_ID_MCS);
                         }
+                        else
+                        {
+                            isSuccess &= scApp.CMDBLL.updateCMD_MCS_TranStatus2Initial(cmd.CMD_ID_MCS);
+                        }
+                        //TODO 在進行命令的改派後SysExecQity的資料要重新判斷一下要怎樣計算
+                        //scApp.SysExcuteQualityBLL.updateSysExecQity_PassSecInfo(cmd.CMD_ID_MCS, assignVH.VEHICLE_ID, assignVH.CUR_SEC_ID,
+                        //                        guide_to_dest_section_ids?.ToArray(), guide_to_dest_address_ids?.ToArray());
                         scApp.SysExcuteQualityBLL.updateSysExecQity_PassSecInfo(cmd.CMD_ID_MCS, assignVH.VEHICLE_ID, assignVH.CUR_SEC_ID,
-                                                    guide_start_to_from_section_ids?.ToArray(), guide_to_dest_section_ids?.ToArray());
+                                                guide_start_to_from_section_ids?.ToArray(), guide_to_dest_section_ids?.ToArray());
                     }
 
                     assignVH.VehicleAssign();
@@ -2014,87 +2007,14 @@ namespace com.mirle.ibg3k0.sc.Service
                     //replyTranEventReport(bcfApp, eventType, eqpt, seq_num);
                     TransferReportBCRRead(bcfApp, eqpt, seq_num, eventType, carrier_id, bCRReadResult);
                     break;
-                case EventType.Initial:
-                    TransferReportInitial(bcfApp, eqpt, seq_num, eventType, carrier_id);
-                    break;
                 default:
                     replyTranEventReport(bcfApp, eventType, eqpt, seq_num);
                     break;
             }
         }
 
-        private void TransferReportInitial(BCFApplication bcfApp, AVEHICLE eqpt, int seq_num, EventType eventType, string cstID)
-        {
-            try
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                   Data: $"Process report {eventType}",
-                   VehicleID: eqpt.VEHICLE_ID,
-                   CarrierID: eqpt.CST_ID);
-                //判斷車子上報該事件時，是否還有MCS命令尚未結束，若有則根據MCS命令狀態
-                //1.Loading + cst=empty => CST在Source Port
-                //2.Loading + cst=not empty => CST在車上
-                //3.unloading + cst=empty => CST在Dest Port上
-                //4.unloading + cst=not empty => CST在車上
-                string cmd_mcs_id = SCUtility.Trim(eqpt.MCS_CMD, true);
-                if (!SCUtility.isEmpty(cmd_mcs_id))
-                {
-                    bool is_cst_on_vh = !SCUtility.isEmpty(cstID);
-                    ACMD_MCS cmd_mcs = scApp.CMDBLL.getCMD_MCSByID(cmd_mcs_id);
-                    if (cmd_mcs != null)
-                    {
-                        if (cmd_mcs.isLoading && !is_cst_on_vh)
-                        {
-                            if (is_cst_on_vh)
-                            {
-                                cmd_mcs.ManualSelectedFinishCarrierLoc = cstID;
-                                finishCmdForInitial(eqpt, cmd_mcs, E_TRAN_STATUS.Aborted, sc.Data.SECS.SouthInnolux.SECSConst.CMD_Result_UnloadError);
-                            }
-                            else
-                            {
-                                cmd_mcs.ManualSelectedFinishCarrierLoc = cmd_mcs.HOSTSOURCE;
-                                finishCmdForInitial(eqpt, cmd_mcs, E_TRAN_STATUS.Canceled, sc.Data.SECS.SouthInnolux.SECSConst.CMD_Result_UnloadError);
-                            }
-                        }
-                        else if (cmd_mcs.isUnloading)
-                        {
-                            if (is_cst_on_vh)
-                            {
-                                cmd_mcs.ManualSelectedFinishCarrierLoc = cstID;
-                                finishCmdForInitial(eqpt, cmd_mcs, E_TRAN_STATUS.Aborted, sc.Data.SECS.SouthInnolux.SECSConst.CMD_Result_LoadError);
-                            }
-                            else
-                            {
-                                cmd_mcs.ManualSelectedFinishCarrierLoc = cmd_mcs.HOSTDESTINATION;
-                                finishCmdForInitial(eqpt, cmd_mcs, E_TRAN_STATUS.Aborted, sc.Data.SECS.SouthInnolux.SECSConst.CMD_Result_LoadError);
-                            }
-                        }
-                        else
-                        {
-                            finishCmdForInitial(eqpt, cmd_mcs, E_TRAN_STATUS.Canceled, sc.Data.SECS.SouthInnolux.SECSConst.CMD_Result_Unsuccessful);
-                        }
-                    }
 
-                }
 
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Exception");
-            }
-        }
-
-        private void finishCmdForInitial(AVEHICLE eqpt, ACMD_MCS cmd_mcs, E_TRAN_STATUS finish_tran_status, string cmd_result_code)
-        {
-            string vh_id = SCUtility.Trim(eqpt.VEHICLE_ID, true);
-            string ohtc_cmd = SCUtility.Trim(eqpt.OHTC_CMD, true);
-            string cmd_mcs_id = SCUtility.Trim(eqpt.MCS_CMD, true);
-
-            scApp.VehicleBLL.doTransferCommandFinish(vh_id, ohtc_cmd, CompleteStatus.CmpStatusForceFinishByOp, 0);
-            scApp.VIDBLL.initialVIDCommandInfo(vh_id);
-            scApp.CMDBLL.updateCMD_MCS_TranStatus2Complete(cmd_mcs_id, finish_tran_status);
-            scApp.ReportBLL.newReportTransferCommandFinish(cmd_mcs, eqpt, cmd_result_code, null);
-        }
 
         private void TranEventReportLoadingUnloading(BCFApplication bcfApp, AVEHICLE eqpt, int seq_num, EventType eventType)
         {
@@ -2920,7 +2840,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         $"UNKNOWN-{eqpt.Real_ID.Trim()}-{vid_info.CARRIER_INSTALLED_TIME?.ToString(SCAppConstants.TimestampFormat_13)}";
                     replyTranEventReport(bcfApp, eventType, eqpt, seqNum,
                         renameCarrierID: new_carrier_id, cancelType: CMDCancelType.CmdCancelIdReadFailed);
-                    scApp.ReportBLL.newReportCarrierRemoved(eqpt.Real_ID, vid_info.CARRIER_ID, vid_info.COMMAND_ID, null);
+                    scApp.ReportBLL.newReportCarrierRemoved(eqpt.Real_ID,vid_info.CARRIER_ID, vid_info.COMMAND_ID, null);
 
                     scApp.VIDBLL.upDateVIDCarrierID(eqpt.VEHICLE_ID, new_carrier_id);
 
@@ -3158,7 +3078,8 @@ namespace com.mirle.ibg3k0.sc.Service
                             case CompleteStatus.CmpStatusIdreadFailed:
                             case CompleteStatus.CmpStatusVehicleAbort:
                             case CompleteStatus.CmpStatusInterlockError:
-                                isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues, is_keep_mcs_cmd_finish);
+                                if (!is_keep_mcs_cmd_finish)
+                                    isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
                                 break;
                             case CompleteStatus.CmpStatusMove:
                             case CompleteStatus.CmpStatusHome:
@@ -3498,7 +3419,6 @@ namespace com.mirle.ibg3k0.sc.Service
         #endregion Command Complete Report
         #region Alarm
 
-        object alarmReport_Lock = new object();
         [ClassAOPAspect]
         public void AlarmReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_194_ALARM_REPORT recive_str, int seq_num)
         {
@@ -3513,10 +3433,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 string err_code = recive_str.ErrCode;
                 string err_desc = recive_str.ErrDescription;
                 ErrorStatus status = recive_str.ErrStatus;
-                lock (alarmReport_Lock)
-                {
-                    ProcessAlarmReport(eqpt, err_code, status, err_desc);
-                }
+                ProcessAlarmReport(eqpt, err_code, status, err_desc);
                 ID_94_ALARM_RESPONSE send_str = new ID_94_ALARM_RESPONSE
                 {
                     ReplyCode = 0
@@ -3578,6 +3495,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
 
                 List<ALARM> alarms = null;
+
+
 
                 scApp.getRedisCacheManager().BeginTransaction();
                 using (TransactionScope tx = SCUtility.getTransactionScope())

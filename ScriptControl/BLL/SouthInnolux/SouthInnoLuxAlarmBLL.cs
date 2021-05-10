@@ -30,7 +30,7 @@ namespace com.mirle.ibg3k0.sc.BLL
     /// <summary>
     /// Class AlarmBLL.
     /// </summary>
-    public class SouthInnoLuxAlarmBLL : AlarmBLL
+    public class SouthInnoLuxAlarmBLL: AlarmBLL
     {
 
         public const string VEHICLE_ALARM_HAPPEND = "00000";
@@ -122,7 +122,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
         #endregion AlarmConvertInfo
         object lock_obj_alarm = new object();
-        public override ALARM setAlarmReport(string nodeID, string eq_id, string error_code, string errorDesc)
+        public ALARM setAlarmReport(string nodeID, string eq_id, string error_code, string errorDesc)
         {
             lock (lock_obj_alarm)
             {
@@ -344,7 +344,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 {
                     alarmRptCondDao.deleteAllRptCond(con);
                     List<AlarmMap> alarmMaps = loadAlarmMaps();
-                    foreach (AlarmMap alarmMap in alarmMaps)
+                    foreach(AlarmMap alarmMap in alarmMaps)
                     {
                         ALARMRPTCOND cond = new ALARMRPTCOND()
                         {

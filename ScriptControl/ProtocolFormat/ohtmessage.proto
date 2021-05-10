@@ -69,7 +69,6 @@ message Timestamp {
 	VHUnloading = 12;
 	BCRRead = 13;
 	BlockRelease = 21;
-	Initial = 31;
   }
 	enum CompleteStatus {
 	CmpStatusMove = 0;
