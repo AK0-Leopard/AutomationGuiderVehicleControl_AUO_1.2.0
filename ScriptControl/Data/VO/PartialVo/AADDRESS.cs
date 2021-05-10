@@ -95,7 +95,7 @@ namespace com.mirle.ibg3k0.sc
         {
             get
             {
-                if (SCApplication.getInstance().BC_ID == "NORTH_INNOLUX") //暫時都return ok
+                if (SCApplication.getInstance().BC_ID == "NORTH_INNOLUX_Test_Site") //暫時都return ok
                 {
                     return true;
                     //如果是該廠的話先一律回復True，因為是台中的Demo Site

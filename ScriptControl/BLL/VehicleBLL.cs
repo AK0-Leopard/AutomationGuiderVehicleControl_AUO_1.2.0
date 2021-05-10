@@ -1839,7 +1839,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             throw new NotImplementedException();
         }
 
-        public virtual void setAndPublishPositionReportInfo2Redis(string vh_id, ID_134_TRANS_EVENT_REP report_obj)
+        public void setAndPublishPositionReportInfo2Redis(string vh_id, ID_134_TRANS_EVENT_REP report_obj)
         {
             setPositionReportInfo2Redis(vh_id, report_obj);
             //PublishPositionReportInfo2Redis(vh_id, report_obj);

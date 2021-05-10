@@ -2744,7 +2744,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 try
                 {
-                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                        Data: $"Try to notify vh avoid...,requestVh:{requestVhID} reservedVh:{reservedVhID}",
                        VehicleID: requestVhID);
                     AVEHICLE reserved_vh = scApp.VehicleBLL.cache.getVehicle(reservedVhID);
@@ -3033,12 +3033,9 @@ namespace com.mirle.ibg3k0.sc.Service
                 //在一開始的時候就先Set一台虛擬車在相同位置，防止找到鄰近的Address
                 var hlt_vh_obj = scApp.ReserveBLL.GetHltVehicle(reservedVh.VEHICLE_ID);
                 string virtual_vh_id = $"{VehicleVirtualSymbol}_{reservedVh.VEHICLE_ID}";
-                //scApp.ReserveBLL.TryAddVehicleOrUpdate(virtual_vh_id, "", hlt_vh_obj.X, hlt_vh_obj.Y, hlt_vh_obj.Angle, 0,
-                //    sensorDir: Mirle.Hlts.Utils.HltDirection.NESW,
-                //      forkDir: Mirle.Hlts.Utils.HltDirection.None);
                 scApp.ReserveBLL.TryAddVehicleOrUpdate(virtual_vh_id, "", hlt_vh_obj.X, hlt_vh_obj.Y, hlt_vh_obj.Angle, 0,
-    sensorDir: Mirle.Hlts.Utils.HltDirection.NS,
-      forkDir: Mirle.Hlts.Utils.HltDirection.None);
+                    sensorDir: Mirle.Hlts.Utils.HltDirection.NESW,
+                      forkDir: Mirle.Hlts.Utils.HltDirection.None);
                 virtual_vh_ids.Add(virtual_vh_id);
                 do
                 {
