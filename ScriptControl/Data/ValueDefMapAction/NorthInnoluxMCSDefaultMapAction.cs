@@ -206,6 +206,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                         //line.CurrentPortStateChecked = true;
                         s1f4.SV[i] = buildEnabledEventVIDItem();
                     }
+                    else if (s1f3.SVID[i] == SECSConst.VID_EventEnabled)
+                    {
+                        //line.CurrentPortStateChecked = true;
+                        s1f4.SV[i] = buildEnabledEventVIDItem();
+                    }
                     else if (s1f3.SVID[i] == SECSConst.VID_PriviousControlState)
                     {
                         //line.CurrentPortStateChecked = true;
@@ -391,8 +396,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         private S6F11.RPTINFO.RPTITEM.VIDITEM_04 buildSettedAlarmVIDItem()
         {
-            //List<ALARM> alarms = scApp.AlarmBLL.getCurrentSeriousAlarms();
-            List<ALARM> alarms = scApp.AlarmBLL.getCurrentAlarms();
+            List<ALARM> alarms = scApp.AlarmBLL.getCurrentSeriousAlarms();
             S6F11.RPTINFO.RPTITEM.VIDITEM_04 viditem_04 = new S6F11.RPTINFO.RPTITEM.VIDITEM_04();
             viditem_04.ALIDs = new string[alarms.Count];
             int index = -1;

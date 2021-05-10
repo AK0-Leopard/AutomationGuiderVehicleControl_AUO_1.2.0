@@ -72,14 +72,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return CouplerAddresses;
             }
 
-            public CouplerAddress GetCouplerAddress(string chargerID, CouplerNum coupler_num)
-            {
-                List<CouplerAddress> CouplerAddresses = CommObjCacheManager.getCouplerAddresses();
-                CouplerAddress CouplerAddress = CouplerAddresses.Where(coupler => SCUtility.isMatche(coupler.ChargerID, chargerID)
-          && coupler.CouplerNum == coupler_num).FirstOrDefault();
-                return CouplerAddress;
-            }
-
             //public bool IsCouplerWork(CouplerAddress couplerAddress, UnitBLL unitBLL)
             //{
             //    if (SCApplication.getInstance().BC_ID == "NORTH_INNOLUX_Test_Site") return true;//暫時都return ok

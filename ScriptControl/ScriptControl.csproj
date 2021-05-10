@@ -518,16 +518,7 @@
     <Compile Include="Data\PLC_Functions\FireDoorCross.cs" />
     <Compile Include="Data\PLC_Functions\FireDoorData.cs" />
     <Compile Include="Data\PLC_Functions\FireReport.cs" />
-    <Compile Include="Data\PLC_Functions\NorthInnolux\AGVCToChargerCouplerEnableDisable.cs" />
-    <Compile Include="Data\PLC_Functions\NorthInnolux\AGVCToChargerForceStopCharging.cs" />
-    <Compile Include="Data\PLC_Functions\NorthInnolux\AGVCToCharger_DateTimeSync.cs" />
-    <Compile Include="Data\PLC_Functions\NorthInnolux\AGVCToMChargerAlarmReset.cs" />
-    <Compile Include="Data\PLC_Functions\NorthInnolux\ChargerInterface.cs" />
-    <Compile Include="Data\PLC_Functions\NorthInnolux\ChargeToAGVCAliveReport.cs" />
-    <Compile Include="Data\PLC_Functions\NorthInnolux\ChargeToAGVCConstantReport.cs" />
-    <Compile Include="Data\PLC_Functions\NorthInnolux\ChargeToAGVCCurrentStatus.cs" />
     <Compile Include="Data\PLC_Functions\NorthInnolux\ChargeToAGVCStatusReport .cs" />
-    <Compile Include="Data\PLC_Functions\NorthInnolux\CouplerChargingReport.cs" />
     <Compile Include="Data\PLC_Functions\PortStationReport.cs" />
     <Compile Include="Data\PLC_Functions\EQStatusReport.cs" />
     <Compile Include="Data\PLC_Functions\SouthInnolux\ColorLightRedWithBuzzer.cs" />

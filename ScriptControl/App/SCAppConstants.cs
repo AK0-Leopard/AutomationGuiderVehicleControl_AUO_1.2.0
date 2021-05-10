@@ -1190,16 +1190,7 @@ namespace com.mirle.ibg3k0.sc.App
             Charging = 2,
             Error = 3
         }
-        public enum CouplerStatus_SOUTH_INNOLUX
-        {
-            None = 0,
-            Manual = 1,
-            Auto = 2,
-            Charging = 3,
-            Error = 4
-        }
-
-        public enum CouplerStatus_NORTH_INNOLUX
+        public enum CpuplerStatus_SOUTH_INNOLUX
         {
             None = 0,
             Manual = 1,
@@ -1218,7 +1209,7 @@ namespace com.mirle.ibg3k0.sc.App
         public enum CouplerHPSafety
         {
             NonSafety = 0,
-            Safety = 1,
+            Safyte = 1,
         }
 
 

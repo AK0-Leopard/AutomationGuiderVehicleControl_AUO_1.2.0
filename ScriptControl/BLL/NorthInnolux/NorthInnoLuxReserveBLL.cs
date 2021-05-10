@@ -125,10 +125,10 @@ namespace com.mirle.ibg3k0.sc.BLL
 
             return result;
         }
-        public override HltResult TryAddVehicleOrUpdate(string vhID, string adrID, float angle = 0, Mirle.Hlts.Utils.HltDirection direction = HltDirection.NESW)
+        public override HltResult TryAddVehicleOrUpdate(string vhID, string adrID, float angle = 0)
         {
             var adr_obj = mapAPI.GetAddressObjectByID(adrID);
-            var hlt_vh = new HltVehicle(vhID, adr_obj.X, adr_obj.Y, angle, sensorDirection: direction);
+            var hlt_vh = new HltVehicle(vhID, adr_obj.X, adr_obj.Y, angle, sensorDirection: Mirle.Hlts.Utils.HltDirection.NESW);
             //HltResult result = mapAPI.TryAddVehicleOrUpdate(vhID, adr_obj.X, adr_obj.Y, 0, vehicleSensorDirection: Mirle.Hlts.Utils.HltDirection.NESW);
             HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh);
             onReserveStatusChange();

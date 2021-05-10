@@ -1593,10 +1593,5 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 Lighthouse.setColorLightYellow(false);
             }
         }
-
-        private void btn_ForceResetAlarm_Click(object sender, EventArgs e)
-        {
-            SCApplication.getInstance().VehicleService.ProcessAlarmReport(noticeCar, "0", sc.ProtocolFormat.OHTMessage.ErrorStatus.ErrReset, "");
-        }
     }
 }
