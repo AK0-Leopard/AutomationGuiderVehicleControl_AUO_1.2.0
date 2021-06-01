@@ -1491,7 +1491,7 @@ namespace com.mirle.ibg3k0.sc.Service
                            VehicleID: assignVH.VEHICLE_ID,
                            CarrierID: assignVH.CST_ID);
                         var result = scApp.ReserveBLL.TryAddReservedSection(assignVH.VEHICLE_ID, vh_current_section,
-                                                                  sensorDir: Mirle.Hlts.Utils.HltDirection.None);
+                                                                    sensorDir: Mirle.Hlts.Utils.HltDirection.None);
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                            Data: $"Override success append vh:{assignVH.VEHICLE_ID} current section:{vh_current_section}.result:{result.ToString()}",
                            VehicleID: assignVH.VEHICLE_ID,

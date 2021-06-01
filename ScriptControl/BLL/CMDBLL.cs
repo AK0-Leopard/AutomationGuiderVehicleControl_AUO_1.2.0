@@ -124,7 +124,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
                 else
                 {
-                    if(scApp.BC_ID == "NORTH_INNOLUX")
+                    if (scApp.BC_ID == "NORTH_INNOLUX")
                     {
                         HostSource = HostSource.Replace("-01", "");
                     }
@@ -2884,7 +2884,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             return cmd_ohtc;
         }
-        
+
 
         #endregion HCMD_OHTC
 

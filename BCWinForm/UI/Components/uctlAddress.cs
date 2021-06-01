@@ -444,7 +444,8 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
                 int loaction_y = this.m_iLocY + (this.Height);
 
                 lbl_AdrID = new Label();
-                lbl_AdrID.Text = m_sAddress;
+                //lbl_AdrID.Text = m_sAddress;
+                lbl_AdrID.Text = str_Map_Add_Info == null ? "" : str_Map_Add_Info.POINT_ID;
                 lbl_AdrID.Font = new System.Drawing.Font("Arial", 7F);
                 lbl_AdrID.ForeColor = Color.YellowGreen;
                 lbl_AdrID.BackColor = Color.Transparent;
