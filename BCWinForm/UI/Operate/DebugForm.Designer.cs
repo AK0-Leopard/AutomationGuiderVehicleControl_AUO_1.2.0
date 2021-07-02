@@ -115,6 +115,8 @@
             this.btn_forceReleaseAllBlock = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label97 = new System.Windows.Forms.Label();
+            this.num_vh_idle_time = new System.Windows.Forms.NumericUpDown();
             this.grb_Reserve = new System.Windows.Forms.GroupBox();
             this.cb_reserve_pass = new System.Windows.Forms.CheckBox();
             this.cb_reserve_reject = new System.Windows.Forms.CheckBox();
@@ -327,8 +329,7 @@
             this.label45 = new System.Windows.Forms.Label();
             this.label44 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.label97 = new System.Windows.Forms.Label();
-            this.num_vh_idle_time = new System.Windows.Forms.NumericUpDown();
+            this.btn_charger_alarm_test = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -343,6 +344,7 @@
             this.groupBox5.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.num_vh_idle_time)).BeginInit();
             this.grb_Reserve.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.gb_blockControl.SuspendLayout();
@@ -372,7 +374,6 @@
             this.DIO_DEVICE_TEST.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.num_vh_idle_time)).BeginInit();
             this.SuspendLayout();
             // 
             // cb_FroceBlockPass
@@ -1349,6 +1350,28 @@
             this.tabPage1.Text = "TcpIp Control";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // label97
+            // 
+            this.label97.AutoSize = true;
+            this.label97.Location = new System.Drawing.Point(1127, 530);
+            this.label97.Name = "label97";
+            this.label97.Size = new System.Drawing.Size(170, 22);
+            this.label97.TabIndex = 56;
+            this.label97.Text = "Vh Idle Time(ms)";
+            // 
+            // num_vh_idle_time
+            // 
+            this.num_vh_idle_time.Location = new System.Drawing.Point(1137, 555);
+            this.num_vh_idle_time.Maximum = new decimal(new int[] {
+            600000,
+            0,
+            0,
+            0});
+            this.num_vh_idle_time.Name = "num_vh_idle_time";
+            this.num_vh_idle_time.Size = new System.Drawing.Size(120, 30);
+            this.num_vh_idle_time.TabIndex = 57;
+            this.num_vh_idle_time.ValueChanged += new System.EventHandler(this.num_vh_idle_time_ValueChanged);
+            // 
             // grb_Reserve
             // 
             this.grb_Reserve.Controls.Add(this.cb_reserve_pass);
@@ -1542,7 +1565,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 3);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 8);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(164, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -1648,6 +1671,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.btn_charger_alarm_test);
             this.tabPage3.Controls.Add(this.groupBox18);
             this.tabPage3.Controls.Add(this.numer_num_of_avoid_seg);
             this.tabPage3.Controls.Add(this.lbl_num_of_avoid_seg);
@@ -3496,27 +3520,15 @@
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // label97
+            // btn_charger_alarm_test
             // 
-            this.label97.AutoSize = true;
-            this.label97.Location = new System.Drawing.Point(1127, 530);
-            this.label97.Name = "label97";
-            this.label97.Size = new System.Drawing.Size(170, 22);
-            this.label97.TabIndex = 56;
-            this.label97.Text = "Vh Idle Time(ms)";
-            // 
-            // num_vh_idle_time
-            // 
-            this.num_vh_idle_time.Location = new System.Drawing.Point(1137, 555);
-            this.num_vh_idle_time.Maximum = new decimal(new int[] {
-            600000,
-            0,
-            0,
-            0});
-            this.num_vh_idle_time.Name = "num_vh_idle_time";
-            this.num_vh_idle_time.Size = new System.Drawing.Size(120, 30);
-            this.num_vh_idle_time.TabIndex = 57;
-            this.num_vh_idle_time.ValueChanged += new System.EventHandler(this.num_vh_idle_time_ValueChanged);
+            this.btn_charger_alarm_test.Location = new System.Drawing.Point(432, 723);
+            this.btn_charger_alarm_test.Name = "btn_charger_alarm_test";
+            this.btn_charger_alarm_test.Size = new System.Drawing.Size(201, 30);
+            this.btn_charger_alarm_test.TabIndex = 56;
+            this.btn_charger_alarm_test.Text = "Charger Alarm Set";
+            this.btn_charger_alarm_test.UseVisualStyleBackColor = true;
+            this.btn_charger_alarm_test.Click += new System.EventHandler(this.btn_charger_alarm_test_Click);
             // 
             // DebugForm
             // 
@@ -3555,6 +3567,7 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.num_vh_idle_time)).EndInit();
             this.grb_Reserve.ResumeLayout(false);
             this.grb_Reserve.PerformLayout();
             this.groupBox7.ResumeLayout(false);
@@ -3603,7 +3616,6 @@
             this.tabPage2.ResumeLayout(false);
             this.tabPage6.ResumeLayout(false);
             this.tabPage6.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.num_vh_idle_time)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -3910,5 +3922,6 @@
         private System.Windows.Forms.TextBox tb_ChargerAlive;
         private System.Windows.Forms.Label label97;
         private System.Windows.Forms.NumericUpDown num_vh_idle_time;
+        private System.Windows.Forms.Button btn_charger_alarm_test;
     }
 }

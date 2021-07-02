@@ -1524,5 +1524,13 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             sc.App.SystemParameter.setAllowIdleTime_ms((int)num_vh_idle_time.Value);
         }
+
+        private void btn_charger_alarm_test_Click(object sender, EventArgs e)
+        {
+            var chargerM = bcApp.SCApplication.getEQObjCacheManager().getEquipmentByEQPTID("MCharger");
+            var action = chargerM.getMapActionByIdentityKey(nameof(com.mirle.ibg3k0.sc.Data.ValueDefMapAction.ChargerValueDefMapAction)) as
+                   com.mirle.ibg3k0.sc.Data.ValueDefMapAction.ChargerValueDefMapAction;
+            Task.Run(() => action.MasterChargerAbnormalChargingReport(null, null));
+        }
     }
 }

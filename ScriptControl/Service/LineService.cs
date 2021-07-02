@@ -1,15 +1,19 @@
 ﻿using com.mirle.ibg3k0.bcf.Common;
 using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.BLL;
+using com.mirle.ibg3k0.sc.Common;
+using com.mirle.ibg3k0.sc.Data;
 using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using com.mirle.ibg3k0.Utility.ul.Data.VO;
 using Newtonsoft.Json.Linq;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using static com.mirle.ibg3k0.sc.AVEHICLE;
 
 namespace com.mirle.ibg3k0.sc.Service
@@ -380,6 +384,92 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     logger.Error(ex, "Exception:");
                 }
+            }
+        }
+        public void ProcessAlarmReport(string eqptID, string err_code, ErrorStatus status, string errorDesc)
+        {
+            try
+            {
+                string node_id = eqptID;
+                string eq_id = eqptID;
+                bool is_all_alarm_clear = SCUtility.isMatche(err_code, "0") && status == ErrorStatus.ErrReset;
+                //List<ALARM> alarms = null;
+                List<ALARM> alarms = new List<ALARM>();
+                scApp.getRedisCacheManager().BeginTransaction();
+                using (TransactionScope tx = SCUtility.getTransactionScope())
+                {
+                    using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                           Data: $"Process eq alarm report.alarm code:{err_code},alarm status{status},error desc:{errorDesc}");
+                        ALARM alarm = null;
+                        if (is_all_alarm_clear)
+                        {
+                            alarms = scApp.AlarmBLL.resetAllAlarmReport(eq_id);
+                            scApp.AlarmBLL.resetAllAlarmReport2Redis(eq_id);
+                        }
+                        else
+                        {
+                            switch (status)
+                            {
+                                case ErrorStatus.ErrSet:
+                                    //將設備上報的Alarm填入資料庫。
+                                    alarm = scApp.AlarmBLL.setAlarmReport(node_id, eqptID, err_code, errorDesc);
+                                    //將其更新至Redis，保存目前所發生的Alarm
+                                    scApp.AlarmBLL.setAlarmReport2Redis(alarm);
+                                    //alarms = new List<ALARM>() { alarm };
+                                    if (alarm != null)
+                                        alarms.Add(alarm);
+                                    break;
+                                case ErrorStatus.ErrReset:
+                                    //將設備上報的Alarm從資料庫刪除。
+                                    alarm = scApp.AlarmBLL.resetAlarmReport(eq_id, err_code);
+                                    //將其更新至Redis，保存目前所發生的Alarm
+                                    scApp.AlarmBLL.resetAlarmReport2Redis(alarm);
+                                    //alarms = new List<ALARM>() { alarm };
+                                    if (alarm != null)
+                                        alarms.Add(alarm);
+                                    break;
+                            }
+                        }
+                        tx.Complete();
+                    }
+                }
+                scApp.getRedisCacheManager().ExecuteTransaction();
+                //通知有Alarm的資訊改變。
+                scApp.getNatsManager().PublishAsync(SCAppConstants.NATS_SUBJECT_CURRENT_ALARM, new byte[0]);
+
+                foreach (ALARM report_alarm in alarms)
+                {
+                    if (report_alarm == null) continue;
+                    if (report_alarm.ALAM_LVL != E_ALARM_LVL.Error) continue;
+                    //需判斷Alarm是否存在如果有的話則需再判斷MCS是否有Disable該Alarm的上報
+                    if (scApp.AlarmBLL.IsReportToHost(report_alarm.ALAM_CODE))
+                    {
+                        string alarm_code = report_alarm.ALAM_CODE;
+                        //scApp.ReportBLL.ReportAlarmHappend(eqpt.VEHICLE_ID, alarm.ALAM_STAT, alarm.ALAM_CODE, alarm.ALAM_DESC, out reportqueues);
+                        List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
+                        if (report_alarm.ALAM_STAT == ErrorStatus.ErrSet)
+                        {
+                            scApp.ReportBLL.ReportAlarmHappend(report_alarm.ALAM_STAT, alarm_code, report_alarm.ALAM_DESC);
+                            scApp.ReportBLL.newReportUnitAlarmSet(eq_id, alarm_code, report_alarm.ALAM_DESC, reportqueues);
+                        }
+                        else
+                        {
+                            scApp.ReportBLL.ReportAlarmHappend(report_alarm.ALAM_STAT, alarm_code, report_alarm.ALAM_DESC);
+                            scApp.ReportBLL.newReportUnitAlarmClear(eq_id, alarm_code, report_alarm.ALAM_DESC, reportqueues);
+                        }
+                        scApp.ReportBLL.newSendMCSMessage(reportqueues);
+
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                           Data: $"do report alarm to mcs,alarm code:{err_code},alarm status{status}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                   Data: ex);
             }
         }
     }

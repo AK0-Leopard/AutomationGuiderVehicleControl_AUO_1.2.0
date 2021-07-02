@@ -41,9 +41,9 @@ AGV_NODE,100000,2, Elmo connection failed
 AGV_NODE,100001,2, Elmo Config read failed
 AGV_NODE,100002,2, Elmo Config path error
 AGV_NODE,101000,2, SR2000-L connection failed
-AGV_NODE,101001,1, SR2000-L data format error
+AGV_NODE,101001,2, SR2000-L data format error
 AGV_NODE,101100,2, SR2000-R connection failed
-AGV_NODE,101101,1, SR2000-R data format error
+AGV_NODE,101101,2, SR2000-R data format error
 AGV_NODE,110000,2, Reject Middler Move Command: Program Closed
 AGV_NODE,110001,2, Reject Middler move command: AGV moving
 AGV_NODE,110002,2, Reject Middler Move Command: Charging
@@ -684,9 +684,9 @@ AGV_NODE,200580,2, Elmo connection failed (IPC)
 AGV_NODE,200581,2, Elmo Config read failure (IPC)
 AGV_NODE,200582,2, Elmo Config path error (IPC)
 AGV_NODE,200583,2, SR2000-L connection failed (IPC)
-AGV_NODE,200584,2, SR2000-L data format error (IPC)
+AGV_NODE,200584,1, SR2000-L data format error (IPC)
 AGV_NODE,200585,2, SR2000-R connection failed (IPC)
-AGV_NODE,200586,2, SR2000-R data format error (IPC)
+AGV_NODE,200586,1, SR2000-R data format error (IPC)
 AGV_NODE,200587,2, I haven't read Barcode (IPC) after too long
 AGV_NODE,200588,2, I haven't read Barcode (IPC) for too long
 AGV_NODE,200589,2, Excessive angular deviation from Section (IPC)
@@ -1027,3 +1027,171 @@ AGV_NODE,201168,1, Interface Signal On (R Side)
 AGV_NODE,201169,2, Ready Signal Off (R Side)
 AGV_NODE,10000,2,Long time inaction
 AGV_NODE,10001,2,Can not service
+ChargerM,1,2,A0001:Main box emergency stop
+ChargerM,2,2,A0002:
+ChargerM,3,2,A0003:
+ChargerM,4,2,A0004:
+ChargerM,5,2,A0005:
+ChargerM,6,2,A0006:
+ChargerM,7,2,A0007:
+ChargerM,8,2,A0008:
+ChargerM,9,2,A0009:
+ChargerM,10,2,A0010:
+ChargerM,11,2,A0011:
+ChargerM,12,2,A0012:
+ChargerM,13,2,A0013:
+ChargerM,14,2,A0014:
+ChargerM,15,2,A0015:
+ChargerM,16,2,A0016:
+ChargerM,17,2,A0017:
+ChargerM,18,2,A0018:
+ChargerM,19,2,A0019:
+ChargerM,20,2,A0020:
+ChargerM,21,2,A0021:
+ChargerM,22,2,A0022:
+ChargerM,23,2,A0023:
+ChargerM,24,2,A0024:
+ChargerM,25,2,A0025:
+ChargerM,26,2,A0026:
+ChargerM,27,2,A0027:
+ChargerM,28,2,A0028:
+ChargerM,29,2,A0029:
+ChargerM,30,2,A0030:
+ChargerM,31,2,A0031:
+Charger1,32,2,A0032:Coupler01 charge time out
+Charger1,33,2,A0033:Coupler01 motor front end sensor erro
+Charger1,34,2,A0034:Coupler01 motor rear end sensor erro
+Charger1,35,2,A0035:Coupler01 Motor erro
+Charger1,36,2,A0036:Charger01 Charger  erro
+Charger1,37,2,A0037:Charger01 Charger  communication erro
+Charger1,38,2,A0038:Coupler01  Measuring without voltage
+Charger1,39,2,A0039:Coupler01 coupler in a position
+Charger1,40,2,A0040:Charger01 command tome out
+Charger1,41,2,A0041:
+Charger1,42,2,A0042:
+Charger1,43,2,A0043:
+Charger1,44,2,A0044:
+Charger1,45,2,A0045:
+Charger1,46,2,A0046:
+Charger1,47,2,A0047:
+Charger1,48,2,A0048:
+Charger1,49,2,A0049:
+Charger1,50,2,A0050:
+Charger1,51,2,A0051:
+Charger1,52,2,A0052:
+Charger1,53,2,A0053:
+Charger1,54,2,A0054:
+Charger1,55,2,A0055:
+Charger1,56,2,A0056:
+Charger1,57,2,A0057:
+Charger1,58,2,A0058:
+Charger1,59,2,A0059:
+Charger1,60,2,A0060:
+Charger1,61,2,A0061:
+Charger1,62,2,A0062:
+Charger1,63,2,A0063:
+Charger2,64,2,A0064:Coupler02 charge time out
+Charger2,65,2,A0065:Coupler02 motor front end sensor erro
+Charger2,66,2,A0066:Coupler02 motor rear end sensor erro
+Charger2,67,2,A0067:Coupler02 Motor erro
+Charger2,68,2,A0068:Charger02 Charger  erro
+Charger2,69,2,A0069:Charger02 Charger  communication erro
+Charger2,70,2,A0070:Coupler02  Measuring without voltage
+Charger2,71,2,A0071:Coupler02 coupler in a position
+Charger2,72,2,A0072:Charger02 command tome out
+Charger2,73,2,A0073:
+Charger2,74,2,A0074:
+Charger2,75,2,A0075:
+Charger2,76,2,A0076:
+Charger2,77,2,A0077:
+Charger2,78,2,A0078:
+Charger2,79,2,A0079:
+Charger2,80,2,A0080:
+Charger2,81,2,A0081:
+Charger2,82,2,A0082:
+Charger2,83,2,A0083:
+Charger2,84,2,A0084:
+Charger2,85,2,A0085:
+Charger2,86,2,A0086:
+Charger2,87,2,A0087:
+Charger2,88,2,A0088:
+Charger2,89,2,A0089:
+Charger2,90,2,A0090:
+Charger2,91,2,A0091:
+Charger2,92,2,A0092:
+Charger2,93,2,A0093:
+Charger2,94,2,A0094:
+Charger2,95,2,A0095:
+Charger3,96,2,A0096:Coupler03 charge time out
+Charger3,97,2,A0097:Coupler03 motor front end sensor erro
+Charger3,98,2,A0098:Coupler03 motor rear end sensor erro
+Charger3,99,2,A0099:Coupler03 Motor erro
+Charger3,100,2,A0100:Charger03 Charger  erro
+Charger3,101,2,A0101:Charger03 Charger  communication erro
+Charger3,102,2,A0102:Coupler03  Measuring without voltage
+Charger3,103,2,A0103:Coupler03 coupler in a position
+Charger3,104,2,A0104:Charger03 command tome out
+Charger3,105,2,A0105:
+Charger3,106,2,A0106:
+Charger3,107,2,A0107:
+Charger3,108,2,A0108:
+Charger3,109,2,A0109:
+Charger3,110,2,A0110:
+Charger3,111,2,A0111:
+Charger3,112,2,A0112:
+Charger3,113,2,A0113:
+Charger3,114,2,A0114:
+Charger3,115,2,A0115:
+Charger3,116,2,A0116:
+Charger3,117,2,A0117:
+Charger3,118,2,A0118:
+Charger3,119,2,A0119:
+Charger3,120,2,A0120:
+Charger3,121,2,A0121:
+Charger3,122,2,A0122:
+Charger3,123,2,A0123:
+Charger3,124,2,A0124:
+Charger3,125,2,A0125:
+Charger3,126,2,A0126:
+Charger3,127,2,A0127:
+Charger4,128,2,A0128:Coupler04 charge time out
+Charger4,129,2,A0129:Coupler04 motor front end sensor erro
+Charger4,130,2,A0130:Coupler04 motor rear end sensor erro
+Charger4,131,2,A0131:Coupler04 Motor erro
+Charger4,132,2,A0132:Charger04 Charger  erro
+Charger4,133,2,A0133:Charger04 Charger  communication erro
+Charger4,134,2,A0134:Coupler04  Measuring without voltage
+Charger4,135,2,A0135:Coupler04 coupler in a position
+Charger4,136,2,A0136:Charger04 command tome out
+Charger4,137,2,A0137:
+Charger4,138,2,A0138:
+Charger4,139,2,A0139:
+Charger4,140,2,A0140:
+Charger4,141,2,A0141:
+Charger4,142,2,A0142:
+Charger4,143,2,A0143:
+Charger4,144,2,A0144:
+Charger4,145,2,A0145:
+Charger4,146,2,A0146:
+Charger4,147,2,A0147:
+Charger4,148,2,A0148:
+Charger4,149,2,A0149:
+Charger4,150,2,A0150:
+Charger4,151,2,A0151:
+Charger4,152,2,A0152:
+Charger4,153,2,A0153:
+Charger4,154,2,A0154:
+Charger4,155,2,A0155:
+Charger4,156,2,A0156:
+Charger4,157,2,A0157:
+Charger4,158,2,A0158:
+Charger4,159,2,A0159:
+Charger5,160,2,A0160:Coupler05 charge time out
+Charger5,161,2,A0161:Coupler05 motor front end sensor erro
+Charger5,162,2,A0162:Coupler05 motor rear end sensor erro
+Charger5,163,2,A0163:Coupler05 Motor erro
+Charger5,164,2,A0164:Charger01 Charger  erro
+Charger5,165,2,A0165:Charger01 Charger  communication erro
+Charger5,166,2,A0166:Coupler05  Measuring without voltage
+Charger5,167,2,A0167:Coupler05 coupler in a position
+Charger5,168,2,A0168:Charger05 command tome out

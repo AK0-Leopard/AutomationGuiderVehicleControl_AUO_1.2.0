@@ -124,6 +124,15 @@ namespace com.mirle.ibg3k0.sc.BLL
             return alarmConvertInfo;
         }
         #endregion AlarmConvertInfo
+
+
+        public (bool isExist, AlarmMap map) tryGetChargerAlarmMap(string errorCode)
+        {
+            var alarm_maps = alarmMapDao.loadAlarmMaps();
+            var alarm_map = alarm_maps.Where(map => map.EQPT_REAL_ID.Contains("Charger") && SCUtility.isMatche(map.ALARM_ID, errorCode)).FirstOrDefault();
+            return (alarm_map != null, alarm_map);
+        }
+
         object lock_obj_alarm = new object();
         public ALARM setAlarmReport(string nodeID, string eq_id, string error_code, string errorDesc)
         {
@@ -172,6 +181,18 @@ namespace com.mirle.ibg3k0.sc.BLL
             {
                 ALARM alarm_obj = (ALARM)JsonConvert.DeserializeObject(redis_value_alarm, typeof(ALARM));
                 alarms.Add(alarm_obj);
+            }
+            return alarms;
+        }
+        public List<ALARM> getCurrentChargerAlarmsFromRedis()
+        {
+            List<ALARM> alarms = new List<ALARM>();
+            var redis_values_alarms = scApp.getRedisCacheManager().HashValuesProductOnlyAsync(SCAppConstants.REDIS_KEY_CURRENT_ALARM).Result;
+            foreach (string redis_value_alarm in redis_values_alarms)
+            {
+                ALARM alarm_obj = (ALARM)JsonConvert.DeserializeObject(redis_value_alarm, typeof(ALARM));
+                if (alarm_obj.EQPT_ID.Contains("Charger"))
+                    alarms.Add(alarm_obj);
             }
             return alarms;
         }

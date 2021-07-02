@@ -954,6 +954,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                                 //        wto_command = from_wto_command;
                                 //    }
                                 //}
+
                                 port_priority_max_command = new List<ACMD_MCS>();
                                 foreach (ACMD_MCS cmd in ACMD_MCSs)
                                 {
@@ -1265,6 +1266,8 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
         /// <summary>
         /// 確認是否有可以等待的後順途搬送命令
+        /// 如果有命令是正要去GroupPort裡面的話就會把對應還在queue中同Group的刪除
+        /// 然正過去的車子執行完命令後，可以直接搬送
         /// </summary>
         /// <param name="InQueueACMD_MCSs"></param>
         private void checkOnTheWayAfterCommandExcuteInOneCommandGroup(ref List<ACMD_MCS> InQueueACMD_MCSs, List<AVEHICLE> idleVhs)
