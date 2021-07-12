@@ -1576,7 +1576,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 8);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 3);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(164, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -2080,10 +2080,10 @@
             this.tabPage4.Controls.Add(this.groupBox20);
             this.tabPage4.Controls.Add(this.groupBox19);
             this.tabPage4.Controls.Add(this.num_BatteryHighBoundaryValue);
+            this.tabPage4.Controls.Add(this.groupBox13);
+            this.tabPage4.Controls.Add(this.lbl_batteryLowBoundaryValue);
             this.tabPage4.Controls.Add(this.label38);
             this.tabPage4.Controls.Add(this.num_BatteryLowBoundaryValue);
-            this.tabPage4.Controls.Add(this.lbl_batteryLowBoundaryValue);
-            this.tabPage4.Controls.Add(this.groupBox13);
             this.tabPage4.Location = new System.Drawing.Point(4, 31);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
@@ -2390,7 +2390,7 @@
             // 
             // num_BatteryHighBoundaryValue
             // 
-            this.num_BatteryHighBoundaryValue.Location = new System.Drawing.Point(952, 792);
+            this.num_BatteryHighBoundaryValue.Location = new System.Drawing.Point(939, 34);
             this.num_BatteryHighBoundaryValue.Name = "num_BatteryHighBoundaryValue";
             this.num_BatteryHighBoundaryValue.Size = new System.Drawing.Size(158, 30);
             this.num_BatteryHighBoundaryValue.TabIndex = 29;
@@ -2399,7 +2399,7 @@
             // label38
             // 
             this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(948, 767);
+            this.label38.Location = new System.Drawing.Point(935, 9);
             this.label38.Name = "label38";
             this.label38.Size = new System.Drawing.Size(360, 22);
             this.label38.TabIndex = 28;
@@ -2407,7 +2407,7 @@
             // 
             // num_BatteryLowBoundaryValue
             // 
-            this.num_BatteryLowBoundaryValue.Location = new System.Drawing.Point(530, 792);
+            this.num_BatteryLowBoundaryValue.Location = new System.Drawing.Point(517, 34);
             this.num_BatteryLowBoundaryValue.Name = "num_BatteryLowBoundaryValue";
             this.num_BatteryLowBoundaryValue.Size = new System.Drawing.Size(158, 30);
             this.num_BatteryLowBoundaryValue.TabIndex = 27;
@@ -2416,7 +2416,7 @@
             // lbl_batteryLowBoundaryValue
             // 
             this.lbl_batteryLowBoundaryValue.AutoSize = true;
-            this.lbl_batteryLowBoundaryValue.Location = new System.Drawing.Point(526, 767);
+            this.lbl_batteryLowBoundaryValue.Location = new System.Drawing.Point(513, 9);
             this.lbl_batteryLowBoundaryValue.Name = "lbl_batteryLowBoundaryValue";
             this.lbl_batteryLowBoundaryValue.Size = new System.Drawing.Size(350, 22);
             this.lbl_batteryLowBoundaryValue.TabIndex = 26;
@@ -2433,7 +2433,7 @@
             this.groupBox13.Controls.Add(this.groupBox16);
             this.groupBox13.Controls.Add(this.groupBox15);
             this.groupBox13.Controls.Add(this.groupBox14);
-            this.groupBox13.Location = new System.Drawing.Point(501, 12);
+            this.groupBox13.Location = new System.Drawing.Point(501, 70);
             this.groupBox13.Name = "groupBox13";
             this.groupBox13.Size = new System.Drawing.Size(946, 752);
             this.groupBox13.TabIndex = 21;
