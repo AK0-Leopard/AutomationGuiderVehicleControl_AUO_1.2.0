@@ -18,7 +18,7 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
         {
             //bool isDetached = con.Entry(point).State == EntityState.Modified;
             //if (isDetached)
-                con.SaveChanges();
+            con.SaveChanges();
         }
 
         public List<APOINT> loadAll(DBConnection_EF con)
@@ -32,6 +32,14 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
         {
             var query = from point in con.APOINT
                         where point.POINT_ID == point_id.Trim()
+                        orderby point.ADR_ID
+                        select point;
+            return query.FirstOrDefault();
+        }
+        public APOINT getByAdrID(DBConnection_EF con, String adrID)
+        {
+            var query = from point in con.APOINT
+                        where point.ADR_ID == adrID.Trim()
                         orderby point.ADR_ID
                         select point;
             return query.FirstOrDefault();

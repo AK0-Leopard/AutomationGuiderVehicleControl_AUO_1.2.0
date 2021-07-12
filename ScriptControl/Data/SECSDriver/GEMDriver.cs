@@ -768,8 +768,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         public abstract bool S6F11SendUnitAlarmSet(string eq_id, string alid, string altx, string error_code, string desc, List<AMCSREPORTQUEUE> reportQueues = null);
 
         public abstract bool S6F11SendUnitAlarmCleared(string eq_id, string alid, string altx, string error_code, string desc, List<AMCSREPORTQUEUE> reportQueues = null);
-        public abstract AMCSREPORTQUEUE S6F11BulibMessage(string ceid, object Vids, List<string> rptids = null);
-
+        public abstract AMCSREPORTQUEUE S6F11BulibMessage(string ceid, object Vids);
         public abstract bool S6F11SendMessage(AMCSREPORTQUEUE queue);
 
 

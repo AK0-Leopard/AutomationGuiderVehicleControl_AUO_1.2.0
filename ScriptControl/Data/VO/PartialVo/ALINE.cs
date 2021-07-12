@@ -74,31 +74,6 @@ namespace com.mirle.ibg3k0.sc
                 }
             }
         }
-
-        private bool hasSeriousAlarmHappend;
-        [BaseElement(NonChangeFromOtherVO = true)]
-        public virtual bool HasSeriousAlarmHappend
-        {
-            get { return hasSeriousAlarmHappend; }
-            set
-            {
-                    hasSeriousAlarmHappend = value;
-                    OnPropertyChanged(BCFUtility.getPropertyName(() => this.HasSeriousAlarmHappend));
-            }
-        }
-
-        private bool hasWarningHappend;
-        [BaseElement(NonChangeFromOtherVO = true)]
-        public virtual bool HasWarningHappend
-        {
-            get { return hasWarningHappend; }
-            set
-            {
-                    hasWarningHappend = value;
-                    OnPropertyChanged(BCFUtility.getPropertyName(() => this.HasWarningHappend));
-            }
-        }
-
         private string current_cycle_type;
         public virtual string Currnet_Cycle_Type
         {

@@ -574,25 +574,13 @@ namespace com.mirle.ibg3k0.sc.App
 
         private void setHltVehicleInfo()
         {
-
-            if(BC_ID != "NORTH_INNOLUX")
-            {
-                int vh_highi = getInt("VehicleHeight", 1800);
-                int vh_width = getInt("VehicleWidth", 3200);
-                int vh_sensor_wlength = getInt("SensorWLength", 1200);
-                reserveSectionAPI.VehicleHeight = vh_highi;
-                reserveSectionAPI.VehicleWidth = vh_width;
-                reserveSectionAPI.SensorLength = vh_sensor_wlength;
-            }
-            else
-            {
-                int vh_highi = getInt("VehicleHeight", 1380);
-                int vh_width = getInt("VehicleWidth", 2750);
-                int vh_sensor_wlength = getInt("SensorWLength", 300);
-                reserveSectionAPI.VehicleHeight = vh_highi;
-                reserveSectionAPI.VehicleWidth = vh_width;
-                reserveSectionAPI.SensorLength = vh_sensor_wlength;
-            }
+            int vh_highi = getInt("VehicleHeight", 1800);
+            int vh_width = getInt("VehicleWidth", 3200);
+            int vh_sensor_wlength = getInt("SensorWLength", 1200);
+            reserveSectionAPI.VehicleHeight = vh_highi;
+            reserveSectionAPI.VehicleWidth = vh_width;
+            reserveSectionAPI.SensorLength = vh_sensor_wlength;
+        }
 
 
         }
@@ -641,7 +629,6 @@ namespace com.mirle.ibg3k0.sc.App
             string trafficLight2Section = getString("TrafficLight2Section", "");
             lineService.trafficLight2Section = trafficLight2Section;
         }
-
 
         private void LoadMapFiles(string addressPath = null, string sectionPath = null)
         {
@@ -995,7 +982,6 @@ namespace com.mirle.ibg3k0.sc.App
                 loadCSVToDataset(ohxcConfig, "VEHICLEMAP");
                 loadCSVToDataset(ohxcConfig, "COUPLERINFO");
                 loadCSVToDataset(ohxcConfig, "FIREDOORSEGMENT");
-                //loadCSVToDataset(ohxcConfig, "TAFFIICLIGHTSECTION");
                 loadCSVToDataset(ohxcConfig, "RESERVEENHANCEINFO");
                 loadCSVToDataset(ohxcConfig, "TRAFFICCONTROLINFO");
                 loadCSVToDataset(ohxcConfig, "ALARMCONVERTINFO");
@@ -2057,7 +2043,6 @@ namespace com.mirle.ibg3k0.sc.App
 
         public static int NumberOfAvoidanceSegment = 3;
         public static Boolean AdvanceDriveAway = true;
-        public static Boolean isPassCouplerHPSafetySignal = false;
 
     }
 }

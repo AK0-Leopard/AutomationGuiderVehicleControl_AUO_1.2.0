@@ -442,6 +442,16 @@ namespace com.mirle.ibg3k0.sc.Common
             UsingCount();
             return value;
         }
+        public Task<RedisValue[]> HashValuesProductOnlyAsync(string key)
+        {
+            IDatabase db = Database();
+            if (db == null) return null;
+            key = $"{productID}_{key}";
+            var value = db.HashValuesAsync(key);
+            UsingCount();
+            return value;
+        }
+
         public RedisValue[] HashKeys(string key)
         {
             IDatabase db = Database();

@@ -124,8 +124,17 @@ namespace com.mirle.ibg3k0.sc.BLL
             return alarmConvertInfo;
         }
         #endregion AlarmConvertInfo
+
+        public (bool isExist, AlarmMap map) tryGetChargerAlarmMap(string errorCode)
+        {
+            var alarm_maps = alarmMapDao.loadAlarmMaps();
+            var alarm_map = alarm_maps.Where(map => map.EQPT_REAL_ID.Contains("Charger") && SCUtility.isMatche(map.ALARM_ID, errorCode)).FirstOrDefault();
+            return (alarm_map != null, alarm_map);
+        }
+
+
         object lock_obj_alarm = new object();
-        public virtual ALARM setAlarmReport(string nodeID, string eq_id, string error_code, string errorDesc)
+        public ALARM setAlarmReport(string nodeID, string eq_id, string error_code, string errorDesc)
         {
             lock (lock_obj_alarm)
             {
@@ -156,7 +165,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
         }
 
-        public virtual void setAlarmReport2Redis(ALARM alarm)
+        public void setAlarmReport2Redis(ALARM alarm)
         {
             if (alarm == null) return;
             string hash_field = $"{alarm.EQPT_ID}_{alarm.ALAM_CODE}";
@@ -175,7 +184,18 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             return alarms;
         }
-
+        public List<ALARM> getCurrentChargerAlarmsFromRedis()
+        {
+            List<ALARM> alarms = new List<ALARM>();
+            var redis_values_alarms = scApp.getRedisCacheManager().HashValuesProductOnlyAsync(SCAppConstants.REDIS_KEY_CURRENT_ALARM).Result;
+            foreach (string redis_value_alarm in redis_values_alarms)
+            {
+                ALARM alarm_obj = (ALARM)JsonConvert.DeserializeObject(redis_value_alarm, typeof(ALARM));
+                if (alarm_obj.EQPT_ID.Contains("Charger"))
+                    alarms.Add(alarm_obj);
+            }
+            return alarms;
+        }
         public List<ALARM> GetAlarms(DateTime startTime, DateTime endTime)
         {
             List<ALARM> alarm = null;
@@ -214,18 +234,8 @@ namespace com.mirle.ibg3k0.sc.BLL
             return alarms;
         }
 
-        public List<ALARM> getCurrentSeriousAlarms()
-        {
-            List<ALARM> alarms = new List<ALARM>();
-            //using (DBConnection_EF con = new DBConnection_EF())
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            {
-                alarms = alarmDao.loadSetSeriousAlarm(con);
-            }
-            return alarms;
-        }
 
-        public virtual ALARM resetAlarmReport(string eq_id, string error_code)
+        public ALARM resetAlarmReport(string eq_id, string error_code)
         {
             lock (lock_obj_alarm)
             {
@@ -243,17 +253,8 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
             }
         }
-        public List<ALARM> GetALARMsBySetTimeClearTime(DateTime set_time, DateTime clear_time)
-        {
-            List<ALARM> alarms = null;
-            //using (DBConnection_EF con = new DBConnection_EF())
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            {
-                alarms = alarmDao.loadAllAlarmByStartTimeEndTime(con, set_time, clear_time);
-            }
-            return alarms;
-        }
-        public virtual void resetAlarmReport2Redis(ALARM alarm)
+
+        public void resetAlarmReport2Redis(ALARM alarm)
         {
             if (alarm == null) return;
             string hash_field = $"{alarm.EQPT_ID.Trim()}_{alarm.ALAM_CODE.Trim()}";
@@ -329,34 +330,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return true;
             }
             return false;
-        }
-
-        public bool hasAlarmErrorExist()
-        {
-            int count = 0;
-
-            lock (lock_obj_alarm)
-            {
-                using (DBConnection_EF con = DBConnection_EF.GetUContext())
-                {
-                    count = alarmDao.GetSetAlarmErrorCount(con);
-                }
-            }
-            return count != 0;
-        }
-
-        public bool hasAlarmWarningExist()
-        {
-            int count = 0;
-
-            lock (lock_obj_alarm)
-            {
-                using (DBConnection_EF con = DBConnection_EF.GetUContext())
-                {
-                    count = alarmDao.GetSetAlarmWaringCount(con);
-                }
-            }
-            return count != 0;
         }
 
         public virtual bool hasAlarmExistByEQ(string eqid)

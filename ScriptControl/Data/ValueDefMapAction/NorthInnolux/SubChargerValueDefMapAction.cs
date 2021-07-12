@@ -26,151 +26,9 @@ using System.Linq.Expressions;
 using System.Linq;
 namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction.NorthInnolux
 {
-    public class SubChargerValueDefMapAction : IValueDefMapAction
+    public class SubChargerValueDefMapAction : com.mirle.ibg3k0.sc.Data.ValueDefMapAction.SubChargerValueDefMapAction
     {
-        public const string DEVICE_NAME_CHARGER = "CHARGER";
-        protected Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        protected AUNIT unit = null;
-        ALINE line;
-        protected SCApplication scApp = null;
-        protected BCFApplication bcfApp = null;
-
-        public SubChargerValueDefMapAction()
-            : base()
-        {
-            scApp = SCApplication.getInstance();
-            bcfApp = scApp.getBCFApplication();
-            line = scApp.getEQObjCacheManager().getLine();
-        }
-
-        public virtual string getIdentityKey()
-        {
-            return this.GetType().Name;
-        }
-        public virtual void setContext(BaseEQObject baseEQ)
-        {
-            this.unit = baseEQ as AUNIT;
-
-        }
-        public virtual void unRegisterEvent()
-        {
-            //not implement
-        }
-        public virtual void doShareMemoryInit(BCFAppConstants.RUN_LEVEL runLevel)
-        {
-            try
-            {
-                switch (runLevel)
-                {
-                    case BCFAppConstants.RUN_LEVEL.ZERO:
-                        initRead();
-                        break;
-                    case BCFAppConstants.RUN_LEVEL.ONE:
-                        break;
-                    case BCFAppConstants.RUN_LEVEL.TWO:
-                        break;
-                    case BCFAppConstants.RUN_LEVEL.NINE:
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Exection:");
-            }
-        }
-
-        public virtual void initRead()
-        {
-            ChargerAliveReport(null, null);
-            ChargerCurrentStatus(null, null);
-            ChargerStatusReport(null, null);
-            ConstantReport(null, null);
-            ChangingInfoReport(null, null);
-            ChargerPIOHandshake(null, null);
-        }
-
-
-        uint ForceStopCharging_index = 0;
-        public virtual void AGVCToChargerForceStopCharging()
-        {
-            AGVCToChargerForceStopCharging send_function =
-                scApp.getFunBaseObj<AGVCToChargerForceStopCharging>(unit.UNIT_ID) as AGVCToChargerForceStopCharging;
-            try
-            {
-                //1.建立各個Function物件
-                if (ForceStopCharging_index > 9999)
-                { ForceStopCharging_index = 0; }
-                send_function.Index = ++ForceStopCharging_index;
-                //2.紀錄發送資料的Log
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(SubChargerValueDefMapAction), Device: DEVICE_NAME_CHARGER,
-                         Data: send_function.ToString(),
-                         VehicleID: unit.UNIT_ID);
-                //3.發送訊息
-                send_function.Write(bcfApp, unit.EqptObjectCate, unit.UNIT_ID);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Exception");
-            }
-            finally
-            {
-                scApp.putFunBaseObj<AGVCToChargerForceStopCharging>(send_function);
-            }
-        }
-
-        uint message_index = 0;
-        public virtual void AGVCToChargerCouplerEnable(uint couplerID, bool isEnable)
-        {
-            AGVCToChargerCouplerEnableDisable send_function =
-                scApp.getFunBaseObj<AGVCToChargerCouplerEnableDisable>(unit.UNIT_ID) as AGVCToChargerCouplerEnableDisable;
-            try
-            {
-                //1.建立各個Function物件
-                send_function.CouplerID = couplerID;
-                send_function.Enable = (uint)(isEnable ? 1 : 0);
-                if (message_index > 9999)
-                { message_index = 0; }
-                send_function.Index = ++message_index;
-                //2.紀錄發送資料的Log
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(SubChargerValueDefMapAction), Device: DEVICE_NAME_CHARGER,
-                         Data: send_function.ToString(),
-                         VehicleID: unit.UNIT_ID);
-                //3.發送訊息
-                send_function.Write(bcfApp, unit.EqptObjectCate, unit.UNIT_ID);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Exception");
-            }
-            finally
-            {
-                scApp.putFunBaseObj<AGVCToChargerCouplerEnableDisable>(send_function);
-            }
-        }
-
-        public virtual void ChargerAliveReport(object sender, ValueChangedEventArgs args)
-        {
-            var function =
-                scApp.getFunBaseObj<ChargeToAGVCAliveReport>(unit.UNIT_ID) as ChargeToAGVCAliveReport;
-            try
-            {
-                //1.建立各個Function物件
-                function.Read(bcfApp, unit.EqptObjectCate, unit.UNIT_ID);
-                //2.read log
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(SubChargerValueDefMapAction), Device: DEVICE_NAME_CHARGER,
-                    XID: unit.UNIT_ID, Data: function.ToString());
-                unit.ChargerAlive = function.Alive;
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Exception");
-            }
-            finally
-            {
-                scApp.putFunBaseObj<ChargeToAGVCAliveReport>(function);
-            }
-        }
-        public virtual void ChargerStatusReport(object sender, ValueChangedEventArgs args)
+        public override void ChargerStatusReport(object sender, ValueChangedEventArgs args)
         {
             var function =
                 scApp.getFunBaseObj<ChargeToAGVCStatusReport>(unit.UNIT_ID) as ChargeToAGVCStatusReport;
@@ -191,9 +49,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction.NorthInnolux
                 unit.chargerHighOutputCurrentProtection = function.HighOutputCurrentProtection;
                 unit.chargerOverheatProtection = function.OverheatProtection;
                 unit.chargerRS485Status = function.RS485Status.ToString();
-                unit.coupler1Status_NORTH_INNOLUX = function.Coupler1Status;
-                unit.coupler2Status_NORTH_INNOLUX = function.Coupler2Status;
-                unit.coupler3Status_NORTH_INNOLUX = function.Coupler3Status;
+                unit.coupler1Status_SOUTH_INNOLUX = function.Coupler1Status;
+                unit.coupler2Status_SOUTH_INNOLUX = function.Coupler2Status;
+                unit.coupler3Status_SOUTH_INNOLUX = function.Coupler3Status;
                 unit.coupler1HPSafety = function.Coupler1Position;
                 unit.coupler2HPSafety = function.Coupler2Position;
                 unit.coupler3HPSafety = function.Coupler3Position;

@@ -58,26 +58,12 @@ namespace com.mirle.ibg3k0.sc.BLL
                 List<CouplerAddress> CouplerAddresses = CommObjCacheManager.getCouplerAddresses();
                 return CouplerAddresses;
             }
-            public List<CouplerAddress> LoadCouplerAddresses(string chargerID)
-            {
-                List<CouplerAddress> CouplerAddresses = CommObjCacheManager.getCouplerAddresses(); 
-                CouplerAddresses = CouplerAddresses.Where(coupler => SCUtility.isMatche(coupler.ChargerID, chargerID)).ToList();
-                return CouplerAddresses;
-            }
             public List<CouplerAddress> GetEnableCouplerAddresses(UnitBLL unitBLL)
             {
                 List<CouplerAddress> CouplerAddresses = CommObjCacheManager.getCouplerAddresses();
                 //CouplerAddresses = CouplerAddresses.Where(coupler => coupler.IsEnable).ToList();
                 CouplerAddresses = CouplerAddresses.Where(coupler => IsCouplerWork(coupler, unitBLL)).ToList();
                 return CouplerAddresses;
-            }
-
-            public CouplerAddress GetCouplerAddress(string chargerID, CouplerNum coupler_num)
-            {
-                List<CouplerAddress> CouplerAddresses = CommObjCacheManager.getCouplerAddresses();
-                CouplerAddress CouplerAddress = CouplerAddresses.Where(coupler => SCUtility.isMatche(coupler.ChargerID, chargerID)
-          && coupler.CouplerNum == coupler_num).FirstOrDefault();
-                return CouplerAddress;
             }
 
             //public bool IsCouplerWork(CouplerAddress couplerAddress, UnitBLL unitBLL)

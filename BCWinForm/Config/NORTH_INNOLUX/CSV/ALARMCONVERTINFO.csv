@@ -18,7 +18,7 @@ ALID,ALCD,ALED,ALTX,CEIDSet,CEIDClear,AlarmLevel,AGVAlarmCode
 601016,2,80,Vehicle has no cassette to unload.,1601016,2601016,0,17
 601017,2,80,AgvcMoveCommand is not match the map to move.,1601017,2601017,0,18
 601018,2,80,Vehicle is not in transfer reject override.,1601018,2601018,0,19
-601019,2,80,Vehicle is not in moving-step reject override.,1601019,2,0,20
+601019,2,80,Vehicle is not in moving-step reject override.,1601019,2601019,0,20
 601020,2,80,Vehicle is not pause by reserve reject override.,1601020,2601020,0,21
 601021,2,80,Unload address unmatch current command unload address.,1601021,2601021,0,22
 601022,2,80,Load address unmatch current command load address.,1601022,2601022,0,23

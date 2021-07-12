@@ -916,7 +916,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return best_vh;
         }
 
-        public override void filterVh(ref List<AVEHICLE> vhs, E_VH_TYPE vh_type, bool checkCst = true)
+        public void filterVh(ref List<AVEHICLE> vhs, E_VH_TYPE vh_type)
         {
             if (vh_type != E_VH_TYPE.None)
             {
@@ -985,22 +985,18 @@ namespace com.mirle.ibg3k0.sc.BLL
                        CarrierID: vh.CST_ID);
                 }
             }
-            if (checkCst)
+            foreach (AVEHICLE vh in vhs.ToList())
             {
-                foreach (AVEHICLE vh in vhs.ToList())
+                if (vh.HAS_CST == 1)
                 {
-                    if (vh.HAS_CST == 1)
-                    {
-                        vhs.Remove(vh);
-                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
-                           Data: $"vh id:{vh.VEHICLE_ID} has carry cst,carrier id:{SCUtility.Trim(vh.CST_ID, true)}," +
-                                 $"so filter it out",
-                           VehicleID: vh.VEHICLE_ID,
-                           CarrierID: vh.CST_ID);
-                    }
+                    vhs.Remove(vh);
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
+                       Data: $"vh id:{vh.VEHICLE_ID} has carry cst,carrier id:{SCUtility.Trim(vh.CST_ID, true)}," +
+                             $"so filter it out",
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID);
                 }
             }
-
             foreach (AVEHICLE vh in vhs.ToList())
             {
                 if (vh.MODE_STATUS != VHModeStatus.AutoRemote)
@@ -1822,7 +1818,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             throw new NotImplementedException();
         }
 
-        public override void setAndPublishPositionReportInfo2Redis(string vh_id, ID_134_TRANS_EVENT_REP report_obj)
+        public void setAndPublishPositionReportInfo2Redis(string vh_id, ID_134_TRANS_EVENT_REP report_obj)
         {
             setPositionReportInfo2Redis(vh_id, report_obj);
             //PublishPositionReportInfo2Redis(vh_id, report_obj);
@@ -1973,18 +1969,15 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         private Mirle.Hlts.Utils.HltDirection decideReserveDirection(double vhAngle)
         {
-            //if (vhAngle == 90
-            //    || vhAngle == -90
-            //    || vhAngle == -270
-            //    || vhAngle == 270)
-            //    return Mirle.Hlts.Utils.HltDirection.NS;
-            //else
-            //{
-            //    return Mirle.Hlts.Utils.HltDirection.EW;
-            //}
-
-            return Mirle.Hlts.Utils.HltDirection.Forward;
-
+            if (vhAngle == 90
+                || vhAngle == -90
+                || vhAngle == -270
+                || vhAngle == 270)
+                return Mirle.Hlts.Utils.HltDirection.NS;
+            else
+            {
+                return Mirle.Hlts.Utils.HltDirection.EW;
+            }
         }
         #region Vehicle Object Info
 
