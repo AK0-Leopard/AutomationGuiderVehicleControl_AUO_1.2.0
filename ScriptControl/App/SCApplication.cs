@@ -492,6 +492,7 @@ namespace com.mirle.ibg3k0.sc.App
 
             initialReserveSectionAPI();
             setRePositionInfo();
+            SetCMDRetryCount();
             setParkAdr1();
             setParkAdr2();
             setTrafficPassTime();
@@ -596,11 +597,18 @@ namespace com.mirle.ibg3k0.sc.App
 
         }
 
+        private void SetCMDRetryCount()
+        {
+            int CMDRetryCount = getInt("CMDFailRetryCount", 3);
+            vehicleService.cmdRetryCount = CMDRetryCount;
+        }
+
         private void setRePositionInfo()
         {
             int RePositionDistance = getInt("RePositionDistance", 5000);
             vehicleService.repositionDistance = RePositionDistance;
         }
+
 
         private void setParkAdr1()
         {

@@ -940,6 +940,8 @@ namespace com.mirle.ibg3k0.sc.BLL
                         int idle_vh_count = scApp.VehicleBLL.cache.getVhCurrentStatusInIdleCount(scApp.CMDBLL);
                         if (idle_vh_count > 0)
                         {
+                            scApp.VehicleService.CreateCMDFromWaitingRetryMCSCMDList();
+
                             List<ACMD_MCS> ACMD_MCSs = scApp.CMDBLL.loadMCS_Command_Queue();
                             checkOnlyOneExcuteWTOCommand(ref ACMD_MCSs);
                             //List<ACMD_MCS> wto_command = null;
@@ -1083,6 +1085,20 @@ namespace com.mirle.ibg3k0.sc.BLL
                                 ACMD_MCS nearest_cmd_mcs = null;
                                 List<AVEHICLE> vhs = scApp.VehicleBLL.cache.loadAllVh().ToList();
                                 scApp.VehicleBLL.filterVh(ref vhs, E_VH_TYPE.None);
+
+                                foreach (AVEHICLE vh in vhs.ToList())
+                                {
+                                    if(scApp.VehicleService.isWaitingRetryMCSCMDListContainKey(vh.VEHICLE_ID))
+                                    {
+                                        vhs.Remove(vh);
+                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
+                                           Data: $"vh id:{vh.VEHICLE_ID} is in WaitingRetryMCSCMDList," +
+                                                 $"so filter it out",
+                                           VehicleID: vh.VEHICLE_ID,
+                                           CarrierID: vh.CST_ID);
+                                    }
+                                }
+
                                 (nearest_vh, nearest_cmd_mcs) = FindNearestVhAndCommand(vhs, search_nearest_mcs_cmd);
                                 if (nearest_vh != null && nearest_cmd_mcs != null)
                                 {

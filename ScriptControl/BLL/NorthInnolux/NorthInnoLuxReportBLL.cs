@@ -288,6 +288,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccsess;
         }
 
+
         public bool ReportEquiptmentOffLine()
         {
             bool isSuccsess = true;
@@ -327,6 +328,14 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTSCAutoCompleted();
             return isSuccsess;
         }
+
+        public override bool RequestDestnationChange(string cmd_id, string carrier_id)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S64F1SendDestinationChangeRequest(cmd_id, carrier_id);
+            return isSuccsess;
+        }
+
         public override bool ReportTSCAutoCompleted(List<AMCSREPORTQUEUE> reportqueues)
         {
             bool isSuccsess = true;
@@ -341,7 +350,10 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTSAvailChanged();
             return isSuccsess;
         }
-
+        //public bool RequestDestinationChange()
+        //{
+        //    return iBSEMDriver.S();
+        //}
         public override bool ReportTSCPauseCompleted(List<AMCSREPORTQUEUE> reportqueues)
         {
             bool isSuccsess = true;

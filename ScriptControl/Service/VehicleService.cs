@@ -60,6 +60,7 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         public const string DEVICE_NAME_AGV = "AGV";
         public int repositionDistance = 5000;
+        public int cmdRetryCount = 3;
         public string parkAdr1 = "";
         public string parkAdr2 = "";
         Logger logger = LogManager.GetCurrentClassLogger();

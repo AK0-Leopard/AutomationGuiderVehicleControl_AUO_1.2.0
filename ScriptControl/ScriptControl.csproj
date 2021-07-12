@@ -694,6 +694,7 @@
     <Compile Include="Data\TimerAction\CouplerCheckTimerAction.cs" />
     <Compile Include="Data\TimerAction\RandomGeneratesCommandTimerActionTiming.cs" />
     <Compile Include="Data\TimerAction\TrafficLightTimerAction.cs" />
+    <Compile Include="Data\TimerAction\ZabbixDataCollectionTimerAction.cs" />
     <Compile Include="Data\ValueDefMapAction\SouthInnolux\ColorLightValueDefMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\SouthInnolux\TrafficLightValueDefMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\UMTCMCSDefaultMapAction.cs" />
@@ -961,7 +962,7 @@
     <Compile Include="Data\TimerAction\RandomGeneratesCommandTimerAction.cs" />
     <Compile Include="Data\TimerAction\BCSystemStatusTimer.cs" />
     <Compile Include="Data\TimerAction\FailOverTimerAction.cs" />
-    <Compile Include="Data\TimerAction\ZabbixDataCollectionTimerAction.cs" />
+    <Compile Include="Data\TimerAction\CouplerHPSafetyTimerAction.cs" />
     <Compile Include="Data\TimerAction\TransferCommandTimerAction.cs" />
     <Compile Include="Data\TimerAction\LinkStatusCheck.cs" />
     <Compile Include="Data\TimerAction\EqptAliveCheck.cs" />

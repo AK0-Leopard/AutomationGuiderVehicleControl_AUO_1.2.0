@@ -180,6 +180,11 @@ namespace com.mirle.ibg3k0.sc
         public bool coupler2SegmentDisableByAGVC = false;
         public bool coupler3SegmentDisableByAGVC = false;
 
+        public const int couplerHPNotSafeTimes = 3;
+        public int coupler1HPNotSafeCount = 0;
+        public int coupler2HPNotSafeCount = 0;
+        public int coupler3HPNotSafeCount = 0;
+
         public SCAppConstants.CouplerStatus GetCoupler1Status(string bcID)
         {
             switch (bcID)

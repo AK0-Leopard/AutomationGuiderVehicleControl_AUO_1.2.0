@@ -49,6 +49,7 @@
             this.Controls.Add(this.elementHost1);
             this.Name = "ChartPopupForm";
             this.Text = "Statics Chart";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ChartPopupForm_FormClosed);
             this.ResumeLayout(false);
 
         }

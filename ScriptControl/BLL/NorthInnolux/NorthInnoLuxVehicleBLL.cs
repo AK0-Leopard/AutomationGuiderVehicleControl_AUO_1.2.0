@@ -1514,12 +1514,16 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                 if (!SCUtility.isEmpty(mcs_cmd_id))
                 {
-                    if (completeStatus == CompleteStatus.CmpStatusVehicleAbort|| completeStatus == CompleteStatus.CmpStatusInterlockError) //20201030 added
+                    if ((completeStatus == CompleteStatus.CmpStatusVehicleAbort
+                        || completeStatus == CompleteStatus.CmpStatusInterlockError)
+                        && !vh.no_needs_to_retry) //20201030 added
                     {
                         //do nothing...
                     }
                     else
                     {
+                        vh.no_needs_to_retry = false;
+
                         E_TRAN_STATUS mcs_cmd_tran_status = CompleteStatusToETransferStatus(completeStatus);
                         //isSuccess &= scApp.SysExcuteQualityBLL.updateSysExecQity_CmdFinish(vh.MCS_CMD);
                         //isSuccess &= scApp.CMDBLL.updateCMD_MCS_TranStatus2Complete(vh.MCS_CMD);

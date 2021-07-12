@@ -1,4 +1,5 @@
 OBJECT_ID,ALARM_ID,ALARM_LVL,ALARM_DESC
+AGV_NODE,600401,2,MCS Phone call.
 AGV_NODE,1,1,Agv already have a transfer command on middler get new transfer command.
 AGV_NODE,2,1,Watch low power thread is charging can't do new transfer command.
 AGV_NODE,3,1,Loading is off after load finished.

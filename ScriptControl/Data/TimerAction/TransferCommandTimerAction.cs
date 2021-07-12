@@ -61,21 +61,21 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
             //}
             try
             {
-                if (System.Threading.Interlocked.Exchange(ref wholeSyncPoint, 1) == 0)
-                {
-                    try
-                    {
-                        scApp.VehicleService.CreateCMDFromWaitingRetryMCSCMDList();
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.Error(ex, "Exception");
-                    }
-                    finally
-                    {
-                        System.Threading.Interlocked.Exchange(ref wholeSyncPoint, 0);
-                    }
-                }
+                //if (System.Threading.Interlocked.Exchange(ref wholeSyncPoint, 1) == 0)
+                //{
+                //    try
+                //    {
+                //        //scApp.VehicleService.CreateCMDFromWaitingRetryMCSCMDList();
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        logger.Error(ex, "Exception");
+                //    }
+                //    finally
+                //    {
+                //        System.Threading.Interlocked.Exchange(ref wholeSyncPoint, 0);
+                //    }
+                //}
 
                 //scApp.CMDBLL.checkMCSTransferCommand();
                 scApp.CMDBLL.checkMCSTransferCommand_New();

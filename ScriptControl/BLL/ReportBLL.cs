@@ -328,6 +328,12 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTSCAutoCompleted();
             return isSuccsess;
         }
+        public virtual bool RequestDestnationChange(string cmd_id, string carrier_id)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S64F1SendDestinationChangeRequest(cmd_id, carrier_id);
+            return isSuccsess;
+        }
         public virtual bool ReportTSCAutoCompleted(List<AMCSREPORTQUEUE> reportqueues)
         {
             bool isSuccsess = true;

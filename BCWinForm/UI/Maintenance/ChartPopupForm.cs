@@ -23,5 +23,10 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             bcApp = _form.BCApp;
             uc_SP_Chart1.Start(bcApp);
         }
+
+        private void ChartPopupForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            form.removeForm(this.Name);
+        }
     }
 }

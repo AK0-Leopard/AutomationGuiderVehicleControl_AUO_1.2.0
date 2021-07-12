@@ -303,6 +303,8 @@ namespace com.mirle.ibg3k0.sc.BLL
                 bool has_success = false;
                 string final_blocked_vh_id = string.Empty;
                 string reserve_fail_section = "";
+                bool isFirst = true;
+
                 ReserveCheckResult result = default(ReserveCheckResult);
                 foreach (var reserve_info in reserveInfos)
                 {
@@ -328,11 +330,41 @@ namespace com.mirle.ibg3k0.sc.BLL
                     //Mirle.Hlts.Utils.HltDirection hltDirection = scApp.ReserveBLL.DecideReserveDirection(scApp.SectionBLL, vh, reserve_section_id);
                     //LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
                     //   Data: $"vh:{vhID} Try add(Only ask) reserve section:{reserve_section_id} ,hlt dir:{hltDirection}...",
-                    //   VehicleID: vhID);
+                    //   VehicleID: vhID);isFirst
                     result = TryAddReservedSectionNew(vhID, reserve_section_id,
                                                    sensorDir: hltDirection,
                                                    isAsk: isAsk);
-                    if (result.OK)
+                    bool already_pass = false;
+                    if (!result.OK)
+                    {
+                        if (isFirst)
+                        {
+                            AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vhID);
+                            if(vh!= null)
+                            {
+                                if (SCUtility.isMatche(vh.CUR_SEC_ID, reserve_section_id))
+                                {
+                                    if (reserveInfos.Count >= 2)
+                                    {
+                                        ASECTION sec1 = scApp.MapBLL.getSectiontByID(reserveInfos[0].ReserveSectionID);
+                                        ASECTION sec2 = scApp.MapBLL.getSectiontByID(reserveInfos[1].ReserveSectionID);
+                                        if (sec1 != null && sec2 != null)
+                                        {
+                                            if ((SCUtility.isMatche(sec1.FROM_ADR_ID, vh.CUR_ADR_ID) || SCUtility.isMatche(sec1.TO_ADR_ID, vh.CUR_ADR_ID)) &&
+                                                (SCUtility.isMatche(sec2.FROM_ADR_ID, vh.CUR_ADR_ID) || SCUtility.isMatche(sec2.TO_ADR_ID, vh.CUR_ADR_ID)))
+                                            {
+                                                already_pass = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    isFirst = false;
+
+                    if (result.OK|| already_pass)
                     {
                         reserve_success_section.Add(reserve_info);
                         has_success |= true;

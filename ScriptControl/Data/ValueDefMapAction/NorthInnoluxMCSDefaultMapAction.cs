@@ -1319,8 +1319,15 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 var cmd_obj = scApp.CMDBLL.getCMD_MCSByID(command_id);
                 if (cmd_obj != null)
                 {
-                    check_result = $"MCS command id:{command_id} already exist.";
-                    return SECSConst.HCACK_Command_ID_Duplication;
+                    if(cmd_obj.TRANSFERSTATE>= E_TRAN_STATUS.Complete)
+                    {
+                        scApp.CMDBLL.MoveACMD_MCSToHCMD_MCS(command_id);
+                    }
+                    else
+                    {
+                        check_result = $"MCS command id:{command_id} already exist.";
+                        return SECSConst.HCACK_Command_ID_Duplication;
+                    }
                 }
             }
             //確認參數是否正確
@@ -2269,7 +2276,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 return false;
             }
         }
-        public bool S64F1SendDestinationChangeRequest(string cmd_id, string carrier_id)
+        public override bool S64F1SendDestinationChangeRequest(string cmd_id, string carrier_id)
         {
             try
             {

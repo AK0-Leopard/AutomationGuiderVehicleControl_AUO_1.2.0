@@ -108,7 +108,17 @@ namespace com.mirle.ibg3k0.sc.Service
             }
 
         }
-
+        public override bool isWaitingRetryMCSCMDListContainKey(string vh_id)
+        {
+            if (WaitingRetryMCSCMDList.ContainsKey(vh_id.Trim()))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         public NorthInnoLuxVehicleService()
         {
@@ -3540,6 +3550,7 @@ namespace com.mirle.ibg3k0.sc.Service
             //Boolean resp_cmp = ITcpIpControl.sendGoogleMsg(bcfApp, tcpipAgentName, wrapper, true);
             //Boolean resp_cmp = eqpt.sendMessage(wrapper, true);
             bool isAddCmdToWaitingRetryMCSCMDList = false;
+            bool informMCSCMDFailed = false;
             List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
             if (!SCUtility.isEmpty(finish_mcs_cmd))
             {
@@ -3552,9 +3563,13 @@ namespace com.mirle.ibg3k0.sc.Service
                         {
                             case CompleteStatus.CmpStatusCancel:
                                 isSuccess = scApp.ReportBLL.newReportTransferCancelCompleted(vh.VEHICLE_ID, reportqueues);
+                                vh.no_needs_to_retry = false;
+                                vh.curCMDRetryCount = 0;
                                 break;
                             case CompleteStatus.CmpStatusAbort:
                                 isSuccess = scApp.ReportBLL.newReportTransferCommandAbortFinish(vh.VEHICLE_ID, reportqueues);
+                                vh.no_needs_to_retry = false;
+                                vh.curCMDRetryCount = 0;
                                 break;
                             case CompleteStatus.CmpStatusLoad:
                             case CompleteStatus.CmpStatusUnload:
@@ -3563,6 +3578,8 @@ namespace com.mirle.ibg3k0.sc.Service
                                 //case CompleteStatus.CmpStatusIdreadFailed:    //20210113 removed
                                 //case CompleteStatus.CmpStatusVehicleAbort:    //20201030 removed
                                 isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
+                                vh.no_needs_to_retry = false;
+                                vh.curCMDRetryCount = 0;
                                 break;
                             //case CompleteStatus.CmpStatusInterlockError:
                             //    if (vh.HAS_CST == 1)
@@ -3586,17 +3603,37 @@ namespace com.mirle.ibg3k0.sc.Service
                             case CompleteStatus.CmpStatusTechingMove:
                             case CompleteStatus.CmpStatusIdmisMatch:      //20210113 added
                             case CompleteStatus.CmpStatusIdreadFailed:    //20210113 added
-                                //Nothing...
+                                vh.no_needs_to_retry = false;
+                                vh.curCMDRetryCount = 0;
                                 break;
 
                             case CompleteStatus.CmpStatusVehicleAbort: //20201030 added
                             case CompleteStatus.CmpStatusInterlockError:
                                 //just add new ohtc command...
-                                isAddCmdToWaitingRetryMCSCMDList = true;
+                                if( vh.curCMDRetryCount >= cmdRetryCount)
+                                {
+                                    vh.curCMDRetryCount = 0;
+                                    isAddCmdToWaitingRetryMCSCMDList = false;
+                                    if (vh.HAS_CST == 1)
+                                    {
+                                        informMCSCMDFailed = true;
+                                    }
+                                    else
+                                    {
+                                        vh.no_needs_to_retry = true;
+                                        isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
+                                    }
+                                }
+                                else
+                                {
+                                    vh.curCMDRetryCount++;
+                                    isAddCmdToWaitingRetryMCSCMDList = true;
+                                }
                                 //WaitingRetryMCSCMDList.Add(vh.VEHICLE_ID, finish_mcs_cmd);
                                 break;
                             default:
                                 logger.Info($"Proc func:CommandCompleteReport, but completeStatus:{completeStatus} notimplemented ");
+                                vh.curCMDRetryCount = 0;
                                 break;
                         }
 
@@ -3644,22 +3681,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
 
 
-            //var finish_cmd_mcs_list = scApp.CMDBLL.loadFinishCMD_MCS();
-            //if (finish_cmd_mcs_list != null && finish_cmd_mcs_list.Count > 0)
-            //{
-            //    using (TransactionScope tx = SCUtility.getTransactionScope())
-            //    {
-            //        using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            //        {
-            //            scApp.CMDBLL.remoteCMD_MCSByBatch(finish_cmd_mcs_list);
-            //            List<HCMD_MCS> hcmd_mcs_list = finish_cmd_mcs_list.Select(cmd => cmd.ToHCMD_MCS()).ToList();
-            //            scApp.CMDBLL.CreatHCMD_MCSs(hcmd_mcs_list);
 
-            //            tx.Complete();
-            //        }
-            //    }
-
-            //}
 
 
 
@@ -3673,23 +3695,6 @@ namespace com.mirle.ibg3k0.sc.Service
                 TranCmpResp = send_str
             };
 
-            //加入Transaction控制，防止在同一筆命令ID下來時，還沒有處裡完。
-            //(在北群創會有在命令結束後，MCS會再派送同樣CMD ID來繼續進行原來的搬送)
-            //Boolean resp_cmp = false;
-            //using (TransactionScope tx = SCUtility.getTransactionScope())
-            //{
-            //    using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            //    {
-            //        if (!SCUtility.isEmpty(finish_mcs_cmd) && completeStatus != CompleteStatus.CmpStatusVehicleAbort)
-            //        {
-            //            scApp.CMDBLL.MoveACMD_MCSToHCMD_MCS(finish_mcs_cmd);
-            //        }
-            //        resp_cmp = vh.sendMessage(wrapper, true);
-            //        if (reportqueues != null && reportqueues.Count > 0)
-            //            scApp.ReportBLL.newSendMCSMessage(reportqueues);
-            //        tx.Complete();
-            //    }
-            //}
             Boolean resp_cmp = vh.sendMessage(wrapper, true);
             if (reportqueues != null && reportqueues.Count > 0)
                 scApp.ReportBLL.newSendMCSMessage(reportqueues);
@@ -3702,15 +3707,6 @@ namespace com.mirle.ibg3k0.sc.Service
                 scApp.VIDBLL.upDateVIDCarrierID(vh.VEHICLE_ID, cur_cst_id);
                 scApp.VIDBLL.upDateVIDCarrierLocInfo(vh.VEHICLE_ID, vh.Real_ID);
             }
-            //當Vh命令結束時，要將她原本所預約的Section 釋放掉
-            //ASECTION current_section = scApp.SectionBLL.cache.GetSection(vh.CUR_SEC_ID);
-            //string adr1 = current_section.FROM_ADR_ID;
-            //string adr2 = current_section.TO_ADR_ID;
-            //AADDRESS adr1_obj = scApp.AddressesBLL.cache.GetAddress(adr1);
-            //AADDRESS adr2_obj = scApp.AddressesBLL.cache.GetAddress(adr2);
-            //adr1_obj?.Release(vh.VEHICLE_ID);
-            //adr2_obj?.Release(vh.VEHICLE_ID);
-            //current_section?.ReleaseSectionReservation(vh.VEHICLE_ID);
             
             sendCommandCompleteEventToNats(vh.VEHICLE_ID, recive_str);
 
@@ -3739,6 +3735,19 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 addCMDToWaitingRetryMCSCMDList(vh.VEHICLE_ID, finish_mcs_cmd);
             }
+            if (informMCSCMDFailed)
+            {
+                if (vh.HAS_CST == 1)
+                {
+                    scApp.ReportBLL.RequestDestnationChange(finish_mcs_cmd, cur_cst_id);
+                }
+                else
+                {
+                    //do nothing
+                }
+                //
+            }
+
         }
 
         private void tryReleaseReservedControl(string vhID, string curSecID)

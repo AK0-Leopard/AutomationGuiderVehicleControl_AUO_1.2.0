@@ -199,38 +199,38 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction.NorthInnolux
                 unit.coupler3HPSafety = function.Coupler3Position;
 
                 unit.ChargerStatusIndex = function.Index;
-                if (function.Coupler1Position == SCAppConstants.CouplerHPSafety.NonSafety && !unit.coupler1SegmentDisableByAGVC)
-                {
-                    CouplerAddress coupler_address = scApp.AddressesBLL.cache.GetCouplerAddress(unit.UNIT_ID, CouplerNum.NumberOne);
-                    unit.coupler1SegmentDisableByAGVC = couplerSafetyHandler(SCAppConstants.CouplerHPSafety.NonSafety, coupler_address);
-                }
-                else if (function.Coupler1Position == SCAppConstants.CouplerHPSafety.Safety && unit.coupler1SegmentDisableByAGVC)
-                {
-                    CouplerAddress coupler_address = scApp.AddressesBLL.cache.GetCouplerAddress(unit.UNIT_ID, CouplerNum.NumberOne);
-                    unit.coupler1SegmentDisableByAGVC = couplerSafetyHandler(SCAppConstants.CouplerHPSafety.Safety, coupler_address);
-                }
+                //if (function.Coupler1Position == SCAppConstants.CouplerHPSafety.NonSafety && !unit.coupler1SegmentDisableByAGVC)
+                //{
+                //    CouplerAddress coupler_address = scApp.AddressesBLL.cache.GetCouplerAddress(unit.UNIT_ID, CouplerNum.NumberOne);
+                //    unit.coupler1SegmentDisableByAGVC = couplerSafetyHandler(SCAppConstants.CouplerHPSafety.NonSafety, coupler_address);
+                //}
+                //else if (function.Coupler1Position == SCAppConstants.CouplerHPSafety.Safety && unit.coupler1SegmentDisableByAGVC)
+                //{
+                //    CouplerAddress coupler_address = scApp.AddressesBLL.cache.GetCouplerAddress(unit.UNIT_ID, CouplerNum.NumberOne);
+                //    unit.coupler1SegmentDisableByAGVC = couplerSafetyHandler(SCAppConstants.CouplerHPSafety.Safety, coupler_address);
+                //}
 
-                if (function.Coupler2Position == SCAppConstants.CouplerHPSafety.NonSafety && !unit.coupler2SegmentDisableByAGVC)
-                {
-                    CouplerAddress coupler_address = scApp.AddressesBLL.cache.GetCouplerAddress(unit.UNIT_ID, CouplerNum.NumberTwo);
-                    unit.coupler2SegmentDisableByAGVC = couplerSafetyHandler(SCAppConstants.CouplerHPSafety.NonSafety, coupler_address);
-                }
-                else if (function.Coupler2Position == SCAppConstants.CouplerHPSafety.Safety && unit.coupler2SegmentDisableByAGVC)
-                {
-                    CouplerAddress coupler_address = scApp.AddressesBLL.cache.GetCouplerAddress(unit.UNIT_ID, CouplerNum.NumberTwo);
-                    unit.coupler2SegmentDisableByAGVC = couplerSafetyHandler(SCAppConstants.CouplerHPSafety.Safety, coupler_address);
-                }
+                //if (function.Coupler2Position == SCAppConstants.CouplerHPSafety.NonSafety && !unit.coupler2SegmentDisableByAGVC)
+                //{
+                //    CouplerAddress coupler_address = scApp.AddressesBLL.cache.GetCouplerAddress(unit.UNIT_ID, CouplerNum.NumberTwo);
+                //    unit.coupler2SegmentDisableByAGVC = couplerSafetyHandler(SCAppConstants.CouplerHPSafety.NonSafety, coupler_address);
+                //}
+                //else if (function.Coupler2Position == SCAppConstants.CouplerHPSafety.Safety && unit.coupler2SegmentDisableByAGVC)
+                //{
+                //    CouplerAddress coupler_address = scApp.AddressesBLL.cache.GetCouplerAddress(unit.UNIT_ID, CouplerNum.NumberTwo);
+                //    unit.coupler2SegmentDisableByAGVC = couplerSafetyHandler(SCAppConstants.CouplerHPSafety.Safety, coupler_address);
+                //}
 
-                if (function.Coupler3Position == SCAppConstants.CouplerHPSafety.NonSafety && !unit.coupler3SegmentDisableByAGVC)
-                {
-                    CouplerAddress coupler_address = scApp.AddressesBLL.cache.GetCouplerAddress(unit.UNIT_ID, CouplerNum.NumberThree);
-                    unit.coupler3SegmentDisableByAGVC = couplerSafetyHandler(SCAppConstants.CouplerHPSafety.NonSafety, coupler_address);
-                }
-                else if (function.Coupler3Position == SCAppConstants.CouplerHPSafety.Safety && unit.coupler3SegmentDisableByAGVC)
-                {
-                    CouplerAddress coupler_address = scApp.AddressesBLL.cache.GetCouplerAddress(unit.UNIT_ID, CouplerNum.NumberThree);
-                    unit.coupler3SegmentDisableByAGVC = couplerSafetyHandler(SCAppConstants.CouplerHPSafety.Safety, coupler_address);
-                }
+                //if (function.Coupler3Position == SCAppConstants.CouplerHPSafety.NonSafety && !unit.coupler3SegmentDisableByAGVC)
+                //{
+                //    CouplerAddress coupler_address = scApp.AddressesBLL.cache.GetCouplerAddress(unit.UNIT_ID, CouplerNum.NumberThree);
+                //    unit.coupler3SegmentDisableByAGVC = couplerSafetyHandler(SCAppConstants.CouplerHPSafety.NonSafety, coupler_address);
+                //}
+                //else if (function.Coupler3Position == SCAppConstants.CouplerHPSafety.Safety && unit.coupler3SegmentDisableByAGVC)
+                //{
+                //    CouplerAddress coupler_address = scApp.AddressesBLL.cache.GetCouplerAddress(unit.UNIT_ID, CouplerNum.NumberThree);
+                //    unit.coupler3SegmentDisableByAGVC = couplerSafetyHandler(SCAppConstants.CouplerHPSafety.Safety, coupler_address);
+                //}
 
                 //3.logical (include db save)
                 //eqpt.Inline_Mode = function.InlineMode;
@@ -245,13 +245,38 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction.NorthInnolux
             }
         }
 
-        private bool couplerSafetyHandler(SCAppConstants.CouplerHPSafety safety, CouplerAddress coupler_address)
+        public bool couplerSafetyHandler(SCAppConstants.CouplerHPSafety safety, CouplerAddress coupler_address,CouplerNum couplerNum)
         {
             bool result = false;
             if (coupler_address != null)
             {
                 if (safety == SCAppConstants.CouplerHPSafety.Safety)
                 {
+                    if(couplerNum == CouplerNum.NumberOne)
+                    {
+                        unit.coupler1HPNotSafeCount = 0;
+                        if (!unit.coupler1SegmentDisableByAGVC)
+                        {
+                            return false;
+                        }
+                    }
+                    else if (couplerNum == CouplerNum.NumberTwo)
+                    {
+                        unit.coupler2HPNotSafeCount = 0;
+                        if (!unit.coupler2SegmentDisableByAGVC)
+                        {
+                            return false;
+                        }
+                    }
+                    else if (couplerNum == CouplerNum.NumberThree)
+                    {
+                        unit.coupler3HPNotSafeCount = 0;
+                        if (!unit.coupler3SegmentDisableByAGVC)
+                        {
+                            return false;
+                        }
+                    }
+
                     scApp.ReserveBLL.RemoveVehicle(unit.UNIT_ID + coupler_address.CouplerNum + "_v_car");
                     foreach (string seg_id in coupler_address.TrafficControlSegment)
                     {
@@ -269,10 +294,46 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction.NorthInnolux
                 }
                 else if (coupler_address.hasVh(scApp.VehicleBLL))
                 {
-                    //do nothing
+                    if (couplerNum == CouplerNum.NumberOne)
+                    {
+                        unit.coupler1HPNotSafeCount = 0;
+                    }
+                    else if (couplerNum == CouplerNum.NumberTwo)
+                    {
+                        unit.coupler2HPNotSafeCount = 0;
+                    }
+                    else if (couplerNum == CouplerNum.NumberThree)
+                    {
+                        unit.coupler3HPNotSafeCount = 0;
+                    }
                 }
                 else
                 {
+                    if (couplerNum == CouplerNum.NumberOne)
+                    {
+                        unit.coupler1HPNotSafeCount ++;
+                        if(unit.coupler1HPNotSafeCount< AUNIT.couplerHPNotSafeTimes)
+                        {
+                            return false;
+                        }
+                    }
+                    else if (couplerNum == CouplerNum.NumberTwo)
+                    {
+                        unit.coupler2HPNotSafeCount ++;
+                        if (unit.coupler2HPNotSafeCount < AUNIT.couplerHPNotSafeTimes)
+                        {
+                            return false;
+                        }
+                    }
+                    else if (couplerNum == CouplerNum.NumberThree)
+                    {
+                        unit.coupler3HPNotSafeCount ++;
+                        if (unit.coupler3HPNotSafeCount < AUNIT.couplerHPNotSafeTimes)
+                        {
+                            return false;
+                        }
+                    }
+
                     string msg = $"The coupler position Address{coupler_address.ADR_ID} is not safe ,begin coupler safe handle process.";
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(SubChargerValueDefMapAction), Device: Service.VehicleService.DEVICE_NAME_AGV,
                        Data: msg);
