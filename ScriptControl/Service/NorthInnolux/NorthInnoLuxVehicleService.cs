@@ -4117,6 +4117,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                         else
                         {
+                            BCFApplication.onErrorMsg($"Can not found AlarmConvertInfo,alarm code:{err_code}, AlarmConvertInfo not found");
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
                            Data: $"can not found AlarmConvertInfo,alarm code:{err_code},alarm status{status}",
                            VehicleID: eqpt.VEHICLE_ID,

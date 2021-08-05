@@ -381,9 +381,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 }
                 else
                 {
+                    BCFApplication.onErrorMsg($"NorthInnoluxMCSDefaultMapAction has Error[alarm code:{aLARMRPTCOND.ALAM_CODE}],[Error method:buildEnabledAlarmVIDItem], AlarmConvertInfo not found");
                     logger.Error("NorthInnoluxMCSDefaultMapAction has Error[Line Name:{0}],[Error method:{1}], AlarmConvertInfo not found",
                      line.LINE_ID, "buildEnabledAlarmVIDItem");
-                    viditem_03.ALIDs[index] = "";
+                    //viditem_03.ALIDs[index] = "";
+                    viditem_03.ALIDs[index] = "0";//查不到先上報0
                 }
             }
             return viditem_03;
@@ -406,9 +408,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 }
                 else
                 {
+                    BCFApplication.onErrorMsg($"NorthInnoluxMCSDefaultMapAction has Error[alarm code:{alarm.ALAM_CODE}],[Error method:buildSettedAlarmVIDItem], AlarmConvertInfo not found");
                     logger.Error("NorthInnoluxMCSDefaultMapAction has Error[Line Name:{0}],[Error method:{1}], AlarmConvertInfo not found",
                      line.LINE_ID, "buildSettedAlarmVIDItem");
-                    viditem_04.ALIDs[index] = "";
+                    //viditem_04.ALIDs[index] = "";
+                    viditem_04.ALIDs[index] = "0";//查不到就上報0
                 }
 
             }
