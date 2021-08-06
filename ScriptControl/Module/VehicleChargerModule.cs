@@ -425,7 +425,7 @@ namespace com.mirle.ibg3k0.sc.Module
             List<CouplerAddress> coupler_addresses = addressesBLL.cache.GetEnableCouplerAddresses(unitBLL);
             foreach (CouplerAddress coupler_address in coupler_addresses)
             {
-                if (coupler_address.hasVh(vehicleBLL))
+                if (coupler_address.hasNoCommandVh(vehicleBLL))
                 {
                     AVEHICLE ChargingVh = vehicleBLL.getVhOnAddress(coupler_address.ADR_ID);
 

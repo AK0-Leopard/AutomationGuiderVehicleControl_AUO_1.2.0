@@ -117,9 +117,13 @@ namespace com.mirle.ibg3k0.sc
         public int Priority { get; set; }
         public string[] TrafficControlSegment { get; set; }
 
+        public bool hasNoCommandVh(VehicleBLL vehicleBLL)
+        {
+            return vehicleBLL.hasNoCommndVhOnAddress(ADR_ID);
+        }
         public bool hasVh(VehicleBLL vehicleBLL)
         {
-            return vehicleBLL.hasVhOnAddress(ADR_ID);
+            return vehicleBLL.hasOnAddress(ADR_ID);
         }
         public bool hasChargingVh(VehicleBLL vehicleBLL)
         {
@@ -185,9 +189,9 @@ namespace com.mirle.ibg3k0.sc
         public int Priority { get; set; }
         public string[] TrafficControlSegment { get; set; }
 
-        public bool hasVh(VehicleBLL vehicleBLL)
+        public bool hasNoCommandVh(VehicleBLL vehicleBLL)
         {
-            return vehicleBLL.hasVhOnAddress(ADR_ID);
+            return vehicleBLL.hasNoCommndVhOnAddress(ADR_ID);
         }
         public bool hasVhGoing(VehicleBLL vehicleBLL)
         {
@@ -211,7 +215,7 @@ namespace com.mirle.ibg3k0.sc
         bool IsEnable { get; set; }
         int Priority { get; set; }
         string[] TrafficControlSegment { get; set; }
-        bool hasVh(VehicleBLL vehicleBLL);
+        bool hasNoCommandVh(VehicleBLL vehicleBLL);
         bool hasVhGoing(VehicleBLL vehicleBLL);
     }
 

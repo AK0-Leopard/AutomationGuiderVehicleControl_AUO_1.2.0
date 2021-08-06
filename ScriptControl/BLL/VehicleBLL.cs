@@ -1264,11 +1264,17 @@ namespace com.mirle.ibg3k0.sc.BLL
                                    vh.CUR_ADR_ID.Trim() == adrID.Trim()).
                        SingleOrDefault();
         }
-        public bool hasVhOnAddress(string adrID)
+        public bool hasNoCommndVhOnAddress(string adrID)
         {
             List<AVEHICLE> vhs = scApp.getEQObjCacheManager().getAllVehicle();
             return vhs.Where(vh => vh.ACT_STATUS == VHActionStatus.NoCommand &&
                                    vh.CUR_ADR_ID.Trim() == adrID.Trim()).
+                       Count() != 0;
+        }
+        public bool hasOnAddress(string adrID)
+        {
+            List<AVEHICLE> vhs = scApp.getEQObjCacheManager().getAllVehicle();
+            return vhs.Where(vh => vh.CUR_ADR_ID.Trim() == adrID.Trim()).
                        Count() != 0;
         }
         public bool hasChargingVhOnAddress(string adrID)

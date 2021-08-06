@@ -152,8 +152,6 @@ namespace com.mirle.ibg3k0.sc
         public float couplerChargeCurrent;
         public UInt16 couplerID;
 
-
-
         public bool chargerReserve;
         public bool chargerConstantVoltageOutput;
         public bool chargerConstantCurrentOutput;
@@ -180,7 +178,7 @@ namespace com.mirle.ibg3k0.sc
         public bool coupler2SegmentDisableByAGVC = false;
         public bool coupler3SegmentDisableByAGVC = false;
 
-        public const int couplerHPNotSafeTimes = 3;
+        public const int couplerHPNotSafeTimes = 5;
         public int coupler1HPNotSafeCount = 0;
         public int coupler2HPNotSafeCount = 0;
         public int coupler3HPNotSafeCount = 0;
