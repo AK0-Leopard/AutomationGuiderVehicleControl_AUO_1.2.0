@@ -12,7 +12,7 @@ AGV_NODE,10,1,Fork command is exist before load.
 AGV_NODE,11,1,Vehicle is not in guide sections.
 AGV_NODE,12,1,This address is a couple but no charge direction.
 AGV_NODE,13,1,Charging is OFF after send start charge command to plc.
-AGV_NODE,14,2,Charging is ON after send stop charge command to plc.
+AGV_NODE,14,1,Charging is ON after send stop charge command to plc.
 AGV_NODE,15,1,Vehicle is not in load position and cannot load.
 AGV_NODE,16,1,Vehicle already have cassette cannot load.
 AGV_NODE,17,1,Vehicle has no cassette to unload.
@@ -35,1163 +35,992 @@ AGV_NODE,33,1,Vehicle is not in transfer reject avoid.
 AGV_NODE,34,1,Vehicle is not in moving-step reject avoid.
 AGV_NODE,35,1,Vehicle is not pause by reserve reject avoid.
 AGV_NODE,36,1,Exception happened in avoid-check.
-AGV_NODE,37,2,Get EMS from AGVC.
-AGV_NODE,38,1,Interlock Error With EQ.
-AGV_NODE,100000,2, Elmo connection failed
-AGV_NODE,100001,2, Elmo Config read failed
-AGV_NODE,100002,2, Elmo Config path error
-AGV_NODE,101000,2, SR2000-L connection failed
-AGV_NODE,101001,2, SR2000-L data format error
-AGV_NODE,101100,2, SR2000-R connection failed
-AGV_NODE,101101,2, SR2000-R data format error
-AGV_NODE,110000,2, Reject Middler Move Command: Program Closed
-AGV_NODE,110001,2, Reject Middler move command: AGV moving
-AGV_NODE,110002,2, Reject Middler Move Command: Charging
-AGV_NODE,110003,2, Reject Middler move command: Fork not Home
-AGV_NODE,110004,2, Reject Middler Move Command: Excessive Start Error
-AGV_NODE,110005,2, Reject Middler Move Command: AGV Trek
-AGV_NODE,110006,2, Reject Middler move command: command breakdown failed
-AGV_NODE,130000,2, I didn't read Barcode after too long
-AGV_NODE,130001,2, Straight line hasn't read Barcode
-AGV_NODE,130002,2, Excessive deviation from Section angle
-AGV_NODE,130003,2, Excessive deviation from Section track
-AGV_NODE,130009,2, No Barcode to read
-AGV_NODE,140000,2, Fork is no longer on Home during the walk
-AGV_NODE,142000,2, XFL exception during running
-AGV_NODE,142001,2, XFR exception during running
-AGV_NODE,142002,2, XRL exception during running
-AGV_NODE,142003,2, XRR exception during running
-AGV_NODE,142004,2, TFL abnormal during running
-AGV_NODE,142005,2, TFR abnormal during running
-AGV_NODE,142006,2, TRL exception during running
-AGV_NODE,142007,2, TRR exception during running
-AGV_NODE,142100,2, VXFL exception during running
-AGV_NODE,142101,2, VXFR abnormal during running
-AGV_NODE,142102,2, VXRL exception during running
-AGV_NODE,142103,2, VXRR abnormal during running
-AGV_NODE,142104,2, VTFL abnormal during running
-AGV_NODE,142105,2, VTFR abnormal during running
-AGV_NODE,142106,2, VTRL exception during running
-AGV_NODE,142107,2, VTRR abnormal during running
-AGV_NODE,150000,2, MoveControl main thread excption
-AGV_NODE,150001,2, Rotate the steering shaft before moving
-AGV_NODE,150002,2, Command trigger interval exceeded
-AGV_NODE,150003,2, AGV Mo stop
-AGV_NODE,151000,2, Deceleration command Deceleration speed abnormal
-AGV_NODE,152000,2, TR curve overspeed
-AGV_NODE,152001,2, Too much difference from expected path
-AGV_NODE,152002,1, TR Instant GT Moving
-AGV_NODE,152003,2, TR enters corner too slowly
-AGV_NODE,152004,2, Excessive angle difference between four wheels
-AGV_NODE,153000,2, R2000 overspeed
-AGV_NODE,153001,1, R2000 enters corner too slowly
-AGV_NODE,153002,2, R2000 stopped abnormally
-AGV_NODE,154000,2, Excessive angular deviation
-AGV_NODE,154001,2, Excessive track deviation
-AGV_NODE,155000,2, SlowStop Timeout
-AGV_NODE,155001,2, Stop Timeout
-AGV_NODE,155002,2, StopAndClear Timeout
-AGV_NODE,156000,2, Second repair timeout
-AGV_NODE,156001,2, Start second repair timeout
-AGV_NODE,159998,2, Where program triggers should not trigger
-AGV_NODE,159999,2, Trigger to unimplemented function
-AGV_NODE,270001,2, Fork Command Format NG
-AGV_NODE,270002,2, Fork Command Read timeout
-AGV_NODE,270003,2, Fork Not Busy timeout
-AGV_NODE,270004,2, Fork Command Executing timeout
-AGV_NODE,270005,1, Batterys Charging Time Out
-AGV_NODE,270007,2, Fork Home Flag Waiting timeout
-AGV_NODE,200001,2, Safety Not Ready
-AGV_NODE,200002,2, MC Not Ready (100)
-AGV_NODE,200003,2, MC Not Ready (284V Power Supply)
-AGV_NODE,200004,2, 
-AGV_NODE,200005,2, 
-AGV_NODE,200006,2, 
-AGV_NODE,200007,2, 
-AGV_NODE,200008,2, 
-AGV_NODE,200009,2, 
-AGV_NODE,200010,2, Main box emergency stop
-AGV_NODE,200011,2, Emergency stop (Teach Box)
-AGV_NODE,200012,2, Emergency stop (FR)
-AGV_NODE,200013,2, Emergency stop (FC)
-AGV_NODE,200014,2, Emergency stop (FL)
-AGV_NODE,200015,2, Emergency stop (BR)
-AGV_NODE,200016,2, Emergency stop (BC)
-AGV_NODE,200017,2, Emergency stop (BL)
-AGV_NODE,200018,2, Emergency stop (IPC Command)
-AGV_NODE,200019,2, 
-AGV_NODE,200020,2, 
-AGV_NODE,200021,2, 
-AGV_NODE,200022,2, 
-AGV_NODE,200023,2, 
-AGV_NODE,200024,2, 
-AGV_NODE,200025,2, 
-AGV_NODE,200026,2, 
-AGV_NODE,200027,2, 
-AGV_NODE,200028,2, 
-AGV_NODE,200029,2, 
-AGV_NODE,200030,2, 
-AGV_NODE,200031,1, 
-AGV_NODE,200032,1, 
-AGV_NODE,200033,1, 
-AGV_NODE,200034,1, 
-AGV_NODE,200035,1, 
-AGV_NODE,200036,1, 
-AGV_NODE,200037,2, 
-AGV_NODE,200038,2, 
-AGV_NODE,200039,2, 
-AGV_NODE,200040,2, 
-AGV_NODE,200041,2, 
-AGV_NODE,200042,2, 
-AGV_NODE,200043,2, 
-AGV_NODE,200044,2, 
-AGV_NODE,200045,2, 284V Power Supply1 Start 2
-AGV_NODE,200046,2, 284V Power Supply2 Start 2
-AGV_NODE,200047,2, 284V Power Supply3 Start 2
-AGV_NODE,200048,2, 284V Power Supply1 FAN 2
-AGV_NODE,200049,2, 284V Power Supply2 FAN 2
-AGV_NODE,200050,2, 284V Power Supply3 FAN 2
-AGV_NODE,200051,2, 284V Power Supply1 Overcurrent 2
-AGV_NODE,200052,2, 284V Power Supply2 Overcurrent 2
-AGV_NODE,200053,2, 284V Power Supply1 Temperature 2
-AGV_NODE,200054,2, 284V Power Supply2 Temperature 2
-AGV_NODE,200055,2, 
-AGV_NODE,200056,2, 
-AGV_NODE,200057,2, 
-AGV_NODE,200058,2, 
-AGV_NODE,200059,2, 
-AGV_NODE,200060,2, Bump_F 2
-AGV_NODE,200061,2, Bump_F 2 (No Setup)
-AGV_NODE,200062,2, 
-AGV_NODE,200063,2, 
-AGV_NODE,200064,2, 
-AGV_NODE,200065,2, 
-AGV_NODE,200066,2, Bump_B 2
-AGV_NODE,200067,2, Bump_B 2 (No Setup)
-AGV_NODE,200068,2, 
-AGV_NODE,200069,2, 
-AGV_NODE,200070,2, 
-AGV_NODE,200071,2, 
-AGV_NODE,200072,2, Bump_L 2
-AGV_NODE,200073,2, Bump_L 2 (No Setup)
-AGV_NODE,200074,2, Bump_R 2
-AGV_NODE,200075,2, Bump_R 2 (No Setup)
-AGV_NODE,200076,2, 
-AGV_NODE,200077,2, 
-AGV_NODE,200078,2, 
-AGV_NODE,200079,2, 
-AGV_NODE,200080,2, 
-AGV_NODE,200081,2, 
-AGV_NODE,200082,2, 
-AGV_NODE,200083,2, 
-AGV_NODE,200084,2, 
-AGV_NODE,200085,2, 
-AGV_NODE,200086,2, 
-AGV_NODE,200087,2, 
-AGV_NODE,200088,2, 
-AGV_NODE,200089,2, 
-AGV_NODE,200090,1, Charger Timeout (R)
-AGV_NODE,200091,1, Charger Timeout (L)
-AGV_NODE,200092,1, Charger Signal Off (R)
-AGV_NODE,200093,1, Charger Signal Off (L)
-AGV_NODE,200094,1, Charger Confirm Sensor Off (R)
-AGV_NODE,200095,1, Charger Confirm Sensor Off (L)
-AGV_NODE,200096,2, 
-AGV_NODE,200097,2, 
-AGV_NODE,200098,2, 
-AGV_NODE,200099,2, 
-AGV_NODE,200100,2, Vehicle BAT Overheating_F 2
-AGV_NODE,200101,2, Vehicle BAT Overheating_B 2
-AGV_NODE,200102,2, Vehicle BMS Low Battery 2
-AGV_NODE,200103,2, Vehicle BAT Temperature 2
-AGV_NODE,200104,2, Vehicle BAT-F FAN1 2
-AGV_NODE,200105,2, Vehicle BAT-F FAN2 2
-AGV_NODE,200106,2, Vehicle BAT-B FAN1 2
-AGV_NODE,200107,2, Vehicle BAT-B FAN2 2
-AGV_NODE,200108,2, 
-AGV_NODE,200109,2, 
-AGV_NODE,200110,2, 
-AGV_NODE,200111,2, 
-AGV_NODE,200112,2, 
-AGV_NODE,200113,2, 
-AGV_NODE,200114,2, 
-AGV_NODE,200115,2, 
-AGV_NODE,200116,2, 
-AGV_NODE,200117,2, 
-AGV_NODE,200118,2, 
-AGV_NODE,200119,2, 
-AGV_NODE,200120,2, Fork Command Timeout
-AGV_NODE,200121,2, Stage Command NG
-AGV_NODE,200122,2, Command Type NG
-AGV_NODE,200123,2, Double storage judgment abnormal (Double Storage)
-AGV_NODE,200124,2, Double storage judgment abnormal (Double Storage)
-AGV_NODE,200125,2, Extraction of double lattice judgment abnormality (Empty Retrieval)
-AGV_NODE,200126,2, Extraction of double lattice judgment abnormality (Empty Retrieval)
-AGV_NODE,200127,2, Vehicle Direction NG
-AGV_NODE,200128,2, Vehicle Home NG
-AGV_NODE,200129,2, Fork Home NG
-AGV_NODE,200130,2, Fork Servo NG
-AGV_NODE,200131,2, Fork Command Signal NG
-AGV_NODE,200132,2, Fork Busy Signal NG
-AGV_NODE,200133,2, Fork Speed ?‹â€‹NG
-AGV_NODE,200134,2, Spare NG
-AGV_NODE,200135,2, System Status NG
-AGV_NODE,200136,2, 
-AGV_NODE,200137,2, 
-AGV_NODE,200138,2, 
-AGV_NODE,200139,2, 
-AGV_NODE,200140,1, Fork Alignment NG
-AGV_NODE,200141,1, Fork Alignment Value NG (P Max)
-AGV_NODE,200142,1, Fork Alignment Value NG (P Min)
-AGV_NODE,200143,1, Fork Alignment Value NG (Y Max)
-AGV_NODE,200144,1, Fork Alignment Value NG (Y Min)
-AGV_NODE,200145,1, Fork Alignment Value NG (? Max)
-AGV_NODE,200146,1, Fork Alignment Value NG (? Min)
-AGV_NODE,200147,2, 
-AGV_NODE,200148,2, 
-AGV_NODE,200149,2, 
-AGV_NODE,200150,1, GOTECH BAT Cell Voltage 2 (Internal))
-AGV_NODE,200151,2, GOTECH BAT MOSFET Temperature 1 2 (Internal)
-AGV_NODE,200152,2, GOTECH BAT Cell Temperature 2 2 (Internal)
-AGV_NODE,200153,2, GOTECH BAT MCU Temperature 3 2 (Internal)
-AGV_NODE,200154,2, GOTECH BAT Over Voltage 2 (Internal)
-AGV_NODE,200155,2, GOTECH BAT Under Voltage 2 (Internal)
-AGV_NODE,200156,2, GOTECH BAT Over Current 2 (Internal)
-AGV_NODE,200157,2, GOTECH BAT Over Voltage 2 (Communication)
-AGV_NODE,200158,2, GOTECH BAT Under Voltage 2 (Communication)
-AGV_NODE,200159,2, GOTECH BAT Over Temperature 2 (Communication)
-AGV_NODE,200160,2, GOTECH BAT Under Temperature 2 (Communication)
-AGV_NODE,200161,2, GOTECH BAT Unbalance 2 (Communication)
-AGV_NODE,200162,2, GOTECH BAT Over Current 2 (Communication)
-AGV_NODE,200163,2, 
-AGV_NODE,200164,2, 
-AGV_NODE,200165,2, 
-AGV_NODE,200166,2, 
-AGV_NODE,200167,2, 
-AGV_NODE,200168,2, 
-AGV_NODE,200169,2, 
-AGV_NODE,200170,2, 
-AGV_NODE,200171,2, 
-AGV_NODE,200172,2, 
-AGV_NODE,200173,2, 
-AGV_NODE,200174,2, 
-AGV_NODE,200175,2, 
-AGV_NODE,200176,2, 
-AGV_NODE,200177,2, 
-AGV_NODE,200178,2, 
-AGV_NODE,200179,2, 
-AGV_NODE,200180,2, 
-AGV_NODE,200181,2, 
-AGV_NODE,200182,2, 
-AGV_NODE,200183,2, 
-AGV_NODE,200184,2, 
-AGV_NODE,200185,2, 
-AGV_NODE,200186,2, 
-AGV_NODE,200187,2, 
-AGV_NODE,200188,2, 
-AGV_NODE,200189,2, 
-AGV_NODE,200190,2, 
-AGV_NODE,200191,2, 
-AGV_NODE,200192,2, 
-AGV_NODE,200193,2, 
-AGV_NODE,200194,2, 
-AGV_NODE,200195,2, 
-AGV_NODE,200196,2, 
-AGV_NODE,200197,2, 
-AGV_NODE,200198,2, 
-AGV_NODE,200199,2, 
-AGV_NODE,200200,2, 
-AGV_NODE,200201,2, emergency stop
-AGV_NODE,200202,2, Servo command address is abnormal
-AGV_NODE,200203,2, Servo input storage data error
-AGV_NODE,200204,2, 
-AGV_NODE,200205,2, Port Duplex
-AGV_NODE,200206,2, Port duality has something
-AGV_NODE,200207,2, 
-AGV_NODE,200208,2, 
-AGV_NODE,200209,2, 
-AGV_NODE,200210,2, Arm with abnormal detection (taken)
-AGV_NODE,200211,2, Arm with abnormal detection (set)
-AGV_NODE,200212,2, Abnormal detection on the arm
-AGV_NODE,200213,2, There is something in the arm after placing the object
-AGV_NODE,200214,2, 
-AGV_NODE,200215,2, Command abnormality detected before arm movement
-AGV_NODE,200216,2, Arm detected abnormal command
-AGV_NODE,200217,2, 
-AGV_NODE,200218,2, 
-AGV_NODE,200219,2, 
-AGV_NODE,200220,2, Action command running timeout
-AGV_NODE,200221,2, 
-AGV_NODE,200222,2, 
-AGV_NODE,200223,2, 
-AGV_NODE,200224,2, 
-AGV_NODE,200225,2, 
-AGV_NODE,200226,2, 
-AGV_NODE,200227,2, 
-AGV_NODE,200228,2, 
-AGV_NODE,200229,2, 
-AGV_NODE,200230,2, AGV exception
-AGV_NODE,200231,2, 
-AGV_NODE,200232,2, 
-AGV_NODE,200233,2, 
-AGV_NODE,200234,2, 
-AGV_NODE,200235,2, Origin lost
-AGV_NODE,200236,2, Lost running origin
-AGV_NODE,200237,2, Lifting origin is lost
-AGV_NODE,200238,2, Lost origin
-AGV_NODE,200239,2, Fork arm origin lost
-AGV_NODE,200240,2, During travel-Wrong arm position
-AGV_NODE,200241,2, Travel origin return timeout
-AGV_NODE,200242,1, Timeout during running action
-AGV_NODE,200243,1, Traveling drive abnormal
-AGV_NODE,200244,1, Traveling drive abnormal
-AGV_NODE,200245,1, Traveling drive abnormal
-AGV_NODE,200246,1, Walking HP origin photoelectric detection abnormal
-AGV_NODE,200247,1, Running HP photoelectric detection abnormal
-AGV_NODE,200248,2, Extreme HP photoelectric abnormality during running
-AGV_NODE,200249,1, Travel EN exceeds HP limit
-AGV_NODE,200250,2, OP origin photoelectric detection abnormal
-AGV_NODE,200251,2, OP photoelectric detection abnormal
-AGV_NODE,200252,2, Limiting photoelectric abnormality on the OP side
-AGV_NODE,200253,2, Running EN exceeds OP limit
-AGV_NODE,200254,2, 
-AGV_NODE,200255,2, 
-AGV_NODE,200256,2, 
-AGV_NODE,200257,2, 
-AGV_NODE,200258,2, 
-AGV_NODE,200259,2, 
-AGV_NODE,200260,2, Lifting action-fork arm action
-AGV_NODE,200261,2, Lifting origin return timeout
-AGV_NODE,200262,1, Timeout during lifting
-AGV_NODE,200263,1, Lift drive abnormal
-AGV_NODE,200264,1, Lift drive abnormal
-AGV_NODE,200265,1, Lift drive abnormal
-AGV_NODE,200266,1, Lifting HP origin photoelectric detection abnormal
-AGV_NODE,200267,1, Positioning photoelectric detection abnormal on lift
-AGV_NODE,200268,1, Lifting upper limit photoelectric abnormality
-AGV_NODE,200269,1, Lifting EN exceeds upper limit
-AGV_NODE,200270,1, Lifting OP origin photoelectric detection abnormal
-AGV_NODE,200271,1, Positioning photoelectric detection abnormal under lifting
-AGV_NODE,200272,1, Limiting photoelectric abnormal
-AGV_NODE,200273,1, Lift EN exceeds lower limit
-AGV_NODE,200274,1, Lift table tilt detection
-AGV_NODE,200275,1, 
-AGV_NODE,200276,1, 
-AGV_NODE,200277,1, 
-AGV_NODE,200278,1, 
-AGV_NODE,200279,1, 
-AGV_NODE,200280,1, Fork arm movement-walking up and down rotation
-AGV_NODE,200281,1, Fork arm origin return timeout
-AGV_NODE,200282,2, Timeout
-AGV_NODE,200283,2, Fork arm driver abnormal
-AGV_NODE,200284,2, Fork arm driver abnormal
-AGV_NODE,200285,2, Fork arm driver abnormal
-AGV_NODE,200286,2, Fork arm HP origin photoelectric detection abnormal
-AGV_NODE,200287,2, Fork arm HP photoelectric detection abnormal
-AGV_NODE,200288,2, Extreme Photoelectric Abnormality on HP Side of Fork Arm
-AGV_NODE,200289,2, Fork arm EN exceeds HP limit
-AGV_NODE,200290,2, Fork arm OP origin photoelectric detection abnormal
-AGV_NODE,200291,2, Fork arm OP photoelectric detection abnormal
-AGV_NODE,200292,2, Limit photoelectric abnormality of OP arm side
-AGV_NODE,200293,2, Fork arm EN exceeds OP limit
-AGV_NODE,200294,2, Fork arm is not in HP (initial position)
-AGV_NODE,200295,2, Abnormal movement of the fork arm
-AGV_NODE,200296,2, 
-AGV_NODE,200297,2, 
-AGV_NODE,200298,2, 
-AGV_NODE,200299,2, 
-AGV_NODE,200300,2, Rotation timeout-positioning
-AGV_NODE,200301,2, Rotation origin return timeout
-AGV_NODE,200302,2, Timeout during turning action
-AGV_NODE,200303,2, Slewing drive abnormal
-AGV_NODE,200304,2, Slewing drive abnormal
-AGV_NODE,200305,2, Slewing drive abnormal
-AGV_NODE,200306,2, 0 degree rotation
-AGV_NODE,200307,2, 0 degree photoelectric detection abnormality
-AGV_NODE,200308,2, Limiting photoelectric abnormality on the 0 degree side
-AGV_NODE,200309,2, Rotation EN exceeds 0 degree limit
-AGV_NODE,200310,2, Rotary 180 degree origin abnormality
-AGV_NODE,200311,2, 180 degree rotation photoelectric detection abnormal
-AGV_NODE,200312,2, Limiting photoelectric abnormality at 180 Â°
-AGV_NODE,200313,2, Rotation EN exceeds 180 degree limit
-AGV_NODE,200314,2, 
-AGV_NODE,200315,2, 90 degree rotation photoelectric detection abnormal
-AGV_NODE,200316,2, Abnormal rotation position
-AGV_NODE,200317,2, No abnormal photoelectric detection
-AGV_NODE,200318,2, 
-AGV_NODE,200319,2, 
-AGV_NODE,200320,2, 
-AGV_NODE,200321,2, 
-AGV_NODE,200322,2, 
-AGV_NODE,200323,2, 
-AGV_NODE,200324,2, 
-AGV_NODE,200325,2, 
-AGV_NODE,200326,2, 
-AGV_NODE,200327,1, 
-AGV_NODE,200328,1, 
-AGV_NODE,200329,1, 
-AGV_NODE,200330,1, 
-AGV_NODE,200331,2, 
-AGV_NODE,200332,2, 
-AGV_NODE,200333,2, 
-AGV_NODE,200334,2, 
-AGV_NODE,200335,2, 
-AGV_NODE,200336,2, 
-AGV_NODE,200337,2, 
-AGV_NODE,200338,2, 
-AGV_NODE,200339,2, 
-AGV_NODE,200340,2, 
-AGV_NODE,200341,2, 
-AGV_NODE,200342,1, 
-AGV_NODE,200343,2, 
-AGV_NODE,200344,2, 
-AGV_NODE,200345,2, 
-AGV_NODE,200346,2, 
-AGV_NODE,200347,2, 
-AGV_NODE,200348,2, 
-AGV_NODE,200349,2, 
-AGV_NODE,200350,2, 
-AGV_NODE,200351,2, 
-AGV_NODE,200352,1, 
-AGV_NODE,200353,2, 
-AGV_NODE,200354,2, 
-AGV_NODE,200355,2, 
-AGV_NODE,200356,2, 
-AGV_NODE,200357,2, 
-AGV_NODE,200358,2, 
-AGV_NODE,200359,2, 
-AGV_NODE,200360,2, 
-AGV_NODE,200361,2, 
-AGV_NODE,200362,2, 
-AGV_NODE,200363,2, 
-AGV_NODE,200364,2, 
-AGV_NODE,200365,2, 
-AGV_NODE,200366,2, 
-AGV_NODE,200367,2, 
-AGV_NODE,200368,2, 
-AGV_NODE,200369,2, 
-AGV_NODE,200370,2, 
-AGV_NODE,200371,2, 
-AGV_NODE,200372,2, 
-AGV_NODE,200373,2, 
-AGV_NODE,200374,2, 
-AGV_NODE,200375,2, 
-AGV_NODE,200376,2, 
-AGV_NODE,200377,2, 
-AGV_NODE,200378,2, 
-AGV_NODE,200379,2, 
-AGV_NODE,200380,2, 
-AGV_NODE,200381,2, 
-AGV_NODE,200382,2, 
-AGV_NODE,200383,2, 
-AGV_NODE,200384,2, 
-AGV_NODE,200385,2, 
-AGV_NODE,200386,2, 
-AGV_NODE,200387,2, 
-AGV_NODE,200388,2, 
-AGV_NODE,200389,2, 
-AGV_NODE,200390,2, 
-AGV_NODE,200391,2, 
-AGV_NODE,200392,2, 
-AGV_NODE,200393,2, 
-AGV_NODE,200394,2, 
-AGV_NODE,200395,2, 
-AGV_NODE,200396,2, 
-AGV_NODE,200397,2, 
-AGV_NODE,200398,2, 
-AGV_NODE,200399,2, 
-AGV_NODE,200400,2, Pause Mode-Non-Automatic
-AGV_NODE,200401,2, In action-forced manual
-AGV_NODE,200402,2, 
-AGV_NODE,200403,2, 
-AGV_NODE,200404,2, 
-AGV_NODE,200405,2, Command abnormality detected before arm movement
-AGV_NODE,200406,2, Arm detected abnormal command
-AGV_NODE,200407,2, 
-AGV_NODE,200408,2, 
-AGV_NODE,200409,2, 
-AGV_NODE,200410,2, 
-AGV_NODE,200411,2, 
-AGV_NODE,200412,2, 
-AGV_NODE,200413,2, 
-AGV_NODE,200414,2, 
-AGV_NODE,200415,2, 
-AGV_NODE,200416,2, 
-AGV_NODE,200417,2, 
-AGV_NODE,200418,2, 
-AGV_NODE,200419,2, 
-AGV_NODE,200420,2, 
-AGV_NODE,200421,2, 
-AGV_NODE,200422,2, 
-AGV_NODE,200423,2, 
-AGV_NODE,200424,2, 
-AGV_NODE,200425,2, 
-AGV_NODE,200426,2, 
-AGV_NODE,200427,2, 
-AGV_NODE,200428,2, 
-AGV_NODE,200429,2, 
-AGV_NODE,200430,2, 
-AGV_NODE,200431,2, 
-AGV_NODE,200432,2, 
-AGV_NODE,200433,2, 
-AGV_NODE,200434,2, 
-AGV_NODE,200435,2, 
-AGV_NODE,200436,2, 
-AGV_NODE,200437,2, 
-AGV_NODE,200438,2, 
-AGV_NODE,200439,2, 
-AGV_NODE,200440,2, 
-AGV_NODE,200441,2, 
-AGV_NODE,200442,2, 
-AGV_NODE,200443,2, 
-AGV_NODE,200444,2, 
-AGV_NODE,200445,2, 
-AGV_NODE,200446,2, 
-AGV_NODE,200447,2, 
-AGV_NODE,200448,2, 
-AGV_NODE,200449,2, 
-AGV_NODE,200450,2, 
-AGV_NODE,200451,2, 
-AGV_NODE,200452,2, 
-AGV_NODE,200453,2, 
-AGV_NODE,200454,2, 
-AGV_NODE,200455,2, 
-AGV_NODE,200456,2, 
-AGV_NODE,200457,2, 
-AGV_NODE,200458,2, 
-AGV_NODE,200459,2, 
-AGV_NODE,200460,2, 
-AGV_NODE,200461,2, 
-AGV_NODE,200462,2, 
-AGV_NODE,200463,2, 
-AGV_NODE,200464,2, 
-AGV_NODE,200465,2, 
-AGV_NODE,200466,2, 
-AGV_NODE,200467,2, 
-AGV_NODE,200468,2, 
-AGV_NODE,200469,2, 
-AGV_NODE,200470,2, 
-AGV_NODE,200471,2, 
-AGV_NODE,200472,2, 
-AGV_NODE,200473,2, 
-AGV_NODE,200474,2, 
-AGV_NODE,200475,2, 
-AGV_NODE,200476,2, 
-AGV_NODE,200477,2, 
-AGV_NODE,200478,2, 
-AGV_NODE,200479,2, 
-AGV_NODE,200480,2, 
-AGV_NODE,200481,2, 
-AGV_NODE,200482,2, 
-AGV_NODE,200483,2, 
-AGV_NODE,200484,2, 
-AGV_NODE,200485,2, 
-AGV_NODE,200486,2, 
-AGV_NODE,200487,2, 
-AGV_NODE,200488,2, 
-AGV_NODE,200489,2, 
-AGV_NODE,200490,2, 
-AGV_NODE,200491,2, 
-AGV_NODE,200492,2, 
-AGV_NODE,200493,2, 
-AGV_NODE,200494,2, 
-AGV_NODE,200495,2, 
-AGV_NODE,200496,2, 
-AGV_NODE,200497,2, 
-AGV_NODE,200498,2, 
-AGV_NODE,200499,2, 
-AGV_NODE,200500,2, Fork Command Format Error. Clear Fork Command for Continue! (IPC)
-AGV_NODE,200501,2, Fork Command PLC Read Error. Clear Fork Command for Continue! (IPC)
-AGV_NODE,200502,2, Fork Start Send out but Busy not on timeout. Please check PLC. (IPC)
-AGV_NODE,200503,2, Fork Command Executing timeout. (IPC)
-AGV_NODE,200504,1, Batterys Charging Time Out (IPC)
-AGV_NODE,200505,2, (IPC)
-AGV_NODE,200506,2, (IPC)
-AGV_NODE,200507,2, (IPC)
-AGV_NODE,200508,2, (IPC)
-AGV_NODE,200509,2, (IPC)
-AGV_NODE,200510,2, (IPC)
-AGV_NODE,200511,2, (IPC)
-AGV_NODE,200512,2, (IPC)
-AGV_NODE,200513,2, (IPC)
-AGV_NODE,200514,2, (IPC)
-AGV_NODE,200515,2, (IPC)
-AGV_NODE,200516,2, Move finish fail. (IPC)
-AGV_NODE,200517,2, (IPC)
-AGV_NODE,200518,2, (IPC)
-AGV_NODE,200519,2, (IPC)
-AGV_NODE,200520,2, (IPC)
-AGV_NODE,200521,2, (IPC)
-AGV_NODE,200522,2, (IPC)
-AGV_NODE,200523,2, (IPC)
-AGV_NODE,200524,2, (IPC)
-AGV_NODE,200525,2, (IPC)
-AGV_NODE,200526,2, (IPC)
-AGV_NODE,200527,2, (IPC)
-AGV_NODE,200528,2, (IPC)
-AGV_NODE,200529,2, (IPC)
-AGV_NODE,200530,2, (IPC)
-AGV_NODE,200531,2, (IPC)
-AGV_NODE,200532,2, (IPC)
-AGV_NODE,200533,2, (IPC)
-AGV_NODE,200534,2, (IPC)
-AGV_NODE,200535,2, (IPC)
-AGV_NODE,200536,2, (IPC)
-AGV_NODE,200537,2, (IPC)
-AGV_NODE,200538,2, (IPC)
-AGV_NODE,200539,2, (IPC)
-AGV_NODE,200540,2, (IPC)
-AGV_NODE,200541,2, (IPC)
-AGV_NODE,200542,2, (IPC)
-AGV_NODE,200543,2, (IPC)
-AGV_NODE,200544,2, (IPC)
-AGV_NODE,200545,2, (IPC)
-AGV_NODE,200546,2, (IPC)
-AGV_NODE,200547,2, (IPC)
-AGV_NODE,200548,2, (IPC)
-AGV_NODE,200549,2, (IPC)
-AGV_NODE,200550,2, (IPC)
-AGV_NODE,200551,2, (IPC)
-AGV_NODE,200552,2, (IPC)
-AGV_NODE,200553,2, (IPC)
-AGV_NODE,200554,2, (IPC)
-AGV_NODE,200555,2, (IPC)
-AGV_NODE,200556,2, (IPC)
-AGV_NODE,200557,2, (IPC)
-AGV_NODE,200558,2, (IPC)
-AGV_NODE,200559,2, (IPC)
-AGV_NODE,200560,2, (IPC)
-AGV_NODE,200561,2, (IPC)
-AGV_NODE,200562,2, (IPC)
-AGV_NODE,200563,2, (IPC)
-AGV_NODE,200564,2, (IPC)
-AGV_NODE,200565,2, (IPC)
-AGV_NODE,200566,2, (IPC)
-AGV_NODE,200567,2, (IPC)
-AGV_NODE,200568,2, (IPC)
-AGV_NODE,200569,2, (IPC)
-AGV_NODE,200570,2, (IPC)
-AGV_NODE,200571,2, (IPC)
-AGV_NODE,200572,2, (IPC)
-AGV_NODE,200573,2, (IPC)
-AGV_NODE,200574,2, (IPC)
-AGV_NODE,200575,2, (IPC)
-AGV_NODE,200576,2, (IPC)
-AGV_NODE,200577,2, (IPC)
-AGV_NODE,200578,2, (IPC)
-AGV_NODE,200579,2, (IPC)
-AGV_NODE,200580,2, Elmo connection failed (IPC)
-AGV_NODE,200581,2, Elmo Config read failure (IPC)
-AGV_NODE,200582,2, Elmo Config path error (IPC)
-AGV_NODE,200583,2, SR2000-L connection failed (IPC)
-AGV_NODE,200584,1, SR2000-L data format error (IPC)
-AGV_NODE,200585,2, SR2000-R connection failed (IPC)
-AGV_NODE,200586,1, SR2000-R data format error (IPC)
-AGV_NODE,200587,2, I haven't read Barcode (IPC) after too long
-AGV_NODE,200588,2, I haven't read Barcode (IPC) for too long
-AGV_NODE,200589,2, Excessive angular deviation from Section (IPC)
-AGV_NODE,200590,2, Excessive deviation from section orbit (IPC)
-AGV_NODE,200591,2, Fork is no longer on the home during the journey (IPC)
-AGV_NODE,200592,2, Axis exception during running (IPC)
-AGV_NODE,200593,2, Disable or virtual axis link failure during running
-AGV_NODE,200594,2, TR Turning Over Speed ?‹â€?IPC)
-AGV_NODE,200595,2, Excessive deviation from expected path
-AGV_NODE,200596,2, Excessive angle difference between four wheels
-AGV_NODE,200597,2, R2000 Cornering Speed ?‹â€?IPC)
-AGV_NODE,200598,2, (IPC)
-AGV_NODE,200599,2, (IPC)
-AGV_NODE,200600,2, (IPC)
-AGV_NODE,200601,2, (IPC)
-AGV_NODE,200602,2, (IPC)
-AGV_NODE,200603,2, (IPC)
-AGV_NODE,200604,2, (IPC)
-AGV_NODE,200605,2, (IPC)
-AGV_NODE,200606,2, (IPC)
-AGV_NODE,200607,2, (IPC)
-AGV_NODE,200608,2, (IPC)
-AGV_NODE,200609,2, (IPC)
-AGV_NODE,200610,2, (IPC)
-AGV_NODE,200611,2, (IPC)
-AGV_NODE,200612,2, (IPC)
-AGV_NODE,200613,2, (IPC)
-AGV_NODE,200614,2, (IPC)
-AGV_NODE,200615,2, (IPC)
-AGV_NODE,200616,2, (IPC)
-AGV_NODE,200617,2, (IPC)
-AGV_NODE,200618,2, (IPC)
-AGV_NODE,200619,2, (IPC)
-AGV_NODE,200620,2, (IPC)
-AGV_NODE,200621,2, (IPC)
-AGV_NODE,200622,2, (IPC)
-AGV_NODE,200623,2, (IPC)
-AGV_NODE,200624,2, (IPC)
-AGV_NODE,200625,2, (IPC)
-AGV_NODE,200626,2, (IPC)
-AGV_NODE,200627,2, (IPC)
-AGV_NODE,200628,2, (IPC)
-AGV_NODE,200629,2, (IPC)
-AGV_NODE,200630,2, (IPC)
-AGV_NODE,200631,2, (IPC)
-AGV_NODE,200632,2, (IPC)
-AGV_NODE,200633,2, (IPC)
-AGV_NODE,200634,2, (IPC)
-AGV_NODE,200635,2, (IPC)
-AGV_NODE,200636,2, (IPC)
-AGV_NODE,200637,2, (IPC)
-AGV_NODE,200638,2, (IPC)
-AGV_NODE,200639,2, (IPC)
-AGV_NODE,200640,2, (IPC)
-AGV_NODE,200641,2, (IPC)
-AGV_NODE,200642,2, (IPC)
-AGV_NODE,200643,2, (IPC)
-AGV_NODE,200644,2, (IPC)
-AGV_NODE,200645,2, (IPC)
-AGV_NODE,200646,2, (IPC)
-AGV_NODE,200647,2, (IPC)
-AGV_NODE,200648,2, (IPC)
-AGV_NODE,200649,2, (IPC)
-AGV_NODE,200650,2, (IPC)
-AGV_NODE,200651,2, (IPC)
-AGV_NODE,200652,2, (IPC)
-AGV_NODE,200653,2, (IPC)
-AGV_NODE,200654,2, (IPC)
-AGV_NODE,200655,2, (IPC)
-AGV_NODE,200656,2, (IPC)
-AGV_NODE,200657,2, (IPC)
-AGV_NODE,200658,2, (IPC)
-AGV_NODE,200659,2, (IPC)
-AGV_NODE,200660,1, Agv already have a transfer command on middler get new transfer command. (IPC)
-AGV_NODE,200661,1, Watch low power thread is charging can't do new transfer command. (IPC)
-AGV_NODE,200662,1, Loading is off after load finished. (IPC)
-AGV_NODE,200663,1, Carrier ID is EMPTY after load finished. (IPC)
-AGV_NODE,200664,1, Carrier ID is ERROR after load finished. (IPC)
-AGV_NODE,200665,1, Loading is ON after unload finished. (IPC)
-AGV_NODE,200666,1, Fork command is exist before unload. (IPC)
-AGV_NODE,200667,1, Vehicle is not in unload position and cannot unload. (IPC)
-AGV_NODE,200668,1, Fork command is exist before load. (IPC)
-AGV_NODE,200669,1, Vehicle is not in guide sections. (IPC)
-AGV_NODE,200670,1, This address is a couple but no charge direction. (IPC)
-AGV_NODE,200671,1, Charging is OFF after send start charge command to plc. (IPC)
-AGV_NODE,200672,1, Charging is ON after send stop charge command to plc. (IPC)
-AGV_NODE,200673,1, Vehicle is not in load position and cannot load. (IPC)
-AGV_NODE,200674,1, Vehicle already have cassette cannot load. (IPC)
-AGV_NODE,200675,1, Vehicle has no cassette to unload. (IPC)
-AGV_NODE,200676,1, AgvcMoveCommand is not match the map to move. (IPC)
-AGV_NODE,200677,1, Vehicle has no command to override. (IPC)
-AGV_NODE,200678,1, Vehicle is not in moving-step. (IPC)
-AGV_NODE,200679,1, Vehicle has next reserve to go. (IPC)
-AGV_NODE,200680,1, Unload address unmatch current command unload address. (IPC)
-AGV_NODE,200681,1, Load address unmatch current command load address. (IPC)
-AGV_NODE,200682,1, ToUnloadSections is empty. (IPC)
-AGV_NODE,200683,1, ToLoadSections is empty. (IPC)
-AGV_NODE,200684,1, Vehicle can not do override. (IPC)
-AGV_NODE,200685,1, Vehicle can not pause. (IPC)
-AGV_NODE,200686,1, Carrier ID is mismatch after load finished. (IPC)
-AGV_NODE,200687,1, Carrier ID read reply is timeout (IPC)
-AGV_NODE,200688,1, Vehicle has 2 cannot do transfer command. (IPC)
-AGV_NODE,200689,2, (IPC)
-AGV_NODE,200690,2, (IPC)
-AGV_NODE,200691,2, (IPC)
-AGV_NODE,200692,2, (IPC)
-AGV_NODE,200693,2, (IPC)
-AGV_NODE,200694,2, (IPC)
-AGV_NODE,200695,2, (IPC)
-AGV_NODE,200696,2, (IPC)
-AGV_NODE,200697,2, (IPC)
-AGV_NODE,200698,2, (IPC)
-AGV_NODE,200699,2, (IPC)
-AGV_NODE,200700,2, (IPC)
-AGV_NODE,200701,2, (IPC)
-AGV_NODE,200702,2, (IPC)
-AGV_NODE,200703,2, (IPC)
-AGV_NODE,200704,2, (IPC)
-AGV_NODE,200705,2, (IPC)
-AGV_NODE,200706,2, (IPC)
-AGV_NODE,200707,2, (IPC)
-AGV_NODE,200708,2, (IPC)
-AGV_NODE,200709,2, (IPC)
-AGV_NODE,200710,2, (IPC)
-AGV_NODE,200711,2, (IPC)
-AGV_NODE,200712,2, (IPC)
-AGV_NODE,200713,2, (IPC)
-AGV_NODE,200714,2, (IPC)
-AGV_NODE,200715,2, (IPC)
-AGV_NODE,200716,2, (IPC)
-AGV_NODE,200717,2, (IPC)
-AGV_NODE,200718,2, (IPC)
-AGV_NODE,200719,2, (IPC)
-AGV_NODE,200720,2, (IPC)
-AGV_NODE,200721,2, (IPC)
-AGV_NODE,200722,2, (IPC)
-AGV_NODE,200723,2, (IPC)
-AGV_NODE,200724,2, (IPC)
-AGV_NODE,200725,2, (IPC)
-AGV_NODE,200726,2, (IPC)
-AGV_NODE,200727,2, (IPC)
-AGV_NODE,200728,2, (IPC)
-AGV_NODE,200729,2, (IPC)
-AGV_NODE,200730,2, (IPC)
-AGV_NODE,200731,2, (IPC)
-AGV_NODE,200732,2, (IPC)
-AGV_NODE,200733,2, (IPC)
-AGV_NODE,200734,2, (IPC)
-AGV_NODE,200735,2, (IPC)
-AGV_NODE,200736,2, (IPC)
-AGV_NODE,200737,2, (IPC)
-AGV_NODE,200738,2, (IPC)
-AGV_NODE,200739,2, (IPC)
-AGV_NODE,200740,2, Axis ErrorCode (IPC)
-AGV_NODE,200741,2, TR Instant GT Moving (IPC)
-AGV_NODE,200742,2, R2000 cornering too slowly (IPC)
-AGV_NODE,200743,2, Deceleration instruction
-AGV_NODE,200744,2, MoveControl main Thread Excption (IPC)
-AGV_NODE,200745,2, (IPC)
-AGV_NODE,200746,2, (IPC)
-AGV_NODE,200747,2, (IPC)
-AGV_NODE,200748,2, (IPC)
-AGV_NODE,200749,2, (IPC)
-AGV_NODE,200750,2, (IPC)
-AGV_NODE,200751,2, (IPC)
-AGV_NODE,200752,2, (IPC)
-AGV_NODE,200753,2, (IPC)
-AGV_NODE,200754,2, (IPC)
-AGV_NODE,200755,2, (IPC)
-AGV_NODE,201001,2, Maintain Mode
-AGV_NODE,201002,2, IPC Not Ready
-AGV_NODE,201003,2, 
-AGV_NODE,201004,2, 
-AGV_NODE,201005,2, Notification preparation and maintenance
-AGV_NODE,201006,2, Driver Battery Low
-AGV_NODE,201007,2, PLC Battery Low
-AGV_NODE,201008,2, CC-Link Master
-AGV_NODE,201009,2, 
-AGV_NODE,201010,2, Fork Command NG
-AGV_NODE,201011,2, Fork Command Idle
-AGV_NODE,201012,2, 
-AGV_NODE,201013,2, 
-AGV_NODE,201014,2, 
-AGV_NODE,201015,2, 
-AGV_NODE,201016,2, 
-AGV_NODE,201017,2, 
-AGV_NODE,201018,2, 
-AGV_NODE,201019,2, ET2 Fork Teaching Report
-AGV_NODE,201020,2, ET2 Index Timeout
-AGV_NODE,201021,2, ET3 Vehicle Teaching Report
-AGV_NODE,201022,2, ET3 Index Timeout
-AGV_NODE,201023,2, ET4 Fork Alignment Teching Report
-AGV_NODE,201024,2, ET4 Index Timeout
-AGV_NODE,201025,2, 
-AGV_NODE,201026,2, ES3 Index Timeout
-AGV_NODE,201027,2, 
-AGV_NODE,201028,2, 
-AGV_NODE,201029,2, 
-AGV_NODE,201030,2, 
-AGV_NODE,201031,2, 
-AGV_NODE,201032,2, 
-AGV_NODE,201033,2, 
-AGV_NODE,201034,2, 
-AGV_NODE,201035,2, 
-AGV_NODE,201036,2, 
-AGV_NODE,201037,2, 
-AGV_NODE,201038,2, 
-AGV_NODE,201039,2, 
-AGV_NODE,201040,2, Vehicle Battery Setting status (None)
-AGV_NODE,201041,2, Vehicle BMS High Battery 1ning
-AGV_NODE,201042,2, Vehicle BMS Low Battery 1ning
-AGV_NODE,201043,2, 
-AGV_NODE,201044,2, 
-AGV_NODE,201045,2, 
-AGV_NODE,201046,2, 
-AGV_NODE,201047,2, 
-AGV_NODE,201048,2, 
-AGV_NODE,201049,2, 
-AGV_NODE,201050,2, Alignment Disable
-AGV_NODE,201051,2, Stage Sensor Disable
-AGV_NODE,201052,2, Fork Sensor Disable
-AGV_NODE,201053,2, Fork Sensor (Double Box) L Side Disable
-AGV_NODE,201054,2, Fork Sensor (Double) R Side Disable
-AGV_NODE,201055,2, Bump Disable
-AGV_NODE,201056,2, 
-AGV_NODE,201057,2, IPC Stop Command Disable
-AGV_NODE,201058,2, 
-AGV_NODE,201059,2, 
-AGV_NODE,201060,2, 
-AGV_NODE,201061,2, 
-AGV_NODE,201062,2, 
-AGV_NODE,201063,2, 
-AGV_NODE,201064,2, 
-AGV_NODE,201065,2, 
-AGV_NODE,201066,2, 
-AGV_NODE,201067,2, 
-AGV_NODE,201068,2, 
-AGV_NODE,201069,2, 
-AGV_NODE,201070,2, Beam Sensor_FUR 1ning
-AGV_NODE,201071,2, Beam Sensor_FUL 1ning
-AGV_NODE,201072,2, Beam Sensor_FDR 1ning
-AGV_NODE,201073,2, Beam Sensor_FDC 1ning
-AGV_NODE,201074,2, Beam Sensor_FDL 1ning
-AGV_NODE,201075,2, Beam Sensor_BUR 1ning
-AGV_NODE,201076,2, Beam Sensor_BUL 1ning
-AGV_NODE,201077,2, Beam Sensor_BDR 1ning
-AGV_NODE,201078,2, Beam Sensor_BDC 1ning
-AGV_NODE,201079,2, Beam Sensor_BDL 1ning
-AGV_NODE,201080,2, Beam Sensor_LUR 1ning
-AGV_NODE,201081,2, Beam Sensor_LUL 1ning
-AGV_NODE,201082,2, Beam Sensor_LDR 1ning
-AGV_NODE,201083,2, Beam Sensor_LDL 1ning
-AGV_NODE,201084,2, Beam Sensor_LUC 1ning
-AGV_NODE,201085,2, Beam Sensor_RUR 1ning
-AGV_NODE,201086,2, Beam Sensor_RUL 1ning
-AGV_NODE,201087,2, Beam Sensor_RDR 1ning
-AGV_NODE,201088,2, Beam Sensor_RDL 1ning
-AGV_NODE,201089,2, Beam Sensor_RUC 1ning
-AGV_NODE,201090,2, 
-AGV_NODE,201091,2, 
-AGV_NODE,201092,2, 
-AGV_NODE,201093,2, 
-AGV_NODE,201094,2, 
-AGV_NODE,201095,2, 
-AGV_NODE,201096,2, 
-AGV_NODE,201097,2, 
-AGV_NODE,201098,2, 
-AGV_NODE,201099,2, 
-AGV_NODE,201100,2, Teach_box _FU 1ning
-AGV_NODE,201101,2, Teach_box _BU 1ning
-AGV_NODE,201102,2, Brake release _FU 1ning
-AGV_NODE,201103,2, Brake release _BU 1ning
-AGV_NODE,201104,2, 
-AGV_NODE,201105,2, 
-AGV_NODE,201106,2, 
-AGV_NODE,201107,2, 
-AGV_NODE,201108,2, 
-AGV_NODE,201109,2, 
-AGV_NODE,201110,2, Meter Communication Timeout
-AGV_NODE,201111,2, Meter Communication Error
-AGV_NODE,201112,2, Charger Station Error
-AGV_NODE,201113,2, 
-AGV_NODE,201114,2, 
-AGV_NODE,201115,2, GOTECH Battery Communication Timeout
-AGV_NODE,201116,2, GOTECH Battery Communication NG
-AGV_NODE,201117,2, 
-AGV_NODE,201118,2, 
-AGV_NODE,201119,2, 
-AGV_NODE,201120,2, 
-AGV_NODE,201121,2, 
-AGV_NODE,201122,2, 
-AGV_NODE,201123,2, 
-AGV_NODE,201124,2, 
-AGV_NODE,201125,2, 
-AGV_NODE,201126,2, 
-AGV_NODE,201127,2, 
-AGV_NODE,201128,2, 
-AGV_NODE,201129,2, 
-AGV_NODE,201130,2, 
-AGV_NODE,201131,2, 
-AGV_NODE,201132,2, 
-AGV_NODE,201133,2, 
-AGV_NODE,201134,2, 
-AGV_NODE,201135,1, LiDAR_F 2
-AGV_NODE,201136,1, LiDAR_F Fault
-AGV_NODE,201137,1, LiDAR_B 2
-AGV_NODE,201138,1, LiDAR_B Fault
-AGV_NODE,201139,2, 
-AGV_NODE,201140,2, 
-AGV_NODE,201141,2, 
-AGV_NODE,201142,2, 
-AGV_NODE,201143,2, 
-AGV_NODE,201144,2, 
-AGV_NODE,201145,2, 
-AGV_NODE,201146,2, 
-AGV_NODE,201147,2, 
-AGV_NODE,201148,2, 
-AGV_NODE,201149,2, 
-AGV_NODE,201150,1, Interface T1 Timeout (L Side)
-AGV_NODE,201151,1, Interface T2 Timeout (L Side)
-AGV_NODE,201152,1, Interface T3 Timeout (L Side)
-AGV_NODE,201153,2, Interface T4 Timeout (L Side)
-AGV_NODE,201154,2, Interface T5 Timeout (L Side)
-AGV_NODE,201155,2, Interface T6 Timeout (L Side)
-AGV_NODE,201156,2, Interface T7 Timeout (L Side)
-AGV_NODE,201157,2, Interface T8 Timeout (L Side)
-AGV_NODE,201158,1, Interface Signal On (L Side)
-AGV_NODE,201159,2, Ready Signal Off (L Side)
-AGV_NODE,201160,1, Interface T1 Timeout (R Side)
-AGV_NODE,201161,1, Interface T2 Timeout (R Side)
-AGV_NODE,201162,1, Interface T3 Timeout (R Side)
-AGV_NODE,201163,2, Interface T4 Timeout (R Side)
-AGV_NODE,201164,2, Interface T5 Timeout (R Side)
-AGV_NODE,201165,2, Interface T6 Timeout (R Side)
-AGV_NODE,201166,2, Interface T7 Timeout (R Side)
-AGV_NODE,201167,2, Interface T8 Timeout (R Side)
-AGV_NODE,201168,1, Interface Signal On (R Side)
-AGV_NODE,201169,2, Ready Signal Off (R Side)
-AGV_NODE,10000,2,Long time inaction
+AGV_NODE,100000,2,Elmo³s½u¥¢±Ñ
+AGV_NODE,100001,2,Elmo ConfigÅª¨ú¥¢±Ñ
+AGV_NODE,100002,2,Elmo Config¸ô®|¿ù»~
+AGV_NODE,101000,2,SR2000-L³s½u¥¢±Ñ
+AGV_NODE,101001,2,SR2000-L¸ê®Æ®æ¦¡¿ù»~
+AGV_NODE,101100,2,SR2000-R³s½u¥¢±Ñ
+AGV_NODE,101101,2,SR2000-R¸ê®Æ®æ¦¡¿ù»~
+AGV_NODE,110000,2,©Úµ´Middler²¾°Ê©R¥O:µ{¦¡Ãö³¬¤¤
+AGV_NODE,110001,2,©Úµ´Middler²¾°Ê©R¥O:AGV²¾°Ê¤¤
+AGV_NODE,110002,2,©Úµ´Middler²¾°Ê©R¥O:Charging
+AGV_NODE,110003,2,©Úµ´Middler²¾°Ê©R¥O:Fork not Home
+AGV_NODE,110004,2,©Úµ´Middler²¾°Ê©R¥O:°_ÂI»~®t¹L¤j
+AGV_NODE,110005,2,©Úµ´Middler²¾°Ê©R¥O:AGV°g¯è¤¤
+AGV_NODE,110006,2,©Úµ´Middler²¾°Ê©R¥O:©R¥O¤À¸Ñ¥¢±Ñ
+AGV_NODE,130000,2,¥XÅs«á¹L¤[¨SÅª¨ìBarcode
+AGV_NODE,130001,2,ª½½u¹L¤[¨SÅª¨ìBarcode
+AGV_NODE,130002,2,©MSection¨¤«×°¾®t¹L¤j
+AGV_NODE,130003,2,©MSection­y¹D°¾®t¹L¤j
+AGV_NODE,130009,2,¨SÅª¨ú¨ì¸ÓÅª¨úªºBarcode
+AGV_NODE,140000,2,¨«¦æ¤¤Fork¤£¦AHomeÂI¤W
+AGV_NODE,142000,2,¨«¦æ¤¤XFL²§±`
+AGV_NODE,142001,2,¨«¦æ¤¤XFR²§±`
+AGV_NODE,142002,2,¨«¦æ¤¤XRL²§±`
+AGV_NODE,142003,2,¨«¦æ¤¤XRR²§±`
+AGV_NODE,142004,2,¨«¦æ¤¤TFL²§±`
+AGV_NODE,142005,2,¨«¦æ¤¤TFR²§±`
+AGV_NODE,142006,2,¨«¦æ¤¤TRL²§±`
+AGV_NODE,142007,2,¨«¦æ¤¤TRR²§±`
+AGV_NODE,142100,2,¨«¦æ¤¤VXFL²§±`
+AGV_NODE,142101,2,¨«¦æ¤¤VXFR²§±`
+AGV_NODE,142102,2,¨«¦æ¤¤VXRL²§±`
+AGV_NODE,142103,2,¨«¦æ¤¤VXRR²§±`
+AGV_NODE,142104,2,¨«¦æ¤¤VTFL²§±`
+AGV_NODE,142105,2,¨«¦æ¤¤VTFR²§±`
+AGV_NODE,142106,2,¨«¦æ¤¤VTRL²§±`
+AGV_NODE,142107,2,¨«¦æ¤¤VTRR²§±`
+AGV_NODE,150000,2,MoveControl¥DThread Excption
+AGV_NODE,150001,2,²¾°Ê«e±ÛÂàÂà¦V¶b±ÛÂà¤£¨ì¦ì
+AGV_NODE,150002,2,¶W¹L©R¥OÄ²µo°Ï¶¡
+AGV_NODE,150003,2,AGV²ö°±
+AGV_NODE,151000,2,­°³t«ü¥O­°³t³t«×²§±`
+AGV_NODE,152000,2,TR¤JÅs¶W³t
+AGV_NODE,152001,2,»P¹w­p¸ô®|®t²§¹L¤j
+AGV_NODE,152002,1,TRÀþ¶¡GT Moving
+AGV_NODE,152003,2,¥|½ü¨¤«×®t²§¹L¤j
+AGV_NODE,153000,2,R2000¤JÅs¶W³t
+AGV_NODE,153001,1,R2000¤JÅs¹LºC
+AGV_NODE,153002,2,R2000²§±`°±¤î
+AGV_NODE,154000,2,¨¤«×°¾®t¹L¤j
+AGV_NODE,154001,2,­y¹D°¾®t¹L¤j
+AGV_NODE,155000,2,SlowStop Timeout
+AGV_NODE,155001,2,Stop Timeout
+AGV_NODE,155002,2,StopAndClear Timeout
+AGV_NODE,156000,2,¤G­×timeout
+AGV_NODE,156001,2,±Ò°Ê¤G­×timeout
+AGV_NODE,159998,2,µ{¦¡Ä²µo¤£À³¸ÓÄ²µoªº¦a¤è
+AGV_NODE,159999,2,Ä²µo¨ì¥¼¹ê§@¥\¯à
+AGV_NODE,270001,2,Fork Command Format NG
+AGV_NODE,270002,2,Fork Command Read timeout
+AGV_NODE,270003,2,Fork Not Busy timeout
+AGV_NODE,270004,2,Fork Command Executing timeout
+AGV_NODE,270005,1,Batterys Charging Time Out
+AGV_NODE,270007,2,Fork Home Flag Waiting timeout
+AGV_NODE,200001,2,Safety Not Ready
+AGV_NODE,200002,2,MC Not Ready(100)
+AGV_NODE,200003,2,MC Not Ready(284V Power Supply)
+AGV_NODE,200004,2,
+AGV_NODE,200005,2,
+AGV_NODE,200006,2,
+AGV_NODE,200007,2,
+AGV_NODE,200008,2,
+AGV_NODE,200009,2,
+AGV_NODE,200010,2,Main box emergency stop
+AGV_NODE,200011,2,Emergency stop(Teach Box)
+AGV_NODE,200012,2,Emergency stop(FR)
+AGV_NODE,200013,2,Emergency stop(FC)
+AGV_NODE,200014,2,Emergency stop(FL)
+AGV_NODE,200015,2,Emergency stop(BR)
+AGV_NODE,200016,2,Emergency stop(BC)
+AGV_NODE,200017,2,Emergency stop(BL)
+AGV_NODE,200018,2,Emergency stop(IPC Command)
+AGV_NODE,200019,2,
+AGV_NODE,200020,2,
+AGV_NODE,200021,2,
+AGV_NODE,200022,2,
+AGV_NODE,200023,2,
+AGV_NODE,200024,2,
+AGV_NODE,200025,2,
+AGV_NODE,200026,2,
+AGV_NODE,200027,2,
+AGV_NODE,200028,2,
+AGV_NODE,200029,2,
+AGV_NODE,200030,2,
+AGV_NODE,200031,1,
+AGV_NODE,200032,1,
+AGV_NODE,200033,1,
+AGV_NODE,200034,1,
+AGV_NODE,200035,1,
+AGV_NODE,200036,1,
+AGV_NODE,200037,2,
+AGV_NODE,200038,2,
+AGV_NODE,200039,2,
+AGV_NODE,200040,2,
+AGV_NODE,200041,2,
+AGV_NODE,200042,2,
+AGV_NODE,200043,2,
+AGV_NODE,200044,2,
+AGV_NODE,200045,2,284V Power Supply1 Start Alarm
+AGV_NODE,200046,2,284V Power Supply2 Start Alarm
+AGV_NODE,200047,2,284V Power Supply3 Start Alarm
+AGV_NODE,200048,2,284V Power Supply1 FAN Alarm
+AGV_NODE,200049,2,284V Power Supply2 FAN Alarm
+AGV_NODE,200050,2,284V Power Supply3 FAN Alarm
+AGV_NODE,200051,2,284V Power Supply1 Overcurrent Alarm
+AGV_NODE,200052,2,284V Power Supply2 Overcurrent Alarm
+AGV_NODE,200053,2,284V Power Supply1 Temperature Alarm
+AGV_NODE,200054,2,284V Power Supply2 Temperature Alarm
+AGV_NODE,200055,2,
+AGV_NODE,200056,2,
+AGV_NODE,200057,2,
+AGV_NODE,200058,2,
+AGV_NODE,200059,2,
+AGV_NODE,200060,2,Bump_F Alarm
+AGV_NODE,200061,2,Bump_F Alarm(No Setup)
+AGV_NODE,200062,2,
+AGV_NODE,200063,2,
+AGV_NODE,200064,2,
+AGV_NODE,200065,2,
+AGV_NODE,200066,2,Bump_B Alarm
+AGV_NODE,200067,2,Bump_B Alarm(No Setup)
+AGV_NODE,200068,2,
+AGV_NODE,200069,2,
+AGV_NODE,200070,2,
+AGV_NODE,200071,2,
+AGV_NODE,200072,2,Bump_L Alarm
+AGV_NODE,200073,2,Bump_L Alarm(No Setup)
+AGV_NODE,200074,2,Bump_R Alarm
+AGV_NODE,200075,2,Bump_R Alarm(No Setup)
+AGV_NODE,200076,2,
+AGV_NODE,200077,2,
+AGV_NODE,200078,2,
+AGV_NODE,200079,2,
+AGV_NODE,200080,2,
+AGV_NODE,200081,2,
+AGV_NODE,200082,2,
+AGV_NODE,200083,2,
+AGV_NODE,200084,2,
+AGV_NODE,200085,2,
+AGV_NODE,200086,2,
+AGV_NODE,200087,2,
+AGV_NODE,200088,2,
+AGV_NODE,200089,2,
+AGV_NODE,200090,1,Charger Timeout(R)
+AGV_NODE,200091,1,Charger Timeout(L)
+AGV_NODE,200092,1,Charger Signal Off(R)
+AGV_NODE,200093,1,Charger Signal Off(L)
+AGV_NODE,200094,1,Charger Confirm Sensor Off(R)
+AGV_NODE,200095,1,Charger Confirm Sensor Off(L)
+AGV_NODE,200096,2,
+AGV_NODE,200097,2,
+AGV_NODE,200098,2,
+AGV_NODE,200099,2,
+AGV_NODE,200100,2,Vehicle BAT Overheating_F Alarm
+AGV_NODE,200101,2,Vehicle BAT Overheating_B Alarm
+AGV_NODE,200102,2,Vehicle BMS Low Battery Alarm
+AGV_NODE,200103,2,Vehicle BAT Temperature Alarm
+AGV_NODE,200104,2,Vehicle BAT-F FAN1 Alarm
+AGV_NODE,200105,2,Vehicle BAT-F FAN2 Alarm
+AGV_NODE,200106,2,Vehicle BAT-B FAN1 Alarm
+AGV_NODE,200107,2,Vehicle BAT-B FAN2 Alarm
+AGV_NODE,200108,2,
+AGV_NODE,200109,2,
+AGV_NODE,200110,2,
+AGV_NODE,200111,2,
+AGV_NODE,200112,2,
+AGV_NODE,200113,2,
+AGV_NODE,200114,2,
+AGV_NODE,200115,2,
+AGV_NODE,200116,2,
+AGV_NODE,200117,2,
+AGV_NODE,200118,2,
+AGV_NODE,200119,2,
+AGV_NODE,200120,2,Fork Command Timeout
+AGV_NODE,200121,2,Stage Command NG
+AGV_NODE,200122,2,Command Type NG
+AGV_NODE,200123,2,¸mª«¤G­«®æ§PÂ_²§±`(Double Storage)
+AGV_NODE,200124,2,¸mª«¤G­«®æ§PÂ_²§±`(Double Storage)
+AGV_NODE,200125,2,¨úª«¤G­«®æ§PÂ_²§±`(Empty Retrieval)
+AGV_NODE,200126,2,¨úª«¤G­«®æ§PÂ_²§±`(Empty Retrieval)
+AGV_NODE,200127,2,Vehicle Direction NG
+AGV_NODE,200128,2,Vehicle Home NG
+AGV_NODE,200129,2,Fork Home NG
+AGV_NODE,200130,2,Fork Servo NG
+AGV_NODE,200131,2,Fork Command Signal NG
+AGV_NODE,200132,2,Fork Busy Signal NG
+AGV_NODE,200133,2,Fork Speed NG
+AGV_NODE,200134,2,Spare NG
+AGV_NODE,200135,2,System Status NG
+AGV_NODE,200136,2,
+AGV_NODE,200137,2,
+AGV_NODE,200138,2,
+AGV_NODE,200139,2,
+AGV_NODE,200140,2,Fork Alignment NG
+AGV_NODE,200141,2,Fork Alignment Value NG(P Max)
+AGV_NODE,200142,2,Fork Alignment Value NG(P Min)
+AGV_NODE,200143,2,Fork Alignment Value NG(Y Max)
+AGV_NODE,200144,2,Fork Alignment Value NG(Y Min)
+AGV_NODE,200145,2,Fork Alignment Value NG(? Max)
+AGV_NODE,200146,2,Fork Alignment Value NG(? Min)
+AGV_NODE,200147,2,
+AGV_NODE,200148,2,
+AGV_NODE,200149,2,
+AGV_NODE,200150,2,GOTECH BAT Cell Voltage Alarm(Internal))
+AGV_NODE,200151,2,GOTECH BAT MOSFET Temperature 1 Alarm(Internal)
+AGV_NODE,200152,2,GOTECH BAT Cell Temperature 2 Alarm(Internal)
+AGV_NODE,200153,2,GOTECH BAT MCU Temperature 3 Alarm(Internal)
+AGV_NODE,200154,2,GOTECH BAT Over Voltage Alarm(Internal)
+AGV_NODE,200155,2,GOTECH BAT Under Voltage Alarm(Internal)
+AGV_NODE,200156,2,GOTECH BAT Over Current Alarm(Internal)
+AGV_NODE,200157,2,GOTECH BAT Over Voltage Alarm(Communication)
+AGV_NODE,200158,2,GOTECH BAT Under Voltage Alarm(Communication)
+AGV_NODE,200159,2,GOTECH BAT Over Temperature Alarm(Communication)
+AGV_NODE,200160,2,GOTECH BAT Under Temperature Alarm(Communication)
+AGV_NODE,200161,2,GOTECH BAT Unbalance Alarm(Communication)
+AGV_NODE,200162,2,GOTECH BAT Over Current Alarm(Communication)
+AGV_NODE,200163,2,
+AGV_NODE,200164,2,
+AGV_NODE,200165,2,
+AGV_NODE,200166,2,
+AGV_NODE,200167,2,
+AGV_NODE,200168,2,
+AGV_NODE,200169,2,
+AGV_NODE,200170,2,
+AGV_NODE,200171,2,
+AGV_NODE,200172,2,
+AGV_NODE,200173,2,
+AGV_NODE,200174,2,
+AGV_NODE,200175,2,
+AGV_NODE,200176,2,
+AGV_NODE,200177,2,
+AGV_NODE,200178,2,
+AGV_NODE,200179,2,
+AGV_NODE,200180,2,
+AGV_NODE,200181,2,
+AGV_NODE,200182,2,
+AGV_NODE,200183,2,
+AGV_NODE,200184,2,
+AGV_NODE,200185,2,
+AGV_NODE,200186,2,
+AGV_NODE,200187,2,
+AGV_NODE,200188,2,
+AGV_NODE,200189,2,
+AGV_NODE,200190,2,
+AGV_NODE,200191,2,
+AGV_NODE,200192,2,
+AGV_NODE,200193,2,
+AGV_NODE,200194,2,
+AGV_NODE,200195,2,
+AGV_NODE,200196,2,
+AGV_NODE,200197,2,
+AGV_NODE,200198,2,
+AGV_NODE,200199,2,
+AGV_NODE,200200,2,
+AGV_NODE,200201,2,ºò«æ°±¤î  
+AGV_NODE,200202,2,¦øªA©R¥O¦ì§}²§±`
+AGV_NODE,200203,2,¦øªA¿é¤JÀx¦ì¸ê®Æ¿ù»~
+AGV_NODE,200204,2,
+AGV_NODE,200205,2,Port¤G­«®æµLª«
+AGV_NODE,200206,2,Port¤G­«®æ¦³ª«
+AGV_NODE,200207,2,
+AGV_NODE,200208,2,
+AGV_NODE,200209,2,
+AGV_NODE,200210,2,¤âÁu²ü¦³ÀËª¾²§±`(¨ú)
+AGV_NODE,200211,2,¤âÁu²ü¦³ÀËª¾²§±`(¸m)
+AGV_NODE,200212,2,¤âÁu²ü¦³ÀËª¾²§±`(¤âÁu²¾°Ê¤¤)
+AGV_NODE,200213,2,¸mª««á¤âÁu¦³ª«
+AGV_NODE,200214,2,
+AGV_NODE,200215,2,¤âÁu¹BÂà«eÀË¬d¨ì©R¥O²§±` 
+AGV_NODE,200216,2,¤âÁuÀË¬d¨ì©R¥O²§±` 
+AGV_NODE,200217,2,
+AGV_NODE,200218,2,
+AGV_NODE,200219,2,
+AGV_NODE,200220,2,°Ê§@©R¥O¹BÂà¶W®É
+AGV_NODE,200221,2,
+AGV_NODE,200222,2,
+AGV_NODE,200223,2,
+AGV_NODE,200224,2,
+AGV_NODE,200225,2,
+AGV_NODE,200226,2,
+AGV_NODE,200227,2,
+AGV_NODE,200228,2,
+AGV_NODE,200229,2,
+AGV_NODE,200230,2,AGV ²§±`
+AGV_NODE,200231,2,
+AGV_NODE,200232,2,
+AGV_NODE,200233,2,
+AGV_NODE,200234,2,
+AGV_NODE,200235,2,­ìÂI°g¥¢
+AGV_NODE,200236,2,¨«¦æ­ìÂI°g¥¢
+AGV_NODE,200237,2,ª@­°­ìÂI°g¥¢
+AGV_NODE,200238,2,¦^Âà­ìÂI°g¥¢
+AGV_NODE,200239,2,¤eÁu­ìÂI°g¥¢
+AGV_NODE,200240,2,¨«¦æ°Ê§@¤¤-¤eÁu¦ì¸m¿ù»~
+AGV_NODE,200241,2,¨«¦æ­ìÂI´_Âk¶W®É
+AGV_NODE,200242,1,¨«¦æ°Ê§@¤¤¶W®É
+AGV_NODE,200243,1,¨«¦æÅX°Ê¾¹²§±`
+AGV_NODE,200244,1,¨«¦æÅX°Ê¾¹²§±`
+AGV_NODE,200245,1,¨«¦æÅX°Ê¾¹²§±`
+AGV_NODE,200246,1,¨«¦æHP­ìÂI¥ú¹qÀË´ú²§±`
+AGV_NODE,200247,1,¨«¦æHP¥ú¹qÀË´ú²§±`
+AGV_NODE,200248,2,¨«¦æHP°¼·¥­­¥ú¹q²§±`
+AGV_NODE,200249,1,¨«¦æ EN ¶W¹L HP ·¥­­
+AGV_NODE,200250,2,¨«¦æOP­ìÂI¥ú¹qÀË´ú²§±`
+AGV_NODE,200251,2,¨«¦æOP¥ú¹qÀË´ú²§±`
+AGV_NODE,200252,2,¨«¦æOP°¼·¥­­¥ú¹q²§±`
+AGV_NODE,200253,2,¨«¦æ EN ¶W¹L OP ·¥­­
+AGV_NODE,200254,2,
+AGV_NODE,200255,2,
+AGV_NODE,200256,2,
+AGV_NODE,200257,2,
+AGV_NODE,200258,2,
+AGV_NODE,200259,2,
+AGV_NODE,200260,2,¤É­°°Ê§@¤¤-¤eÁu°Ê§@
+AGV_NODE,200261,2,¤É­°­ìÂI´_Âk¶W®É
+AGV_NODE,200262,1,¤É­°°Ê§@¤¤¶W®É
+AGV_NODE,200263,1,¤É­°ÅX°Ê¾¹²§±`
+AGV_NODE,200264,1,¤É­°ÅX°Ê¾¹²§±`
+AGV_NODE,200265,1,¤É­°ÅX°Ê¾¹²§±`
+AGV_NODE,200266,1,¤É­°HP­ìÂI¥ú¹qÀË´ú²§±`
+AGV_NODE,200267,1,¤É­°¤W©w¦ì¥ú¹qÀË´ú²§±`
+AGV_NODE,200268,1,¤É­°¤W·¥­­¥ú¹q²§±`
+AGV_NODE,200269,1,¤É­° EN ¶W¹L¤W·¥­­
+AGV_NODE,200270,1,¤É­°OP­ìÂI¥ú¹qÀË´ú²§±`
+AGV_NODE,200271,1,¤É­°¤U©w¦ì¥ú¹qÀË´ú²§±`
+AGV_NODE,200272,1,¤É­°¤U·¥­­¥ú¹q²§±`
+AGV_NODE,200273,1,¤É­° EN ¶W¹L¤U·¥­­
+AGV_NODE,200274,1,¤É­°¥x¶É±×ÀËª¾
+AGV_NODE,200275,1,
+AGV_NODE,200276,1,
+AGV_NODE,200277,1,
+AGV_NODE,200278,1,
+AGV_NODE,200279,1,
+AGV_NODE,200280,1,¤eÁu°Ê§@¤¤-¨«¦æ¤É­°°jÂà°Ê§@
+AGV_NODE,200281,1,¤eÁu­ìÂI´_Âk¶W®É
+AGV_NODE,200282,2,¤eÁu°Ê§@¤¤¶W®É
+AGV_NODE,200283,2,¤eÁuÅX°Ê¾¹²§±`
+AGV_NODE,200284,2,¤eÁuÅX°Ê¾¹²§±`
+AGV_NODE,200285,2,¤eÁuÅX°Ê¾¹²§±`
+AGV_NODE,200286,2,¤eÁuHP­ìÂI¥ú¹qÀË´ú²§±`
+AGV_NODE,200287,2,¤eÁuHP¥ú¹qÀË´ú²§±`
+AGV_NODE,200288,2,¤eÁuHP°¼·¥­­¥ú¹q²§±`
+AGV_NODE,200289,2,¤eÁu EN ¶W¹L HP ·¥­­
+AGV_NODE,200290,2,¤eÁuOP­ìÂI¥ú¹qÀË´ú²§±`
+AGV_NODE,200291,2,¤eÁuOP¥ú¹qÀË´ú²§±`
+AGV_NODE,200292,2,¤eÁuOP°¼·¥­­¥ú¹q²§±`
+AGV_NODE,200293,2,¤eÁu EN ¶W¹L OP ·¥­­
+AGV_NODE,200294,2,¤eÁu¤£¦bHP(ªì©l¦ì¸m)
+AGV_NODE,200295,2,¤eÁu°Ê§@¤¤²§±`
+AGV_NODE,200296,2,
+AGV_NODE,200297,2,
+AGV_NODE,200298,2,
+AGV_NODE,200299,2,
+AGV_NODE,200300,2,°jÂà¶W®É-©w¦ì
+AGV_NODE,200301,2,°jÂà­ìÂI´_Âk¶W®É
+AGV_NODE,200302,2,°jÂà°Ê§@¤¤¶W®É
+AGV_NODE,200303,2,°jÂàÅX°Ê¾¹²§±`
+AGV_NODE,200304,2,°jÂàÅX°Ê¾¹²§±`
+AGV_NODE,200305,2,°jÂàÅX°Ê¾¹²§±`
+AGV_NODE,200306,2,°jÂà0«×­ìÂI¥ú¹qÀË´ú²§±`
+AGV_NODE,200307,2,°jÂà0«×¥ú¹qÀË´ú²§±`
+AGV_NODE,200308,2,°jÂà0«×°¼·¥­­¥ú¹q²§±`
+AGV_NODE,200309,2,°jÂà EN ¶W¹L 0«×·¥­­
+AGV_NODE,200310,2,°jÂà180«×­ìÂI¥ú¹qÀË´ú²§±`
+AGV_NODE,200311,2,°jÂà180«×¥ú¹qÀË´ú²§±`
+AGV_NODE,200312,2,°jÂà180«×°¼·¥­­¥ú¹q²§±`
+AGV_NODE,200313,2,°jÂà EN ¶W¹L 180«×·¥­­
+AGV_NODE,200314,2,
+AGV_NODE,200315,2,°jÂà90«×¥ú¹qÀË´ú²§±`
+AGV_NODE,200316,2,°jÂà¦ì¸m²§±`
+AGV_NODE,200317,2,°jÂàµL¥ú¹qÀË´ú²§±`
+AGV_NODE,200318,2,
+AGV_NODE,200319,2,
+AGV_NODE,200320,2,
+AGV_NODE,200321,2,
+AGV_NODE,200322,2,
+AGV_NODE,200323,2,
+AGV_NODE,200324,2,
+AGV_NODE,200325,2,
+AGV_NODE,200326,2,
+AGV_NODE,200327,1,
+AGV_NODE,200328,1,
+AGV_NODE,200329,1,
+AGV_NODE,200330,1,
+AGV_NODE,200331,2,
+AGV_NODE,200332,2,
+AGV_NODE,200333,2,
+AGV_NODE,200334,2,
+AGV_NODE,200335,2,
+AGV_NODE,200336,2,
+AGV_NODE,200337,2,
+AGV_NODE,200338,2,
+AGV_NODE,200339,2,
+AGV_NODE,200340,2,
+AGV_NODE,200341,2,
+AGV_NODE,200342,1,
+AGV_NODE,200343,2,
+AGV_NODE,200344,2,
+AGV_NODE,200345,2,
+AGV_NODE,200346,2,
+AGV_NODE,200347,2,
+AGV_NODE,200348,2,
+AGV_NODE,200349,2,
+AGV_NODE,200350,2,
+AGV_NODE,200351,2,
+AGV_NODE,200352,1,
+AGV_NODE,200353,2,
+AGV_NODE,200354,2,
+AGV_NODE,200355,2,
+AGV_NODE,200356,2,
+AGV_NODE,200357,2,
+AGV_NODE,200358,2,
+AGV_NODE,200359,2,
+AGV_NODE,200360,2,
+AGV_NODE,200361,2,
+AGV_NODE,200362,2,
+AGV_NODE,200363,2,
+AGV_NODE,200364,2,
+AGV_NODE,200365,2,
+AGV_NODE,200366,2,
+AGV_NODE,200367,2,
+AGV_NODE,200368,2,
+AGV_NODE,200369,2,
+AGV_NODE,200370,2,
+AGV_NODE,200371,2,
+AGV_NODE,200372,2,
+AGV_NODE,200373,2,
+AGV_NODE,200374,2,
+AGV_NODE,200375,2,
+AGV_NODE,200376,2,
+AGV_NODE,200377,2,
+AGV_NODE,200378,2,
+AGV_NODE,200379,2,
+AGV_NODE,200380,2,
+AGV_NODE,200381,2,
+AGV_NODE,200382,2,
+AGV_NODE,200383,2,
+AGV_NODE,200384,2,
+AGV_NODE,200385,2,
+AGV_NODE,200386,2,
+AGV_NODE,200387,2,
+AGV_NODE,200388,2,
+AGV_NODE,200389,2,
+AGV_NODE,200390,2,
+AGV_NODE,200391,2,
+AGV_NODE,200392,2,
+AGV_NODE,200393,2,
+AGV_NODE,200394,2,
+AGV_NODE,200395,2,
+AGV_NODE,200396,2,
+AGV_NODE,200397,2,
+AGV_NODE,200398,2,
+AGV_NODE,200399,2,
+AGV_NODE,200400,2,¼È°±¼Ò¦¡-«D¦Û°Ê
+AGV_NODE,200401,2,°Ê§@¤¤-±j¨î¤â°Ê(»Ýªì©l¤Æ)
+AGV_NODE,200402,2,
+AGV_NODE,200403,2,
+AGV_NODE,200404,2,
+AGV_NODE,200405,2,¤âÁu¹BÂà«eÀË¬d¨ì©R¥O²§±` 
+AGV_NODE,200406,2,¤âÁuÀË¬d¨ì©R¥O²§±` 
+AGV_NODE,200407,2,
+AGV_NODE,200408,2,
+AGV_NODE,200409,2,
+AGV_NODE,200410,2,
+AGV_NODE,200411,2,
+AGV_NODE,200412,2,
+AGV_NODE,200413,2,
+AGV_NODE,200414,2,
+AGV_NODE,200415,2,
+AGV_NODE,200416,2,
+AGV_NODE,200417,2,
+AGV_NODE,200418,2,
+AGV_NODE,200419,2,
+AGV_NODE,200420,2,
+AGV_NODE,200421,2,
+AGV_NODE,200422,2,
+AGV_NODE,200423,2,
+AGV_NODE,200424,2,
+AGV_NODE,200425,2,
+AGV_NODE,200426,2,
+AGV_NODE,200427,2,
+AGV_NODE,200428,2,
+AGV_NODE,200429,2,
+AGV_NODE,200430,2,
+AGV_NODE,200431,2,
+AGV_NODE,200432,2,
+AGV_NODE,200433,2,
+AGV_NODE,200434,2,
+AGV_NODE,200435,2,
+AGV_NODE,200436,2,
+AGV_NODE,200437,2,
+AGV_NODE,200438,2,
+AGV_NODE,200439,2,
+AGV_NODE,200440,2,
+AGV_NODE,200441,2,
+AGV_NODE,200442,2,
+AGV_NODE,200443,2,
+AGV_NODE,200444,2,
+AGV_NODE,200445,2,
+AGV_NODE,200446,2,
+AGV_NODE,200447,2,
+AGV_NODE,200448,2,
+AGV_NODE,200449,2,
+AGV_NODE,200450,2,
+AGV_NODE,200451,2,
+AGV_NODE,200452,2,
+AGV_NODE,200453,2,
+AGV_NODE,200454,2,
+AGV_NODE,200455,2,
+AGV_NODE,200456,2,
+AGV_NODE,200457,2,
+AGV_NODE,200458,2,
+AGV_NODE,200459,2,
+AGV_NODE,200460,2,
+AGV_NODE,200461,2,
+AGV_NODE,200462,2,
+AGV_NODE,200463,2,
+AGV_NODE,200464,2,
+AGV_NODE,200465,2,
+AGV_NODE,200466,2,
+AGV_NODE,200467,2,
+AGV_NODE,200468,2,
+AGV_NODE,200469,2,
+AGV_NODE,200470,2,
+AGV_NODE,200471,2,
+AGV_NODE,200472,2,
+AGV_NODE,200473,2,
+AGV_NODE,200474,2,
+AGV_NODE,200475,2,
+AGV_NODE,200476,2,
+AGV_NODE,200477,2,
+AGV_NODE,200478,2,
+AGV_NODE,200479,2,
+AGV_NODE,200480,2,
+AGV_NODE,200481,2,
+AGV_NODE,200482,2,
+AGV_NODE,200483,2,
+AGV_NODE,200484,2,
+AGV_NODE,200485,2,
+AGV_NODE,200486,2,
+AGV_NODE,200487,2,
+AGV_NODE,200488,2,
+AGV_NODE,200489,2,
+AGV_NODE,200490,2,
+AGV_NODE,200491,2,
+AGV_NODE,200492,2,
+AGV_NODE,200493,2,
+AGV_NODE,200494,2,
+AGV_NODE,200495,2,
+AGV_NODE,200496,2,
+AGV_NODE,200497,2,
+AGV_NODE,200498,2,
+AGV_NODE,200499,2,
+AGV_NODE,200500,2,Fork Command Format Error. Clear Fork Command for Continue!(IPC)
+AGV_NODE,200501,2,Fork Command PLC Read Error. Clear Fork Command for Continue!(IPC)
+AGV_NODE,200502,2,Fork Start Send out but Busy not on timeout. Please check PLC.(IPC)
+AGV_NODE,200503,2,Fork Command Executing timeout.(IPC)
+AGV_NODE,200504,1,Batterys Charging Time Out(IPC)
+AGV_NODE,200505,2,(IPC)
+AGV_NODE,200506,2,(IPC)
+AGV_NODE,200507,2,(IPC)
+AGV_NODE,200508,2,(IPC)
+AGV_NODE,200509,2,(IPC)
+AGV_NODE,200510,2,(IPC)
+AGV_NODE,200511,2,(IPC)
+AGV_NODE,200512,2,(IPC)
+AGV_NODE,200513,2,(IPC)
+AGV_NODE,200514,2,(IPC)
+AGV_NODE,200515,2,(IPC)
+AGV_NODE,200516,2,Move finish fail.(IPC)
+AGV_NODE,200517,2,(IPC)
+AGV_NODE,200518,2,(IPC)
+AGV_NODE,200519,2,(IPC)
+AGV_NODE,200520,2,(IPC)
+AGV_NODE,200521,2,(IPC)
+AGV_NODE,200522,2,(IPC)
+AGV_NODE,200523,2,(IPC)
+AGV_NODE,200524,2,(IPC)
+AGV_NODE,200525,2,(IPC)
+AGV_NODE,200526,2,(IPC)
+AGV_NODE,200527,2,(IPC)
+AGV_NODE,200528,2,(IPC)
+AGV_NODE,200529,2,(IPC)
+AGV_NODE,200530,2,(IPC)
+AGV_NODE,200531,2,(IPC)
+AGV_NODE,200532,2,(IPC)
+AGV_NODE,200533,2,(IPC)
+AGV_NODE,200534,2,(IPC)
+AGV_NODE,200535,2,(IPC)
+AGV_NODE,200536,2,(IPC)
+AGV_NODE,200537,2,(IPC)
+AGV_NODE,200538,2,(IPC)
+AGV_NODE,200539,2,(IPC)
+AGV_NODE,200540,2,(IPC)
+AGV_NODE,200541,2,(IPC)
+AGV_NODE,200542,2,(IPC)
+AGV_NODE,200543,2,(IPC)
+AGV_NODE,200544,2,(IPC)
+AGV_NODE,200545,2,(IPC)
+AGV_NODE,200546,2,(IPC)
+AGV_NODE,200547,2,(IPC)
+AGV_NODE,200548,2,(IPC)
+AGV_NODE,200549,2,(IPC)
+AGV_NODE,200550,2,(IPC)
+AGV_NODE,200551,2,(IPC)
+AGV_NODE,200552,2,(IPC)
+AGV_NODE,200553,2,(IPC)
+AGV_NODE,200554,2,(IPC)
+AGV_NODE,200555,2,(IPC)
+AGV_NODE,200556,2,(IPC)
+AGV_NODE,200557,2,(IPC)
+AGV_NODE,200558,2,(IPC)
+AGV_NODE,200559,2,(IPC)
+AGV_NODE,200560,2,(IPC)
+AGV_NODE,200561,2,(IPC)
+AGV_NODE,200562,2,(IPC)
+AGV_NODE,200563,2,(IPC)
+AGV_NODE,200564,2,(IPC)
+AGV_NODE,200565,2,(IPC)
+AGV_NODE,200566,2,(IPC)
+AGV_NODE,200567,2,(IPC)
+AGV_NODE,200568,2,(IPC)
+AGV_NODE,200569,2,(IPC)
+AGV_NODE,200570,2,(IPC)
+AGV_NODE,200571,2,(IPC)
+AGV_NODE,200572,2,(IPC)
+AGV_NODE,200573,2,(IPC)
+AGV_NODE,200574,2,(IPC)
+AGV_NODE,200575,2,(IPC)
+AGV_NODE,200576,2,(IPC)
+AGV_NODE,200577,2,(IPC)
+AGV_NODE,200578,2,(IPC)
+AGV_NODE,200579,2,(IPC)
+AGV_NODE,200580,2,Elmo³s½u¥¢±Ñ(IPC)
+AGV_NODE,200581,2,Elmo ConfigÅª¨ú¥¢±Ñ(IPC)
+AGV_NODE,200582,2,Elmo Config¸ô®|¿ù»~(IPC)
+AGV_NODE,200583,2,SR2000-L³s½u¥¢±Ñ(IPC)
+AGV_NODE,200584,2,SR2000-L¸ê®Æ®æ¦¡¿ù»~(IPC)
+AGV_NODE,200585,2,SR2000-R³s½u¥¢±Ñ(IPC)
+AGV_NODE,200586,2,SR2000-R¸ê®Æ®æ¦¡¿ù»~(IPC)
+AGV_NODE,200587,2,¥XÅs«á¹L¤[¨SÅª¨ìBarcode(IPC)
+AGV_NODE,200588,2,ª½½u¹L¤[¨SÅª¨ìBarcode(IPC)
+AGV_NODE,200589,2,©MSection¨¤«×°¾®t¹L¤j(IPC)
+AGV_NODE,200590,2,©MSection­y¹D°¾®t¹L¤j(IPC)
+AGV_NODE,200591,2,¨«¦æ¤¤Fork¤£¦AHomeÂI¤W(IPC)
+AGV_NODE,200592,2,¨«¦æ¤¤Axis²§±`(IPC)
+AGV_NODE,200593,2,¨«¦æ¤¤Disable©ÎµêÀÀ¶bLink¥¢±Ñ(IPC)
+AGV_NODE,200594,2,TR¤JÅs¶W³t(IPC)
+AGV_NODE,200595,2,»P¹w­p¸ô®|®t²§¹L¤j(IPC)
+AGV_NODE,200596,2,¥|½ü¨¤«×®t²§¹L¤j(IPC)
+AGV_NODE,200597,2,R2000¤JÅs¶W³t(IPC)
+AGV_NODE,200598,2,(IPC)
+AGV_NODE,200599,2,(IPC)
+AGV_NODE,200600,2,(IPC)
+AGV_NODE,200601,2,(IPC)
+AGV_NODE,200602,2,(IPC)
+AGV_NODE,200603,2,(IPC)
+AGV_NODE,200604,2,(IPC)
+AGV_NODE,200605,2,(IPC)
+AGV_NODE,200606,2,(IPC)
+AGV_NODE,200607,2,(IPC)
+AGV_NODE,200608,2,(IPC)
+AGV_NODE,200609,2,(IPC)
+AGV_NODE,200610,2,(IPC)
+AGV_NODE,200611,2,(IPC)
+AGV_NODE,200612,2,(IPC)
+AGV_NODE,200613,2,(IPC)
+AGV_NODE,200614,2,(IPC)
+AGV_NODE,200615,2,(IPC)
+AGV_NODE,200616,2,(IPC)
+AGV_NODE,200617,2,(IPC)
+AGV_NODE,200618,2,(IPC)
+AGV_NODE,200619,2,(IPC)
+AGV_NODE,200620,2,(IPC)
+AGV_NODE,200621,2,(IPC)
+AGV_NODE,200622,2,(IPC)
+AGV_NODE,200623,2,(IPC)
+AGV_NODE,200624,2,(IPC)
+AGV_NODE,200625,2,(IPC)
+AGV_NODE,200626,2,(IPC)
+AGV_NODE,200627,2,(IPC)
+AGV_NODE,200628,2,(IPC)
+AGV_NODE,200629,2,(IPC)
+AGV_NODE,200630,2,(IPC)
+AGV_NODE,200631,2,(IPC)
+AGV_NODE,200632,2,(IPC)
+AGV_NODE,200633,2,(IPC)
+AGV_NODE,200634,2,(IPC)
+AGV_NODE,200635,2,(IPC)
+AGV_NODE,200636,2,(IPC)
+AGV_NODE,200637,2,(IPC)
+AGV_NODE,200638,2,(IPC)
+AGV_NODE,200639,2,(IPC)
+AGV_NODE,200640,2,(IPC)
+AGV_NODE,200641,2,(IPC)
+AGV_NODE,200642,2,(IPC)
+AGV_NODE,200643,2,(IPC)
+AGV_NODE,200644,2,(IPC)
+AGV_NODE,200645,2,(IPC)
+AGV_NODE,200646,2,(IPC)
+AGV_NODE,200647,2,(IPC)
+AGV_NODE,200648,2,(IPC)
+AGV_NODE,200649,2,(IPC)
+AGV_NODE,200650,2,(IPC)
+AGV_NODE,200651,2,(IPC)
+AGV_NODE,200652,2,(IPC)
+AGV_NODE,200653,2,(IPC)
+AGV_NODE,200654,2,(IPC)
+AGV_NODE,200655,2,(IPC)
+AGV_NODE,200656,2,(IPC)
+AGV_NODE,200657,2,(IPC)
+AGV_NODE,200658,2,(IPC)
+AGV_NODE,200659,2,(IPC)
+AGV_NODE,200660,1,Agv already have a transfer command on middler get new transfer command.(IPC)
+AGV_NODE,200661,1,Watch low power thread is charging can't do new transfer command.(IPC)
+AGV_NODE,200662,1,Loading is off after load finished.(IPC)
+AGV_NODE,200663,1,Carrier ID is EMPTY after load finished.(IPC)
+AGV_NODE,200664,1,Carrier ID is ERROR after load finished.(IPC)
+AGV_NODE,200665,1,Loading is ON after unload finished.(IPC)
+AGV_NODE,200666,1,Fork command is exist before unload.(IPC)
+AGV_NODE,200667,1,Vehicle is not in unload position and cannot unload.(IPC)
+AGV_NODE,200668,1,Fork command is exist before load.(IPC)
+AGV_NODE,200669,1,Vehicle is not in guide sections.(IPC)
+AGV_NODE,200670,1,This address is a couple but no charge direction.(IPC)
+AGV_NODE,200671,1,Charging is OFF after send start charge command to plc.(IPC)
+AGV_NODE,200672,1,Charging is ON after send stop charge command to plc.(IPC)
+AGV_NODE,200673,1,Vehicle is not in load position and cannot load.(IPC)
+AGV_NODE,200674,1,Vehicle already have cassette cannot load.(IPC)
+AGV_NODE,200675,1,Vehicle has no cassette to unload.(IPC)
+AGV_NODE,200676,1,AgvcMoveCommand is not match the map to move.(IPC)
+AGV_NODE,200677,1,Vehicle has no command to override.(IPC)
+AGV_NODE,200678,1,Vehicle is not in moving-step.(IPC)
+AGV_NODE,200679,1,Vehicle has next reserve to go.(IPC)
+AGV_NODE,200680,1,Unload address unmatch current command unload address.(IPC)
+AGV_NODE,200681,1,Load address unmatch current command load address.(IPC)
+AGV_NODE,200682,1,ToUnloadSections is empty.(IPC)
+AGV_NODE,200683,1,ToLoadSections is empty.(IPC)
+AGV_NODE,200684,1,Vehicle can not do override.(IPC)
+AGV_NODE,200685,1,Vehicle can not pause.(IPC)
+AGV_NODE,200686,1,Carrier ID is mismatch after load finished.(IPC)
+AGV_NODE,200687,1,Carrier ID read reply is timeout(IPC)
+AGV_NODE,200688,1,Vehicle has alarm cannot do transfer command.(IPC)
+AGV_NODE,200689,2,(IPC)
+AGV_NODE,200690,2,(IPC)
+AGV_NODE,200691,2,(IPC)
+AGV_NODE,200692,2,(IPC)
+AGV_NODE,200693,2,(IPC)
+AGV_NODE,200694,2,(IPC)
+AGV_NODE,200695,2,(IPC)
+AGV_NODE,200696,2,(IPC)
+AGV_NODE,200697,2,(IPC)
+AGV_NODE,200698,2,(IPC)
+AGV_NODE,200699,2,(IPC)
+AGV_NODE,200700,2,(IPC)
+AGV_NODE,200701,2,(IPC)
+AGV_NODE,200702,2,(IPC)
+AGV_NODE,200703,2,(IPC)
+AGV_NODE,200704,2,(IPC)
+AGV_NODE,200705,2,(IPC)
+AGV_NODE,200706,2,(IPC)
+AGV_NODE,200707,2,(IPC)
+AGV_NODE,200708,2,(IPC)
+AGV_NODE,200709,2,(IPC)
+AGV_NODE,200710,2,(IPC)
+AGV_NODE,200711,2,(IPC)
+AGV_NODE,200712,2,(IPC)
+AGV_NODE,200713,2,(IPC)
+AGV_NODE,200714,2,(IPC)
+AGV_NODE,200715,2,(IPC)
+AGV_NODE,200716,2,(IPC)
+AGV_NODE,200717,2,(IPC)
+AGV_NODE,200718,2,(IPC)
+AGV_NODE,200719,2,(IPC)
+AGV_NODE,200720,2,(IPC)
+AGV_NODE,200721,2,(IPC)
+AGV_NODE,200722,2,(IPC)
+AGV_NODE,200723,2,(IPC)
+AGV_NODE,200724,2,(IPC)
+AGV_NODE,200725,2,(IPC)
+AGV_NODE,200726,2,(IPC)
+AGV_NODE,200727,2,(IPC)
+AGV_NODE,200728,2,(IPC)
+AGV_NODE,200729,2,(IPC)
+AGV_NODE,200730,2,(IPC)
+AGV_NODE,200731,2,(IPC)
+AGV_NODE,200732,2,(IPC)
+AGV_NODE,200733,2,(IPC)
+AGV_NODE,200734,2,(IPC)
+AGV_NODE,200735,2,(IPC)
+AGV_NODE,200736,2,(IPC)
+AGV_NODE,200737,2,(IPC)
+AGV_NODE,200738,2,(IPC)
+AGV_NODE,200739,2,(IPC)
+AGV_NODE,200740,2,Axis ErrorCode(IPC)
+AGV_NODE,200741,2,TRÀþ¶¡GT Moving(IPC)
+AGV_NODE,200742,2,R2000¤JÅs¹LºC(IPC)
+AGV_NODE,200743,2,­°³t«ü¥O­°³t³t«×²§±`(IPC)
+AGV_NODE,200744,2,MoveControl¥DThread Excption(IPC)
+AGV_NODE,200745,2,(IPC)
+AGV_NODE,200746,2,(IPC)
+AGV_NODE,200747,2,(IPC)
+AGV_NODE,200748,2,(IPC)
+AGV_NODE,200749,2,(IPC)
+AGV_NODE,200750,2,(IPC)
+AGV_NODE,200751,2,(IPC)
+AGV_NODE,200752,2,(IPC)
+AGV_NODE,200753,2,(IPC)
+AGV_NODE,200754,2,(IPC)
+AGV_NODE,200755,2,(IPC)
+AGV_NODE,201001,2,Maintain Mode
+AGV_NODE,201002,2,IPC Not Ready
+AGV_NODE,201003,2,
+AGV_NODE,201004,2,
+AGV_NODE,201005,2,Notification preparation and maintenance
+AGV_NODE,201006,2,Driver Battery Low
+AGV_NODE,201007,2,PLC Battery Low
+AGV_NODE,201008,2,CC-Link Master
+AGV_NODE,201009,2,
+AGV_NODE,201010,2,Fork Command NG
+AGV_NODE,201011,2,Fork Command Idle
+AGV_NODE,201012,2,
+AGV_NODE,201013,2,
+AGV_NODE,201014,2,
+AGV_NODE,201015,2,
+AGV_NODE,201016,2,
+AGV_NODE,201017,2,
+AGV_NODE,201018,2,
+AGV_NODE,201019,2,ET2 Fork Teaching Report
+AGV_NODE,201020,2,ET2 Index Timeout
+AGV_NODE,201021,2,ET3 Vehicle Teaching Report
+AGV_NODE,201022,2,ET3 Index Timeout
+AGV_NODE,201023,2,ET4 Fork Alignment Teching Report
+AGV_NODE,201024,2,ET4 Index Timeout
+AGV_NODE,201025,2,
+AGV_NODE,201026,2,ES3 Index Timeout
+AGV_NODE,201027,2,
+AGV_NODE,201028,2,
+AGV_NODE,201029,2,
+AGV_NODE,201030,2,
+AGV_NODE,201031,2,
+AGV_NODE,201032,2,
+AGV_NODE,201033,2,
+AGV_NODE,201034,2,
+AGV_NODE,201035,2,
+AGV_NODE,201036,2,
+AGV_NODE,201037,2,
+AGV_NODE,201038,2,
+AGV_NODE,201039,2,
+AGV_NODE,201040,2,Vehicle Battery Setting status(None)
+AGV_NODE,201041,2,Vehicle BMS High Battery Warnning
+AGV_NODE,201042,2,Vehicle BMS Low Battery Warnning
+AGV_NODE,201043,2,
+AGV_NODE,201044,2,
+AGV_NODE,201045,2,
+AGV_NODE,201046,2,
+AGV_NODE,201047,2,
+AGV_NODE,201048,2,
+AGV_NODE,201049,2,
+AGV_NODE,201050,2,Alignment Disable
+AGV_NODE,201051,2,Stage Sensor Disable
+AGV_NODE,201052,2,Fork Sensor Disable
+AGV_NODE,201053,2,Fork Sensor(¤G­«®æ)L Side Disable
+AGV_NODE,201054,2,Fork Sensor(¤G­«®æ)R Side Disable
+AGV_NODE,201055,2,Bump Disable
+AGV_NODE,201056,2,
+AGV_NODE,201057,2,IPC Stop Command Disable
+AGV_NODE,201058,2,
+AGV_NODE,201059,2,
+AGV_NODE,201060,2,
+AGV_NODE,201061,2,
+AGV_NODE,201062,2,
+AGV_NODE,201063,2,
+AGV_NODE,201064,2,
+AGV_NODE,201065,2,
+AGV_NODE,201066,2,
+AGV_NODE,201067,2,
+AGV_NODE,201068,2,
+AGV_NODE,201069,2,
+AGV_NODE,201070,2,Beam Sensor_FUR Warnning
+AGV_NODE,201071,2,Beam Sensor_FUL Warnning
+AGV_NODE,201072,2,Beam Sensor_FDR Warnning
+AGV_NODE,201073,2,Beam Sensor_FDC Warnning
+AGV_NODE,201074,2,Beam Sensor_FDL Warnning
+AGV_NODE,201075,2,Beam Sensor_BUR Warnning
+AGV_NODE,201076,2,Beam Sensor_BUL Warnning
+AGV_NODE,201077,2,Beam Sensor_BDR Warnning
+AGV_NODE,201078,2,Beam Sensor_BDC Warnning
+AGV_NODE,201079,2,Beam Sensor_BDL Warnning
+AGV_NODE,201080,2,Beam Sensor_LUR Warnning
+AGV_NODE,201081,2,Beam Sensor_LUL Warnning
+AGV_NODE,201082,2,Beam Sensor_LDR Warnning
+AGV_NODE,201083,2,Beam Sensor_LDL Warnning
+AGV_NODE,201084,2,Beam Sensor_LUC Warnning
+AGV_NODE,201085,2,Beam Sensor_RUR Warnning
+AGV_NODE,201086,2,Beam Sensor_RUL Warnning
+AGV_NODE,201087,2,Beam Sensor_RDR Warnning
+AGV_NODE,201088,2,Beam Sensor_RDL Warnning
+AGV_NODE,201089,2,Beam Sensor_RUC Warnning
+AGV_NODE,201090,2,
+AGV_NODE,201091,2,
+AGV_NODE,201092,2,
+AGV_NODE,201093,2,
+AGV_NODE,201094,2,
+AGV_NODE,201095,2,
+AGV_NODE,201096,2,
+AGV_NODE,201097,2,
+AGV_NODE,201098,2,
+AGV_NODE,201099,2,
+AGV_NODE,201100,2,Teach_box _FU Warnning
+AGV_NODE,201101,2,Teach_box _BU Warnning
+AGV_NODE,201102,2,Brake release _FU Warnning
+AGV_NODE,201103,2,Brake release _BU Warnning
+AGV_NODE,201104,2,
+AGV_NODE,201105,2,
+AGV_NODE,201106,2,
+AGV_NODE,201107,2,
+AGV_NODE,201108,2,
+AGV_NODE,201109,2,
+AGV_NODE,201110,2,Meter Communication Timeout
+AGV_NODE,201111,2,Meter Communication Error
+AGV_NODE,201112,2,Charger Station Error
+AGV_NODE,201113,2,
+AGV_NODE,201114,2,
+AGV_NODE,201115,2,GOTECH Battery Communication Timeout
+AGV_NODE,201116,2,GOTECH Battery Communication NG
+AGV_NODE,201117,2,
+AGV_NODE,201118,2,
+AGV_NODE,201119,2,
+AGV_NODE,201120,2,
+AGV_NODE,201121,2,
+AGV_NODE,201122,2,
+AGV_NODE,201123,2,
+AGV_NODE,201124,2,
+AGV_NODE,201125,2,
+AGV_NODE,201126,2,
+AGV_NODE,201127,2,
+AGV_NODE,201128,2,
+AGV_NODE,201129,2,
+AGV_NODE,201130,2,
+AGV_NODE,201131,2,
+AGV_NODE,201132,2,
+AGV_NODE,201133,2,
+AGV_NODE,201134,2,
+AGV_NODE,201135,1,LiDAR_F Alarm
+AGV_NODE,201136,1,LiDAR_F Fault
+AGV_NODE,201137,1,LiDAR_B Alarm
+AGV_NODE,201138,1,LiDAR_B Fault
+AGV_NODE,201139,2,
+AGV_NODE,201140,2,
+AGV_NODE,201141,2,
+AGV_NODE,201142,2,
+AGV_NODE,201143,2,
+AGV_NODE,201144,2,
+AGV_NODE,201145,2,
+AGV_NODE,201146,2,
+AGV_NODE,201147,2,
+AGV_NODE,201148,2,
+AGV_NODE,201149,2,
+AGV_NODE,201150,2,Interface T1 Timeout(L Side)
+AGV_NODE,201151,2,Interface T2 Timeout(L Side)
+AGV_NODE,201152,2,Interface T3 Timeout(L Side)
+AGV_NODE,201153,2,Interface T4 Timeout(L Side)
+AGV_NODE,201154,2,Interface T5 Timeout(L Side)
+AGV_NODE,201155,2,Interface T6 Timeout(L Side)
+AGV_NODE,201156,2,Interface T7 Timeout(L Side)
+AGV_NODE,201157,2,Interface T8 Timeout(L Side)
+AGV_NODE,201158,2,Interface Signal On(L Side)
+AGV_NODE,201159,2,Ready Signal Off(L Side)
+AGV_NODE,201160,2,Interface T1 Timeout(R Side)
+AGV_NODE,201161,2,Interface T2 Timeout(R Side)
+AGV_NODE,201162,2,Interface T3 Timeout(R Side)
+AGV_NODE,201163,2,Interface T4 Timeout(R Side)
+AGV_NODE,201164,2,Interface T5 Timeout(R Side)
+AGV_NODE,201165,2,Interface T6 Timeout(R Side)
+AGV_NODE,201166,2,Interface T7 Timeout(R Side)
+AGV_NODE,201167,2,Interface T8 Timeout(R Side)
+AGV_NODE,201168,2,Interface Signal On(R Side)
+AGV_NODE,201169,2,Ready Signal Off(R Side)
+AGV_NODE,10000,1,Long time inaction
 AGV_NODE,10001,2,Can not service
-ChargerM,1,2,A0001:Main box emergency stop
-ChargerM,2,2,A0002:
-ChargerM,3,2,A0003:
-ChargerM,4,2,A0004:
-ChargerM,5,2,A0005:
-ChargerM,6,2,A0006:
-ChargerM,7,2,A0007:
-ChargerM,8,2,A0008:
-ChargerM,9,2,A0009:
-ChargerM,10,2,A0010:
-ChargerM,11,2,A0011:
-ChargerM,12,2,A0012:
-ChargerM,13,2,A0013:
-ChargerM,14,2,A0014:
-ChargerM,15,2,A0015:
-ChargerM,16,2,A0016:
-ChargerM,17,2,A0017:
-ChargerM,18,2,A0018:
-ChargerM,19,2,A0019:
-ChargerM,20,2,A0020:
-ChargerM,21,2,A0021:
-ChargerM,22,2,A0022:
-ChargerM,23,2,A0023:
-ChargerM,24,2,A0024:
-ChargerM,25,2,A0025:
-ChargerM,26,2,A0026:
-ChargerM,27,2,A0027:
-ChargerM,28,2,A0028:
-ChargerM,29,2,A0029:
-ChargerM,30,2,A0030:
-ChargerM,31,2,A0031:
-Charger1,32,2,A0032:Coupler01 charge time out
-Charger1,33,2,A0033:Coupler01 motor front end sensor erro
-Charger1,34,2,A0034:Coupler01 motor rear end sensor erro
-Charger1,35,2,A0035:Coupler01 Motor erro
-Charger1,36,2,A0036:Charger01 Charger  erro
-Charger1,37,2,A0037:Charger01 Charger  communication erro
-Charger1,38,2,A0038:Coupler01  Measuring without voltage
-Charger1,39,2,A0039:Coupler01 coupler in a position
-Charger1,40,2,A0040:Charger01 command tome out
-Charger1,41,2,A0041:
-Charger1,42,2,A0042:
-Charger1,43,2,A0043:
-Charger1,44,2,A0044:
-Charger1,45,2,A0045:
-Charger1,46,2,A0046:
-Charger1,47,2,A0047:
-Charger1,48,2,A0048:
-Charger1,49,2,A0049:
-Charger1,50,2,A0050:
-Charger1,51,2,A0051:
-Charger1,52,2,A0052:
-Charger1,53,2,A0053:
-Charger1,54,2,A0054:
-Charger1,55,2,A0055:
-Charger1,56,2,A0056:
-Charger1,57,2,A0057:
-Charger1,58,2,A0058:
-Charger1,59,2,A0059:
-Charger1,60,2,A0060:
-Charger1,61,2,A0061:
-Charger1,62,2,A0062:
-Charger1,63,2,A0063:
-Charger2,64,2,A0064:Coupler02 charge time out
-Charger2,65,2,A0065:Coupler02 motor front end sensor erro
-Charger2,66,2,A0066:Coupler02 motor rear end sensor erro
-Charger2,67,2,A0067:Coupler02 Motor erro
-Charger2,68,2,A0068:Charger02 Charger  erro
-Charger2,69,2,A0069:Charger02 Charger  communication erro
-Charger2,70,2,A0070:Coupler02  Measuring without voltage
-Charger2,71,2,A0071:Coupler02 coupler in a position
-Charger2,72,2,A0072:Charger02 command tome out
-Charger2,73,2,A0073:
-Charger2,74,2,A0074:
-Charger2,75,2,A0075:
-Charger2,76,2,A0076:
-Charger2,77,2,A0077:
-Charger2,78,2,A0078:
-Charger2,79,2,A0079:
-Charger2,80,2,A0080:
-Charger2,81,2,A0081:
-Charger2,82,2,A0082:
-Charger2,83,2,A0083:
-Charger2,84,2,A0084:
-Charger2,85,2,A0085:
-Charger2,86,2,A0086:
-Charger2,87,2,A0087:
-Charger2,88,2,A0088:
-Charger2,89,2,A0089:
-Charger2,90,2,A0090:
-Charger2,91,2,A0091:
-Charger2,92,2,A0092:
-Charger2,93,2,A0093:
-Charger2,94,2,A0094:
-Charger2,95,2,A0095:
-Charger3,96,2,A0096:Coupler03 charge time out
-Charger3,97,2,A0097:Coupler03 motor front end sensor erro
-Charger3,98,2,A0098:Coupler03 motor rear end sensor erro
-Charger3,99,2,A0099:Coupler03 Motor erro
-Charger3,100,2,A0100:Charger03 Charger  erro
-Charger3,101,2,A0101:Charger03 Charger  communication erro
-Charger3,102,2,A0102:Coupler03  Measuring without voltage
-Charger3,103,2,A0103:Coupler03 coupler in a position
-Charger3,104,2,A0104:Charger03 command tome out
-Charger3,105,2,A0105:
-Charger3,106,2,A0106:
-Charger3,107,2,A0107:
-Charger3,108,2,A0108:
-Charger3,109,2,A0109:
-Charger3,110,2,A0110:
-Charger3,111,2,A0111:
-Charger3,112,2,A0112:
-Charger3,113,2,A0113:
-Charger3,114,2,A0114:
-Charger3,115,2,A0115:
-Charger3,116,2,A0116:
-Charger3,117,2,A0117:
-Charger3,118,2,A0118:
-Charger3,119,2,A0119:
-Charger3,120,2,A0120:
-Charger3,121,2,A0121:
-Charger3,122,2,A0122:
-Charger3,123,2,A0123:
-Charger3,124,2,A0124:
-Charger3,125,2,A0125:
-Charger3,126,2,A0126:
-Charger3,127,2,A0127:
-Charger4,128,2,A0128:Coupler04 charge time out
-Charger4,129,2,A0129:Coupler04 motor front end sensor erro
-Charger4,130,2,A0130:Coupler04 motor rear end sensor erro
-Charger4,131,2,A0131:Coupler04 Motor erro
-Charger4,132,2,A0132:Charger04 Charger  erro
-Charger4,133,2,A0133:Charger04 Charger  communication erro
-Charger4,134,2,A0134:Coupler04  Measuring without voltage
-Charger4,135,2,A0135:Coupler04 coupler in a position
-Charger4,136,2,A0136:Charger04 command tome out
-Charger4,137,2,A0137:
-Charger4,138,2,A0138:
-Charger4,139,2,A0139:
-Charger4,140,2,A0140:
-Charger4,141,2,A0141:
-Charger4,142,2,A0142:
-Charger4,143,2,A0143:
-Charger4,144,2,A0144:
-Charger4,145,2,A0145:
-Charger4,146,2,A0146:
-Charger4,147,2,A0147:
-Charger4,148,2,A0148:
-Charger4,149,2,A0149:
-Charger4,150,2,A0150:
-Charger4,151,2,A0151:
-Charger4,152,2,A0152:
-Charger4,153,2,A0153:
-Charger4,154,2,A0154:
-Charger4,155,2,A0155:
-Charger4,156,2,A0156:
-Charger4,157,2,A0157:
-Charger4,158,2,A0158:
-Charger4,159,2,A0159:
-Charger5,160,2,A0160:Coupler05 charge time out
-Charger5,161,2,A0161:Coupler05 motor front end sensor erro
-Charger5,162,2,A0162:Coupler05 motor rear end sensor erro
-Charger5,163,2,A0163:Coupler05 Motor erro
-Charger5,164,2,A0164:Charger01 Charger  erro
-Charger5,165,2,A0165:Charger01 Charger  communication erro
-Charger5,166,2,A0166:Coupler05  Measuring without voltage
-Charger5,167,2,A0167:Coupler05 coupler in a position
-Charger5,168,2,A0168:Charger05 command tome out

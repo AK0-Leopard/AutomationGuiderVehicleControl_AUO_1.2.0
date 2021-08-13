@@ -54,26 +54,26 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
             ohtc_Form = _ohtc_Form;
             initialMapSpace();
 
-            lbl_Through_Times_Lv1.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV1;
-            lbl_Through_Times_Lv2.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV2;
-            lbl_Through_Times_Lv3.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV3;
-            lbl_Through_Times_Lv4.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV4;
-            lbl_Through_Times_Lv5.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV5;
-            lbl_Through_Times_Lv6.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV6;
-            lbl_Through_Times_Lv7.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV7;
-            lbl_Through_Times_Lv8.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV8;
-            lbl_Through_Times_Lv9.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV9;
-            lbl_Through_Times_Lv10.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV10;
-            lbl_Through_Times_Lv1.Text = $"{0} ~ {BCAppConstants.SEC_THROUGH_TIMES_LV1}";
-            lbl_Through_Times_Lv2.Text = $"{BCAppConstants.SEC_THROUGH_TIMES_LV1} ~ {BCAppConstants.SEC_THROUGH_TIMES_LV2}";
-            lbl_Through_Times_Lv3.Text = $"{BCAppConstants.SEC_THROUGH_TIMES_LV2} ~ {BCAppConstants.SEC_THROUGH_TIMES_LV3}";
-            lbl_Through_Times_Lv4.Text = $"{BCAppConstants.SEC_THROUGH_TIMES_LV3} ~ {BCAppConstants.SEC_THROUGH_TIMES_LV4}";
-            lbl_Through_Times_Lv5.Text = $"{BCAppConstants.SEC_THROUGH_TIMES_LV4} ~ {BCAppConstants.SEC_THROUGH_TIMES_LV5}";
-            lbl_Through_Times_Lv6.Text = $"{BCAppConstants.SEC_THROUGH_TIMES_LV5} ~ {BCAppConstants.SEC_THROUGH_TIMES_LV6}";
-            lbl_Through_Times_Lv7.Text = $"{BCAppConstants.SEC_THROUGH_TIMES_LV6} ~ {BCAppConstants.SEC_THROUGH_TIMES_LV7}";
-            lbl_Through_Times_Lv8.Text = $"{BCAppConstants.SEC_THROUGH_TIMES_LV7} ~ {BCAppConstants.SEC_THROUGH_TIMES_LV8}";
-            lbl_Through_Times_Lv9.Text = $"{BCAppConstants.SEC_THROUGH_TIMES_LV8} ~ {BCAppConstants.SEC_THROUGH_TIMES_LV9}";
-            lbl_Through_Times_Lv10.Text = $"{BCAppConstants.SEC_THROUGH_TIMES_LV9} ~ ";
+            //lbl_Through_Times_Lv1.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV1;
+            //lbl_Through_Times_Lv2.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV2;
+            //lbl_Through_Times_Lv3.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV3;
+            //lbl_Through_Times_Lv4.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV4;
+            //lbl_Through_Times_Lv5.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV5;
+            //lbl_Through_Times_Lv6.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV6;
+            //lbl_Through_Times_Lv7.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV7;
+            //lbl_Through_Times_Lv8.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV8;
+            //lbl_Through_Times_Lv9.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV9;
+            //lbl_Through_Times_Lv10.BackColor = BCAppConstants.SEC_THROUGH_COLOR_LV10;
+            //lbl_Through_Times_Lv1.Text = $"{0} ~ {BCAppConstants.SEC_THROUGH_TIMES_LV1}";
+            //lbl_Through_Times_Lv2.Text = $"{BCAppConstants.SEC_THROUGH_TIMES_LV1} ~ {BCAppConstants.SEC_THROUGH_TIMES_LV2}";
+            //lbl_Through_Times_Lv3.Text = $"{BCAppConstants.SEC_THROUGH_TIMES_LV2} ~ {BCAppConstants.SEC_THROUGH_TIMES_LV3}";
+            //lbl_Through_Times_Lv4.Text = $"{BCAppConstants.SEC_THROUGH_TIMES_LV3} ~ {BCAppConstants.SEC_THROUGH_TIMES_LV4}";
+            //lbl_Through_Times_Lv5.Text = $"{BCAppConstants.SEC_THROUGH_TIMES_LV4} ~ {BCAppConstants.SEC_THROUGH_TIMES_LV5}";
+            //lbl_Through_Times_Lv6.Text = $"{BCAppConstants.SEC_THROUGH_TIMES_LV5} ~ {BCAppConstants.SEC_THROUGH_TIMES_LV6}";
+            //lbl_Through_Times_Lv7.Text = $"{BCAppConstants.SEC_THROUGH_TIMES_LV6} ~ {BCAppConstants.SEC_THROUGH_TIMES_LV7}";
+            //lbl_Through_Times_Lv8.Text = $"{BCAppConstants.SEC_THROUGH_TIMES_LV7} ~ {BCAppConstants.SEC_THROUGH_TIMES_LV8}";
+            //lbl_Through_Times_Lv9.Text = $"{BCAppConstants.SEC_THROUGH_TIMES_LV8} ~ {BCAppConstants.SEC_THROUGH_TIMES_LV9}";
+            //lbl_Through_Times_Lv10.Text = $"{BCAppConstants.SEC_THROUGH_TIMES_LV9} ~ ";
 
 
 
@@ -342,6 +342,8 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
                 IEnumerable<AADDRESS> enumerAdr = mainForm.BCApp.SCApplication.MapBLL.loadAllAddress();
 
                 iAddrCount = enumerAdr.Count();
+                List<string> portstation_adresses = SCApplication.getInstance().PortStationBLL.OperateCatch.getAllPortStation().Select(a => a.ADR_ID.Trim()).ToList();
+
 
                 int index = 0;
                 m_objItemAddr = new uctlAddress[iAddrCount];
@@ -357,11 +359,20 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
                         m_objItemAddr[index].p_LayoutPoint = 0;
                         m_objItemAddr[index].p_Text = string.Empty;
                         m_objItemAddr[index].p_PointType = point.POINTTYPE;
+                        if (portstation_adresses.Contains(adr.ADR_ID.Trim()))
+                        {
+                            m_objItemAddr[index].p_PointType = E_POINT_TYPE.LoadUnload;
+                        }
                         m_objItemAddr[index].p_LocX = point.LOCATIONX;
                         m_objItemAddr[index].p_LocY = point.LOCATIONY;
                         m_objItemAddr[index].p_SizeW = (int)point.WIDTH;
                         m_objItemAddr[index].p_SizeH = (int)point.HEIGHT;
                         m_objItemAddr[index].p_Color = BCUtility.ConvStr2Color(point.COLOR);
+                        
+                        if (adr.IsCoupler)
+                        {
+                            m_objItemAddr[index].p_Color = Color.LawnGreen;
+                        }
                         m_objItemAddr[index].p_ZoomLV = adr.ZOOM_LV;
                         m_objItemAddr[index].Visible = adr.ZOOM_LV >= trackBar_scale.Value;
                         m_objItemAddr[index].Tag = m_objItemAddr[index].Top + "|" + m_objItemAddr[index].Left + "|"
@@ -1051,16 +1062,16 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
 
 
         #region Monitor Mode
-        public void entryMonitorMode()
-        {
-            tlp_Through_Times.Visible = true;
-            pnl_Status_desc.Visible = false;
-        }
-        public void LeaveMonitorMode()
-        {
-            tlp_Through_Times.Visible = false;
-            pnl_Status_desc.Visible = true;
-        }
+        //public void entryMonitorMode()
+        //{
+        //    tlp_Through_Times.Visible = true;
+        //    pnl_Status_desc.Visible = false;
+        //}
+        //public void LeaveMonitorMode()
+        //{
+        //    tlp_Through_Times.Visible = false;
+        //    pnl_Status_desc.Visible = true;
+        //}
 
 
         #endregion Monitor Mode

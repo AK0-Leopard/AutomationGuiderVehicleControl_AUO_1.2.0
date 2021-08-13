@@ -23,21 +23,6 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions
         public UInt16 ErrorCode_5;
         [PLCElement(ValueName = "MCHARGER_TO_AGVC_ABNORMAL_CHARGING_REPORT_INDEX")]
         public UInt16 index;
-        public List<string> loadCurrentHappendAlarms()
-        {
-            var alarms = new List<UInt16>();
-            if (ErrorCode_1 != 0)
-                alarms.Add(ErrorCode_1);
-            if (ErrorCode_2 != 0)
-                alarms.Add(ErrorCode_2);
-            if (ErrorCode_3 != 0)
-                alarms.Add(ErrorCode_3);
-            if (ErrorCode_4 != 0)
-                alarms.Add(ErrorCode_4);
-            if (ErrorCode_5 != 0)
-                alarms.Add(ErrorCode_5);
-            return alarms.Select(error_code => error_code.ToString()).ToList();
-        }
     }
 
 

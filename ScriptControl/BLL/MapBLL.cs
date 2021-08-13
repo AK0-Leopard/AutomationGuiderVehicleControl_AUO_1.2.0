@@ -94,15 +94,6 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             return point;
         }
-        public APOINT getPointByAdrID(string adrID)
-        {
-            APOINT point = null;
-            using (DBConnection_EF con = new DBConnection_EF())
-            {
-                point = pointDAO.getByAdrID(con, adrID);
-            }
-            return point;
-        }
         #endregion Point
         #region GROUPRAILS
         public AGROUPRAILS getGroupRailsBySectionID(string sec_id)

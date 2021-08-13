@@ -5,6 +5,7 @@ using com.mirle.ibg3k0.sc.BLL;
 using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data;
 using com.mirle.ibg3k0.sc.Data.PLC_Functions;
+using com.mirle.ibg3k0.sc.Data.SECS.NorthInnolux;
 using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.sc.Module;
 using com.mirle.ibg3k0.sc.ProtocolFormat.NorthInnolux.Agvmessage;
@@ -41,6 +42,23 @@ namespace com.mirle.ibg3k0.sc.Service
         //SCApplication scApp = null;
 
         public event EventHandler<DeadLockEventArgs> DeadLockProcessFail;
+        private Dictionary<string, string> WaitingRetryMCSCMDList { get; set; } = new Dictionary<string, string>();
+        private object WaitingRetryMCSCMDListLock = new object();
+        public override void addCMDToWaitingRetryMCSCMDList(string vh_id, string cmd)
+        {
+            lock (WaitingRetryMCSCMDListLock)
+            {
+                try
+                {
+                    if (!WaitingRetryMCSCMDList.ContainsKey(vh_id))
+                    {
+                        WaitingRetryMCSCMDList.Add(vh_id, cmd);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    logger.Error(ex, "Exception:");
+                }
 
             }
         }
@@ -148,11 +166,13 @@ namespace com.mirle.ibg3k0.sc.Service
                     e == VHModeStatus.AutoLocal ||
                     e == VHModeStatus.AutoRemote)
                 {
-                    //北群創不需要報這個 ProcessAlarmReport(vh, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrReset, $"vehicle cannot service");
+                    //北群創不需要報這個 
+                    ProcessAlarmReport(vh, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrReset, $"vehicle cannot service");
                 }
                 else
                 {
-                    //北群創不需要報這個 if (vh.IS_INSTALLED) ProcessAlarmReport(vh, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrSet, $"vehicle cannot service");
+                    //北群創不需要報這個 
+                    if (vh.IS_INSTALLED) ProcessAlarmReport(vh, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrSet, $"vehicle cannot service");
                 }
             }
             catch (Exception ex)
@@ -177,7 +197,8 @@ namespace com.mirle.ibg3k0.sc.Service
                    CarrierID: vh.CST_ID);
 
                 //要再上報Alamr Rerport給MCS
-                //北群創不需要報這個 if (vh.IS_INSTALLED)ProcessAlarmReport(vh, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrSet, $"vehicle cannot service");
+                //北群創不需要報這個 
+                    if (vh.IS_INSTALLED) ProcessAlarmReport(vh, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrSet, $"vehicle cannot service");
             }
             catch (Exception ex)
             {
@@ -607,15 +628,15 @@ namespace com.mirle.ibg3k0.sc.Service
         /// 與Vehicle進行資料同步。(通常使用剛與Vehicle連線時)
         /// </summary>
         /// <param name="vh_id"></param>
-        public void VehicleInfoSynchronize(string vh_id)
+        public override void VehicleInfoSynchronize(string vh_id)
         {
             /*與Vehicle進行狀態同步*/
             VehicleStatusRequest(vh_id, true);
             /*要求Vehicle進行Alarm的Reset，如果成功後會將OHxC上針對該Vh的Alarm清除*/
             if (AlarmResetRequest(vh_id))
             {
-                //scApp.AlarmBLL.resetAllAlarmReport(vh_id);
-                //scApp.AlarmBLL.resetAllAlarmReport2Redis(vh_id);
+                scApp.AlarmBLL.resetAllAlarmReport(vh_id);
+                scApp.AlarmBLL.resetAllAlarmReport2Redis(vh_id);
             }
             AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vh_id);
             //if (vh.MODE_STATUS == VHModeStatus.Manual &&
@@ -991,7 +1012,12 @@ namespace com.mirle.ibg3k0.sc.Service
                 //scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(cmd.CMD_ID, E_CMD_STATUS.Sending);
                 scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(vh_id, cmd.CMD_ID, E_CMD_STATUS.Sending);
                 if (!string.IsNullOrEmpty(cmd.CMD_ID_MCS))
-                    isSuccess &= scApp.ReportBLL.newReportTransferInitial(cmd.CMD_ID_MCS, null);
+                {
+                    if(!cmd.CMD_ID.StartsWith(((int)GenOHxCCommandType.Retry).ToString()))
+                    {
+                        isSuccess &= scApp.ReportBLL.newReportTransferInitial(cmd.CMD_ID_MCS, null);
+                    }
+                }
                 isSuccess = ProcSendTransferCommandToVh(cmd, assignVH, active_type,
                  guide_start_to_from_segment_ids?.ToArray(), guide_start_to_from_section_ids?.ToArray(), guide_start_to_from_address_ids?.ToArray(),
                  guide_to_dest_segment_ids?.ToArray(), guide_to_dest_section_ids?.ToArray(), guide_to_dest_address_ids?.ToArray());
@@ -1495,10 +1521,13 @@ namespace com.mirle.ibg3k0.sc.Service
 
         public override bool doCancelOrAbortCommandByMCSCmdID(string cancel_abort_mcs_cmd_id, CMDCancelType actType)
         {
+            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
+               Details: $"Enter doCancelOrAbortCommandByMCSCmdID method,mcs cmdid:[{cancel_abort_mcs_cmd_id}] cancel type:[{actType}].",
+               XID: cancel_abort_mcs_cmd_id);
             ACMD_MCS mcs_cmd = scApp.CMDBLL.getCMD_MCSByID(cancel_abort_mcs_cmd_id);
             if (mcs_cmd == null)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
                    Details: $"want to cancel/abort mcs cmd:{cancel_abort_mcs_cmd_id},but cmd not exist.",
                    XID: cancel_abort_mcs_cmd_id);
                 return false;
@@ -1508,6 +1537,7 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 case CMDCancelType.CmdCancel:
                     scApp.ReportBLL.newReportTransferCancelInitial(mcs_cmd, null);
+
                     if (mcs_cmd.TRANSFERSTATE == E_TRAN_STATUS.Queue)
                     {
                         scApp.CMDBLL.updateCMD_MCS_TranStatus2Canceled(cancel_abort_mcs_cmd_id);
@@ -1526,14 +1556,69 @@ namespace com.mirle.ibg3k0.sc.Service
                     }
                     else if (mcs_cmd.TRANSFERSTATE >= E_TRAN_STATUS.Initial)
                     {
-                        is_success = scApp.VehicleService.cancleOrAbortCommandByMCSCmdID(cancel_abort_mcs_cmd_id, ProtocolFormat.OHTMessage.CMDCancelType.CmdAbort);
-                        if (is_success)
+                        if (mcs_cmd.COMMANDSTATE == TaskCmdStatus.BCRReadFail)
                         {
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
+                               Details: $" doCancelOrAbortCommandByMCSCmdID Enter BCRReadFail senario,mcs cmdid:[{cancel_abort_mcs_cmd_id}]].",
+                               XID: cancel_abort_mcs_cmd_id);
+                            AVEHICLE assign_vh = scApp.VehicleBLL.getVehicleByExcuteMCS_CMD_ID(cancel_abort_mcs_cmd_id);
                             scApp.CMDBLL.updateCMD_MCS_TranStatus2Aborting(cancel_abort_mcs_cmd_id);
+                            is_success = scApp.ReportBLL.newReportTransferCommandAbortFinish(mcs_cmd, assign_vh,"8", null);
+                            if (is_success)
+                            {
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
+                               Details: $" doCancelOrAbortCommandByMCSCmdID end BCRReadFail senario success,mcs cmdid:[{cancel_abort_mcs_cmd_id}].",
+                               XID: cancel_abort_mcs_cmd_id);
+
+
+                            }
+                            else
+                            {
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
+                                Details: $" doCancelOrAbortCommandByMCSCmdID end BCRReadFail senario fail,mcs cmdid:[{cancel_abort_mcs_cmd_id}].",
+                                XID: cancel_abort_mcs_cmd_id);
+                            }
+
+                            using (TransactionScope tx = SCUtility.getTransactionScope())
+                            {
+                                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                                {
+                                    bool isSuccess = true;
+                                    //isSuccess &= scApp.VehicleBLL.doTransferCommandFinish(vh.VEHICLE_ID, cmd_id, completeStatus, travel_dis);
+                                    isSuccess &= scApp.VehicleBLL.doTransferCommandFinish(assign_vh.VEHICLE_ID, assign_vh.OHTC_CMD, CompleteStatus.CmpStatusIdreadFailed, 0);
+                                    //isSuccess &= scApp.VIDBLL.initialVIDCommandInfo(vh.VEHICLE_ID);
+                                    isSuccess &= scApp.VIDBLL.initialVIDCommandInfo(assign_vh.VEHICLE_ID);
+
+                                    if (isSuccess)
+                                    {
+                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
+                                        Details: $" doCancelOrAbortCommandByMCSCmdID BCRReadFail senario delete Cmd success,mcs cmdid:[{cancel_abort_mcs_cmd_id}].",
+                                        XID: cancel_abort_mcs_cmd_id);
+
+                                        tx.Complete();
+                                    }
+                                    else
+                                    {
+                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
+                                Details: $" doCancelOrAbortCommandByMCSCmdID BCRReadFail senario delete Cmd fail,mcs cmdid:[{cancel_abort_mcs_cmd_id}].",
+                                XID: cancel_abort_mcs_cmd_id);
+                                    }
+                                }
+                            }
+                            assign_vh.onCommandComplete(CompleteStatus.CmpStatusIdreadFailed);
+
                         }
                         else
                         {
-                            scApp.ReportBLL.newReportTransferAbortFailed(cancel_abort_mcs_cmd_id, null);
+                            is_success = scApp.VehicleService.cancleOrAbortCommandByMCSCmdID(cancel_abort_mcs_cmd_id, ProtocolFormat.OHTMessage.CMDCancelType.CmdAbort);
+                            if (is_success)
+                            {
+                                scApp.CMDBLL.updateCMD_MCS_TranStatus2Aborting(cancel_abort_mcs_cmd_id);
+                            }
+                            else
+                            {
+                                scApp.ReportBLL.newReportTransferAbortFailed(cancel_abort_mcs_cmd_id, null);
+                            }
                         }
                     }
                     break;
@@ -1689,8 +1774,11 @@ namespace com.mirle.ibg3k0.sc.Service
                             if (!SCUtility.isEmpty(cmd.CMD_ID_MCS))
                             {
                                 isSuccess &= scApp.VIDBLL.upDateVIDCommandInfo(cmd.VH_ID, cmd.CMD_ID_MCS);
-                                isSuccess &= scApp.ReportBLL.newReportBeginTransfer(assignVH.VEHICLE_ID, reportqueues);
-                                scApp.ReportBLL.insertMCSReport(reportqueues);
+                                if (!cmd.CMD_ID.StartsWith(((int)GenOHxCCommandType.Retry).ToString()))//retry命令不用發
+                                {
+                                    isSuccess &= scApp.ReportBLL.newReportBeginTransfer(assignVH.VEHICLE_ID, reportqueues);
+                                    scApp.ReportBLL.insertMCSReport(reportqueues);
+                                }
                             }
                         }
 
@@ -2405,11 +2493,11 @@ namespace com.mirle.ibg3k0.sc.Service
                        VehicleID: eqpt.VEHICLE_ID,
                        CarrierID: eqpt.CST_ID);
 
-                    AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(eqpt.VEHICLE_ID);
-                    string new_carrier_id =
-                        $"NR-{eqpt.Real_ID.Trim()}-{vid_info.CARRIER_INSTALLED_TIME?.ToString(SCAppConstants.TimestampFormat_16)}";
+                    //AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(eqpt.VEHICLE_ID);
+                    //string new_carrier_id =
+                    //    $"NR-{eqpt.Real_ID.Trim()}-{vid_info.CARRIER_INSTALLED_TIME?.ToString(SCAppConstants.TimestampFormat_16)}";
                     replyTranEventReport(bcfApp, eventType, eqpt, seqNum, cancelType: CMDCancelType.CmdCancelIdReadFailed);
-                    scApp.VIDBLL.upDateVIDCarrierID(eqpt.VEHICLE_ID, new_carrier_id);
+                    //scApp.VIDBLL.upDateVIDCarrierID(eqpt.VEHICLE_ID, new_carrier_id);
 
                     break;
                 case BCRReadResult.BcrNormal:
@@ -2417,10 +2505,11 @@ namespace com.mirle.ibg3k0.sc.Service
                     break;
             }
 
-            List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
-            scApp.ReportBLL.newReportCarrierIDReadReport(eqpt.VEHICLE_ID, reportqueues);
-            scApp.ReportBLL.insertMCSReport(reportqueues);
-            scApp.ReportBLL.newSendMCSMessage(reportqueues);
+            //2020/12/21 Hsinyu Chang: 北群創不需要報CEID 151，包含的資訊已經用2880取代了
+            //List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
+            //scApp.ReportBLL.newReportCarrierIDReadReport(eqpt.VEHICLE_ID, reportqueues);
+            //scApp.ReportBLL.insertMCSReport(reportqueues);
+            //scApp.ReportBLL.newSendMCSMessage(reportqueues);
         }
 
 
@@ -2493,7 +2582,8 @@ namespace com.mirle.ibg3k0.sc.Service
 
             lock (reserve_lock)
             {
-                var ReserveResult = IsReserveSuccessNew(eqpt.VEHICLE_ID, reserveInfos);
+                var ReserveResult = scApp.ReserveBLL.IsMultiReserveSuccess(scApp, eqpt.VEHICLE_ID, reserveInfos);
+                //var ReserveResult = IsReserveSuccessNew(eqpt.VEHICLE_ID, reserveInfos);
                 if (ReserveResult.isSuccess)
                 {
                     scApp.VehicleBLL.cache.ResetCanNotReserveInfo(eqpt.VEHICLE_ID);//TODO Mark check
@@ -2512,7 +2602,10 @@ namespace com.mirle.ibg3k0.sc.Service
                     scApp.VehicleBLL.cache.SetUnsuccessReserveInfo(eqpt.VEHICLE_ID, new AVEHICLE.ReserveUnsuccessInfo(ReserveResult.reservedVhID, "", reserve_fail_section));
                     Task.Run(() => tryNotifyVhAvoid_New(eqpt.VEHICLE_ID, ReserveResult.reservedVhID));
                 }
-                replyTranEventReport(bcfApp, EventType.ReserveReq, eqpt, seqNum, reserveSuccess: ReserveResult.isSuccess, reserveInfos: reserveInfos);
+                //replyTranEventReport(bcfApp, EventType.ReserveReq, eqpt, seqNum, reserveSuccess: ReserveResult.isSuccess, reserveInfos: reserveInfos);
+                replyTranEventReport(bcfApp, EventType.ReserveReq, eqpt, seqNum, 
+                     reserveSuccess: ReserveResult.isSuccess,
+                     reserveInfos: ReserveResult.reserveSuccessInfos);
             }
         }
 
@@ -2574,7 +2667,6 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 var result = scApp.ReserveBLL.TryAddReservedSection(vhID, reserve_section_id,
                                                                     sensorDir: hltDirection,
-                                                                    forkDir: hltDirection,
                                                                     isAsk: isAsk);
 
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
@@ -2665,7 +2757,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 try
                 {
-                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
                        Data: $"Try to notify vh avoid...,requestVh:{requestVhID} reservedVh:{reservedVhID}",
                        VehicleID: requestVhID);
                     AVEHICLE reserved_vh = scApp.VehicleBLL.cache.getVehicle(reservedVhID);
@@ -2954,9 +3046,12 @@ namespace com.mirle.ibg3k0.sc.Service
                 //在一開始的時候就先Set一台虛擬車在相同位置，防止找到鄰近的Address
                 var hlt_vh_obj = scApp.ReserveBLL.GetHltVehicle(reservedVh.VEHICLE_ID);
                 string virtual_vh_id = $"{VehicleVirtualSymbol}_{reservedVh.VEHICLE_ID}";
+                //scApp.ReserveBLL.TryAddVehicleOrUpdate(virtual_vh_id, "", hlt_vh_obj.X, hlt_vh_obj.Y, hlt_vh_obj.Angle, 0,
+                //    sensorDir: Mirle.Hlts.Utils.HltDirection.NESW,
+                //      forkDir: Mirle.Hlts.Utils.HltDirection.None);
                 scApp.ReserveBLL.TryAddVehicleOrUpdate(virtual_vh_id, "", hlt_vh_obj.X, hlt_vh_obj.Y, hlt_vh_obj.Angle, 0,
-                    sensorDir: Mirle.Hlts.Utils.HltDirection.NESW,
-                      forkDir: Mirle.Hlts.Utils.HltDirection.None);
+    sensorDir: Mirle.Hlts.Utils.HltDirection.NS,
+      forkDir: Mirle.Hlts.Utils.HltDirection.None);
                 virtual_vh_ids.Add(virtual_vh_id);
                 do
                 {
@@ -3142,13 +3237,17 @@ namespace com.mirle.ibg3k0.sc.Service
                         AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(vh.VEHICLE_ID);
                     if (carrier_id.StartsWith("ERROR"))
                     {
-                        scApp.VIDBLL.upDateVIDCarrierID(vh.VEHICLE_ID, string.Empty);//讀不到ID的話，更新為空白
+                        string new_carrier_id =
+                            $"NR-{vh.Real_ID.Trim()}-{vid_info.CARRIER_INSTALLED_TIME?.ToString(SCAppConstants.TimestampFormat_16)}";
+                        scApp.VIDBLL.upDateVIDCarrierID(vh.VEHICLE_ID, new_carrier_id);//讀不到ID的話，更新為"NR-xxxx"
                         bCRReadResult = BCRReadResult.BcrReadFail;
+                        scApp.CMDBLL.updateCMD_MCS_CmdState2BCRFail(vh.MCS_CMD);
                     }
                     else if(!SCUtility.isMatche( carrier_id , vid_info.MCS_CARRIER_ID))
                     {
                         scApp.VIDBLL.upDateVIDCarrierID(vh.VEHICLE_ID, carrier_id);
                         bCRReadResult = BCRReadResult.BcrMisMatch;
+                        scApp.CMDBLL.updateCMD_MCS_CmdState2BCRFail(vh.MCS_CMD);
                     }
                     else
                     {
@@ -3156,14 +3255,6 @@ namespace com.mirle.ibg3k0.sc.Service
                         bCRReadResult = BCRReadResult.BcrNormal;
                     }
                     scApp.VehicleBLL.updateVehicleBCRReadResult(vh, bCRReadResult);//因為已經要上報MCS Bcrcode Read Report，要先更新BCRReadResult
-
-
-
-
-
-
-
-
                     //scApp.PortBLL.OperateCatch.ClearAllPortStationCSTExistToEmpty();
                     break;
                 case EventType.UnloadComplete:
@@ -3483,24 +3574,24 @@ namespace com.mirle.ibg3k0.sc.Service
                             case CompleteStatus.CmpStatusLoad:
                             case CompleteStatus.CmpStatusUnload:
                             case CompleteStatus.CmpStatusLoadunload:
-                            case CompleteStatus.CmpStatusIdmisMatch:
-                            case CompleteStatus.CmpStatusIdreadFailed:
-                            //case CompleteStatus.CmpStatusVehicleAbort:    //20201030 removed
+                                //case CompleteStatus.CmpStatusIdmisMatch:      //20210113 removed
+                                //case CompleteStatus.CmpStatusIdreadFailed:    //20210113 removed
+                                //case CompleteStatus.CmpStatusVehicleAbort:    //20201030 removed
                                 isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
                                 vh.no_needs_to_retry = false;
                                 vh.curCMDRetryCount = 0;
                                 break;
-                            case CompleteStatus.CmpStatusInterlockError:
-                                if (vh.HAS_CST == 1)
-                                {
-                                    isSuccess = scApp.ReportBLL.newReportUnloadFailed(vh.VEHICLE_ID, reportqueues);
-                                }
-                                else
-                                {
-                                    isSuccess = scApp.ReportBLL.newReportLoadFailed(vh.VEHICLE_ID, reportqueues);
-                                }
-                                isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
-                                break;
+                            //case CompleteStatus.CmpStatusInterlockError:
+                            //    if (vh.HAS_CST == 1)
+                            //    {
+                            //        isSuccess = scApp.ReportBLL.newReportUnloadFailed(vh.VEHICLE_ID, reportqueues);
+                            //    }
+                            //    else
+                            //    {
+                            //        isSuccess = scApp.ReportBLL.newReportLoadFailed(vh.VEHICLE_ID, reportqueues);
+                            //    }
+                            //    isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
+                            //    break;
                             case CompleteStatus.CmpStatusMove:
                             case CompleteStatus.CmpStatusHome:
                             case CompleteStatus.CmpStatusOverride:
@@ -3515,7 +3606,9 @@ namespace com.mirle.ibg3k0.sc.Service
                                 vh.no_needs_to_retry = false;
                                 vh.curCMDRetryCount = 0;
                                 break;
+
                             case CompleteStatus.CmpStatusVehicleAbort: //20201030 added
+                            case CompleteStatus.CmpStatusInterlockError:
                                 //just add new ohtc command...
                                 if( vh.curCMDRetryCount >= cmdRetryCount)
                                 {
@@ -3561,22 +3654,25 @@ namespace com.mirle.ibg3k0.sc.Service
             //tryReleaseReservedControl(vh_id, cur_sec_id);
             string start_adr = vh.startAdr;
             scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(vh.VEHICLE_ID);
-            using (TransactionScope tx = SCUtility.getTransactionScope())
+            if(completeStatus != CompleteStatus.CmpStatusIdmisMatch&& completeStatus != CompleteStatus.CmpStatusIdreadFailed)
             {
-                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                using (TransactionScope tx = SCUtility.getTransactionScope())
                 {
-                    //isSuccess &= scApp.VehicleBLL.doTransferCommandFinish(vh.VEHICLE_ID, cmd_id, completeStatus, travel_dis);
-                    isSuccess &= scApp.VehicleBLL.doTransferCommandFinish(vh_id, cmd_id, completeStatus, travel_dis);
-                    //isSuccess &= scApp.VIDBLL.initialVIDCommandInfo(vh.VEHICLE_ID);
-                    isSuccess &= scApp.VIDBLL.initialVIDCommandInfo(vh_id);
+                    using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                    {
+                        //isSuccess &= scApp.VehicleBLL.doTransferCommandFinish(vh.VEHICLE_ID, cmd_id, completeStatus, travel_dis);
+                        isSuccess &= scApp.VehicleBLL.doTransferCommandFinish(vh_id, cmd_id, completeStatus, travel_dis);
+                        //isSuccess &= scApp.VIDBLL.initialVIDCommandInfo(vh.VEHICLE_ID);
+                        isSuccess &= scApp.VIDBLL.initialVIDCommandInfo(vh_id);
 
-                    if (isSuccess)
-                    {
-                        tx.Complete();
-                    }
-                    else
-                    {
-                        return;
+                        if (isSuccess)
+                        {
+                            tx.Complete();
+                        }
+                        else
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -3619,7 +3715,13 @@ namespace com.mirle.ibg3k0.sc.Service
                 SpinWait.SpinUntil(() => false, DebugParameter.CycleRunIntervalTime);
                 TestCycleRun(vh, cmd_id, start_adr);
             }
-            vh.onCommandComplete(completeStatus);
+            if (completeStatus != CompleteStatus.CmpStatusIdmisMatch && completeStatus != CompleteStatus.CmpStatusIdreadFailed)
+            {
+                vh.onCommandComplete(completeStatus);
+            }
+
+
+
 
             if (scApp.getEQObjCacheManager().getLine().SCStats == ALINE.TSCState.PAUSING)
             {
@@ -3628,6 +3730,10 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     scApp.LineService.TSCStateToPause();
                 }
+            }
+            if (isAddCmdToWaitingRetryMCSCMDList)
+            {
+                addCMDToWaitingRetryMCSCMDList(vh.VEHICLE_ID, finish_mcs_cmd);
             }
             if (informMCSCMDFailed)
             {
@@ -3858,7 +3964,7 @@ namespace com.mirle.ibg3k0.sc.Service
         #region Alarm
 
         [ClassAOPAspect]
-        public void AlarmReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_194_ALARM_REPORT recive_str, int seq_num)
+        public override void AlarmReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_194_ALARM_REPORT recive_str, int seq_num)
         {
             SCUtility.RecodeReportInfo(eqpt.VEHICLE_ID, seq_num, recive_str);
             LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
@@ -3912,18 +4018,36 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 string node_id = eqpt.NODE_ID;
                 string vh_id = eqpt.VEHICLE_ID;
-                //var alarm_map = scApp.AlarmBLL.GetAlarmMap(vh_id, err_code);
                 bool is_all_alarm_clear = SCUtility.isMatche(err_code, "0") && status == ErrorStatus.ErrReset;
-                //if (is_all_alarm_clear ||
-                //    (alarm_map != null && alarm_map.ALARM_LVL == E_ALARM_LVL.Error))
-                //{
-                List<ALARM> alarms = null;
-                //在設備上報Alarm時，如果是第一次上報(之前都沒有Alarm發生時，則要上報S6F11 CEID=52 Alarm Set)
-                if (status == ErrorStatus.ErrSet &&
-                    !scApp.AlarmBLL.hasAlarmExist())
+                if (!is_all_alarm_clear)
                 {
-                    scApp.ReportBLL.ReportAlarmSet();
+                    var alarm_map = scApp.AlarmBLL.GetAlarmMap(node_id, err_code);
+                    if (alarm_map == null)
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
+                           Data: $"Process vehicle alarm report,but can not found alarm map. alarm code:{err_code},alarm status{status},error desc:{errorDesc}",
+                           VehicleID: eqpt.VEHICLE_ID,
+                           CarrierID: eqpt.CST_ID);
+                        return;
+                    }
+
+                    //if (is_all_alarm_clear ||
+                    //    (alarm_map != null && alarm_map.ALARM_LVL == E_ALARM_LVL.Error))
+                    //{
+                    //在設備上報Alarm時，如果是第一次上報(之前都沒有Alarm發生時，則要上報S6F11 CEID=52 Alarm Set)
+                    //if (status == ErrorStatus.ErrSet &&
+                    //    !scApp.AlarmBLL.hasAlarmExist())
+                    //{
+                    //    scApp.ReportBLL.ReportAlarmSet();
+                    //}
+                    if (status == ErrorStatus.ErrSet &&
+                        !scApp.AlarmBLL.hasAlarmErrorExist() && alarm_map.ALARM_LVL == E_ALARM_LVL.Error)
+                    {
+                        scApp.ReportBLL.ReportAlarmSet();
+                    }
                 }
+                List<ALARM> alarms = null;
+
                 scApp.getRedisCacheManager().BeginTransaction();
                 using (TransactionScope tx = SCUtility.getTransactionScope())
                 {
@@ -3969,7 +4093,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 foreach (ALARM report_alarm in alarms)
                 {
                     if (report_alarm == null) continue;
-                    //if (report_alarm.ALAM_LVL != E_ALARM_LVL.Error) continue;
+                    if (report_alarm.ALAM_LVL != E_ALARM_LVL.Error) continue;
                     //需判斷Alarm是否存在如果有的話則需再判斷MCS是否有Disable該Alarm的上報
                     if (scApp.AlarmBLL.IsReportToHost(report_alarm.ALAM_CODE))
                     {
@@ -3991,10 +4115,17 @@ namespace com.mirle.ibg3k0.sc.Service
                                 scApp.ReportBLL.newReportAlarmEvent(eqpt.Real_ID, alarmConvertInfo.CEIDClear, alarmConvertInfo.ALID, eqpt.MCS_CMD, alarmConvertInfo.ALTX, alarmConvertInfo.AlarmLevel, reportqueues);
                             }
                         }
+                        else
+                        {
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
+                           Data: $"can not found AlarmConvertInfo,alarm code:{err_code},alarm status{status}",
+                           VehicleID: eqpt.VEHICLE_ID,
+                           CarrierID: eqpt.CST_ID);
+                        }
 
                         scApp.ReportBLL.newSendMCSMessage(reportqueues);
 
-                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
                            Data: $"do report alarm to mcs,alarm code:{err_code},alarm status{status}",
                            VehicleID: eqpt.VEHICLE_ID,
                            CarrierID: eqpt.CST_ID);
@@ -4002,7 +4133,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 //在設備上報取消Alarm，如果已經沒有Alarm(Alarm都已經消除，則要上報S6F11 CEID=52 Alarm Clear)
                 if (status == ErrorStatus.ErrReset &&
-                    !scApp.AlarmBLL.hasAlarmExist())
+                    !scApp.AlarmBLL.hasAlarmErrorExist())
                 {
                     scApp.ReportBLL.ReportAlarmCleared();
                 }
@@ -4140,7 +4271,7 @@ namespace com.mirle.ibg3k0.sc.Service
         #endregion Vehicle Change The Path
         #region Vh connection / disconnention
         [ClassAOPAspect]
-        public void Connection(BCFApplication bcfApp, AVEHICLE vh)
+        public override void Connection(BCFApplication bcfApp, AVEHICLE vh)
         {
             //scApp.getEQObjCacheManager().refreshVh(eqpt.VEHICLE_ID);
             vh.VhRecentTranEvent = EventType.AdrPass;
@@ -4217,7 +4348,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 is_success = is_success && scApp.VehicleBLL.updataVehicleInstall(vhID);
                 if (vh_vo.MODE_STATUS == VHModeStatus.Manual)
                 {
-                    //北群創不需要報這個 ProcessAlarmReport(vh_vo, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrSet, $"vehicle cannot service");
+                    //北群創不需要報這個 
+                    ProcessAlarmReport(vh_vo, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrSet, $"vehicle cannot service");
                 }
                 List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
                 is_success = is_success && scApp.ReportBLL.newReportVehicleInstalled(vh_vo.Real_ID, reportqueues);
@@ -4260,7 +4392,8 @@ namespace com.mirle.ibg3k0.sc.Service
                        Data: $"vh id:{vhID} remove success. start release reserved control...",
                        VehicleID: vhID);
                     scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(vh_vo.VEHICLE_ID);
-                    //北群創不需要報這個 ProcessAlarmReport(vh_vo, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrReset, $"vehicle cannot service");
+                    //北群創不需要報這個 
+                    ProcessAlarmReport(vh_vo, AlarmBLL.VEHICLE_CAN_NOT_SERVICE, ErrorStatus.ErrReset, $"vehicle cannot service");
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                        Data: $"vh id:{vhID} remove success. end release reserved control.",
                        VehicleID: vhID);

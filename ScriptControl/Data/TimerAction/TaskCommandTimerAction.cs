@@ -52,25 +52,17 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
             {
                 LogHelper.setCallContextKey_ServiceID(CALL_CONTEXT_KEY_WORD_SERVICE_ID_TaskCmdTimerAction);
 
-                if (System.Threading.Interlocked.Exchange(ref wholeSyncPoint, 1) == 0)
-                {
-                    try
-                    {
-                        if (scApp.VehicleService.WaitingRetryMCSCMDList.Count > 0)
-                        {
-                            var waitPair = scApp.VehicleService.WaitingRetryMCSCMDList.FirstOrDefault();
-                            bool isSuccess = scApp.CMDBLL.createWaitingRetryOHTCCmd(waitPair.Key, waitPair.Value);
-                            if (isSuccess)
-                            {
-                                scApp.VehicleService.WaitingRetryMCSCMDList.Remove(waitPair.Key);
-                            }
-                        }
-                    }
-                    finally
-                    {
-                        System.Threading.Interlocked.Exchange(ref wholeSyncPoint, 0);
-                    }
-                }
+                //if (System.Threading.Interlocked.Exchange(ref wholeSyncPoint, 1) == 0)
+                //{
+                //    try
+                //    {
+                //        scApp.VehicleService.CreateCMDFromWaitingRetryMCSCMDList();
+                //    }
+                //    finally
+                //    {
+                //        System.Threading.Interlocked.Exchange(ref wholeSyncPoint, 0);
+                //    }
+                //}
 
                 scApp.CMDBLL.checkOHxC_TransferCommand();
             }

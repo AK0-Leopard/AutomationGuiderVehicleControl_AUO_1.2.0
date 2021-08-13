@@ -316,15 +316,32 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.NorthInnolux
             {
                 case BCRReadResult.BcrNormal:
                     return ((int)NorthInnoluxBarcodeReadReult.Normal).ToString();
-                case BCRReadResult.BcrMisMatch: //北群創Mismatch也報Normal給MCS
-                    return ((int)NorthInnoluxBarcodeReadReult.Normal).ToString();
+                case BCRReadResult.BcrMisMatch: //北群創Mismatch也報Normal給MCS -> 2020/12/21 Hsinyu Chang: mismatch報error
+                    return ((int)NorthInnoluxBarcodeReadReult.Error).ToString();
                 case BCRReadResult.BcrReadFail:
-                    return ((int)NorthInnoluxBarcodeReadReult.Error).ToString();
+                    return ((int)NorthInnoluxBarcodeReadReult.NoBarcode).ToString();
                 default:
-                    return ((int)NorthInnoluxBarcodeReadReult.Error).ToString();
+                    return ((int)NorthInnoluxBarcodeReadReult.NoResponse).ToString();
             }
         }
 
+        public static string NorthInnoluxCommpleteReultMap(int result_code)
+        {
+            switch (result_code)
+            {
+                case (int)CompleteStatus.CmpStatusCancel:
+                case (int)CompleteStatus.CmpStatusAbort:
+                case (int)CompleteStatus.CmpStatusVehicleAbort:
+                case (int)CompleteStatus.CmpStatusIdmisMatch:
+                case (int)CompleteStatus.CmpStatusIdreadFailed:
+                case (int)CompleteStatus.CmpStatusInterlockError:
+                case (int)CompleteStatus.CmpStatusLongTimeInaction:
+                case (int)CompleteStatus.CmpStatusForceFinishByOp:
+                    return "8";
+                default:
+                    return result_code.ToString();
+            }
+        }
 
         public const string CEID_Equipment_OFF_LINE = "001";
         public const string CEID_Control_Status_Local = "002";

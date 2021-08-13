@@ -4,6 +4,10 @@ using Mirle.Hlts.Utils;
 using System;
 using System.Text;
 using System.Linq;
+using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
+using Google.Protobuf.Collections;
+using NLog;
+using System.Collections.Generic;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
@@ -14,7 +18,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         private EventHandler reserveStatusChange;
         private object _reserveStatusChangeEventLock = new object();
-        public event EventHandler ReserveStatusChange
+        public override event EventHandler ReserveStatusChange
         {
             add
             {
@@ -41,12 +45,12 @@ namespace com.mirle.ibg3k0.sc.BLL
         public NorthInnoLuxReserveBLL()
         {
         }
-        public void start(SCApplication _app)
+        public override void start(SCApplication _app)
         {
             mapAPI = _app.getReserveSectionAPI();
         }
 
-        public bool DrawAllReserveSectionInfo()
+        public override bool DrawAllReserveSectionInfo()
         {
             bool is_success = false;
             try
@@ -65,12 +69,12 @@ namespace com.mirle.ibg3k0.sc.BLL
             return is_success;
         }
 
-        public System.Windows.Media.Imaging.BitmapSource GetCurrentReserveInfoMap()
+        public override System.Windows.Media.Imaging.BitmapSource GetCurrentReserveInfoMap()
         {
             return mapAPI.MapBitmapSource;
         }
 
-        public (double x, double y, bool isTR50) GetHltMapAddress(string adrID)
+        public override (double x, double y, bool isTR50) GetHltMapAddress(string adrID)
         {
             var adr_obj = mapAPI.GetAddressObjectByID(adrID);
             return (adr_obj.X, adr_obj.Y, adr_obj.IsTR50);
@@ -97,7 +101,46 @@ namespace com.mirle.ibg3k0.sc.BLL
             return result;
         }
 
-        public void RemoveManyReservedSectionsByVIDSID(string vhID, string sectionID)
+        public override HltResult TryAddVehicleOrUpdateResetSensorForkDir(string vhID)
+        {
+            var hltvh = mapAPI.HltVehicles.Where(vh => SCUtility.isMatche(vh.ID, vhID)).SingleOrDefault();
+            var clone_hltvh = hltvh.DeepClone();
+            clone_hltvh.SensorDirection = HltDirection.None;
+            clone_hltvh.ForkDirection = HltDirection.None;
+            HltResult result = mapAPI.TryAddOrUpdateVehicle(clone_hltvh);
+            return result;
+        }
+
+        public override HltResult TryAddVehicleOrUpdate(string vhID, string currentSectionID, double vehicleX, double vehicleY, float vehicleAngle, double speedMmPerSecond,
+                                   HltDirection sensorDir, HltDirection forkDir)
+        {
+            LogHelper.Log(logger: logger, LogLevel: NLog.LogLevel.Debug, Class: nameof(ReserveBLL), Device: "AGV",
+               Data: $"add vh in reserve system: vh:{vhID},x:{vehicleX},y:{vehicleY},angle:{vehicleAngle},speedMmPerSecond:{speedMmPerSecond},sensorDir:{sensorDir},forkDir:{forkDir}",
+               VehicleID: vhID);
+            //HltResult result = mapAPI.TryAddVehicleOrUpdate(vhID, vehicleX, vehicleY, vehicleAngle, sensorDir, forkDir);
+            var hlt_vh = new HltVehicle(vhID, vehicleX, vehicleY, vehicleAngle, speedMmPerSecond, sensorDirection: sensorDir, forkDirection: forkDir);
+            HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh);
+            //mapAPI.KeepRestSection(hlt_vh, currentSectionID);
+            onReserveStatusChange();
+
+            return result;
+        }
+        public override HltResult TryAddVehicleOrUpdate(string vhID, string adrID, float angle = 0, Mirle.Hlts.Utils.HltDirection direction = HltDirection.NESW)
+        {
+            var adr_obj = mapAPI.GetAddressObjectByID(adrID);
+            var hlt_vh = new HltVehicle(vhID, adr_obj.X, adr_obj.Y, angle, sensorDirection: direction);
+            //HltResult result = mapAPI.TryAddVehicleOrUpdate(vhID, adr_obj.X, adr_obj.Y, 0, vehicleSensorDirection: Mirle.Hlts.Utils.HltDirection.NESW);
+            HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh);
+            onReserveStatusChange();
+
+            return result;
+        }
+
+
+
+
+
+        public override void RemoveManyReservedSectionsByVIDSID(string vhID, string sectionID)
         {
             //int sec_id = 0;
             //int.TryParse(sectionID, out sec_id);
@@ -106,7 +149,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             onReserveStatusChange();
         }
 
-        public void RemoveVehicle(string vhID)
+        public override void RemoveVehicle(string vhID)
         {
             var vh = mapAPI.GetVehicleObjectByID(vhID);
             if (vh != null)
@@ -115,7 +158,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
         }
 
-        public string GetCurrentReserveSection()
+        public override string GetCurrentReserveSection()
         {
             StringBuilder sb = new StringBuilder();
             var current_reserve_sections = mapAPI.HltReservedSections;
@@ -126,12 +169,60 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             return sb.ToString();
         }
-        public HltVehicle GetHltVehicle(string vhID)
+        public override HltVehicle GetHltVehicle(string vhID)
         {
             return mapAPI.GetVehicleObjectByID(vhID);
         }
 
-        public HltResult TryAddReservedSection(string vhID, string sectionID, HltDirection sensorDir = HltDirection.NESW, HltDirection forkDir = HltDirection.NESW, bool isAsk = false)
+        //public HltResult TryAddReservedSection(string vhID, string sectionID, HltDirection sensorDir = HltDirection.NESW, HltDirection forkDir = HltDirection.NESW, bool isAsk = false)
+        //{
+        //    //int sec_id = 0;
+        //    //int.TryParse(sectionID, out sec_id);
+        //    string sec_id = SCUtility.Trim(sectionID);
+
+        //    HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, isAsk);
+        //    onReserveStatusChange();
+
+        //    return result;
+        //}
+
+        public override HltResult RemoveAllReservedSectionsBySectionID(string sectionID)
+        {
+            //int sec_id = 0;
+            //int.TryParse(sectionID, out sec_id);
+            string sec_id = SCUtility.Trim(sectionID);
+            HltResult result = mapAPI.RemoveAllReservedSectionsBySectionID(sec_id);
+            onReserveStatusChange();
+            return result;
+
+        }
+
+        public override void RemoveAllReservedSectionsByVehicleID(string vhID)
+        {
+            mapAPI.RemoveAllReservedSectionsByVehicleID(vhID);
+            onReserveStatusChange();
+        }
+        public override void RemoveAllReservedSections()
+        {
+
+            mapAPI.RemoveAllReservedSections();
+            onReserveStatusChange();
+        }
+
+        public ReserveCheckResult TryAddReservedSectionNew(string vhID, string sectionID, HltDirection sensorDir = HltDirection.None, HltDirection forkDir = HltDirection.None, bool isAsk = false)
+        {
+            //int sec_id = 0;
+            //int.TryParse(sectionID, out sec_id);
+            string sec_id = SCUtility.Trim(sectionID);
+
+            ReserveCheckResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, isAsk).ToReserveCheckResult();
+            onReserveStatusChange();
+
+            return result;
+        }
+
+
+        public override HltResult TryAddReservedSection(string vhID, string sectionID, HltDirection sensorDir = HltDirection.NESW, HltDirection forkDir = HltDirection.None, bool isAsk = false)
         {
             //int sec_id = 0;
             //int.TryParse(sectionID, out sec_id);
@@ -143,16 +234,20 @@ namespace com.mirle.ibg3k0.sc.BLL
             return result;
         }
 
-        public HltResult RemoveAllReservedSectionsBySectionID(string sectionID)
+        private (bool isSuccess, string reservedVhID) IsReserveBlockSuccess(SCApplication scApp, string vhID, string reserveSectionID)
         {
-            //int sec_id = 0;
-            //int.TryParse(sectionID, out sec_id);
-            string sec_id = SCUtility.Trim(sectionID);
-            HltResult result = mapAPI.RemoveAllReservedSectionsBySectionID(sec_id);
-            onReserveStatusChange();
-            return result;
-
-        }
+            AVEHICLE vh = scApp.VehicleBLL.cache.getVehicle(vhID);
+            string vh_id = vh.VEHICLE_ID;
+            string cur_sec_id = SCUtility.Trim(vh.CUR_SEC_ID, true);
+            var block_control_check_result = scApp.getCommObjCacheManager().IsBlockControlSection(reserveSectionID);
+            if (block_control_check_result.isBlockControlSec)
+            {
+                var current_vh_section_is_in_req_block_control_check_result =
+                    scApp.getCommObjCacheManager().IsBlockControlSection(block_control_check_result.enhanceInfo.BlockID, cur_sec_id);
+                if (current_vh_section_is_in_req_block_control_check_result.isBlockControlSec)
+                {
+                    return (true, "");
+                }
 
                 List<string> reserve_enhance_sections = block_control_check_result.enhanceInfo.EnhanceControlSections.ToList();
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
@@ -283,16 +378,49 @@ namespace com.mirle.ibg3k0.sc.BLL
                     }
                 }
 
+                return (has_success, final_blocked_vh_id, reserve_fail_section, reserve_success_section);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(ReserveBLL), Device: "AGV",
+                   Data: ex,
+                   Details: $"process function:{nameof(IsMultiReserveSuccess)} Exception");
+                return (false, string.Empty, string.Empty, null);
+            }
+        }
 
+        public override HltDirection DecideReserveDirection(SectionBLL sectionBLL, AVEHICLE reserveVh, string reserveSectionID)
+        {
+            //先取得目前vh所在的current adr，如果這次要求的Reserve Sec是該Current address連接的其中一點時
+            //就不用增加Secsor預約的範圍，預防發生車子預約不到本身路段的問題
+            string cur_adr = reserveVh.CUR_ADR_ID;
+            var related_sections_id = sectionBLL.cache.GetSectionsByAddress(cur_adr).Select(sec => sec.SEC_ID.Trim()).ToList();
+            if (related_sections_id.Contains(reserveSectionID))
+            {
+                return Mirle.Hlts.Utils.HltDirection.None;
+            }
+            else
+            {
+                //在R2000的路段上，預約方向要帶入
+                if (IsR2000Section(reserveSectionID))
+                {
+                    return Mirle.Hlts.Utils.HltDirection.NS;
+                }
+                else
+                {
+                    return Mirle.Hlts.Utils.HltDirection.NESW;
+                }
+            }
+        }
 
-        public bool IsR2000Address(string adrID)
+        public override bool IsR2000Address(string adrID)
         {
             var hlt_r2000_section_objs = mapAPI.HltMapSections.Where(sec => SCUtility.isMatche(sec.Type, HtlSectionType.R2000.ToString())).ToList();
             bool is_r2000_address = hlt_r2000_section_objs.Where(sec => SCUtility.isMatche(sec.StartAddressID, adrID) || SCUtility.isMatche(sec.EndAddressID, adrID))
                                                           .Count() > 0;
             return is_r2000_address;
         }
-        public bool IsR2000Section(string sectionID)
+        public override bool IsR2000Section(string sectionID)
         {
             var hlt_section_obj = mapAPI.HltMapSections.Where(sec => SCUtility.isMatche(sec.ID, sectionID)).FirstOrDefault();
             return SCUtility.isMatche(hlt_section_obj.Type, HtlSectionType.R2000.ToString());
@@ -305,5 +433,28 @@ namespace com.mirle.ibg3k0.sc.BLL
             R2000
         }
     }
+    public class ReserveCheckResult
+    {
+        public static ReserveCheckResult Empty() { return new ReserveCheckResult(); }
+        public ReserveCheckResult() { }
+        public ReserveCheckResult(bool ok, string vehicleID, string sectionID, string description)
+        {
+            OK = ok;
+            VehicleID = vehicleID;
+            SectionID = sectionID;
+            Description = description;
+        }
 
+        public virtual bool OK { get; } = true;
+        public virtual string VehicleID { get; } = "";
+        public virtual string SectionID { get; } = "";
+        public virtual string Description { get; } = "";
+    }
+}
+public static class HltMapViewModelExtension
+{
+    public static com.mirle.ibg3k0.sc.BLL.ReserveCheckResult ToReserveCheckResult(this HltResult result)
+    {
+        return new com.mirle.ibg3k0.sc.BLL.ReserveCheckResult(result.OK, result.VehicleID, result.SectionID, result.Description);
+    }
 }
