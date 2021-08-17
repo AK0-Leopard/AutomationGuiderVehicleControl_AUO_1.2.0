@@ -4181,6 +4181,16 @@ namespace com.mirle.ibg3k0.sc.Service
             Boolean resp_cmp = vh.sendMessage(wrapper, true);
 
             SCUtility.RecodeReportInfo(vh.VEHICLE_ID, seq_num, send_str, resp_cmp.ToString());
+            var check_need_override = checkIsNeedOvrride(vh);
+            if (!check_need_override.isNeed)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                   Data: $"Not need to override,reason:{check_need_override.reason}",
+                   VehicleID: vh.VEHICLE_ID,
+                   CarrierID: vh.CST_ID);
+                return;
+            }
+
             if (is_avoid_complete)
             {
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
@@ -4209,7 +4219,42 @@ namespace com.mirle.ibg3k0.sc.Service
                    VehicleID: vh.VEHICLE_ID,
                    CarrierID: vh.CST_ID);
             }
+        }
 
+        private (bool isNeed, string reason) checkIsNeedOvrride(AVEHICLE vh)
+        {
+            var cmd = scApp.CMDBLL.GetCMD_OHTCByID(vh.OHTC_CMD);
+            if (cmd == null)
+                return (false, "No command excute");
+            bool check_with_source_some = false;
+            bool has_carrier = vh.HAS_CST == 1;
+            switch (cmd.CMD_TPYE)
+            {
+                case E_CMD_TYPE.Load:
+                case E_CMD_TYPE.LoadUnload:
+                    if (!has_carrier)
+                    {
+                        check_with_source_some = true;
+                    }
+                    break;
+            }
+
+            if (check_with_source_some)
+            {
+                if (SCUtility.isMatche(cmd.SOURCE, vh.CUR_ADR_ID))
+                {
+                    return (false, $"current adr:{vh.CUR_ADR_ID} with source adr:{cmd.SOURCE} is same ,not need overide");
+                }
+                return (true, "");
+            }
+            else
+            {
+                if (SCUtility.isMatche(cmd.DESTINATION, vh.CUR_ADR_ID))
+                {
+                    return (false, $"current adr:{vh.CUR_ADR_ID} with dest. adr:{cmd.DESTINATION} is same ,not need overide");
+                }
+                return (true, "");
+            }
         }
 
         #endregion Avoid Control

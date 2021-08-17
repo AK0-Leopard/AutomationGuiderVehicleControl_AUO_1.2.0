@@ -144,6 +144,7 @@
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btn_refresf_portsation_info = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.btn_charger_alarm_test = new System.Windows.Forms.Button();
             this.groupBox18 = new System.Windows.Forms.GroupBox();
             this.btn_reposition = new System.Windows.Forms.Button();
             this.checkBox_host_offline = new System.Windows.Forms.CheckBox();
@@ -335,7 +336,6 @@
             this.label45 = new System.Windows.Forms.Label();
             this.label44 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.btn_charger_alarm_test = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1357,7 +1357,7 @@
             // cb_advanceDriveAway
             // 
             this.cb_advanceDriveAway.AutoSize = true;
-            this.cb_advanceDriveAway.Location = new System.Drawing.Point(1153, 346);
+            this.cb_advanceDriveAway.Location = new System.Drawing.Point(1153, 344);
             this.cb_advanceDriveAway.Name = "cb_advanceDriveAway";
             this.cb_advanceDriveAway.Size = new System.Drawing.Size(209, 26);
             this.cb_advanceDriveAway.TabIndex = 27;
@@ -1684,6 +1684,16 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Test Tool";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // btn_charger_alarm_test
+            // 
+            this.btn_charger_alarm_test.Location = new System.Drawing.Point(432, 710);
+            this.btn_charger_alarm_test.Name = "btn_charger_alarm_test";
+            this.btn_charger_alarm_test.Size = new System.Drawing.Size(201, 30);
+            this.btn_charger_alarm_test.TabIndex = 55;
+            this.btn_charger_alarm_test.Text = "Charger Alarm Set";
+            this.btn_charger_alarm_test.UseVisualStyleBackColor = true;
+            this.btn_charger_alarm_test.Click += new System.EventHandler(this.btn_charger_alarm_test_Click);
             // 
             // groupBox18
             // 
@@ -3583,16 +3593,6 @@
             // 
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // btn_charger_alarm_test
-            // 
-            this.btn_charger_alarm_test.Location = new System.Drawing.Point(432, 710);
-            this.btn_charger_alarm_test.Name = "btn_charger_alarm_test";
-            this.btn_charger_alarm_test.Size = new System.Drawing.Size(201, 30);
-            this.btn_charger_alarm_test.TabIndex = 55;
-            this.btn_charger_alarm_test.Text = "Charger Alarm Set";
-            this.btn_charger_alarm_test.UseVisualStyleBackColor = true;
-            this.btn_charger_alarm_test.Click += new System.EventHandler(this.btn_charger_alarm_test_Click);
             // 
             // DebugForm
             // 
