@@ -10,6 +10,7 @@
 // ------------- -------------  -------------  ------  -----------------------------
 // 2020/03/23    Kevin Wei      N/A            A0.01   對於在要不到Reserve時，邏輯由原本只會在1.車子長沖2.車子異常才會對來車下達Override
 //                                                     改成只要車子一要不到，又無法進行驅趕的話就對來車下達Override。
+// 2021/08/18    Shirley        N/A            A0.01   對於在要不到Reserve時，若對方是正在Load/Unload，不馬上override而是等對方完成命令。
 //**********************************************************************************
 using com.mirle.ibg3k0.bcf.App;
 using com.mirle.ibg3k0.bcf.Common;
@@ -2615,7 +2616,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         {
                             case CAN_NOT_AVOID_RESULT.VehicleInError:
                             case CAN_NOT_AVOID_RESULT.VehicleInLongCharge:
-                            case CAN_NOT_AVOID_RESULT.VehicleInLoadingUnloading:
+                            //case CAN_NOT_AVOID_RESULT.VehicleInLoadingUnloading:
                             case CAN_NOT_AVOID_RESULT.VehicleInObstacleStop:
                                 if (request_vh.IsReservePause)
                                 {
@@ -2634,6 +2635,14 @@ namespace com.mirle.ibg3k0.sc.Service
                                         OvrerideByDriveOutFail(requestVhID, reservedVhID, check_can_creat_avoid_command.result);
                                     }
                                 }
+                                break;
+                            case CAN_NOT_AVOID_RESULT.VehicleInLoadingUnloading:
+                                //shirley: 等待對方完成LoadUnload再決定要不要避車。
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                    Data: $"vh:{requestVhID} of can't reserve section id:{request_vh.CanNotReserveInfo.ReservedSectionID}" +
+                                          $"because reservedVh:{reservedVhID} status is {check_can_creat_avoid_command.result}." +
+                                          $"waiting {reservedVhID} finished",
+                                    VehicleID: requestVhID);
                                 break;
                             default:
                                 if (request_vh.IsReservePause && reserved_vh.IsReservePause)
