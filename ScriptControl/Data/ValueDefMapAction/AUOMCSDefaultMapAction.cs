@@ -11,6 +11,8 @@
 // 2019/07/16    Mark Chou      N/A            M0.01   修正回覆S1F4 SVID305會發生Exception的問題
 // 2019/08/26    Kevin Wei      N/A            M0.02   修正原本在只要有From、To命令還是在Wating的狀態時，
 //                                                     此時MCS若下達一筆命令則會拒絕，改成只要是From相同，就會拒絕。
+// 2019/07/16    KevinWei       N/A            M0.01   TEST
+
 //**********************************************************************************
 using com.mirle.ibg3k0.bcf.App;
 using com.mirle.ibg3k0.bcf.Controller;
