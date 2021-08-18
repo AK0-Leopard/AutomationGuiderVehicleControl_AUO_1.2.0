@@ -84,7 +84,6 @@ namespace com.mirle.ibg3k0.sc
         public DbSet<AHIDZONEQUEUE> AHIDZONEQUEUE { get; set; }
         public DbSet<ALARMRPTCOND> ALARMRPTCOND { get; set; }
         public DbSet<ASECTION_CONTROL_100> ASECTION_CONTROL_100 { get; set; }
-        public DbSet<VSECTION_100> VSECTION_100 { get; set; }
         public DbSet<ASECTION> ASECTION { get; set; }
         public DbSet<ASEGMENT> ASEGMENT { get; set; }
         public DbSet<AADDRESS> AADDRESS { get; set; }
@@ -94,5 +93,6 @@ namespace com.mirle.ibg3k0.sc
         public DbSet<ACMD_MCS> ACMD_MCS { get; set; }
         public DbSet<HCMD_OHTC> HCMD_OHTC { get; set; }
         public DbSet<VACMD_MCS> VACMD_MCS { get; set; }
+        public DbSet<VSECTION_100> VSECTION_100 { get; set; }
     }
 }

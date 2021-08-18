@@ -163,6 +163,13 @@
       <HintPath>..\packages\KingAOP.1.0.0\lib\KingAOP.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="LiveCharts">
+      <HintPath>DLL\LiveCharts.dll</HintPath>
+    </Reference>
+    <Reference Include="LiveCharts.Wpf, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLL\LiveCharts.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="M2Mqtt.Net">
       <HintPath>..\ScriptControl\DLL\M2Mqtt.Net.dll</HintPath>
     </Reference>
@@ -278,6 +285,13 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Components\Chart\CustomVm.cs" />
+    <Compile Include="UI\Components\Chart\CustomTooltip.xaml.cs">
+      <DependentUpon>CustomTooltip.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Components\Chart\CustomLegend.xaml.cs">
+      <DependentUpon>CustomLegend.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Components\MyUserControl\LabelExt.cs">
       <SubType>Component</SubType>
@@ -402,8 +416,17 @@
     <Compile Include="UI\Components\VhOfPLCInfo.Designer.cs">
       <DependentUpon>VhOfPLCInfo.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Components\WPFComponents\uc_SP_Chart.xaml.cs">
+      <DependentUpon>uc_SP_Chart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Components\WPFComponents\uctlReserveSectionView.xaml.cs">
       <DependentUpon>uctlReserveSectionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Maintenance\ChartPopupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Maintenance\ChartPopupForm.Designer.cs">
+      <DependentUpon>ChartPopupForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Maintenance\ReserveSectionInfoForm.cs">
       <SubType>Form</SubType>
@@ -546,6 +569,7 @@
     <Compile Include="UI\UAS\UserMngForm.Designer.cs">
       <DependentUpon>UserMngForm.cs</DependentUpon>
     </Compile>
+    <Content Include="DLL\LiveCharts.Wpf.dll" />
     <Content Include="MapFile\AUO_CAAGV100\v1.2.0.10之後需使用_AOU_AGVC_CREAT_HCMD_OHTC.sql" />
     <Content Include="MapFile\AUO_CAAGV100\AUO_CAAGV100_20191016.sql" />
     <Content Include="MapFile\AUO_CAAGV100\AUO_CAAGV100_20191216.sql" />
@@ -1675,6 +1699,9 @@
     <EmbeddedResource Include="UI\Components\VhOfPLCInfo.resx">
       <DependentUpon>VhOfPLCInfo.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Maintenance\ChartPopupForm.resx">
+      <DependentUpon>ChartPopupForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Maintenance\ReserveSectionInfoForm.resx">
       <DependentUpon>ReserveSectionInfoForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -1807,12 +1834,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ScriptControl\ScriptControl.csproj">
-      <Project>{34f0d133-fc32-4219-bca9-9d0bc9a74ad6}</Project>
-      <Name>ScriptControl</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Doc\Config Modify Note.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -1869,10 +1890,28 @@
     </PublishFile>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="UI\Components\Chart\CustomTooltip.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Components\Chart\CustomLegend.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Components\WPFComponents\uc_SP_Chart.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Components\WPFComponents\uctlReserveSectionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ScriptControl\ScriptControl.csproj">
+      <Project>{34f0d133-fc32-4219-bca9-9d0bc9a74ad6}</Project>
+      <Name>ScriptControl</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

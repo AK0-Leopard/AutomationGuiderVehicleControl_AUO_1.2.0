@@ -4,6 +4,9 @@ using Mirle.Hlts.Utils;
 using System;
 using System.Text;
 using System.Linq;
+using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
+using Google.Protobuf.Collections;
+using Common.Logging;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
@@ -14,7 +17,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         private EventHandler reserveStatusChange;
         private object _reserveStatusChangeEventLock = new object();
-        public event EventHandler ReserveStatusChange
+        public virtual event EventHandler ReserveStatusChange
         {
             add
             {
@@ -41,12 +44,12 @@ namespace com.mirle.ibg3k0.sc.BLL
         public ReserveBLL()
         {
         }
-        public void start(SCApplication _app)
+        public virtual void start(SCApplication _app)
         {
             mapAPI = _app.getReserveSectionAPI();
         }
 
-        public bool DrawAllReserveSectionInfo()
+        public virtual bool DrawAllReserveSectionInfo()
         {
             bool is_success = false;
             try
@@ -65,7 +68,13 @@ namespace com.mirle.ibg3k0.sc.BLL
             return is_success;
         }
 
-        public System.Windows.Media.Imaging.BitmapSource GetCurrentReserveInfoMap()
+        public virtual (bool isSuccess, string reservedVhID, string reservedFailSection, RepeatedField<ReserveInfo> reserveSuccessInfos) IsMultiReserveSuccess
+        (SCApplication scApp, string vhID, RepeatedField<ReserveInfo> reserveInfos, bool isAsk = false)
+        {
+            return (false, string.Empty, string.Empty, null);
+        }
+
+        public virtual System.Windows.Media.Imaging.BitmapSource GetCurrentReserveInfoMap()
         {
             return mapAPI.MapBitmapSource;
         }
@@ -98,10 +107,10 @@ namespace com.mirle.ibg3k0.sc.BLL
 
             return result;
         }
-        public virtual HltResult TryAddVehicleOrUpdate(string vhID, string adrID, float angle = 0)
+        public virtual HltResult TryAddVehicleOrUpdate(string vhID, string adrID, float angle = 0, Mirle.Hlts.Utils.HltDirection direction = HltDirection.NESW)
         {
             var adr_obj = mapAPI.GetAddressObjectByID(adrID);
-            var hlt_vh = new HltVehicle(vhID, adr_obj.X, adr_obj.Y, angle, sensorDirection: Mirle.Hlts.Utils.HltDirection.NESW);
+            var hlt_vh = new HltVehicle(vhID, adr_obj.X, adr_obj.Y, angle, sensorDirection: direction);
             //HltResult result = mapAPI.TryAddVehicleOrUpdate(vhID, adr_obj.X, adr_obj.Y, 0, vehicleSensorDirection: Mirle.Hlts.Utils.HltDirection.NESW);
             HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh);
             onReserveStatusChange();
@@ -201,14 +210,14 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
 
 
-        public bool IsR2000Address(string adrID)
+        public virtual bool IsR2000Address(string adrID)
         {
             var hlt_r2000_section_objs = mapAPI.HltMapSections.Where(sec => SCUtility.isMatche(sec.Type, HtlSectionType.R2000.ToString())).ToList();
             bool is_r2000_address = hlt_r2000_section_objs.Where(sec => SCUtility.isMatche(sec.StartAddressID, adrID) || SCUtility.isMatche(sec.EndAddressID, adrID))
                                                           .Count() > 0;
             return is_r2000_address;
         }
-        public bool IsR2000Section(string sectionID)
+        public virtual bool IsR2000Section(string sectionID)
         {
             var hlt_section_obj = mapAPI.HltMapSections.Where(sec => SCUtility.isMatche(sec.ID, sectionID)).FirstOrDefault();
             return SCUtility.isMatche(hlt_section_obj.Type, HtlSectionType.R2000.ToString());
@@ -260,7 +269,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             return new HltResult(true, "By Pass Reserve");
         }
-        public override HltResult TryAddVehicleOrUpdate(string vhID, string adrID, float angle = 0)
+        public override HltResult TryAddVehicleOrUpdate(string vhID, string adrID, float angle = 0, Mirle.Hlts.Utils.HltDirection direction = HltDirection.NESW)
         {
             return new HltResult(true, "By Pass Reserve");
         }

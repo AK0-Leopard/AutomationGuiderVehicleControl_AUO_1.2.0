@@ -80,6 +80,9 @@ namespace com.mirle.ibg3k0.sc
         /// </summary>
         public static UInt16 MAX_ALLOW_CARRIER_INSTALLED_TIME_SECOND { get; private set; } = 1200;
 
+        public bool no_needs_to_retry = false;
+        public bool is_in_retry_process = false;
+        public int curCMDRetryCount = 0;
         public long syncUrgentPausePoint = 0;
 
         public event EventHandler<LocationChangeEventArgs> LocationChange;

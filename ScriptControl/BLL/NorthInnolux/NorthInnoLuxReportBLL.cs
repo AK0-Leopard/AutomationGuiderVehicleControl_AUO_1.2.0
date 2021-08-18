@@ -288,6 +288,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccsess;
         }
 
+
         public bool ReportEquiptmentOffLine()
         {
             bool isSuccsess = true;
@@ -327,6 +328,14 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTSCAutoCompleted();
             return isSuccsess;
         }
+
+        public override bool RequestDestnationChange(string cmd_id, string carrier_id)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && iBSEMDriver.S64F1SendDestinationChangeRequest(cmd_id, carrier_id);
+            return isSuccsess;
+        }
+
         public override bool ReportTSCAutoCompleted(List<AMCSREPORTQUEUE> reportqueues)
         {
             bool isSuccsess = true;
@@ -341,7 +350,10 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTSAvailChanged();
             return isSuccsess;
         }
-
+        //public bool RequestDestinationChange()
+        //{
+        //    return iBSEMDriver.S();
+        //}
         public override bool ReportTSCPauseCompleted(List<AMCSREPORTQUEUE> reportqueues)
         {
             bool isSuccsess = true;
@@ -358,7 +370,10 @@ namespace com.mirle.ibg3k0.sc.BLL
             bool isSuccsess = true;
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleAcquireCompleted(vhID, reportqueues);
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierInstalledWithIDRead(vhID, reportqueues);//北群創要等到AcquireCompleted之後才能報CarrierInstalled
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleDeparted(vhID, reportqueues);
+            if(bcrReadResult== BCRReadResult.BcrNormal)
+            {
+                isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleDeparted(vhID, reportqueues);
+            }
             return isSuccsess;
         }
 
@@ -458,6 +473,18 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferAbortCompleted(vhID, reportqueues);
             return isSuccsess;
         }
+
+        public override bool newReportTransferCommandAbortFinish(ACMD_MCS CMD_MCS, AVEHICLE vh, string resultCode, List<AMCSREPORTQUEUE> reportqueues)
+        {
+            bool isSuccsess = true;
+            if (vh != null)
+            {
+                isSuccsess = isSuccsess && iBSEMDriver.S6F11SendVehicleUnassinged(vh.VEHICLE_ID, reportqueues);
+            }
+            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferAbortCompleted(CMD_MCS, vh, resultCode, reportqueues, vh.Real_ID+"-01");
+            return isSuccsess;
+        }
+
         public override bool ReportAlarmSet()
         {
             bool isSuccsess = true;
@@ -561,26 +588,26 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         public void insertMCSReport(List<AMCSREPORTQUEUE> mcsQueues)
         {
-            //using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            //{
-            //    mcsReportQueueDao.AddByBatch(con, mcsQueues);
-            //}
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                mcsReportQueueDao.AddByBatch(con, mcsQueues);
+            }
         }
 
         public void insertMCSReport(AMCSREPORTQUEUE mcs_queue)
         {
             //lock (mcs_report_lock_obj)
             //{
-            //SCUtility.LockWithTimeout(mcs_report_lock_obj, SCAppConstants.LOCK_TIMEOUT_MS,
-            //    () =>
-            //    {
-            //        //DBConnection_EF con = DBConnection_EF.GetContext();
-            //        //using (DBConnection_EF con = new DBConnection_EF())
-            //        using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            //        {
-            //            mcsReportQueueDao.add(con, mcs_queue);
-            //        }
-            //    });
+            SCUtility.LockWithTimeout(mcs_report_lock_obj, SCAppConstants.LOCK_TIMEOUT_MS,
+                () =>
+                {
+                    //DBConnection_EF con = DBConnection_EF.GetContext();
+                    //using (DBConnection_EF con = new DBConnection_EF())
+                    using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                    {
+                        mcsReportQueueDao.add(con, mcs_queue);
+                    }
+                });
             //}
         }
         object mcs_report_lock_obj = new object();

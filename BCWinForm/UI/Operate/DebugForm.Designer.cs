@@ -221,6 +221,7 @@
             this.label24 = new System.Windows.Forms.Label();
             this.tb_ChargerAlive = new System.Windows.Forms.TextBox();
             this.groupBox22 = new System.Windows.Forms.GroupBox();
+            this.cb_passCouplerHPSafetySingnal = new System.Windows.Forms.CheckBox();
             this.cb_PIOCoupler = new System.Windows.Forms.ComboBox();
             this.label83 = new System.Windows.Forms.Label();
             this.tb_PIOIndex = new System.Windows.Forms.TextBox();
@@ -318,6 +319,7 @@
             this.label33 = new System.Windows.Forms.Label();
             this.comboBox_port11 = new System.Windows.Forms.ComboBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.btn_ForceResetAlarm = new System.Windows.Forms.Button();
             this.btn_online = new System.Windows.Forms.Button();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.button_set_ECID = new System.Windows.Forms.Button();
@@ -335,6 +337,20 @@
             this.label46 = new System.Windows.Forms.Label();
             this.label45 = new System.Windows.Forms.Label();
             this.label44 = new System.Windows.Forms.Label();
+            this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
+            this.btn_lighthouse_red_reset = new System.Windows.Forms.Button();
+            this.btn_lighthouse_red_set = new System.Windows.Forms.Button();
+            this.btn_lighthouse_green_set = new System.Windows.Forms.Button();
+            this.btn_lighthouse_blue_set = new System.Windows.Forms.Button();
+            this.btn_lighthouse_orange_set = new System.Windows.Forms.Button();
+            this.btn_lighthouse_green_reset = new System.Windows.Forms.Button();
+            this.btn_lighthouse_blue_reset = new System.Windows.Forms.Button();
+            this.btn_lighthouse_orange_reset = new System.Windows.Forms.Button();
+            this.label76 = new System.Windows.Forms.Label();
+            this.label84 = new System.Windows.Forms.Label();
+            this.label85 = new System.Windows.Forms.Label();
+            this.label86 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -379,6 +395,8 @@
             this.DIO_DEVICE_TEST.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage6.SuspendLayout();
+            this.tabPage7.SuspendLayout();
+            this.tableLayoutPanel6.SuspendLayout();
             this.SuspendLayout();
             // 
             // cb_FroceBlockPass
@@ -1329,6 +1347,7 @@
             this.tabControl1.Controls.Add(this.DIO_DEVICE_TEST);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage6);
+            this.tabControl1.Controls.Add(this.tabPage7);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -1664,7 +1683,6 @@
             // 
             // tabPage3
             // 
-            this.tabPage3.Controls.Add(this.btn_charger_alarm_test);
             this.tabPage3.Controls.Add(this.groupBox18);
             this.tabPage3.Controls.Add(this.numer_num_of_avoid_seg);
             this.tabPage3.Controls.Add(this.lbl_num_of_avoid_seg);
@@ -2452,6 +2470,7 @@
             // 
             // groupBox22
             // 
+            this.groupBox22.Controls.Add(this.cb_passCouplerHPSafetySingnal);
             this.groupBox22.Controls.Add(this.cb_PIOCoupler);
             this.groupBox22.Controls.Add(this.label83);
             this.groupBox22.Controls.Add(this.tb_PIOIndex);
@@ -2470,6 +2489,17 @@
             this.groupBox22.TabIndex = 33;
             this.groupBox22.TabStop = false;
             this.groupBox22.Text = "PIO Handshake Report";
+            // 
+            // cb_passCouplerHPSafetySingnal
+            // 
+            this.cb_passCouplerHPSafetySingnal.AutoSize = true;
+            this.cb_passCouplerHPSafetySingnal.Location = new System.Drawing.Point(38, 217);
+            this.cb_passCouplerHPSafetySingnal.Name = "cb_passCouplerHPSafetySingnal";
+            this.cb_passCouplerHPSafetySingnal.Size = new System.Drawing.Size(319, 26);
+            this.cb_passCouplerHPSafetySingnal.TabIndex = 45;
+            this.cb_passCouplerHPSafetySingnal.Text = "Pass Coupler HP Safety Signal";
+            this.cb_passCouplerHPSafetySingnal.UseVisualStyleBackColor = true;
+            this.cb_passCouplerHPSafetySingnal.CheckedChanged += new System.EventHandler(this.cb_passCouplerHPSafetySingnal_CheckedChanged);
             // 
             // cb_PIOCoupler
             // 
@@ -3423,6 +3453,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.btn_ForceResetAlarm);
             this.tabPage2.Controls.Add(this.btn_online);
             this.tabPage2.Location = new System.Drawing.Point(4, 31);
             this.tabPage2.Name = "tabPage2";
@@ -3432,9 +3463,19 @@
             this.tabPage2.Text = "ON-LINE";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // btn_ForceResetAlarm
+            // 
+            this.btn_ForceResetAlarm.Location = new System.Drawing.Point(51, 101);
+            this.btn_ForceResetAlarm.Name = "btn_ForceResetAlarm";
+            this.btn_ForceResetAlarm.Size = new System.Drawing.Size(234, 32);
+            this.btn_ForceResetAlarm.TabIndex = 2;
+            this.btn_ForceResetAlarm.Text = "Force Reset All Alarm";
+            this.btn_ForceResetAlarm.UseVisualStyleBackColor = true;
+            this.btn_ForceResetAlarm.Click += new System.EventHandler(this.btn_ForceResetAlarm_Click);
+            // 
             // btn_online
             // 
-            this.btn_online.Location = new System.Drawing.Point(39, 33);
+            this.btn_online.Location = new System.Drawing.Point(51, 250);
             this.btn_online.Name = "btn_online";
             this.btn_online.Size = new System.Drawing.Size(210, 32);
             this.btn_online.TabIndex = 1;
@@ -3589,6 +3630,173 @@
             this.label44.TabIndex = 0;
             this.label44.Text = "EqpNAME:";
             // 
+            // tabPage7
+            // 
+            this.tabPage7.Controls.Add(this.tableLayoutPanel6);
+            this.tabPage7.Location = new System.Drawing.Point(4, 31);
+            this.tabPage7.Name = "tabPage7";
+            this.tabPage7.Size = new System.Drawing.Size(1455, 830);
+            this.tabPage7.TabIndex = 9;
+            this.tabPage7.Text = "ColorLight";
+            this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel6
+            // 
+            this.tableLayoutPanel6.ColumnCount = 3;
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 47.29345F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 26.49573F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 26.21083F));
+            this.tableLayoutPanel6.Controls.Add(this.btn_lighthouse_red_reset, 2, 0);
+            this.tableLayoutPanel6.Controls.Add(this.btn_lighthouse_red_set, 1, 0);
+            this.tableLayoutPanel6.Controls.Add(this.btn_lighthouse_green_set, 1, 1);
+            this.tableLayoutPanel6.Controls.Add(this.btn_lighthouse_blue_set, 1, 2);
+            this.tableLayoutPanel6.Controls.Add(this.btn_lighthouse_orange_set, 1, 3);
+            this.tableLayoutPanel6.Controls.Add(this.btn_lighthouse_green_reset, 2, 1);
+            this.tableLayoutPanel6.Controls.Add(this.btn_lighthouse_blue_reset, 2, 2);
+            this.tableLayoutPanel6.Controls.Add(this.btn_lighthouse_orange_reset, 2, 3);
+            this.tableLayoutPanel6.Controls.Add(this.label76, 0, 0);
+            this.tableLayoutPanel6.Controls.Add(this.label84, 0, 1);
+            this.tableLayoutPanel6.Controls.Add(this.label85, 0, 2);
+            this.tableLayoutPanel6.Controls.Add(this.label86, 0, 3);
+            this.tableLayoutPanel6.Location = new System.Drawing.Point(135, 73);
+            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
+            this.tableLayoutPanel6.RowCount = 4;
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(350, 208);
+            this.tableLayoutPanel6.TabIndex = 1;
+            // 
+            // btn_lighthouse_red_reset
+            // 
+            this.btn_lighthouse_red_reset.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_lighthouse_red_reset.Location = new System.Drawing.Point(260, 3);
+            this.btn_lighthouse_red_reset.Name = "btn_lighthouse_red_reset";
+            this.btn_lighthouse_red_reset.Size = new System.Drawing.Size(87, 46);
+            this.btn_lighthouse_red_reset.TabIndex = 6;
+            this.btn_lighthouse_red_reset.Text = "Reset";
+            this.btn_lighthouse_red_reset.UseVisualStyleBackColor = true;
+            this.btn_lighthouse_red_reset.Click += new System.EventHandler(this.btnLighthouse_Click);
+            // 
+            // btn_lighthouse_red_set
+            // 
+            this.btn_lighthouse_red_set.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_lighthouse_red_set.Location = new System.Drawing.Point(168, 3);
+            this.btn_lighthouse_red_set.Name = "btn_lighthouse_red_set";
+            this.btn_lighthouse_red_set.Size = new System.Drawing.Size(86, 46);
+            this.btn_lighthouse_red_set.TabIndex = 5;
+            this.btn_lighthouse_red_set.Text = "Set";
+            this.btn_lighthouse_red_set.UseVisualStyleBackColor = true;
+            this.btn_lighthouse_red_set.Click += new System.EventHandler(this.btnLighthouse_Click);
+            // 
+            // btn_lighthouse_green_set
+            // 
+            this.btn_lighthouse_green_set.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_lighthouse_green_set.Location = new System.Drawing.Point(168, 55);
+            this.btn_lighthouse_green_set.Name = "btn_lighthouse_green_set";
+            this.btn_lighthouse_green_set.Size = new System.Drawing.Size(86, 46);
+            this.btn_lighthouse_green_set.TabIndex = 6;
+            this.btn_lighthouse_green_set.Text = "Set";
+            this.btn_lighthouse_green_set.UseVisualStyleBackColor = true;
+            this.btn_lighthouse_green_set.Click += new System.EventHandler(this.btnLighthouse_Click);
+            // 
+            // btn_lighthouse_blue_set
+            // 
+            this.btn_lighthouse_blue_set.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_lighthouse_blue_set.Location = new System.Drawing.Point(168, 107);
+            this.btn_lighthouse_blue_set.Name = "btn_lighthouse_blue_set";
+            this.btn_lighthouse_blue_set.Size = new System.Drawing.Size(86, 46);
+            this.btn_lighthouse_blue_set.TabIndex = 6;
+            this.btn_lighthouse_blue_set.Text = "Set";
+            this.btn_lighthouse_blue_set.UseVisualStyleBackColor = true;
+            this.btn_lighthouse_blue_set.Click += new System.EventHandler(this.btnLighthouse_Click);
+            // 
+            // btn_lighthouse_orange_set
+            // 
+            this.btn_lighthouse_orange_set.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_lighthouse_orange_set.Location = new System.Drawing.Point(168, 159);
+            this.btn_lighthouse_orange_set.Name = "btn_lighthouse_orange_set";
+            this.btn_lighthouse_orange_set.Size = new System.Drawing.Size(86, 46);
+            this.btn_lighthouse_orange_set.TabIndex = 6;
+            this.btn_lighthouse_orange_set.Text = "Set";
+            this.btn_lighthouse_orange_set.UseVisualStyleBackColor = true;
+            this.btn_lighthouse_orange_set.Click += new System.EventHandler(this.btnLighthouse_Click);
+            // 
+            // btn_lighthouse_green_reset
+            // 
+            this.btn_lighthouse_green_reset.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_lighthouse_green_reset.Location = new System.Drawing.Point(260, 55);
+            this.btn_lighthouse_green_reset.Name = "btn_lighthouse_green_reset";
+            this.btn_lighthouse_green_reset.Size = new System.Drawing.Size(87, 46);
+            this.btn_lighthouse_green_reset.TabIndex = 6;
+            this.btn_lighthouse_green_reset.Text = "Reset";
+            this.btn_lighthouse_green_reset.UseVisualStyleBackColor = true;
+            this.btn_lighthouse_green_reset.Click += new System.EventHandler(this.btnLighthouse_Click);
+            // 
+            // btn_lighthouse_blue_reset
+            // 
+            this.btn_lighthouse_blue_reset.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_lighthouse_blue_reset.Location = new System.Drawing.Point(260, 107);
+            this.btn_lighthouse_blue_reset.Name = "btn_lighthouse_blue_reset";
+            this.btn_lighthouse_blue_reset.Size = new System.Drawing.Size(87, 46);
+            this.btn_lighthouse_blue_reset.TabIndex = 6;
+            this.btn_lighthouse_blue_reset.Text = "Reset";
+            this.btn_lighthouse_blue_reset.UseVisualStyleBackColor = true;
+            this.btn_lighthouse_blue_reset.Click += new System.EventHandler(this.btnLighthouse_Click);
+            // 
+            // btn_lighthouse_orange_reset
+            // 
+            this.btn_lighthouse_orange_reset.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_lighthouse_orange_reset.Location = new System.Drawing.Point(260, 159);
+            this.btn_lighthouse_orange_reset.Name = "btn_lighthouse_orange_reset";
+            this.btn_lighthouse_orange_reset.Size = new System.Drawing.Size(87, 46);
+            this.btn_lighthouse_orange_reset.TabIndex = 6;
+            this.btn_lighthouse_orange_reset.Text = "Reset";
+            this.btn_lighthouse_orange_reset.UseVisualStyleBackColor = true;
+            this.btn_lighthouse_orange_reset.Click += new System.EventHandler(this.btnLighthouse_Click);
+            // 
+            // label76
+            // 
+            this.label76.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label76.AutoSize = true;
+            this.label76.Location = new System.Drawing.Point(17, 15);
+            this.label76.Name = "label76";
+            this.label76.Size = new System.Drawing.Size(130, 22);
+            this.label76.TabIndex = 7;
+            this.label76.Text = "Red / Buzzer";
+            // 
+            // label84
+            // 
+            this.label84.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label84.AutoSize = true;
+            this.label84.Location = new System.Drawing.Point(52, 67);
+            this.label84.Name = "label84";
+            this.label84.Size = new System.Drawing.Size(60, 22);
+            this.label84.TabIndex = 7;
+            this.label84.Text = "Green";
+            // 
+            // label85
+            // 
+            this.label85.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label85.AutoSize = true;
+            this.label85.Location = new System.Drawing.Point(57, 119);
+            this.label85.Name = "label85";
+            this.label85.Size = new System.Drawing.Size(50, 22);
+            this.label85.TabIndex = 7;
+            this.label85.Text = "Blue";
+            // 
+            // label86
+            // 
+            this.label86.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label86.AutoSize = true;
+            this.label86.Location = new System.Drawing.Point(47, 171);
+            this.label86.Name = "label86";
+            this.label86.Size = new System.Drawing.Size(70, 22);
+            this.label86.TabIndex = 7;
+            this.label86.Text = "Yellow";
+            // 
             // timer1
             // 
             this.timer1.Interval = 1000;
@@ -3679,6 +3887,9 @@
             this.tabPage2.ResumeLayout(false);
             this.tabPage6.ResumeLayout(false);
             this.tabPage6.PerformLayout();
+            this.tabPage7.ResumeLayout(false);
+            this.tableLayoutPanel6.ResumeLayout(false);
+            this.tableLayoutPanel6.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -3991,6 +4202,21 @@
         private System.Windows.Forms.Label label74;
         private System.Windows.Forms.Label label75;
         private System.Windows.Forms.CheckBox cb_advanceDriveAway;
-        private System.Windows.Forms.Button btn_charger_alarm_test;
+        private System.Windows.Forms.CheckBox cb_passCouplerHPSafetySingnal;
+        private System.Windows.Forms.TabPage tabPage7;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
+        private System.Windows.Forms.Button btn_lighthouse_red_reset;
+        private System.Windows.Forms.Button btn_lighthouse_red_set;
+        private System.Windows.Forms.Button btn_lighthouse_green_set;
+        private System.Windows.Forms.Button btn_lighthouse_blue_set;
+        private System.Windows.Forms.Button btn_lighthouse_orange_set;
+        private System.Windows.Forms.Button btn_lighthouse_green_reset;
+        private System.Windows.Forms.Button btn_lighthouse_blue_reset;
+        private System.Windows.Forms.Button btn_lighthouse_orange_reset;
+        private System.Windows.Forms.Label label76;
+        private System.Windows.Forms.Label label84;
+        private System.Windows.Forms.Label label85;
+        private System.Windows.Forms.Label label86;
+        private System.Windows.Forms.Button btn_ForceResetAlarm;
     }
 }

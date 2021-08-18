@@ -717,7 +717,44 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
 
             return false;
         }
-
+        public virtual bool S64F1SendDestinationChangeRequest(string cmd_id, string carrier_id)
+        {
+            try
+            {
+                S64F1 s64f1 = new S64F1()
+                {
+                    SECSAgentName = scApp.EAPSecsAgentName,
+                    CLOCK = DateTime.Now.ToString(SCAppConstants.TimestampFormat_14).PadRight(16, '0'),
+                    COMMANDID = cmd_id,
+                    CARRIERID = carrier_id
+                };
+                S64F2 s64f2 = null;
+                SXFY abortSecs = null;
+                String rtnMsg = string.Empty;
+                if (isSend())
+                {
+                    TrxSECS.ReturnCode rtnCode = ISECSControl.sendRecv<S64F2>(bcfApp, s64f1, out s64f2,
+                        out abortSecs, out rtnMsg, null);
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(GEMDriver), Device: DEVICE_NAME_MCS,
+                       Data: s64f1);
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(GEMDriver), Device: DEVICE_NAME_MCS,
+                       Data: s64f2);
+                    SCUtility.actionRecordMsg(scApp, s64f1.StreamFunction, line.Real_ID,
+                        "Send Destination Change Request.", rtnCode.ToString());
+                    if (rtnCode != TrxSECS.ReturnCode.Normal)
+                    {
+                        logger.Warn("Send Destination Change Request[S64F1] Error![rtnCode={0}]", rtnCode);
+                        return false;
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+                return false;
+            }
+        }
         public abstract bool S6F11SendEquiptmentOffLine();
         public abstract bool S6F11SendControlStateLocal();
         public abstract bool S6F11SendControlStateRemote();
@@ -731,7 +768,8 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         public abstract bool S6F11SendUnitAlarmSet(string eq_id, string alid, string altx, string error_code, string desc, List<AMCSREPORTQUEUE> reportQueues = null);
 
         public abstract bool S6F11SendUnitAlarmCleared(string eq_id, string alid, string altx, string error_code, string desc, List<AMCSREPORTQUEUE> reportQueues = null);
-        public abstract AMCSREPORTQUEUE S6F11BulibMessage(string ceid, object Vids);
+        public abstract AMCSREPORTQUEUE S6F11BulibMessage(string ceid, object Vids, List<string> rptids = null);
+
         public abstract bool S6F11SendMessage(AMCSREPORTQUEUE queue);
 
 

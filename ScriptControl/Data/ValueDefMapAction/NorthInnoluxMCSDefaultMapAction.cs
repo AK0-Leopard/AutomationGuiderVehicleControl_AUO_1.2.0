@@ -26,6 +26,7 @@ using com.mirle.ibg3k0.sc.Data.SECSDriver;
 using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.stc.Common;
 using com.mirle.ibg3k0.stc.Data.SecsData;
+//using ExcelDataReader.Log;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -205,11 +206,6 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                         //line.CurrentPortStateChecked = true;
                         s1f4.SV[i] = buildEnabledEventVIDItem();
                     }
-                    else if (s1f3.SVID[i] == SECSConst.VID_EventEnabled)
-                    {
-                        //line.CurrentPortStateChecked = true;
-                        s1f4.SV[i] = buildEnabledEventVIDItem();
-                    }
                     else if (s1f3.SVID[i] == SECSConst.VID_PriviousControlState)
                     {
                         //line.CurrentPortStateChecked = true;
@@ -378,21 +374,43 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             foreach (ALARMRPTCOND aLARMRPTCOND in aLARMRPTCONDs)
             {
                 index++;
-                viditem_03.ALIDs[index] = aLARMRPTCOND.ALAM_CODE;
+                AlarmConvertInfo alarmConvertInfo = scApp.AlarmBLL.getAlarmConvertInfo(aLARMRPTCOND.ALAM_CODE);
+                if(alarmConvertInfo != null)
+                {
+                    viditem_03.ALIDs[index] = alarmConvertInfo.ALID;
+                }
+                else
+                {
+                    logger.Error("NorthInnoluxMCSDefaultMapAction has Error[Line Name:{0}],[Error method:{1}], AlarmConvertInfo not found",
+                     line.LINE_ID, "buildEnabledAlarmVIDItem");
+                    viditem_03.ALIDs[index] = "";
+                }
             }
             return viditem_03;
         }
 
         private S6F11.RPTINFO.RPTITEM.VIDITEM_04 buildSettedAlarmVIDItem()
         {
-            List<ALARM> alarms = scApp.AlarmBLL.getCurrentAlarms();
+            List<ALARM> alarms = scApp.AlarmBLL.getCurrentSeriousAlarms();
+            //List<ALARM> alarms = scApp.AlarmBLL.getCurrentAlarms();
             S6F11.RPTINFO.RPTITEM.VIDITEM_04 viditem_04 = new S6F11.RPTINFO.RPTITEM.VIDITEM_04();
             viditem_04.ALIDs = new string[alarms.Count];
             int index = -1;
             foreach (ALARM alarm in alarms)
             {
                 index++;
-                viditem_04.ALIDs[index] = alarm.ALAM_CODE;
+                AlarmConvertInfo alarmConvertInfo = scApp.AlarmBLL.getAlarmConvertInfo(alarm.ALAM_CODE);
+                if (alarmConvertInfo != null)
+                {
+                    viditem_04.ALIDs[index] = alarmConvertInfo.ALID;
+                }
+                else
+                {
+                    logger.Error("NorthInnoluxMCSDefaultMapAction has Error[Line Name:{0}],[Error method:{1}], AlarmConvertInfo not found",
+                     line.LINE_ID, "buildSettedAlarmVIDItem");
+                    viditem_04.ALIDs[index] = "";
+                }
+
             }
             return viditem_04;
         }
@@ -1144,19 +1162,24 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                                     isCreatScuess &= scApp.CMDBLL.doCreatMCSCommand(cmdID, priority, replace, cstID, source, dest, s2f50.HCACK);
                                 if (s2f50.HCACK == SECSConst.HCACK_Confirm)
                                     isCreatScuess &= scApp.SysExcuteQualityBLL.creatSysExcuteQuality(cmdID, cstID, source, dest);
-                                if (isCreatScuess)
+                                if (!isCreatScuess&& s2f50.HCACK == SECSConst.HCACK_Confirm)//如果沒能成功建帳
                                 {
-                                    TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s2f50);
-                                    SCUtility.secsActionRecordMsg(scApp, false, s2f50);
-                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
-                                       Data: s2f50);
-                                    if (rtnCode != TrxSECS.ReturnCode.Normal)
-                                    {
-                                        logger.Warn("Reply EQPT S2F50) Error:{0}", rtnCode);
-                                        isCreatScuess = false;
-                                    }
-                                    //SCUtility.RecodeReportInfo(s2f50, cmdID, rtnCode.ToString());
+                                    s2f50.HCACK = SECSConst.HCACK_Param_Invalid;
                                 }
+                                else
+                                {
+                                }
+                                TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s2f50);
+                                SCUtility.secsActionRecordMsg(scApp, false, s2f50);
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                                   Data: s2f50);
+                                if (rtnCode != TrxSECS.ReturnCode.Normal)
+                                {
+                                    logger.Warn("Reply EQPT S2F50) Error:{0}", rtnCode);
+                                    isCreatScuess = false;
+                                }
+
+
                                 if (isCreatScuess)
                                 {
                                     tx.Complete();
@@ -1296,8 +1319,15 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 var cmd_obj = scApp.CMDBLL.getCMD_MCSByID(command_id);
                 if (cmd_obj != null)
                 {
-                    check_result = $"MCS command id:{command_id} already exist.";
-                    return SECSConst.HCACK_Command_ID_Duplication;
+                    if(cmd_obj.TRANSFERSTATE>= E_TRAN_STATUS.Complete)
+                    {
+                        scApp.CMDBLL.MoveACMD_MCSToHCMD_MCS(command_id);
+                    }
+                    else
+                    {
+                        check_result = $"MCS command id:{command_id} already exist.";
+                        return SECSConst.HCACK_Command_ID_Duplication;
+                    }
                 }
             }
             //確認參數是否正確
@@ -2213,6 +2243,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             try
             {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(NorthInnoluxMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+   Data: $"enter S6F11SendAlarmEvent eq_id:{eq_id} ceid{ceid} alid{alid} cmd_id{cmd_id} altx{altx} alarmLvl{alarmLvl} ");
                 VIDCollection Vids = new VIDCollection();
                 Vids.VID_05_Clock.CLOCK = DateTime.Now.ToString(SCAppConstants.TimestampFormat_14).PadRight(16, '0');
                 Vids.VID_01_AlarmID.ALID = alid;
@@ -2223,7 +2255,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 Vids.VID_1001_AlarmLevel.ALARM_LEVEL = alarmLvl;
                 Vids.VID_1002_FlagForAlarmReport.FLAG_FOR_ALARM_REPORT = "0";
                 Vids.VID_1003_Classification.CLASSIFICATION = "0";
-                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(ceid, Vids);
+                List<string> rptids = new List<string>();
+                rptids.Add("902");
+                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(ceid, Vids, rptids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 if (reportQueues == null)
                 {
@@ -2237,12 +2271,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(NorthInnoluxMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
         }
-        public bool S64F1SendDestinationChangeRequest(string cmd_id, string carrier_id)
+        public override bool S64F1SendDestinationChangeRequest(string cmd_id, string carrier_id)
         {
             try
             {
@@ -3127,6 +3161,77 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
         }
 
+        public override bool S6F11SendTransferAbortCompleted(ACMD_MCS CMD_MCS, AVEHICLE vh, string resultCode, List<AMCSREPORTQUEUE> reportQueues = null,string _carrier_loc =null)
+        {
+            try
+            {
+                if (!isSend()) return true;
+
+                VIDCollection vid_collection = new VIDCollection();
+                vid_collection.VID_05_Clock.CLOCK = DateTime.Now.ToString(SCAppConstants.TimestampFormat_14).PadRight(16, '0');
+                //VID_59_CommandInfo
+                vid_collection.VID_59_CommandInfo.COMMAND_ID = CMD_MCS.CMD_ID;
+                vid_collection.VID_59_CommandInfo.PRIORITY = CMD_MCS.PRIORITY.ToString();
+                vid_collection.VID_59_CommandInfo.REPLACE = CMD_MCS.REPLACE.ToString();
+                //VID_67_TransferInfo
+                vid_collection.VID_67_TransferInfo.CARRIER_INFOs[0].CARRIER_ID.CARRIER_ID = CMD_MCS.CARRIER_ID;
+                vid_collection.VID_67_TransferInfo.CARRIER_INFOs[0].SOURCE_PORT.SOURCE_PORT = CMD_MCS.HOSTSOURCE;
+                vid_collection.VID_67_TransferInfo.CARRIER_INFOs[0].DEST_PORT.DEST_PORT = CMD_MCS.HOSTDESTINATION;
+                //vid_collection.VID_301_TransferCompleteInfo.TRANSFER_COMPLETE_INFOs[0].CARRIER_LOC_OBJ.CARRIER_LOC = "";
+
+                string carrier_loc = "";
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoluxMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+   Data: $"S6F11SendTransferAbortCompleted For BCRreadFail carrier_loc:{_carrier_loc}");
+                if (_carrier_loc == null)
+                {
+                    if (CMD_MCS.TRANSFERSTATE >= E_TRAN_STATUS.Transferring)
+                    {
+                        AVEHICLE carry_vh = scApp.VehicleBLL.cache.getVehicleByCSTID(CMD_MCS.CARRIER_ID);
+                        if (carry_vh != null)
+                            carrier_loc = (carry_vh.Real_ID+"-01");
+                    }
+                    else
+                    {
+                        carrier_loc = CMD_MCS.HOSTSOURCE;
+                    }
+                }
+                else
+                {
+                    carrier_loc = _carrier_loc;
+                }
+
+                //string carrier_loc = CMD_MCS.TRANSFERSTATE >= E_TRAN_STATUS.Transferring ?
+                //                          vh == null ? "" : vh.Real_ID :
+                //                          CMD_MCS.HOSTSOURCE;
+                vid_collection.VID_56_CarrierLoc.CARRIER_LOC = carrier_loc;
+
+                //VID_63_ResultCode
+                vid_collection.VID_64_ResultCode.RESULT_CODE = resultCode;
+
+                //VID_310_NearStockerPort
+                //vid_collection.VID_310_NearStockerPort.NEAR_STOCKER_PORT = string.Empty;//不知道NEAR_STOCKER_PORT要填什麼 , For Kevin Wei to Confirm
+
+
+                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Transfer_Abort_Completed, vid_collection);
+                if (reportQueues == null)
+                {
+                    S6F11SendMessage(mcs_queue);
+                }
+                else
+                {
+                    reportQueues.Add(mcs_queue);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(NorthInnoluxMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                   Data: ex);
+                return false;
+            }
+        }
+
+
         public override bool S6F11SendTransferCancelCompleted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             try
@@ -3328,8 +3433,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //}
             return false;
         }
+        
 
-        public override AMCSREPORTQUEUE S6F11BulibMessage(string ceid, object vidCollection)
+
+
+
+        public override AMCSREPORTQUEUE S6F11BulibMessage(string ceid, object vidCollection, List<string> rptids = null)
         {
             try
             {
@@ -3349,7 +3458,15 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 {
                     tempceid = ceid.TrimStart('0');
                 }
-                List<string> RPTIDs = SECSConst.DicCEIDAndRPTID[tempceid];
+                List<string> RPTIDs = null;
+                if (rptids == null)
+                {
+                    RPTIDs = SECSConst.DicCEIDAndRPTID[tempceid];
+                }
+                else
+                {
+                    RPTIDs = rptids;
+                }
                 s6f11.INFO.ITEM = new S6F11.RPTINFO.RPTITEM[RPTIDs.Count];
 
                 for (int i = 0; i < RPTIDs.Count; i++)
@@ -3827,7 +3944,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             vid_collection.VID_54_CarrierID.CARRIER_ID = vid_info.MCS_CARRIER_ID;
 
             //VID_55_CarrierInfo
-            vid_collection.VID_55_CarrierInfo.CARRIER_ID = vid_info.CARRIER_ID;
+            vid_collection.VID_55_CarrierInfo.CARRIER_ID = vid_info.MCS_CARRIER_ID;
             vid_collection.VID_55_CarrierInfo.VEHICLE_ID = vh.Real_ID;
             if (vh.HAS_CST==1)
             {
@@ -3866,8 +3983,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             vid_collection.VID_62_Priority.PRIORITY = vid_info.PRIORITY.ToString();
 
             //VID_63_ResultCode
+            //vid_collection.VID_64_ResultCode.RESULT_CODE = SECSConst.NorthInnoluxCommpleteReultMap(vid_info.RESULT_CODE);
             vid_collection.VID_64_ResultCode.RESULT_CODE = vid_info.RESULT_CODE.ToString();
-
             //VID_65_SourcePort
             vid_collection.VID_65_SourcePort.SOURCE_PORT = vid_info.SOURCEPORT;
 
@@ -3894,7 +4011,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             vid_collection.VID_70_VehicleID.VEHICLE_ID = vh.Real_ID;
             vid_collection.VID_317_ReadIDInfo.ID_RESULT_CODE = SECSConst.NorthInnoluxBarcodeReadReultMap( vh.BCRReadResult);
             //vid_collection.VID_317_ReadIDInfo.READ_CARRRIER_ID = vh.CST_ID;
-            vid_collection.VID_317_ReadIDInfo.READ_CARRRIER_ID = vid_info.CARRIER_ID;
+            //2020/12/21 Hsinyu Chang: read fail時，此處帶空值，其餘狀況帶實際讀到的值
+            vid_collection.VID_317_ReadIDInfo.READ_CARRRIER_ID = 
+                (vh.BCRReadResult == ProtocolFormat.OHTMessage.BCRReadResult.BcrReadFail) ? "" : vid_info.CARRIER_ID;
             //VID_901_AlarmText
             vid_collection.VID_1060_AlarmText.ALARM_TEXT = vid_info.ALARM_TEXT;
 

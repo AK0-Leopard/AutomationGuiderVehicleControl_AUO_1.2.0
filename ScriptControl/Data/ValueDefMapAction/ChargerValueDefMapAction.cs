@@ -11,6 +11,7 @@
 //**********************************************************************************
 using com.mirle.ibg3k0.bcf.App;
 using com.mirle.ibg3k0.bcf.Common;
+using com.mirle.ibg3k0.bcf.Common.MPLC;
 using com.mirle.ibg3k0.bcf.Controller;
 using com.mirle.ibg3k0.bcf.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.bcf.Data.VO;
@@ -21,7 +22,6 @@ using KingAOP;
 using NLog;
 using System;
 using System.Dynamic;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
@@ -250,35 +250,6 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 eqpt.abnormalReportCode04 = recevie_function.ErrorCode_4;
                 eqpt.abnormalReportCode05 = recevie_function.ErrorCode_5;
                 eqpt.AbnormalReportIndex = recevie_function.index;
-
-                var current_has_record_alarms = scApp.AlarmBLL.getCurrentChargerAlarmsFromRedis();
-                var current_has_record_alarm_ids = current_has_record_alarms.Select(alarm => SCUtility.Trim(alarm.ALAM_CODE, true)).ToList();
-                var current_happend_alarm_ids = recevie_function.loadCurrentHappendAlarms();
-                var new_happend_alarm_ids = current_happend_alarm_ids.Except(current_has_record_alarm_ids);
-                var end_happend_alarm_ids = current_has_record_alarm_ids.Except(current_happend_alarm_ids);
-
-                foreach (string error_code in new_happend_alarm_ids)
-                {
-                    var find_alarm_info = scApp.AlarmBLL.tryGetChargerAlarmMap(error_code);
-                    if (find_alarm_info.isExist)
-                    {
-                        string eq_id = find_alarm_info.map.EQPT_REAL_ID;
-                        string alarm_code = find_alarm_info.map.ALARM_ID;
-                        string alarm_desc = find_alarm_info.map.ALARM_DESC;
-                        scApp.LineService.ProcessAlarmReport(eq_id, alarm_code, ProtocolFormat.OHTMessage.ErrorStatus.ErrSet, alarm_desc);
-                    }
-                }
-                foreach (string error_code in end_happend_alarm_ids)
-                {
-                    var find_alarm_info = scApp.AlarmBLL.tryGetChargerAlarmMap(error_code);
-                    if (find_alarm_info.isExist)
-                    {
-                        string eq_id = find_alarm_info.map.EQPT_REAL_ID;
-                        string alarm_code = find_alarm_info.map.ALARM_ID;
-                        string alarm_desc = find_alarm_info.map.ALARM_DESC;
-                        scApp.LineService.ProcessAlarmReport(eq_id, alarm_code, ProtocolFormat.OHTMessage.ErrorStatus.ErrReset, alarm_desc);
-                    }
-                }
 
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ChargerValueDefMapAction), Device: DEVICE_NAME_MC,
                          Data: recevie_function.ToString(),
