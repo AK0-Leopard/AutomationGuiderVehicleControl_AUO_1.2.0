@@ -76,7 +76,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return checkcode;
         }
 
-        public override bool doCreatMCSCommand(string command_id, string Priority, string replace, string carrier_id, string HostSource, string HostDestination, string checkcode)
+        public bool doCreatMCSCommand(string command_id, string Priority, string replace, string carrier_id, string HostSource, string HostDestination, string checkcode)
         {
             bool isSuccess = true;
             int ipriority = 0;
@@ -109,7 +109,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         }
 
-        public override ACMD_MCS creatCommand_MCS(string command_id, int Priority, int replace, string carrier_id, string HostSource, string HostDestination, string checkcode)
+        public ACMD_MCS creatCommand_MCS(string command_id, int Priority, int replace, string carrier_id, string HostSource, string HostDestination, string checkcode)
         {
             int port_priority = 0;
             if (!SCUtility.isEmpty(HostSource))
@@ -118,7 +118,6 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                 if (source_portStation == null)
                 {
-                    HostSource = HostSource.Replace("-01", "");
                     logger.Warn($"MCS cmd of hostsource port[{HostSource} not exist.]");
                 }
                 else
@@ -249,17 +248,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccess;
         }
 
-        public bool updateCMD_MCS_CmdState2BCRFail(string cmd_id)
-        {
-            bool isSuccess = true;
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            {
-                ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmd_id);
-                cmd.COMMANDSTATE = SCAppConstants.TaskCmdStatus.BCRReadFail;
-                cmd_mcsDao.update(con, cmd);
-            }
-            return isSuccess;
-        }
+
 
         public bool updateCMD_MCS_TranStatus2Transferring(string cmd_id)
         {
@@ -953,8 +942,8 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
             }
         }
-        const string WTO_GROUP_NAME = "AAWTO400";
-        public override void checkMCSTransferCommand_New()
+
+        public void checkMCSTransferCommand_New()
         {
             if (System.Threading.Interlocked.Exchange(ref syncTranCmdPoint, 1) == 0)
             {
@@ -964,85 +953,83 @@ namespace com.mirle.ibg3k0.sc.BLL
                         != SCAppConstants.AppServiceMode.Active)
                         return;
 
+                    //if (scApp.getEQObjCacheManager().getLine().SCStats != ALINE.TSCState.AUTO)
+                    //    return;
+                    //if (DebugParameter.CanAutoRandomGeneratesCommand || scApp.getEQObjCacheManager().getLine().SCStats == ALINE.TSCState.AUTO)
+
                     if (DebugParameter.CanAutoRandomGeneratesCommand || (scApp.getEQObjCacheManager().getLine().SCStats == ALINE.TSCState.AUTO && scApp.getEQObjCacheManager().getLine().MCSCommandAutoAssign))
                     {
                         int idle_vh_count = scApp.VehicleBLL.cache.getVhCurrentStatusInIdleCount(scApp.CMDBLL);
                         if (idle_vh_count > 0)
                         {
                             List<ACMD_MCS> ACMD_MCSs = scApp.CMDBLL.loadMCS_Command_Queue();
-                            checkOnlyOneExcuteWTOCommand(ref ACMD_MCSs);
-                            List<ACMD_MCS> port_priority_max_command = null;
+                            List<ACMD_MCS> wto_command = null;
                             if (ACMD_MCSs != null && ACMD_MCSs.Count > 0)
                             {
-                                port_priority_max_command = new List<ACMD_MCS>();
-                                foreach (ACMD_MCS cmd in ACMD_MCSs)
+                                string WTO_GROUP_NAME = "AAWTO400";
+                                //先找是否有CST要到從WTO出來的，如果有找看看有沒有要去WTO的貨，有的話就先把它搬過去，
+                                //如果找不到要去WTO的Command就直接去把它搬出來
+                                List<ACMD_MCS> from_wto_command = ACMD_MCSs.
+                                    Where(cmd => SCUtility.isMatche(cmd.SOURCE_GROUP_NAME, WTO_GROUP_NAME)).
+                                    ToList();
+                                if (from_wto_command != null && from_wto_command.Count > 0)
                                 {
-                                    APORTSTATION source_port = scApp.getEQObjCacheManager().getPortStation(cmd.HOSTSOURCE);
-                                    APORTSTATION destination_port = scApp.getEQObjCacheManager().getPortStation(cmd.HOSTDESTINATION);
-                                    if (source_port != null && source_port.PRIORITY >= SCAppConstants.PortMaxPriority)
+                                    List<ACMD_MCS> to_wto_command = ACMD_MCSs.
+                                    Where(cmd => SCUtility.isMatche(cmd.DESTINATION_GROUP_NAME, WTO_GROUP_NAME)).
+                                    ToList();
+                                    if (to_wto_command != null && to_wto_command.Count > 0)
                                     {
-                                        if (destination_port != null)
-                                        {
-                                            if (source_port.PRIORITY >= destination_port.PRIORITY)
-                                            {
-                                                cmd.PORT_PRIORITY = source_port.PRIORITY;
-                                            }
-                                            else
-                                            {
-                                                cmd.PORT_PRIORITY = destination_port.PRIORITY;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            cmd.PORT_PRIORITY = source_port.PRIORITY;
-                                        }
-                                        port_priority_max_command.Add(cmd);
-                                        continue;
+                                        wto_command = to_wto_command;
                                     }
-                                    if (destination_port != null && destination_port.PRIORITY >= SCAppConstants.PortMaxPriority)
+                                    else
                                     {
-                                        if (source_port != null)
-                                        {
-                                            if (destination_port.PRIORITY >= source_port.PRIORITY)
-                                            {
-                                                cmd.PORT_PRIORITY = destination_port.PRIORITY;
-                                            }
-                                            else
-                                            {
-                                                cmd.PORT_PRIORITY = source_port.PRIORITY;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            cmd.PORT_PRIORITY = destination_port.PRIORITY;
-                                        }
-                                        port_priority_max_command.Add(cmd);
-                                        continue;
+                                        wto_command = from_wto_command;
                                     }
-                                }
-                                if (port_priority_max_command.Count == 0)
-                                {
-                                    port_priority_max_command = null;
-                                }
-                                else
-                                {
-                                    port_priority_max_command = port_priority_max_command.OrderByDescending(cmd => cmd.PORT_PRIORITY).ToList();
                                 }
 
                                 List<ACMD_MCS> timeout_command = null;
-
-                                if (port_priority_max_command == null && SystemParameter.CSTMaxWaitTime != 0)
+                                //bool has_hight_priority_command = ACMD_MCSs.Where(cmd => cmd.PRIORITY_SUM >= HIGHT_PRIORITY_VALUE).Count() > 0;
+                                //var hight_priority_command = ACMD_MCSs.Where(cmd => cmd.PRIORITY_SUM >= HIGHT_PRIORITY_VALUE).ToList();
+                                if (wto_command == null && SystemParameter.CSTMaxWaitTime != 0)
                                 {
                                     timeout_command = ACMD_MCSs.
                                                       Where(cmd => DateTime.Now >= cmd.CMD_INSER_TIME.AddMinutes(SystemParameter.CSTMaxWaitTime)).
                                                       ToList();
+                                    //if (timeout_command != null && timeout_command.Count > 0)
+                                    //{
+                                    //    string PRIORITY_EQ_NAME = "AAWTO400";
+                                    //    List<ACMD_MCS> wto_first = null;
+                                    //    //1.先找Desc port有沒有WTO的，如果有的話這樣有機會搬過去 就可以順途搬回來
+                                    //    wto_first = timeout_command.Where(cmd => cmd.HOSTDESTINATION.Trim().StartsWith(PRIORITY_EQ_NAME)).ToList();
+                                    //    //2.沒有的話再找Source port有沒有WTO的
+                                    //    if (wto_first == null || wto_first.Count == 0)
+                                    //    {
+                                    //        wto_first = timeout_command.Where(cmd => cmd.HOSTSOURCE.Trim().StartsWith(PRIORITY_EQ_NAME)).ToList();
+                                    //    }
+                                    //    //3.如果有wto是在Time out list中，則就優先找出來做
+                                    //    if (wto_first != null && wto_first.Count > 0)
+                                    //    {
+                                    //        timeout_command = wto_first;
+                                    //    }
+                                    //    //如果都沒有Timeout的List都沒有WTO的話，就不要走Timeout流程
+                                    //    else
+                                    //    {
+                                    //        timeout_command = null;
+                                    //    }
+                                    //}
                                 }
+                                //LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(CMDBLL), Device: string.Empty,
+                                //              Data: $"Has hight priority :{hight_priority_command != null}");
 
+                                //if (hight_priority_command == null)
+                                //{
+
+                                //List<ACMD_MCS> search_nearest_mcs_cmd = timeout_command == null || timeout_command.Count == 0 ?
+                                //                                        ACMD_MCSs : timeout_command;
                                 List<ACMD_MCS> search_nearest_mcs_cmd = null;
-
-                                if (port_priority_max_command != null && port_priority_max_command.Count > 0)
+                                if (wto_command != null && wto_command.Count > 0)
                                 {
-                                    search_nearest_mcs_cmd = port_priority_max_command;
+                                    search_nearest_mcs_cmd = wto_command;
                                 }
                                 else if (timeout_command != null && timeout_command.Count > 0)
                                 {
@@ -1062,7 +1049,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                                 {
                                     if (AssignMCSCommand2Vehicle(nearest_cmd_mcs, E_CMD_TYPE.LoadUnload, nearest_vh))
                                     {
-                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxCMDBLL), Device: string.Empty,
+                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(CMDBLL), Device: string.Empty,
                                                       Data: $"Success find nearest mcs command for vh:{nearest_vh.VEHICLE_ID}, command id:{nearest_cmd_mcs.CMD_ID.Trim()}" +
                                                             $"vh current address:{nearest_vh.CUR_ADR_ID},command source port:{nearest_cmd_mcs.HOSTSOURCE?.Trim()}",
                                                       XID: nearest_cmd_mcs.CMD_ID);
@@ -1120,22 +1107,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                                     else
                                     {
                                         bestSuitableVh = scApp.VehicleBLL.cache.getVehicleByRealID(hostsource);
-                                        if (bestSuitableVh == null)
-                                        {
-                                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxCMDBLL), Device: string.Empty,
-                                              Data: $"MCS command:{first_waitting_excute_mcs_cmd.CMD_ID} specify of vehicle:{hostsource} not found." ,
-                                              XID: first_waitting_excute_mcs_cmd.CMD_ID);
-                                            continue;
-                                        }
-                                        else if (bestSuitableVh.MODE_STATUS != VHModeStatus.AutoRemote ||
-                                            bestSuitableVh.BatteryLevel == BatteryLevel.Low)
-                                        {
-                                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxCMDBLL), Device: string.Empty,
-                                                          Data: $"MCS command:{first_waitting_excute_mcs_cmd.CMD_ID} specify of vehicle:{hostsource} not ready," +
-                                                                $"mode status:{bestSuitableVh.MODE_STATUS},battery level:{bestSuitableVh.BatteryLevel}",
-                                                          XID: first_waitting_excute_mcs_cmd.CMD_ID);
-                                            continue;
-                                        }
                                         cmd_type = E_CMD_TYPE.Unload;
                                     }
 
@@ -1147,8 +1118,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                                         //vehicleId = bestSuitableVh.VEHICLE_ID.Trim();
                                         if (AssignMCSCommand2Vehicle(first_waitting_excute_mcs_cmd, cmd_type, bestSuitableVh))
                                         {
-                                            //return;
-                                            continue;
+                                            return;
                                         }
                                     }
                                     else
@@ -1165,45 +1135,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                                         //continue;
                                     }
                                 }
-                            }
-                            else
-                            {
-                                //當前沒有MCS命令待執行，又有車輛處於Idle狀態則下命令使其前往設定好的等待點
-                                List<AVEHICLE> vhs = scApp.VehicleBLL.cache.loadAllVh().ToList();
-                                scApp.VehicleBLL.filterVh(ref vhs, E_VH_TYPE.None);
-
-                                foreach (AVEHICLE v in vhs)
-                                {
-                                    if (v.VEHICLE_ID == "AGV01")
-                                    {
-                                        string park_adr = scApp.VehicleService.parkAdr1;
-                                        if (!string.IsNullOrWhiteSpace(park_adr))
-                                        {
-                                            doCreatTransferCommand(v.VEHICLE_ID, string.Empty, string.Empty,
-                                              E_CMD_TYPE.Move,
-                                             string.Empty,
-                                             park_adr, 0, 0);
-                                        }
-                                    }
-                                    else if (v.VEHICLE_ID == "AGV02")
-                                    {
-                                        string park_adr = scApp.VehicleService.parkAdr2;
-                                        if (!string.IsNullOrWhiteSpace(park_adr))
-                                        {
-                                            doCreatTransferCommand(v.VEHICLE_ID, string.Empty, string.Empty,
-                                              E_CMD_TYPE.Move,
-                                             string.Empty,
-                                             park_adr, 0, 0);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        //donothing
-                                    }
-
-                                }
-
-
                             }
 
                             foreach (ACMD_MCS waitting_excute_mcs_cmd in ACMD_MCSs)
@@ -1228,76 +1159,22 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
         }
 
-        private void checkOnlyOneExcuteWTOCommand(ref List<ACMD_MCS> InQueueACMD_MCSs)
-        {
-            if (InQueueACMD_MCSs != null && InQueueACMD_MCSs.Count > 0)
-            {
-                bool has_wto_command_in_queue = InQueueACMD_MCSs.Where(mcs_cmd => mcs_cmd.HOSTSOURCE.Contains(WTO_GROUP_NAME) ||
-                                                                                  mcs_cmd.HOSTDESTINATION.Contains(WTO_GROUP_NAME)).Count() != 0;
-                if (has_wto_command_in_queue)
-                {
-                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(CMDBLL), Device: string.Empty,
-                                  Data: $"Has wto command in queue, start check has orther wto command excute...");
-
-                    bool has_excute_wto_commnad = scApp.CMDBLL.hasCMD_MCSExcuteByFromToPort(WTO_GROUP_NAME);
-                    if (has_excute_wto_commnad)
-                    {
-                        foreach (var mcs_cmd in InQueueACMD_MCSs.ToList())
-                        {
-                            if (mcs_cmd.HOSTSOURCE.Contains(WTO_GROUP_NAME) ||
-                                mcs_cmd.HOSTDESTINATION.Contains(WTO_GROUP_NAME))
-                            {
-                                InQueueACMD_MCSs.Remove(mcs_cmd);
-                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(CMDBLL), Device: string.Empty,
-                                              Data: $"Has orther wto command excute, remove it:{SCUtility.Trim(mcs_cmd.CMD_ID)}");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(CMDBLL), Device: string.Empty,
-                                      Data: $"Has wto command in queue, no wto command excute.");
-                    }
-                }
-            }
-        }
         public override bool createWaitingRetryOHTCCmd(string vhID, string mcs_cmd_ID)
         {
             AVEHICLE vehicle = scApp.VehicleBLL.cache.getVehicle(vhID);
             ACMD_MCS waittingExcuteMcsCmd = getCMD_MCSByID(mcs_cmd_ID);
-            if (waittingExcuteMcsCmd == null)//對應MCS指令已經消失，停止重下
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxCMDBLL), Device: string.Empty,
-              Data: $"MCS command:{mcs_cmd_ID} could not be found,end retry cmd." +
-                    $"mode status:{vehicle.MODE_STATUS},battery level:{vehicle.BatteryLevel}",
-              XID: mcs_cmd_ID);
-                return true;
-            }
-            bool isTransferAlready = waittingExcuteMcsCmd.TRANSFERSTATE >= E_TRAN_STATUS.Transferring;
-            List<AVEHICLE> vhs = new List<AVEHICLE>();
-            vhs.Add(vehicle);
-            scApp.VehicleBLL.filterVh(ref vhs, E_VH_TYPE.None,false);
-            if (vhs.Count < 1)
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxCMDBLL), Device: string.Empty,
-              Data: $"MCS command:{waittingExcuteMcsCmd.CMD_ID} retry fail specify of vehicle:{vhID} not ready," +
-                    $"please check vehicle status.",
-              XID: waittingExcuteMcsCmd.CMD_ID);
-                return false;
-            }
             if (vehicle.MODE_STATUS != VHModeStatus.AutoRemote || vehicle.BatteryLevel == BatteryLevel.Low)
             {
                 //LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(CMDBLL), Device: string.Empty,
                 //              Data: $"MCS command:{nearest_cmd_mcs.CMD_ID} specify of vehicle:{hostsource} not ready," +
                 //                    $"mode status:{bestSuitableVh.MODE_STATUS},battery level:{bestSuitableVh.BatteryLevel}",
                 //              XID: nearest_cmd_mcs.CMD_ID);
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxCMDBLL), Device: string.Empty,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(CMDBLL), Device: string.Empty,
                               Data: $"MCS command:{waittingExcuteMcsCmd.CMD_ID} specify of vehicle:{vhID} not ready," +
                                     $"mode status:{vehicle.MODE_STATUS},battery level:{vehicle.BatteryLevel}",
                               XID: waittingExcuteMcsCmd.CMD_ID);
                 return false;
             }
-
 
             string hostsource = waittingExcuteMcsCmd.HOSTSOURCE;
             string hostdest = waittingExcuteMcsCmd.HOSTDESTINATION;
@@ -1313,101 +1190,11 @@ namespace com.mirle.ibg3k0.sc.BLL
 
             check_result.IsSuccess = creatCommand_OHTC
                          (vhID, mcs_cmd_ID, waittingExcuteMcsCmd.CARRIER_ID, isCstOnVh ? E_CMD_TYPE.Unload : E_CMD_TYPE.LoadUnload,
-                         from_adr, to_adr, 0, 0, SCAppConstants.GenOHxCCommandType.Retry, out cmd_obj);
+                         from_adr, to_adr, 0, 0, SCAppConstants.GenOHxCCommandType.Auto, out cmd_obj);
 
             if (!check_result.IsSuccess)
             {
                 check_result.Result.AppendLine($" vh:{vhID} creat command to db unsuccess.");
-            }
-            else
-            {
-                //scApp.VIDBLL.upDateVIDMCSCarrierID(vhID, waittingExcuteMcsCmd.CARRIER_ID);
-                scApp.VIDBLL.upDateVIDCommandInfo(vhID, waittingExcuteMcsCmd.CMD_ID);
-                //補CarrierON的相關event
-                if (isCstOnVh && !isTransferAlready)
-                {
-                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxCMDBLL), Device: string.Empty,
-              Data: $"MCS command:{waittingExcuteMcsCmd.CMD_ID} retry with CST:{vehicle.CST_ID},",
-                              XID: waittingExcuteMcsCmd.CMD_ID);
-                    #region 補CarrierON的相關event
-                    #region LoadArrival
-                    //scApp.VIDBLL.upDateVIDPortID(vhID, EventType.LoadArrivals);
-                    #endregion LoadArrival
-
-                    #region Loading
-                    //List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
-                    //using (TransactionScope tx = SCUtility.getTransactionScope())
-                    //{
-                    //    using (DBConnection_EF con = DBConnection_EF.GetUContext())
-                    //    {
-                    //        bool isSuccess = true;
-                    //        scApp.ReportBLL.newReportLoading(vehicle.VEHICLE_ID, reportqueues);
-                    //        scApp.ReportBLL.insertMCSReport(reportqueues);
-                    //        //isSuccess = scApp.ReportBLL.ReportLoadingUnloading(eqpt.VEHICLE_ID, eventType, out List<AMCSREPORTQUEUE> reportqueues);
-                    //        if (isSuccess)
-                    //        {
-                    //            tx.Complete();
-                    //            scApp.ReportBLL.newSendMCSMessage(reportqueues);
-                    //        }
-                    //    }
-                    //}
-
-                    #endregion Loading
-
-                    #region LoadComplete
-
-                    if (!SCUtility.isEmpty(mcs_cmd_ID))
-                        scApp.CMDBLL.updateCMD_MCS_TranStatus2Transferring(mcs_cmd_ID);
-                    string port_id;
-                    scApp.MapBLL.getPortID(vehicle.CUR_ADR_ID, out port_id);
-                    scApp.PortBLL.OperateCatch.updatePortStationCSTExistStatus(port_id, string.Empty);
-                    BCRReadResult bCRReadResult = BCRReadResult.BcrNormal;
-
-                    if (vehicle.CST_ID.StartsWith("ERROR"))
-                    {
-                        string new_carrier_id =
-                            $"NR-{vehicle.Real_ID.Trim()}-{DateTime.Now.ToString(SCAppConstants.TimestampFormat_16)}";
-                        scApp.VIDBLL.upDateVIDCarrierID(vehicle.VEHICLE_ID, new_carrier_id);//讀不到ID的話，更新為"NR-xxxx"
-                        bCRReadResult = BCRReadResult.BcrReadFail;
-                    }
-                    else if (!SCUtility.isMatche(vehicle.CST_ID, waittingExcuteMcsCmd.CARRIER_ID))
-                    {
-                        scApp.VIDBLL.upDateVIDCarrierID(vehicle.VEHICLE_ID, vehicle.CST_ID);
-                        bCRReadResult = BCRReadResult.BcrMisMatch;
-                    }
-                    else
-                    {
-                        scApp.VIDBLL.upDateVIDCarrierID(vehicle.VEHICLE_ID, vehicle.CST_ID);
-                        bCRReadResult = BCRReadResult.BcrNormal;
-                    }
-                    scApp.VehicleBLL.updateVehicleBCRReadResult(vehicle, bCRReadResult);//因為已經要上報MCS Bcrcode Read Report，要先更新BCRReadResult
-                    scApp.VIDBLL.upDateVIDCarrierLocInfo(vehicle.VEHICLE_ID, vehicle.Real_ID);
-//                    AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(vehicle.VEHICLE_ID);
-
-//                    if(vid_info!= null)
-//                    {
-//                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxCMDBLL), Device: string.Empty,
-//Data: $"MCS command:{waittingExcuteMcsCmd.CMD_ID} retry with VID CST:{vid_info.MCS_CARRIER_ID},",
-//XID: waittingExcuteMcsCmd.CMD_ID);
-//                    }
-
-
-                    List<AMCSREPORTQUEUE> reportqueues_ = new List<AMCSREPORTQUEUE>();
-                    using (TransactionScope tx = SCUtility.getTransactionScope())
-                    {
-                        using (DBConnection_EF con = DBConnection_EF.GetUContext())
-                        {
-                            scApp.ReportBLL.newReportLoadComplete(vehicle.VEHICLE_ID, bCRReadResult, reportqueues_);
-                            scApp.ReportBLL.insertMCSReport(reportqueues_);
-                            tx.Complete();
-                        }
-                    }
-                    scApp.ReportBLL.newSendMCSMessage(reportqueues_);
-
-                    scApp.VehicleBLL.doLoadComplete(vehicle.VEHICLE_ID, vehicle.CUR_ADR_ID, vehicle.CUR_SEC_ID, vehicle.CST_ID);
-                    #endregion LoadComplete
-                    #endregion 補CarrierON的相關event
-                }
             }
             setCallContext(CALL_CONTEXT_KEY_WORD_OHTC_CMD_CHECK_RESULT, check_result);
 
@@ -2204,7 +1991,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         //}
 
         private long ohxc_cmd_SyncPoint = 0;
-        public override void checkOHxC_TransferCommand()
+        public void checkOHxC_TransferCommand()
         {
             if (System.Threading.Interlocked.Exchange(ref ohxc_cmd_SyncPoint, 1) == 0)
             {
@@ -2218,6 +2005,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                         return;
                     foreach (ACMD_OHTC cmd in CMD_OHTC_Queues)
                     {
+
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(CMDBLL), Device: string.Empty,
                            Data: $"Start process ohxc of command ,id:{SCUtility.Trim(cmd.CMD_ID)},vh id:{SCUtility.Trim(cmd.VH_ID)},from:{SCUtility.Trim(cmd.SOURCE)},to:{SCUtility.Trim(cmd.DESTINATION)}");
 
@@ -2229,7 +2017,8 @@ namespace com.mirle.ibg3k0.sc.BLL
                             {
                                 continue;
                             }
-                            scApp.VehicleService.doSendCommandToVh(assignVH, cmd);//定時檢查發送
+
+                            scApp.VehicleService.doSendCommandToVh(assignVH, cmd);
                         }
                         //else
                         //{

@@ -492,12 +492,7 @@ namespace com.mirle.ibg3k0.sc.App
 
             initialReserveSectionAPI();
             setRePositionInfo();
-            SetCMDRetryCount();
-            setParkAdr1();
-            setParkAdr2();
-            setTrafficPassTime();
-            setTrafficLight1Section();
-            setTrafficLight2Section();
+
             startBLL();
             initWIF();      //Initial WIF   //A0.01
             initialCatchDataFromDB();
@@ -574,33 +569,12 @@ namespace com.mirle.ibg3k0.sc.App
 
         private void setHltVehicleInfo()
         {
-
-            if(BC_ID != "NORTH_INNOLUX")
-            {
-                int vh_highi = getInt("VehicleHeight", 1800);
-                int vh_width = getInt("VehicleWidth", 3200);
-                int vh_sensor_wlength = getInt("SensorWLength", 1200);
-                reserveSectionAPI.VehicleHeight = vh_highi;
-                reserveSectionAPI.VehicleWidth = vh_width;
-                reserveSectionAPI.SensorLength = vh_sensor_wlength;
-            }
-            else
-            {
-                int vh_highi = getInt("VehicleHeight", 1380);
-                int vh_width = getInt("VehicleWidth", 2750);
-                int vh_sensor_wlength = getInt("SensorWLength", 300);
-                reserveSectionAPI.VehicleHeight = vh_highi;
-                reserveSectionAPI.VehicleWidth = vh_width;
-                reserveSectionAPI.SensorLength = vh_sensor_wlength;
-            }
-
-
-        }
-
-        private void SetCMDRetryCount()
-        {
-            int CMDRetryCount = getInt("CMDFailRetryCount", 3);
-            vehicleService.cmdRetryCount = CMDRetryCount;
+            int vh_highi = getInt("VehicleHeight", 1800);
+            int vh_width = getInt("VehicleWidth", 3200);
+            int vh_sensor_wlength = getInt("SensorWLength", 1200);
+            reserveSectionAPI.VehicleHeight = vh_highi;
+            reserveSectionAPI.VehicleWidth = vh_width;
+            reserveSectionAPI.SensorLength = vh_sensor_wlength;
         }
 
         private void setRePositionInfo()
@@ -608,40 +582,6 @@ namespace com.mirle.ibg3k0.sc.App
             int RePositionDistance = getInt("RePositionDistance", 5000);
             vehicleService.repositionDistance = RePositionDistance;
         }
-
-
-        private void setParkAdr1()
-        {
-            string ParkAdr1 = getString("ParkAdr1", "");
-            vehicleService.parkAdr1 = ParkAdr1;
-        }
-
-        private void setParkAdr2()
-        {
-            string ParkAdr2 = getString("ParkAdr2", "");
-            vehicleService.parkAdr2 = ParkAdr2;
-        }
-
-
-        private void setTrafficPassTime()
-        {
-            int trafficPassTime = getInt("TrafficPassTime", 20);
-            lineService.trafficPassTime = trafficPassTime;
-        }
-
-        private void setTrafficLight1Section()
-        {
-            string trafficLight1Section = getString("TrafficLight1Section", "");
-            lineService.trafficLight1Section = trafficLight1Section;
-        }
-
-
-        private void setTrafficLight2Section()
-        {
-            string trafficLight2Section = getString("TrafficLight2Section", "");
-            lineService.trafficLight2Section = trafficLight2Section;
-        }
-
 
         private void LoadMapFiles(string addressPath = null, string sectionPath = null)
         {
@@ -995,7 +935,6 @@ namespace com.mirle.ibg3k0.sc.App
                 loadCSVToDataset(ohxcConfig, "VEHICLEMAP");
                 loadCSVToDataset(ohxcConfig, "COUPLERINFO");
                 loadCSVToDataset(ohxcConfig, "FIREDOORSEGMENT");
-                //loadCSVToDataset(ohxcConfig, "TAFFIICLIGHTSECTION");
                 loadCSVToDataset(ohxcConfig, "RESERVEENHANCEINFO");
                 loadCSVToDataset(ohxcConfig, "TRAFFICCONTROLINFO");
                 loadCSVToDataset(ohxcConfig, "ALARMCONVERTINFO");
@@ -2057,7 +1996,6 @@ namespace com.mirle.ibg3k0.sc.App
 
         public static int NumberOfAvoidanceSegment = 3;
         public static Boolean AdvanceDriveAway = true;
-        public static Boolean isPassCouplerHPSafetySignal = false;
 
     }
 }

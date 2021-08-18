@@ -148,22 +148,6 @@ namespace com.mirle.ibg3k0.sc.Common
             (couplerAddress as ICpuplerType).TrafficControlSegment = coupler_info.TrafficControlSegment.Split('-');
             //if (!SCUtility.isMatche(couplerAddress.ADR_ID, "24002"))
             (couplerAddress as ICpuplerType).IsEnable = true;
-            //AUNIT charger = scApp.getEQObjCacheManager().getUnitByUnitID(coupler_info.ChargerID);
-            //if (charger != null)
-            //{
-            //    if(coupler_info.CouplerNum == 1)
-            //    {
-            //        charger.Coupler1Address = couplerAddress.ADR_ID;
-            //    }
-            //    else if(coupler_info.CouplerNum == 2)
-            //    {
-            //        charger.Coupler2Address = couplerAddress.ADR_ID;
-            //    }
-            //    else if (coupler_info.CouplerNum == 3)
-            //    {
-            //        charger.Coupler3Address = couplerAddress.ADR_ID;
-            //    }
-            //}
         }
 
         public List<ASEGMENT> getFireDoorSegment(string fireDoorID)
@@ -285,14 +269,6 @@ namespace com.mirle.ibg3k0.sc.Common
                              Select(adr => adr as CouplerAddress).
                              ToList();
         }
-
-        public CouplerAddress getCouplerAddress(string address)
-        {
-            return Addresses.Where(adr => adr is CouplerAddress&& adr.ADR_ID ==address).
-                             Select(adr => adr as CouplerAddress).FirstOrDefault()
-                           ;
-        }
-
         public List<string> getEnhanceSubAddresses()
         {
             return EnhanceSubAddresses;

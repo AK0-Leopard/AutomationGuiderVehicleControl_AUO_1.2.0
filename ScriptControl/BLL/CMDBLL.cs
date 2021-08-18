@@ -78,59 +78,40 @@ namespace com.mirle.ibg3k0.sc.BLL
             return checkcode;
         }
 
-        public virtual bool doCreatMCSCommand(string command_id, string Priority, string replace, string carrier_id, string HostSource, string HostDestination, string checkcode)
-        {
-            try
-            {
-                bool isSuccess = true;
-                int ipriority = 0;
-                if (!int.TryParse(Priority, out ipriority))
-                {
-                    logger.Warn("command id :{0} of priority parse fail. priority valus:{1}"
-                                , command_id
-                                , Priority);
-                }
-                int ireplace = 0;
-                if (!int.TryParse(replace, out ireplace))
-                {
-                    logger.Warn("command id :{0} of priority parse fail. priority valus:{1}"
-                                , command_id
-                                , ireplace);
-                }
-
-
-                //ACMD_MCS mcs_com = creatCommand_MCS(command_id, ipriority, carrier_id, HostSource, HostDestination, checkcode);
-                creatCommand_MCS(command_id, ipriority, ireplace, carrier_id, HostSource, HostDestination, checkcode);
-                //if (mcs_com != null)
-                //{
-                //    isSuccess = true;
-                //    scApp.SysExcuteQualityBLL.creatSysExcuteQuality(mcs_com);
-                //    //mcsDefaultMapAction.sendS6F11_TranInit(command_id);
-                //    scApp.ReportBLL.doReportTransferInitial(command_id);
-                //    checkMCS_TransferCommand();
-                //}
-                return isSuccess;
-            }
-            catch(Exception ex)
-            {
-                logger.Error(ex, "Exection:");
-                return false;
-            }
-
-
-        }
-        public bool updateCMD_MCS_CmdState2BCRFail(string cmd_id)
+        public bool doCreatMCSCommand(string command_id, string Priority, string replace, string carrier_id, string HostSource, string HostDestination, string checkcode)
         {
             bool isSuccess = true;
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            int ipriority = 0;
+            if (!int.TryParse(Priority, out ipriority))
             {
-                ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmd_id);
-                cmd.COMMANDSTATE = SCAppConstants.TaskCmdStatus.BCRReadFail;
-                cmd_mcsDao.update(con, cmd);
+                logger.Warn("command id :{0} of priority parse fail. priority valus:{1}"
+                            , command_id
+                            , Priority);
             }
+            int ireplace = 0;
+            if (!int.TryParse(replace, out ireplace))
+            {
+                logger.Warn("command id :{0} of priority parse fail. priority valus:{1}"
+                            , command_id
+                            , ireplace);
+            }
+
+
+            //ACMD_MCS mcs_com = creatCommand_MCS(command_id, ipriority, carrier_id, HostSource, HostDestination, checkcode);
+            creatCommand_MCS(command_id, ipriority, ireplace, carrier_id, HostSource, HostDestination, checkcode);
+            //if (mcs_com != null)
+            //{
+            //    isSuccess = true;
+            //    scApp.SysExcuteQualityBLL.creatSysExcuteQuality(mcs_com);
+            //    //mcsDefaultMapAction.sendS6F11_TranInit(command_id);
+            //    scApp.ReportBLL.doReportTransferInitial(command_id);
+            //    checkMCS_TransferCommand();
+            //}
             return isSuccess;
+
         }
-        public virtual ACMD_MCS creatCommand_MCS(string command_id, int Priority, int replace, string carrier_id, string HostSource, string HostDestination, string checkcode)
+
+        public ACMD_MCS creatCommand_MCS(string command_id, int Priority, int replace, string carrier_id, string HostSource, string HostDestination, string checkcode)
         {
             int port_priority = 0;
             if (!SCUtility.isEmpty(HostSource))
@@ -143,6 +124,10 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
                 else
                 {
+                    if (scApp.BC_ID == "NORTH_INNOLUX")
+                    {
+                        HostSource = HostSource.Replace("-01", "");
+                    }
                     port_priority = source_portStation.PRIORITY;
                 }
             }
@@ -921,7 +906,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
 
         const string WTO_GROUP_NAME = "AAWTO400";
-        public virtual void checkMCSTransferCommand_New()
+        public void checkMCSTransferCommand_New()
         {
             if (System.Threading.Interlocked.Exchange(ref syncTranCmdPoint, 1) == 0)
             {
@@ -940,8 +925,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                         int idle_vh_count = scApp.VehicleBLL.cache.getVhCurrentStatusInIdleCount(scApp.CMDBLL);
                         if (idle_vh_count > 0)
                         {
-                            scApp.VehicleService.CreateCMDFromWaitingRetryMCSCMDList();
-
                             List<ACMD_MCS> ACMD_MCSs = scApp.CMDBLL.loadMCS_Command_Queue();
                             checkOnlyOneExcuteWTOCommand(ref ACMD_MCSs);
                             //List<ACMD_MCS> wto_command = null;
@@ -1085,20 +1068,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                                 ACMD_MCS nearest_cmd_mcs = null;
                                 List<AVEHICLE> vhs = scApp.VehicleBLL.cache.loadAllVh().ToList();
                                 scApp.VehicleBLL.filterVh(ref vhs, E_VH_TYPE.None);
-
-                                foreach (AVEHICLE vh in vhs.ToList())
-                                {
-                                    if(scApp.VehicleService.isWaitingRetryMCSCMDListContainKey(vh.VEHICLE_ID))
-                                    {
-                                        vhs.Remove(vh);
-                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
-                                           Data: $"vh id:{vh.VEHICLE_ID} is in WaitingRetryMCSCMDList," +
-                                                 $"so filter it out",
-                                           VehicleID: vh.VEHICLE_ID,
-                                           CarrierID: vh.CST_ID);
-                                    }
-                                }
-
                                 (nearest_vh, nearest_cmd_mcs) = FindNearestVhAndCommand(vhs, search_nearest_mcs_cmd);
                                 if (nearest_vh != null && nearest_cmd_mcs != null)
                                 {
@@ -1205,7 +1174,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                                     }
                                 }
                             }
-
 
                             foreach (ACMD_MCS waitting_excute_mcs_cmd in ACMD_MCSs)
                             {
@@ -2030,7 +1998,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         //}
 
         private long ohxc_cmd_SyncPoint = 0;
-        public virtual void checkOHxC_TransferCommand()
+        public void checkOHxC_TransferCommand()
         {
             if (System.Threading.Interlocked.Exchange(ref ohxc_cmd_SyncPoint, 1) == 0)
             {
@@ -2057,7 +2025,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                                 continue;
                             }
 
-                            scApp.VehicleService.doSendCommandToVh(assignVH, cmd);//定時檢查發送
+                            scApp.VehicleService.doSendCommandToVh(assignVH, cmd);
                         }
                         //else
                         //{
@@ -2917,16 +2885,6 @@ namespace com.mirle.ibg3k0.sc.BLL
             return cmd_ohtc;
         }
 
-        public List<HCMD_OHTC> GetHisOHTCCMDsBySetTimeClearTime(DateTime insertTime, DateTime endTime)
-        {
-            List<HCMD_OHTC> cmds = null;
-            //using (DBConnection_EF con = new DBConnection_EF())
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            {
-                cmds = hcmd_ohtcDao.loadByInsertTimeEndTime(con, insertTime, endTime);
-            }
-            return cmds;
-        }
 
         #endregion HCMD_OHTC
 

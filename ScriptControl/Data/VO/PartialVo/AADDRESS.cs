@@ -60,12 +60,12 @@ namespace com.mirle.ibg3k0.sc
 
         [JsonIgnore]
         public bool IsCoupler
-        //{ get { return AddressTypeFlags[BIT_INDEX_COUPLER]; } }
+        { get { return AddressTypeFlags[BIT_INDEX_COUPLER]; } }
         //{ get { return false; } }
-        { get { return ADR_ID == "24031"; } }
+        //{ get { return ADR_ID == "24031"; } }
         //{ get { return ADR_ID == "10010"; } }
         //{ get { return ADR_ID == "24014"; }}
-        //{ get { return ADR_ID == "10005" || ADR_ID == "10010"; } }
+        //{ get { return ADR_ID == "10001"|| ADR_ID == "10007"; } }
         [JsonIgnore]
         public bool IsPort
         { get { return AddressTypeFlags[BIT_INDEX_PORT]; } }
@@ -95,7 +95,7 @@ namespace com.mirle.ibg3k0.sc
         {
             get
             {
-                if (SCApplication.getInstance().BC_ID == "NORTH_INNOLUX") //暫時都return ok
+                if (SCApplication.getInstance().BC_ID == "NORTH_INNOLUX_Test_Site") //暫時都return ok
                 {
                     return true;
                     //如果是該廠的話先一律回復True，因為是台中的Demo Site

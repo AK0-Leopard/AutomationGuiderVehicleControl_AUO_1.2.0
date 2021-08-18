@@ -19,14 +19,14 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
 
         public void add(DBConnection_EF con, AMCSREPORTQUEUE queue)
         {
-            con.AMCSREPORTQUEUE.Add(queue);
-            con.SaveChanges();
+            //con.AMCSREPORTQUEUE.Add(queue);
+            //con.SaveChanges();
         }
 
         public void AddByBatch(DBConnection_EF con, List<AMCSREPORTQUEUE> queues)
         {
-            con.AMCSREPORTQUEUE.AddRange(queues);
-            con.SaveChanges();
+            //con.AMCSREPORTQUEUE.AddRange(queues);
+            //con.SaveChanges();
         }
 
         public void Update(DBConnection_EF con, AMCSREPORTQUEUE queue)
