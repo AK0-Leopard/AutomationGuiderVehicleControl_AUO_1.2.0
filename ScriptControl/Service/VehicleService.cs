@@ -11,6 +11,7 @@
 // 2020/03/23    Kevin Wei      N/A            A0.01   對於在要不到Reserve時，邏輯由原本只會在1.車子長沖2.車子異常才會對來車下達Override
 //                                                     改成只要車子一要不到，又無法進行驅趕的話就對來車下達Override。
 // 2021/08/18    Shirley        N/A            A0.01   對於在要不到Reserve時，若對方是正在Load/Unload，不馬上override而是等對方完成命令。
+// 2021/08/24    Shirley        N/A            A0.01   對於在要不到Reserve時，若對方是正在移動中，不馬上override而是等對方完成命令。
 //**********************************************************************************
 using com.mirle.ibg3k0.bcf.App;
 using com.mirle.ibg3k0.bcf.Common;
@@ -1133,7 +1134,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         {
                             isSuccess = true;//如果相同 代表是在同一個點上
                         }
-                        if (isSuccess && !SCUtility.isMatche(source_adr, dest_adr))
+                        if (isSuccess && !SCUtility.isMatche(source_adr, dest_adr)) //shirley: 如果成功，且source_adr和dest_adr不相同???
                         {
                             (isSuccess, guide_to_dest_segment_ids, guide_to_dest_section_ids, guide_to_dest_address_ids, total_cost)
                                 = scApp.GuideBLL.getGuideInfo(source_adr, dest_adr, null);
@@ -1282,7 +1283,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                         if (!SCUtility.isEmpty(next_walk_section)) //由於有可能找出來後，是剛好在原地
                         {
-                            if (isSuccess && is_need_check_reserve_status)
+                            if (isSuccess && is_need_check_reserve_status) //shirley: is_need_check_reserve_status都是false??
                             {
                                 var reserve_result = askReserveSuccess(assignVH.VEHICLE_ID, next_walk_section, next_walk_address);
                                 if (reserve_result.isSuccess)
@@ -2498,7 +2499,8 @@ namespace com.mirle.ibg3k0.sc.Service
             VehicleInLongCharge,
             VehicleInError,
             VehicleInLoadingUnloading,
-            VehicleInObstacleStop
+            VehicleInObstacleStop,
+            VehicleIsMoving //shirley: 20180818
         }
 
         private (bool is_can, CAN_NOT_AVOID_RESULT result) canCreatDriveOutCommand(AVEHICLE reservedVh)
@@ -2513,6 +2515,7 @@ namespace com.mirle.ibg3k0.sc.Service
             }
             else if (reservedVh.IsError)
             {
+                //shirley: 這裡可以記錄Error vh所占用的section?
                 return (false, CAN_NOT_AVOID_RESULT.VehicleInError);
             }
             else if (reservedVh.IsObstacle)
@@ -2526,6 +2529,17 @@ namespace com.mirle.ibg3k0.sc.Service
                     )
             {
                 return (false, CAN_NOT_AVOID_RESULT.VehicleInLoadingUnloading);
+            }
+            else if (reservedVh.ACT_STATUS == VHActionStatus.Commanding &&
+                    reservedVh.ObstacleStatus == VhStopSingle.StopSingleOff &&
+                    reservedVh.RESERVE_PAUSE == VhStopSingle.StopSingleOff &&
+                    reservedVh.BlockingStatus == VhStopSingle.StopSingleOff &&
+                    reservedVh.PauseStatus == VhStopSingle.StopSingleOff &&
+                    reservedVh.ERROR == VhStopSingle.StopSingleOff &&
+                    reservedVh.EARTHQUAKE_PAUSE == VhStopSingle.StopSingleOff &&
+                    reservedVh.SAFETY_DOOR_PAUSE == VhStopSingle.StopSingleOff)
+            {
+                return (false, CAN_NOT_AVOID_RESULT.VehicleIsMoving); //shirley: 判斷對方正在移動中先不進行override
             }
             else
             {
@@ -2629,7 +2643,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                                  $" is vh of target adr:{check_target_address.targetAdr} address" +
                                                  $"reserved vh:{reservedVhID} current section:{reserved_vh.CUR_SEC_ID},don't excute override",
                                            VehicleID: requestVhID);
-                                    }
+                                    }//shirley: TODO 如果是在這裡加入判斷目的地address距離Error Car位置不到一台車的距離就不Override => 我們沒有距離資訊
                                     else
                                     {
                                         OvrerideByDriveOutFail(requestVhID, reservedVhID, check_can_creat_avoid_command.result);
@@ -2642,6 +2656,14 @@ namespace com.mirle.ibg3k0.sc.Service
                                     Data: $"vh:{requestVhID} of can't reserve section id:{request_vh.CanNotReserveInfo.ReservedSectionID}" +
                                           $"because reservedVh:{reservedVhID} status is {check_can_creat_avoid_command.result}." +
                                           $"waiting {reservedVhID} finished",
+                                    VehicleID: requestVhID);
+                                break;
+                            case CAN_NOT_AVOID_RESULT.VehicleIsMoving:
+                                //shirley: 對方正在移動，等待對方移動結束。
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                    Data: $"vh:{requestVhID} of can't reserve section id:{request_vh.CanNotReserveInfo.ReservedSectionID}" +
+                                          $"because reservedVh:{reservedVhID} status is {check_can_creat_avoid_command.result}." +
+                                          $"waiting {reservedVhID} moving away",
                                     VehicleID: requestVhID);
                                 break;
                             default:
