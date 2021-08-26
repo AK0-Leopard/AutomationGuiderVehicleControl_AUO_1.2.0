@@ -305,6 +305,8 @@ namespace com.mirle.ibg3k0.sc.BLL
                 string reserve_fail_section = "";
                 bool isFirst = true;
 
+                HltVehicle hltvh = mapAPI.HltVehicles.Where(v => SCUtility.isMatche(v.ID, vhID)).SingleOrDefault();
+                double originalSpeed = hltvh.SpeedMmPerSecond;
                 ReserveCheckResult result = default(ReserveCheckResult);
                 foreach (var reserve_info in reserveInfos)
                 {
@@ -324,7 +326,13 @@ namespace com.mirle.ibg3k0.sc.BLL
                         break;
                     }
 
-                    Mirle.Hlts.Utils.HltDirection hltDirection = Mirle.Hlts.Utils.HltDirection.NS;
+
+                    //2021.08.26 Hsinyu Chang: 預約每個section之前，都要先更新AGV車的行進方向(forward/reverse)
+                    double newSpeed = hltvh.SpeedMmPerSecond;
+                    newSpeed = (reserve_info.DriveDirction == DriveDirction.DriveDirReverse) ? -Math.Abs(newSpeed) : Math.Abs(newSpeed);
+                    hltvh.SpeedMmPerSecond = newSpeed;
+                    mapAPI.TryAddOrUpdateVehicle(hltvh);
+                    Mirle.Hlts.Utils.HltDirection hltDirection = Mirle.Hlts.Utils.HltDirection.Forward;
                     //Mirle.Hlts.Utils.HltDirection hltDirection = decideReserveDirection(vh, reserve_section_id);
                     //AVEHICLE vh = scApp.VehicleBLL.cache.getVehicle(vhID);
                     //Mirle.Hlts.Utils.HltDirection hltDirection = scApp.ReserveBLL.DecideReserveDirection(scApp.SectionBLL, vh, reserve_section_id);
@@ -377,6 +385,8 @@ namespace com.mirle.ibg3k0.sc.BLL
                         break;
                     }
                 }
+                hltvh.SpeedMmPerSecond = originalSpeed;
+                mapAPI.TryAddOrUpdateVehicle(hltvh);
 
                 return (has_success, final_blocked_vh_id, reserve_fail_section, reserve_success_section);
             }
