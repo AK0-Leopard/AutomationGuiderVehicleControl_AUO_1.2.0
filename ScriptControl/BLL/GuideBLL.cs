@@ -42,7 +42,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             int.TryParse(targetAddress, out int i_target_address);
 
             List<RouteInfo> stratFromRouteInfoList = null;
-            if (byPassSectionIDs == null || byPassSectionIDs.Count == 0)
+            if (byPassSectionIDs == null || byPassSectionIDs.Count == 0) //shirley: 沒有預約不到的section
             {
                 stratFromRouteInfoList = scApp.NewRouteGuide.getFromToRoutesAddrToAddr(i_start_address, i_target_address);
             }
@@ -51,9 +51,18 @@ namespace com.mirle.ibg3k0.sc.BLL
                 stratFromRouteInfoList = scApp.NewRouteGuide.getFromToRoutesAddrToAddr(i_start_address, i_target_address, byPassSectionIDs);
             }
             RouteInfo min_stratFromRouteInfo = null;
-            if (stratFromRouteInfoList != null && stratFromRouteInfoList.Count > 0)
+            if (stratFromRouteInfoList != null && stratFromRouteInfoList.Count > 0) //shirley: 有找到路徑
             {
-                min_stratFromRouteInfo = stratFromRouteInfoList.First();
+                //shirley: TODO 找到的路徑中有沒有不經過error vehicle所佔的section/address的走法。
+                //有: 選擇那條; 沒有: is_success = false
+                //foreach (var routeInfo in stratFromRouteInfoList)
+                //{
+                //    foreach (var routeInfoSection in routeInfo.sections)
+                //    {
+                //        //shirley: TODO 有跟error section重複到的就不選取
+                //    }
+                //}
+                min_stratFromRouteInfo = stratFromRouteInfoList.First(); //shirley: 從已經找到的路經中選擇最小的那個
                 is_success = true;
             }
             else
