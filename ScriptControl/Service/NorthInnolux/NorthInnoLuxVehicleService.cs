@@ -85,11 +85,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     if (WaitingRetryMCSCMDList.Count > 0)
                     {
-                        List<string> keyList = new List<string>();
-                        foreach (string k in WaitingRetryMCSCMDList.Keys)
-                        {
-                            keyList.Add(k);
-                        }
+                        List<string> keyList = WaitingRetryMCSCMDList.Keys.ToList();
                         foreach (string k in keyList)
                         {
                             bool isSuccess = scApp.CMDBLL.createWaitingRetryOHTCCmd(k, WaitingRetryMCSCMDList[k]);
@@ -108,7 +104,7 @@ namespace com.mirle.ibg3k0.sc.Service
             }
 
         }
-        public override bool isWaitingRetryMCSCMDListContainKey(string vh_id)
+        public override bool IsVehicleWaitingRetryMCSCMD(string vh_id)
         {
             if (WaitingRetryMCSCMDList.ContainsKey(vh_id.Trim()))
             {
@@ -3677,14 +3673,6 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
             }
 
-
-
-
-
-
-
-
-
             send_str = new ID_32_TRANS_COMPLETE_RESPONSE
             {
                 ReplyCode = 0
@@ -3719,9 +3707,6 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 vh.onCommandComplete(completeStatus);
             }
-
-
-
 
             if (scApp.getEQObjCacheManager().getLine().SCStats == ALINE.TSCState.PAUSING)
             {
