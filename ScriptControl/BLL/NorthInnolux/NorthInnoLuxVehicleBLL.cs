@@ -1511,12 +1511,14 @@ namespace com.mirle.ibg3k0.sc.BLL
                 //isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(cmd_id, E_CMD_STATUS.NormalEnd);
                 //isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(cmd_id, ohtc_cmd_status);
                 isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(vh_id, cmd_id, ohtc_cmd_status);
-
+                
                 if (!SCUtility.isEmpty(mcs_cmd_id))
                 {
-                    if ((completeStatus == CompleteStatus.CmpStatusVehicleAbort
-                        || completeStatus == CompleteStatus.CmpStatusInterlockError)
-                        && !vh.no_needs_to_retry) //20201030 added
+                    //Chris Modifyed 20210917
+                    //if ((completeStatus == CompleteStatus.CmpStatusVehicleAbort
+                    //    || completeStatus == CompleteStatus.CmpStatusInterlockError)
+                    //    && !vh.no_needs_to_retry) //20201030 added
+                    if ((completeStatus == CompleteStatus.CmpStatusVehicleAbort)&& !vh.no_needs_to_retry) //20201030 added
                     {
                         //do nothing...
                     }
