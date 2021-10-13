@@ -247,7 +247,14 @@ namespace com.mirle.ibg3k0.sc.Module
             foreach (CouplerAddress adr in coupler_addresses)
             {
                 string coupler_adr = adr.ADR_ID;
+                //濾掉自己所在的充電站
+                if (!SCUtility.isMatche(coupler_adr, vh_current_address))
+                {
+                    continue;
+                }
+
                 //1.確定路段是可以通的
+
                 if (!guideBLL.IsRoadWalkable(vh_current_address, coupler_adr))
                 {
                     continue;
@@ -415,11 +422,13 @@ namespace com.mirle.ibg3k0.sc.Module
                 if (vh.BatteryLevel == BatteryLevel.Low)
                 {
                     //確定它是在Auto charge mode 且 已經沒有在執行命令 且 目前所在的Addres不在充電站上 
-                    if (vh.MODE_STATUS == VHModeStatus.AutoCharging &&
+                    if (
+                        vh.MODE_STATUS == VHModeStatus.AutoCharging &&
                         vh.ACT_STATUS == VHActionStatus.NoCommand &&
                         (!(current_adr is CouplerAddress) ||
                         //((current_adr is CouplerAddress) && !(current_adr as CouplerAddress).IsEnable))
-                        ((current_adr is CouplerAddress) && !addressesBLL.cache.IsCouplerWork(current_adr as CouplerAddress, unitBLL)))
+                        ((current_adr is CouplerAddress) && !addressesBLL.cache.IsCouplerWork(current_adr as CouplerAddress, unitBLL)) ||
+                        ((current_adr is CouplerAddress) && vh.ACC_SEC_DIST != 0))
                        )
                     {
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleChargerModule), Device: DEVICE_NAME,
@@ -435,7 +444,8 @@ namespace com.mirle.ibg3k0.sc.Module
                         vh.ACT_STATUS == VHActionStatus.NoCommand &&
                         (!(current_adr is CouplerAddress) ||
                         //((current_adr is CouplerAddress) && !(current_adr as CouplerAddress).IsEnable))
-                        ((current_adr is CouplerAddress) && !addressesBLL.cache.IsCouplerWork(current_adr as CouplerAddress, unitBLL)))
+                        ((current_adr is CouplerAddress) && !addressesBLL.cache.IsCouplerWork(current_adr as CouplerAddress, unitBLL)) ||
+                        ((current_adr is CouplerAddress) && vh.ACC_SEC_DIST != 0))
                        )
                     {
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleChargerModule), Device: DEVICE_NAME,
