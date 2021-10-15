@@ -3577,17 +3577,19 @@ namespace com.mirle.ibg3k0.sc.Service
                                 vh.no_needs_to_retry = false;
                                 vh.curCMDRetryCount = 0;
                                 break;
-                            //case CompleteStatus.CmpStatusInterlockError:
-                            //    if (vh.HAS_CST == 1)
-                            //    {
-                            //        isSuccess = scApp.ReportBLL.newReportUnloadFailed(vh.VEHICLE_ID, reportqueues);
-                            //    }
-                            //    else
-                            //    {
-                            //        isSuccess = scApp.ReportBLL.newReportLoadFailed(vh.VEHICLE_ID, reportqueues);
-                            //    }
-                            //    isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
-                            //    break;
+                            case CompleteStatus.CmpStatusInterlockError:    //2021.10.15
+                                vh.curCMDRetryCount = 0;
+                                if (vh.HAS_CST == 1)
+                                {
+                                    isSuccess = scApp.ReportBLL.newReportUnloadFailed(vh.VEHICLE_ID, reportqueues);
+                                    informMCSCMDFailed = true;
+                                }
+                                else
+                                {
+                                    isSuccess = scApp.ReportBLL.newReportLoadFailed(vh.VEHICLE_ID, reportqueues);
+                                }
+                                isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
+                                break;
                             case CompleteStatus.CmpStatusMove:
                             case CompleteStatus.CmpStatusHome:
                             case CompleteStatus.CmpStatusOverride:
@@ -3602,29 +3604,30 @@ namespace com.mirle.ibg3k0.sc.Service
                                 vh.no_needs_to_retry = false;
                                 vh.curCMDRetryCount = 0;
                                 break;
-
                             case CompleteStatus.CmpStatusVehicleAbort: //20201030 added
-                            case CompleteStatus.CmpStatusInterlockError:
+                            //case CompleteStatus.CmpStatusInterlockError:
                                 //just add new ohtc command...
-                                if( vh.curCMDRetryCount >= cmdRetryCount)
-                                {
-                                    vh.curCMDRetryCount = 0;
-                                    isAddCmdToWaitingRetryMCSCMDList = false;
-                                    if (vh.HAS_CST == 1)
-                                    {
-                                        informMCSCMDFailed = true;
-                                    }
-                                    else
-                                    {
-                                        vh.no_needs_to_retry = true;
-                                        isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
-                                    }
-                                }
-                                else
-                                {
-                                    vh.curCMDRetryCount++;
-                                    isAddCmdToWaitingRetryMCSCMDList = true;
-                                }
+                                //if( vh.curCMDRetryCount >= cmdRetryCount)
+                                //{
+                                //    vh.curCMDRetryCount = 0;
+                                //    isAddCmdToWaitingRetryMCSCMDList = false;
+                                //    if (vh.HAS_CST == 1)
+                                //    {
+                                //        informMCSCMDFailed = true;
+                                //    }
+                                //    else
+                                //    {
+                                //        vh.no_needs_to_retry = true;
+                                //        isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
+                                //    }
+                                //}
+                                //else
+                                //{
+                                //    vh.curCMDRetryCount++;
+                                //    isAddCmdToWaitingRetryMCSCMDList = true;
+                                //}
+                                vh.curCMDRetryCount = 0;
+                                isAddCmdToWaitingRetryMCSCMDList = true;
                                 //WaitingRetryMCSCMDList.Add(vh.VEHICLE_ID, finish_mcs_cmd);
                                 break;
                             default:
