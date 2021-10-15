@@ -222,8 +222,6 @@ namespace com.mirle.ibg3k0.sc.Module
             }
         }
 
-
-
         private void Vh_CommandComplete(object sender, CompleteStatus e)
         {
             AVEHICLE vh = sender as AVEHICLE;

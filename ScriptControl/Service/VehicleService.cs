@@ -81,7 +81,7 @@ namespace com.mirle.ibg3k0.sc.Service
         {
             return;
         }
-        public virtual bool isWaitingRetryMCSCMDListContainKey(string vh_id)
+        public virtual bool IsVehicleWaitingRetryMCSCMD(string vh_id)
         {
             return false;
         }

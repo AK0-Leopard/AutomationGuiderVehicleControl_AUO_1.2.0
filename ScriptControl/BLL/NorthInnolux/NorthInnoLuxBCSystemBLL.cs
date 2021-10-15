@@ -29,7 +29,7 @@ namespace com.mirle.ibg3k0.sc.BLL
     /// <summary>
     /// Class BCSystemBLL.
     /// </summary>
-    public class NorthInnoLuxBCSystemBLL:BCSystemBLL
+    public class NorthInnoLuxBCSystemBLL : BCSystemBLL
     {
         /// <summary>
         /// The sc application
@@ -38,7 +38,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         /// <summary>
         /// The logger
         /// </summary>
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        //private static Logger logger = LogManager.GetCurrentClassLogger();
 
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         /// Starts the specified sc application.
         /// </summary>
         /// <param name="scApp">The sc application.</param>
-        public void start(SCApplication scApp)
+        public override void start(SCApplication scApp)
         {
             this.scApp = scApp;
             this.bcStatusDao = scApp.BCStatusDao;
@@ -73,7 +73,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         /// Initials the bc system.
         /// </summary>
         /// <returns>SCAppConstants.BCSystemInitialRtnCode.</returns>
-        public SCAppConstants.BCSystemInitialRtnCode initialBCSystem()
+        public override SCAppConstants.BCSystemInitialRtnCode initialBCSystem()
         {
             string bc_id = scApp.getBCFApplication().BC_ID;
             SCAppConstants.BCSystemInitialRtnCode rtnCode = SCAppConstants.BCSystemInitialRtnCode.Normal;
@@ -124,7 +124,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         /// <summary>
         /// Res the write bc system run time.
         /// </summary>
-        public void reWriteBCSystemRunTime()
+        public override void reWriteBCSystemRunTime()
         {
             string bc_id = scApp.getBCFApplication().BC_ID;
             try
@@ -149,7 +149,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         /// Closes the bc system.
         /// </summary>
         /// <returns>Boolean.</returns>
-        public Boolean closeBCSystem()
+        public override Boolean closeBCSystem()
         {
             string bc_id = scApp.getBCFApplication().BC_ID;
             try
@@ -217,11 +217,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                     SystemParameter.setMDLN(val);
                 }
 
-
-
-
-
-
                 else if (BCFUtility.isMatche(ecid, SCAppConstants.ECID_CONTROL_STATE_KEEPING_TIME))
                 {
                     SystemParameter.setControlStateKeepTime(Convert.ToInt16(val));
@@ -275,7 +270,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         /// <param name="user_id">The user_id.</param>
         /// <param name="formName">Name of the form.</param>
         /// <param name="action">The action.</param>
-        public void addOperationHis(string user_id, string formName, string action)
+        public override void addOperationHis(string user_id, string formName, string action)
         {
             DBConnection_EF conn = null;
             try
@@ -285,10 +280,12 @@ namespace com.mirle.ibg3k0.sc.BLL
                 string timeStamp = BCFUtility.formatDateTime(DateTime.Now, SCAppConstants.TimestampFormat_19);
                 HOPERATION his = new HOPERATION()
                 {
+                    SEQ_NO = BCFUtility.formatDateTime(DateTime.Now, SCAppConstants.TimestampFormat_17),
                     T_STAMP = timeStamp,
                     USER_ID = user_id,
                     FORM_NAME = formName,
-                    ACTION = action
+                    ACTION = action,
+                    INSERT_TIME = DateTime.Now,
                 };
                 SCUtility.PrintOperationLog(his);
                 operationHisDao.insertOperationHis(conn, his);

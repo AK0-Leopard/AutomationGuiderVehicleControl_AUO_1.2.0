@@ -969,6 +969,8 @@ namespace com.mirle.ibg3k0.sc.BLL
                         int idle_vh_count = scApp.VehicleBLL.cache.getVhCurrentStatusInIdleCount(scApp.CMDBLL);
                         if (idle_vh_count > 0)
                         {
+                            scApp.VehicleService.CreateCMDFromWaitingRetryMCSCMDList();
+
                             List<ACMD_MCS> ACMD_MCSs = scApp.CMDBLL.loadMCS_Command_Queue();
                             checkOnlyOneExcuteWTOCommand(ref ACMD_MCSs);
                             List<ACMD_MCS> port_priority_max_command = null;
@@ -1057,6 +1059,20 @@ namespace com.mirle.ibg3k0.sc.BLL
                                 ACMD_MCS nearest_cmd_mcs = null;
                                 List<AVEHICLE> vhs = scApp.VehicleBLL.cache.loadAllVh().ToList();
                                 scApp.VehicleBLL.filterVh(ref vhs, E_VH_TYPE.None);
+
+                                foreach (AVEHICLE vh in vhs.ToList())
+                                {
+                                    if (scApp.VehicleService.IsVehicleWaitingRetryMCSCMD(vh.VEHICLE_ID))
+                                    {
+                                        vhs.Remove(vh);
+                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
+                                           Data: $"vh id:{vh.VEHICLE_ID} is in WaitingRetryMCSCMDList," +
+                                                 $"so filter it out",
+                                           VehicleID: vh.VEHICLE_ID,
+                                           CarrierID: vh.CST_ID);
+                                    }
+                                }
+
                                 (nearest_vh, nearest_cmd_mcs) = FindNearestVhAndCommand(vhs, search_nearest_mcs_cmd);
                                 if (nearest_vh != null && nearest_cmd_mcs != null)
                                 {
@@ -1268,21 +1284,21 @@ namespace com.mirle.ibg3k0.sc.BLL
             if (waittingExcuteMcsCmd == null)//對應MCS指令已經消失，停止重下
             {
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxCMDBLL), Device: string.Empty,
-              Data: $"MCS command:{mcs_cmd_ID} could not be found,end retry cmd." +
+                    Data: $"MCS command:{mcs_cmd_ID} could not be found,end retry cmd." +
                     $"mode status:{vehicle.MODE_STATUS},battery level:{vehicle.BatteryLevel}",
-              XID: mcs_cmd_ID);
+                    XID: mcs_cmd_ID);
                 return true;
             }
             bool isTransferAlready = waittingExcuteMcsCmd.TRANSFERSTATE >= E_TRAN_STATUS.Transferring;
             List<AVEHICLE> vhs = new List<AVEHICLE>();
             vhs.Add(vehicle);
-            scApp.VehicleBLL.filterVh(ref vhs, E_VH_TYPE.None,false);
+            scApp.VehicleBLL.filterVh(ref vhs, E_VH_TYPE.None, false);
             if (vhs.Count < 1)
             {
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxCMDBLL), Device: string.Empty,
-              Data: $"MCS command:{waittingExcuteMcsCmd.CMD_ID} retry fail specify of vehicle:{vhID} not ready," +
+                    Data: $"MCS command:{waittingExcuteMcsCmd.CMD_ID} retry fail specify of vehicle:{vhID} not ready," +
                     $"please check vehicle status.",
-              XID: waittingExcuteMcsCmd.CMD_ID);
+                    XID: waittingExcuteMcsCmd.CMD_ID);
                 return false;
             }
             if (vehicle.MODE_STATUS != VHModeStatus.AutoRemote || vehicle.BatteryLevel == BatteryLevel.Low)
@@ -1297,7 +1313,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                               XID: waittingExcuteMcsCmd.CMD_ID);
                 return false;
             }
-
 
             string hostsource = waittingExcuteMcsCmd.HOSTSOURCE;
             string hostdest = waittingExcuteMcsCmd.HOSTDESTINATION;
@@ -1327,8 +1342,8 @@ namespace com.mirle.ibg3k0.sc.BLL
                 if (isCstOnVh && !isTransferAlready)
                 {
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxCMDBLL), Device: string.Empty,
-              Data: $"MCS command:{waittingExcuteMcsCmd.CMD_ID} retry with CST:{vehicle.CST_ID},",
-                              XID: waittingExcuteMcsCmd.CMD_ID);
+                        Data: $"MCS command:{waittingExcuteMcsCmd.CMD_ID} retry with CST:{vehicle.CST_ID},",
+                        XID: waittingExcuteMcsCmd.CMD_ID);
                     #region 補CarrierON的相關event
                     #region LoadArrival
                     //scApp.VIDBLL.upDateVIDPortID(vhID, EventType.LoadArrivals);

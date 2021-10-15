@@ -63,7 +63,14 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                     MessageBox.Show($"Command ID:{mcs_cmd.CMD_ID.Trim()} can't excute cancel / abort,\r\ncurrent state:{mcs_cmd.TRANSFERSTATE}", "Cancel / Abort command fail.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
-                await Task.Run(() => mainform.BCApp.SCApplication.VehicleService.doCancelOrAbortCommandByMCSCmdID(mcs_cmd.CMD_ID, cnacel_type));
+                await Task.Run(() => 
+                {
+                    mainform.BCApp.SCApplication.VehicleService.doCancelOrAbortCommandByMCSCmdID(mcs_cmd.CMD_ID, cnacel_type);
+                    if (cnacel_type == CMDCancelType.CmdCancel)
+                        mainform.BCApp.SCApplication.BCSystemBLL.addOperationHis("user", "AGVC", $"Manual cancel command ID {mcs_cmd.CMD_ID.Trim()}");
+                    else
+                        mainform.BCApp.SCApplication.BCSystemBLL.addOperationHis("user", "AGVC", $"Manual abort command ID {mcs_cmd.CMD_ID.Trim()}");
+                });
                 updateTransferCommand();
             }
             catch { }
@@ -107,6 +114,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                         }
                         mainform.BCApp.SCApplication.CMDBLL.updateCMD_MCS_TranStatus2Complete(mcs_cmd.CMD_ID, E_TRAN_STATUS.Canceled);
                         mainform.BCApp.SCApplication.ReportBLL.newReportTransferCommandFinish(mcs_cmd.cmd_mcs, excute_cmd_of_vh, sc.Data.SECS.AGVC.SECSConst.CMD_Result_Unsuccessful, null);
+                        mainform.BCApp.SCApplication.BCSystemBLL.addOperationHis("user", "AGVC", $"Force finish command ID {mcs_cmd.CMD_ID.Trim()}");
                     }
                     catch { }
                 }
