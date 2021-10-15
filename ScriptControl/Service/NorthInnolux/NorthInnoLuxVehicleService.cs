@@ -53,6 +53,10 @@ namespace com.mirle.ibg3k0.sc.Service
                     if (!WaitingRetryMCSCMDList.ContainsKey(vh_id))
                     {
                         WaitingRetryMCSCMDList.Add(vh_id, cmd);
+                        //Chris Add Log 20210927
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                        Data: $"Print WaitingRetryMCSCMDList CMD ID:{cmd} ",
+                        VehicleID: vh_id);
                     }
                 }
                 catch(Exception ex)
@@ -3239,7 +3243,8 @@ namespace com.mirle.ibg3k0.sc.Service
                         bCRReadResult = BCRReadResult.BcrReadFail;
                         scApp.CMDBLL.updateCMD_MCS_CmdState2BCRFail(vh.MCS_CMD);
                     }
-                    else if(!SCUtility.isMatche( carrier_id , vid_info.MCS_CARRIER_ID))
+                    //else if(!SCUtility.isMatche( carrier_id , vid_info.MCS_CARRIER_ID)) //Chris Add 修改手動命令會卡住136的問題
+                    else if (!SCUtility.isMatche(carrier_id, vid_info.MCS_CARRIER_ID) && !SCUtility.isEmpty(vh.MCS_CMD))
                     {
                         scApp.VIDBLL.upDateVIDCarrierID(vh.VEHICLE_ID, carrier_id);
                         bCRReadResult = BCRReadResult.BcrMisMatch;
@@ -3559,12 +3564,12 @@ namespace com.mirle.ibg3k0.sc.Service
                         {
                             case CompleteStatus.CmpStatusCancel:
                                 isSuccess = scApp.ReportBLL.newReportTransferCancelCompleted(vh.VEHICLE_ID, reportqueues);
-                                vh.no_needs_to_retry = false;
+                                vh.NeedToRetryAfterVehicleAbort = false;
                                 vh.curCMDRetryCount = 0;
                                 break;
                             case CompleteStatus.CmpStatusAbort:
                                 isSuccess = scApp.ReportBLL.newReportTransferCommandAbortFinish(vh.VEHICLE_ID, reportqueues);
-                                vh.no_needs_to_retry = false;
+                                vh.NeedToRetryAfterVehicleAbort = false;
                                 vh.curCMDRetryCount = 0;
                                 break;
                             case CompleteStatus.CmpStatusLoad:
@@ -3574,11 +3579,12 @@ namespace com.mirle.ibg3k0.sc.Service
                                 //case CompleteStatus.CmpStatusIdreadFailed:    //20210113 removed
                                 //case CompleteStatus.CmpStatusVehicleAbort:    //20201030 removed
                                 isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
-                                vh.no_needs_to_retry = false;
+                                vh.NeedToRetryAfterVehicleAbort = false;
                                 vh.curCMDRetryCount = 0;
                                 break;
                             case CompleteStatus.CmpStatusInterlockError:    //2021.10.15
                                 vh.curCMDRetryCount = 0;
+                                vh.NeedToRetryAfterVehicleAbort = false;
                                 if (vh.HAS_CST == 1)
                                 {
                                     isSuccess = scApp.ReportBLL.newReportUnloadFailed(vh.VEHICLE_ID, reportqueues);
@@ -3601,7 +3607,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             case CompleteStatus.CmpStatusTechingMove:
                             case CompleteStatus.CmpStatusIdmisMatch:      //20210113 added
                             case CompleteStatus.CmpStatusIdreadFailed:    //20210113 added
-                                vh.no_needs_to_retry = false;
+                                vh.NeedToRetryAfterVehicleAbort = false;
                                 vh.curCMDRetryCount = 0;
                                 break;
                             case CompleteStatus.CmpStatusVehicleAbort: //20201030 added
@@ -3626,8 +3632,19 @@ namespace com.mirle.ibg3k0.sc.Service
                                 //    vh.curCMDRetryCount++;
                                 //    isAddCmdToWaitingRetryMCSCMDList = true;
                                 //}
-                                vh.curCMDRetryCount = 0;
-                                isAddCmdToWaitingRetryMCSCMDList = true;
+                                if (cmdRetryCount >= 0 && vh.curCMDRetryCount < cmdRetryCount)
+                                {
+                                    vh.NeedToRetryAfterVehicleAbort = true;
+                                    vh.curCMDRetryCount++;
+                                    isAddCmdToWaitingRetryMCSCMDList = true;
+                                }
+                                else
+                                {
+                                    vh.curCMDRetryCount = 0;
+                                    isAddCmdToWaitingRetryMCSCMDList = false;
+                                    vh.NeedToRetryAfterVehicleAbort = false;
+                                    isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
+                                }
                                 //WaitingRetryMCSCMDList.Add(vh.VEHICLE_ID, finish_mcs_cmd);
                                 break;
                             default:
