@@ -72,10 +72,11 @@ namespace com.mirle.ibg3k0.sc.BLL
             return mapAPI.MapBitmapSource;
         }
 
-        public virtual (double x, double y, bool isTR50) GetHltMapAddress(string adrID)
+        public virtual (bool isExist, double x, double y, bool isTR50) GetHltMapAddress(string adrID)
         {
-            var adr_obj = mapAPI.GetAddressObjectByID(adrID);
-            return (adr_obj.X, adr_obj.Y, adr_obj.IsTR50);
+            //var adr_obj = mapAPI.GetAddressObjectByID(adrID);
+            var adr_obj = mapAPI.HltMapAddresses.Where(a => SCUtility.isMatche(a.ID, adrID)).FirstOrDefault();
+            return (adr_obj != null, adr_obj.X, adr_obj.Y, adr_obj.IsTR50);
         }
         public virtual HltMapSection GetHltMapSections(string secID)
         {
@@ -171,7 +172,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
             return result;
         }
-        private  int getVehicleDirection(DriveDirction driveDirction)
+        private int getVehicleDirection(DriveDirction driveDirction)
         {
             switch (driveDirction)
             {
@@ -262,9 +263,9 @@ namespace com.mirle.ibg3k0.sc.BLL
     public class ReserveBLLForByPass : ReserveBLL
     {
 
-        public override (double x, double y, bool isTR50) GetHltMapAddress(string adrID)
+        public override (bool isExist, double x, double y, bool isTR50) GetHltMapAddress(string adrID)
         {
-            return (0, 0, false);
+            return (true, 0, 0, false);
         }
         public override HltMapSection GetHltMapSections(string secID)
         {

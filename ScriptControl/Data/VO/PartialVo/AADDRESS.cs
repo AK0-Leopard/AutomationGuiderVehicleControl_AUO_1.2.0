@@ -170,6 +170,23 @@ namespace com.mirle.ibg3k0.sc
 
             return result;
         }
+        public bool IsPreciseOnHere(AVEHICLE vh, BLL.ReserveBLL reserveBLL)
+        {
+            var adr_result = reserveBLL.GetHltMapAddress(ADR_ID);
+            if (!adr_result.isExist) return true; //因為如果找不到對應的X、Y，就無法判斷是否是準確停在點上，因此保險作法就是回復true讓它當作已經是在點上
+            double distance = getDistance(vh.X_Axis, vh.Y_Axis, adr_result.x, adr_result.y);
+            if (distance > SystemParameter.MAX_ALLOW_DISTANCE_OFFSET_mm) return false;
+            else return true;
+        }
+
+        private double getDistance(double x1, double y1, double x2, double y2)
+        {
+            double dx, dy;
+            dx = x2 - x1;
+            dy = y2 - y1;
+            return Math.Sqrt(dx * dx + dy * dy);
+        }
+
     }
 
     public class ReserveEnhanceAddress : AADDRESS, IReserveEnhance
