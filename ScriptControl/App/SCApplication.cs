@@ -556,6 +556,10 @@ namespace com.mirle.ibg3k0.sc.App
             //bdTableWatcher = new DBTableWatcher(this);
             SystemParameter.setCstMaxWaitTime(getInt("CSTMaxWaitTime", 0));
             SystemParameter.setLongestFullyChargedIntervalTime(getInt("LongestFullyChargedIntervalTime", 15));
+
+            SystemParameter.setMaxAllowDistanceOffset_mm(getInt("MAX_ALLOW_DISTANCE_OFFSET_mm", 50));
+            SystemParameter.setMAX_ALLOW_VH_ACTION_TIME_SECOND(getInt("MAX_ALLOW_VH_ACTION_TIME_SECOND", 1200));
+
         }
 
         private void initialReserveSectionAPI()
@@ -1860,6 +1864,10 @@ namespace com.mirle.ibg3k0.sc.App
 
         public static bool AutoOverride = true;
 
+        public static int MAX_ALLOW_DISTANCE_OFFSET_mm { get; private set; } = 50;
+        public static int MAX_ALLOW_VH_ACTION_TIME_SECOND { get; private set; } = 1200;
+
+
         public static void setSECSConversactionTimeout(int timeout)
         {
             SECSConversactionTimeout = timeout;
@@ -1921,6 +1929,17 @@ namespace com.mirle.ibg3k0.sc.App
         {
             TheLongestFullyChargedIntervalTime_Mim = longestFullyChargedIntervalTime;
         }
+
+
+        public static void setMaxAllowDistanceOffset_mm(int maxAllowDistanceOffset_ms)
+        {
+            MAX_ALLOW_DISTANCE_OFFSET_mm = maxAllowDistanceOffset_ms;
+        }
+        public static void setMAX_ALLOW_VH_ACTION_TIME_SECOND(int maxAllowVhActionTime_sec)
+        {
+            MAX_ALLOW_VH_ACTION_TIME_SECOND = maxAllowVhActionTime_sec;
+        }
+
     }
 
     public class HAProxyConnectionTest

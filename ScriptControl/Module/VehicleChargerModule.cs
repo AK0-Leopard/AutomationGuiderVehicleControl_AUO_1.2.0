@@ -21,6 +21,7 @@ namespace com.mirle.ibg3k0.sc.Module
         private GuideBLL guideBLL = null;
         private CMDBLL cmdBLL = null;
         private UnitBLL unitBLL = null;
+        private ReserveBLL reserveBLL = null;
         private CommObjCacheManager commObjCacheManager = null;
         public VehicleChargerModule()
         {
@@ -35,6 +36,7 @@ namespace com.mirle.ibg3k0.sc.Module
             guideBLL = app.GuideBLL;
             cmdBLL = app.CMDBLL;
             unitBLL = app.UnitBLL;
+            reserveBLL = app.ReserveBLL;
             commObjCacheManager = app.getCommObjCacheManager();
             var vhs = app.getEQObjCacheManager().getAllVehicle();
             foreach (AVEHICLE vh in vhs)
@@ -428,7 +430,7 @@ namespace com.mirle.ibg3k0.sc.Module
                         (!(current_adr is CouplerAddress) ||
                         //((current_adr is CouplerAddress) && !(current_adr as CouplerAddress).IsEnable))
                         ((current_adr is CouplerAddress) && !addressesBLL.cache.IsCouplerWork(current_adr as CouplerAddress, unitBLL)) ||
-                        ((current_adr is CouplerAddress) && vh.ACC_SEC_DIST != 0))
+                        ((current_adr is CouplerAddress) && !(current_adr as CouplerAddress).IsPreciseOnHere(vh, reserveBLL)))
                        )
                     {
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleChargerModule), Device: DEVICE_NAME,
@@ -445,7 +447,7 @@ namespace com.mirle.ibg3k0.sc.Module
                         (!(current_adr is CouplerAddress) ||
                         //((current_adr is CouplerAddress) && !(current_adr as CouplerAddress).IsEnable))
                         ((current_adr is CouplerAddress) && !addressesBLL.cache.IsCouplerWork(current_adr as CouplerAddress, unitBLL)) ||
-                        ((current_adr is CouplerAddress) && vh.ACC_SEC_DIST != 0))
+                        ((current_adr is CouplerAddress) && !(current_adr as CouplerAddress).IsPreciseOnHere(vh, reserveBLL)))
                        )
                     {
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleChargerModule), Device: DEVICE_NAME,
