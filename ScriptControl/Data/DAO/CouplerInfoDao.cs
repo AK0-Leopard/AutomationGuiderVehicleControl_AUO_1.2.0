@@ -66,6 +66,29 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
             }
         }
 
+        public List<CouplerInfo> getCouplerInfos(SCApplication app)
+        {
+            try
+            {
+                DataTable dt = app.OHxCConfig.Tables["COUPLERINFO"];
+                var query = from c in dt.AsEnumerable()
+                            select new CouplerInfo
+                            {
+                                AddressID = c.Field<string>("ADDRESS_ID"),
+                                Priority = stringToInt(c.Field<string>("PRIORITY")),
+                                TrafficControlSegment = c.Field<string>("TRAFFIC_CONTROL_SEGMENT"),
+                                ChargerID = c.Field<string>("CHARGER_ID"),
+                                CouplerNum = stringToInt(c.Field<string>("COUPLER_NUM"))
+                            };
+                return query.ToList();
+            }
+            catch (Exception ex)
+            {
+                logger.Warn(ex);
+                throw;
+            }
+        }
+
         int stringToInt(string value)
         {
             int i_value = 0;

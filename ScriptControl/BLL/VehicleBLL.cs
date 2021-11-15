@@ -2094,7 +2094,9 @@ namespace com.mirle.ibg3k0.sc.BLL
                 CurrentDriveDirction = vh.CurrentDriveDirction,
                 BatteryCapacity = (uint)vh.BatteryCapacity,
                 ChargeStatus = vh.ChargeStatus,
-                BatteryTemperature = vh.BatteryTemperature
+                BatteryTemperature = vh.BatteryTemperature,
+                XAxis = vh.X_Axis,
+                YAxis = vh.Y_Axis,
             };
             if (vh.PredictSections != null)
                 vh_gpp.PredictPath.AddRange(vh.PredictSections);

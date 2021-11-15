@@ -133,6 +133,12 @@ namespace com.mirle.ibg3k0.sc.WebAPI
                     case SCAppConstants.MapInfoDataType.PortIcon:
                         query_data = JsonConvert.SerializeObject(scApp.MapBLL.loadAllPortIcon());
                         break;
+                    case SCAppConstants.MapInfoDataType.Charger:
+                        query_data = JsonConvert.SerializeObject(scApp.getEQObjCacheManager().getEquipmentByEQPTID("MCharger")?.UnitList);
+                        break;
+                    case SCAppConstants.MapInfoDataType.CouplerInfo:
+                        query_data = JsonConvert.SerializeObject(scApp.CouplerInfoDao.getCouplerInfos(scApp));
+                        break;
                     case SCAppConstants.MapInfoDataType.Vehicle:
                         query_data = JsonConvert.SerializeObject(scApp.getEQObjCacheManager().getAllVehicle());
                         break;
