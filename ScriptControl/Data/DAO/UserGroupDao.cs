@@ -10,7 +10,7 @@
 // ------------- -------------  -------------  ------  -----------------------------
 // 2015/01/02    Steven Hong    N/A            N/A     Initial Release
 // 2016/03/02    Kevin Wei      N/A            A0.01   增加Fun:updateUser_ClearGroupByGroupName
-// 2021/11/12    Allen Ting     N/A            NA      增加Fun:IsUserGroupExist (搬運功能)
+// 2021/11/15    Allen Ting     N/A            NA      增加Fun:IsUserGroupExist (搬運功能)
 //**********************************************************************************
 using System;
 using System.Collections.Generic;
