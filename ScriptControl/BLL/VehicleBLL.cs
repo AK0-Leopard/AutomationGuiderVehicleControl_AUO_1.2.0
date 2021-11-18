@@ -2102,6 +2102,8 @@ namespace com.mirle.ibg3k0.sc.BLL
                 vh_gpp.PredictPath.AddRange(vh.PredictSections);
             if (vh.WillPassSectionID != null)
                 vh_gpp.WillPassSectionID.AddRange(vh.WillPassSectionID);
+            if (vh.ReservedSectionID != null)
+                vh_gpp.ReservedSectionID.AddRange(vh.ReservedSectionID);
             if (vh.Alarms != null)
                 vh_gpp.Alarms.AddRange(vh.Alarms);
             LogManager.GetLogger("VehicleHistoricalInfo").Trace(vh_gpp.ToString());
