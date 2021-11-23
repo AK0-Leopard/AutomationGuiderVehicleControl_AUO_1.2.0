@@ -250,7 +250,7 @@ namespace com.mirle.ibg3k0.sc.Module
             {
                 string coupler_adr = adr.ADR_ID;
                 //濾掉自己所在的充電站
-                if (!SCUtility.isMatche(coupler_adr, vh_current_address))
+                if (SCUtility.isMatche(coupler_adr, vh_current_address))
                 {
                     continue;
                 }
