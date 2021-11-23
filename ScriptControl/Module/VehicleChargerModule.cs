@@ -254,6 +254,11 @@ namespace com.mirle.ibg3k0.sc.Module
             foreach (CouplerAddress adr in coupler_addresses)
             {
                 string coupler_adr = adr.ADR_ID;
+                //過濾掉自己所在的位置
+                if (SCUtility.isMatche(vh_current_address, coupler_adr))
+                {
+                    continue;
+                }
                 //1.確定路段是可以通的
                 if (!guideBLL.IsRoadWalkable(vh_current_address, coupler_adr))
                 {
