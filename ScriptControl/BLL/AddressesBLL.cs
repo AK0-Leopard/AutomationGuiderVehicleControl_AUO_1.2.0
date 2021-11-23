@@ -108,6 +108,10 @@ namespace com.mirle.ibg3k0.sc.BLL
             public bool IsCouplerWork(CouplerAddress couplerAddress, UnitBLL unitBLL)
             {
                 string bc_id = SCApplication.getInstance().BC_ID;
+
+                //Chris Add 20211108 暫時忽略PLC訊號，一律回OK
+                if (bc_id != "") return true;
+
                 if (bc_id == "NORTH_INNOLUX_Test_Site") return true;//暫時都return ok
                 AUNIT charger = unitBLL.OperateCatch.getUnit(couplerAddress.ChargerID);
                 if (charger != null)
