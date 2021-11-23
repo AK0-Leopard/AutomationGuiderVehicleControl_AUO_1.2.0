@@ -92,6 +92,14 @@ namespace com.mirle.ibg3k0.sc.WebAPI
                 response.ContentType = restfulContentType;
                 return response;
             };
+
+            Post["ConnectionInfo/ThisExist"] = (p) =>
+            {
+                string result = "OK";
+                var response = (Response)result;
+                response.ContentType = restfulContentType;
+                return response;
+            };
         }
     }
 }

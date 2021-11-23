@@ -2094,12 +2094,16 @@ namespace com.mirle.ibg3k0.sc.BLL
                 CurrentDriveDirction = vh.CurrentDriveDirction,
                 BatteryCapacity = (uint)vh.BatteryCapacity,
                 ChargeStatus = vh.ChargeStatus,
-                BatteryTemperature = vh.BatteryTemperature
+                BatteryTemperature = vh.BatteryTemperature,
+                XAxis = vh.X_Axis,
+                YAxis = vh.Y_Axis,
             };
             if (vh.PredictSections != null)
                 vh_gpp.PredictPath.AddRange(vh.PredictSections);
             if (vh.WillPassSectionID != null)
                 vh_gpp.WillPassSectionID.AddRange(vh.WillPassSectionID);
+            if (vh.ReservedSectionID != null)
+                vh_gpp.ReservedSectionID.AddRange(vh.ReservedSectionID);
             if (vh.Alarms != null)
                 vh_gpp.Alarms.AddRange(vh.Alarms);
             LogManager.GetLogger("VehicleHistoricalInfo").Trace(vh_gpp.ToString());

@@ -13,6 +13,8 @@
 //                                                     Adjust User Function to User Froup Function
 // 2016/02/23    Steven Hong    N/A            A0.02   Add Query By Badge_Number
 // 2016/03/30    Kevin Wei      N/A            A0.03   新增當User Group被刪除時，要將其User有於其相關的給清空。
+// 2021/11/15    Allen Ting     N/A            NA      增加Fun:IsGrpExist (搬運功能), checkUserActivation
+//                                                     Fun:deleteUserGroup時deleteUserFuncByUserGrp
 //**********************************************************************************
 using System;
 using System.Collections.Generic;
@@ -209,6 +211,20 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
             }
             return true;
+        }
+        public bool IsGrpExist(string grp)
+        {
+            DBConnection_EF conn = null;
+            try
+            {
+                conn = DBConnection_EF.GetContext();
+                bool result = userGroupDao.IsUserGroupExist(conn, grp);
+                return result;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
 
@@ -820,6 +836,52 @@ namespace com.mirle.ibg3k0.sc.BLL
             return rtnList;
         }
 
+        public Boolean checkUserActivation(string user_id)
+        {
+            DBConnection_EF conn = null;
+            Boolean result = true;
+            try
+            {
+                conn = DBConnection_EF.GetContext();
+                conn.BeginTransaction();
+                UASUSR loginUser = userDao.getUser(conn, false, user_id);
+                if (loginUser == null)
+                {
+                    result = false;
+                }
+                else
+                {
+                    bool isDisable = loginUser.DISABLE_FLG?.Trim() == SCAppConstants.YES_FLAG;
+                    if (isDisable)
+                    {
+                        result = false;
+                    }
+                }
+                conn.Commit();
+            }
+            catch (Exception ex)
+            {
+                logger.Warn("Load User Function Failed from UASUFNC [user_id:{0}]",
+                    user_id, ex);
+                result = false;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    try
+                    {
+                        conn.Close();
+                    }
+                    catch (Exception exception)
+                    {
+                        logger.Warn("Close Connection Failed.", exception);
+                    }
+                }
+            }
+            return result;
+        }
+
         public Boolean checkUserPassword(string user_id, string password)
         {
             DBConnection_EF conn = null;
@@ -999,6 +1061,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             {
                 conn = DBConnection_EF.GetContext();
                 conn.BeginTransaction();
+                userFuncDao.deleteUserFuncByUserGrp(conn, user_grp);
                 userGroupDao.deleteUserGroupByID(conn, user_grp);
                 userGroupDao.updateUser_ClearGroupByGroupName(conn, user_grp); //A0.03
                 conn.Commit();

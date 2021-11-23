@@ -466,6 +466,7 @@ namespace com.mirle.ibg3k0.sc
             }
         }
 
+        public virtual List<string> ReservedSectionID { get; set; }
         public virtual List<string> WillPassSectionID { get; set; }
         public virtual List<string> WillPassAddressID { get; set; }
 

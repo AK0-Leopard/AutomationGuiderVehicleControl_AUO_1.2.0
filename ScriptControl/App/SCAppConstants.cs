@@ -1114,6 +1114,8 @@ namespace com.mirle.ibg3k0.sc.App
             Segment,
             Port,
             PortIcon,
+            Charger,
+            CouplerInfo,
             Vehicle,
             Line,
             BlockZoneDetail,

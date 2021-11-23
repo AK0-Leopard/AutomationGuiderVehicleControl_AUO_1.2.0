@@ -10,6 +10,7 @@
 // ------------- -------------  -------------  ------  -----------------------------
 // 2015/01/02    Steven Hong    N/A            N/A     Initial Release
 // 2016/03/02    Kevin Wei      N/A            A0.01   增加Fun:updateUser_ClearGroupByGroupName
+// 2021/11/15    Allen Ting     N/A            NA      增加Fun:IsUserGroupExist (搬運功能)
 //**********************************************************************************
 using System;
 using System.Collections.Generic;
@@ -41,7 +42,19 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
                 throw;
             }
         }
-
+        public bool IsUserGroupExist(DBConnection_EF conn, string userGrp)
+        {
+            try
+            {
+                var result = conn.UASUSRGRP.Where(x => x.USER_GRP == userGrp).FirstOrDefault();
+                return result != null;
+            }
+            catch (Exception ex)
+            {
+                logger.Warn(ex);
+                throw;
+            }
+        }
         public void updateUserGroup(DBConnection_EF conn, UASUSRGRP userGrp)
         {
             try

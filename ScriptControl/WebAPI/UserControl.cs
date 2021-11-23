@@ -5,6 +5,7 @@ using Nancy;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -40,6 +41,10 @@ namespace com.mirle.ibg3k0.sc.WebAPI
                     Boolean loginSuccess = false;
                     Boolean hasAuth = false;
                     if (!SCUtility.isEmpty(userID))
+                    {
+                        loginSuccess = scApp.UserBLL.checkUserActivation(userID);
+                    }
+                    if (loginSuccess)
                     {
                         loginSuccess = scApp.UserBLL.checkUserPassword(userID, password);
                     }
@@ -191,7 +196,7 @@ namespace com.mirle.ibg3k0.sc.WebAPI
                 string badgeNo = Request.Query.badgeNo.Value ?? Request.Form.badgeNo.Value ?? string.Empty;
                 //string isAdmin = Request.Query.isAdmin.Value ?? Request.Form.isAdmin.Value ?? string.Empty;
                 string department = Request.Query.department.Value ?? Request.Form.department.Value ?? string.Empty;
-                bool bIsDisable = isDisable == true.ToString();
+                bool bIsDisable = isDisable == true.ToString() || isDisable == SCAppConstants.YES_FLAG;
                 //bool bIsPowerUser = isPowerUser == true.ToString();
                 //bool bIsAdmin = isAdmin == true.ToString();
                 try
@@ -248,7 +253,7 @@ namespace com.mirle.ibg3k0.sc.WebAPI
                 string badgeNo = Request.Query.badgeNo.Value ?? Request.Form.badgeNo.Value ?? string.Empty;
                 //string isAdmin = Request.Query.isAdmin.Value ?? Request.Form.isAdmin.Value ?? string.Empty;
                 string department = Request.Query.department.Value ?? Request.Form.department.Value ?? string.Empty;
-                bool bIsDisable = isDisable == true.ToString();
+                bool bIsDisable = isDisable == true.ToString() || isDisable == SCAppConstants.YES_FLAG;
                 //bool bIsPowerUser = isPowerUser == true.ToString();
                 //bool bIsAdmin = isAdmin == true.ToString();
                 try
@@ -326,16 +331,27 @@ namespace com.mirle.ibg3k0.sc.WebAPI
                 bool isSuccess = true;
                 string result = string.Empty;
 
-                string userGrp = Request.Query.userGrp.Value ?? Request.Form.userGrp.Value ?? string.Empty;
-                string funcCloseSystem = Request.Query.funcCloseSystem.Value ?? Request.Form.funcCloseSystem.Value ?? string.Empty;
-                string funcSystemControlMode = Request.Query.funcSystemControlMode.Value ?? Request.Form.funcSystemControlMode.Value ?? string.Empty;
-                string funcLogin = Request.Query.funcLogin.Value ?? Request.Form.funcLogin.Value ?? string.Empty;
-                string funcAccountManagement = Request.Query.funcAccountManagement.Value ?? Request.Form.funcAccountManagement.Value ?? string.Empty;
-                string funcVehicleManagement = Request.Query.funcVehicleManagement.Value ?? Request.Form.funcVehicleManagement.Value ?? string.Empty;
-                string funcTransferManagement = Request.Query.funcTransferManagement.Value ?? Request.Form.funcTransferManagement.Value ?? string.Empty;
-                string funcAdvancedSetting = Request.Query.funcAdvancedSetting.Value ?? Request.Form.funcAdvancedSetting.Value ?? string.Empty;
-                string funcPortMaintenance = Request.Query.funcPortMaintenance.Value ?? Request.Form.funcPortMaintenance.Value ?? string.Empty;
-                string funcDebug = Request.Query.funcDebug.Value ?? Request.Form.funcDebug.Value ?? string.Empty;
+                string resuleJson = string.Empty;
+                using (Stream stream = Request.Body)
+                {
+                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding("UTF-8")))
+                    {
+                        resuleJson = reader.ReadToEnd();
+                    }
+                }
+                var fun_enable = JsonConvert.DeserializeObject<Dictionary<string, bool>>(resuleJson);
+                string userGrp = fun_enable.FirstOrDefault().Key;
+
+                //string userGrp = Request.Query.userGrp.Value ?? Request.Form.userGrp.Value ?? string.Empty;
+                //string funcCloseSystem = Request.Query.funcCloseSystem.Value ?? Request.Form.funcCloseSystem.Value ?? string.Empty;
+                //string funcSystemControlMode = Request.Query.funcSystemControlMode.Value ?? Request.Form.funcSystemControlMode.Value ?? string.Empty;
+                //string funcLogin = Request.Query.funcLogin.Value ?? Request.Form.funcLogin.Value ?? string.Empty;
+                //string funcAccountManagement = Request.Query.funcAccountManagement.Value ?? Request.Form.funcAccountManagement.Value ?? string.Empty;
+                //string funcVehicleManagement = Request.Query.funcVehicleManagement.Value ?? Request.Form.funcVehicleManagement.Value ?? string.Empty;
+                //string funcTransferManagement = Request.Query.funcTransferManagement.Value ?? Request.Form.funcTransferManagement.Value ?? string.Empty;
+                //string funcAdvancedSetting = Request.Query.funcAdvancedSetting.Value ?? Request.Form.funcAdvancedSetting.Value ?? string.Empty;
+                //string funcPortMaintenance = Request.Query.funcPortMaintenance.Value ?? Request.Form.funcPortMaintenance.Value ?? string.Empty;
+                //string funcDebug = Request.Query.funcDebug.Value ?? Request.Form.funcDebug.Value ?? string.Empty;
 
                 try
                 {
@@ -345,15 +361,42 @@ namespace com.mirle.ibg3k0.sc.WebAPI
                     }
                     else
                     {
-                        Boolean createSuccess =
-                        scApp.UserBLL.addUserGroup(userGrp);
+                        Boolean createSuccess = scApp.UserBLL.addUserGroup(userGrp);
                         if (createSuccess)
                         {
-                            result = "OK";
+                            List<string> functionList = new List<string>();
+                            foreach (var item in fun_enable)
+                            {
+                                if (item.Value == true)
+                                {
+                                    functionList.Add(item.Key);
+                                }
+                            }
+
+                            //if (bfuncCloseSystem) functionList.Add(SCAppConstants.FUNC_CLOSE_SYSTEM);
+                            //if (bfuncSystemControlMode) functionList.Add(SCAppConstants.FUNC_SYSTEM_CONCROL_MODE);
+                            //if (bfuncLogin) functionList.Add(SCAppConstants.FUNC_LOGIN);
+                            //if (bfuncAccountManagement) functionList.Add(SCAppConstants.FUNC_ACCOUNT_MANAGEMENT);
+                            //if (bfuncVehicleManagement) functionList.Add(SCAppConstants.FUNC_VEHICLE_MANAGEMENT);
+                            //if (bfuncTransferManagement) functionList.Add(SCAppConstants.FUNC_TRANSFER_MANAGEMENT);
+                            //if (bfuncMTLMTSMaintenance) functionList.Add(SCAppConstants.FUNC_MTS_MTL_MAINTENANCE);
+                            //if (bfuncPortMaintenance) functionList.Add(SCAppConstants.FUNC_PORT_MAINTENANCE);
+                            //if (bfunDebug) functionList.Add(SCAppConstants.FUNC_DEBUG);
+                            //if (bfunAdvancedSettings) functionList.Add(SCAppConstants.FUNC_ADVANCED_SETTINGS);
+
+                            createSuccess = scApp.UserBLL.registerUserFunc(userGrp, functionList);
+                            if (createSuccess)
+                            {
+                                result = "OK";
+                            }
+                            else
+                            {
+                                result = "Create user function failed.";
+                            }
                         }
                         else
                         {
-                            result = "CREATE_FAILED";
+                            result = "Create user group failed.";
                         }
                     }
                 }
@@ -374,26 +417,38 @@ namespace com.mirle.ibg3k0.sc.WebAPI
                 bool isSuccess = true;
                 string result = string.Empty;
 
-                string userGrp = Request.Query.userGrp.Value ?? Request.Form.userGrp.Value ?? string.Empty;
-                string funcCloseSystem = Request.Query.funcCloseSystem.Value ?? Request.Form.funcCloseSystem.Value ?? string.Empty;
-                string funcSystemControlMode = Request.Query.funcSystemControlMode.Value ?? Request.Form.funcSystemControlMode.Value ?? string.Empty;
-                string funcLogin = Request.Query.funcLogin.Value ?? Request.Form.funcLogin.Value ?? string.Empty;
-                string funcAccountManagement = Request.Query.funcAccountManagement.Value ?? Request.Form.funcAccountManagement.Value ?? string.Empty;
-                string funcVehicleManagement = Request.Query.funcVehicleManagement.Value ?? Request.Form.funcVehicleManagement.Value ?? string.Empty;
-                string funcTransferManagement = Request.Query.funcTransferManagement.Value ?? Request.Form.funcTransferManagement.Value ?? string.Empty;
-                string funcAdvancedSetting = Request.Query.funcAdvancedSetting.Value ?? Request.Form.funcAdvancedSetting.Value ?? string.Empty;
-                string funcPortMaintenance = Request.Query.funcPortMaintenance.Value ?? Request.Form.funcPortMaintenance.Value ?? string.Empty;
-                string funcDebug = Request.Query.funcDebug.Value ?? Request.Form.funcDebug.Value ?? string.Empty;
+                string resuleJson = string.Empty;
+                using (Stream stream = Request.Body)
+                {
+                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding("UTF-8")))
+                    {
+                        resuleJson = reader.ReadToEnd();
+                    }
+                }
 
-                bool bfuncCloseSystem = funcCloseSystem == true.ToString();
-                bool bfuncSystemControlMode = funcSystemControlMode == true.ToString();
-                bool bfuncLogin = funcLogin == true.ToString();
-                bool bfuncAccountManagement = funcAccountManagement == true.ToString();
-                bool bfuncVehicleManagement = funcVehicleManagement == true.ToString();
-                bool bfuncTransferManagement = funcTransferManagement == true.ToString();
-                bool bfuncAdvancedSetting = funcAdvancedSetting == true.ToString();
-                bool bfuncPortMaintenance = funcPortMaintenance == true.ToString();
-                bool bfunDebug = funcDebug == true.ToString();
+                var fun_enable = JsonConvert.DeserializeObject<Dictionary<string, bool>>(resuleJson);
+                string userGrp = fun_enable.FirstOrDefault().Key;
+
+                //string userGrp = Request.Query.userGrp.Value ?? Request.Form.userGrp.Value ?? string.Empty;
+                //string funcCloseSystem = Request.Query.funcCloseSystem.Value ?? Request.Form.funcCloseSystem.Value ?? string.Empty;
+                //string funcSystemControlMode = Request.Query.funcSystemControlMode.Value ?? Request.Form.funcSystemControlMode.Value ?? string.Empty;
+                //string funcLogin = Request.Query.funcLogin.Value ?? Request.Form.funcLogin.Value ?? string.Empty;
+                //string funcAccountManagement = Request.Query.funcAccountManagement.Value ?? Request.Form.funcAccountManagement.Value ?? string.Empty;
+                //string funcVehicleManagement = Request.Query.funcVehicleManagement.Value ?? Request.Form.funcVehicleManagement.Value ?? string.Empty;
+                //string funcTransferManagement = Request.Query.funcTransferManagement.Value ?? Request.Form.funcTransferManagement.Value ?? string.Empty;
+                //string funcAdvancedSetting = Request.Query.funcAdvancedSetting.Value ?? Request.Form.funcAdvancedSetting.Value ?? string.Empty;
+                //string funcPortMaintenance = Request.Query.funcPortMaintenance.Value ?? Request.Form.funcPortMaintenance.Value ?? string.Empty;
+                //string funcDebug = Request.Query.funcDebug.Value ?? Request.Form.funcDebug.Value ?? string.Empty;
+
+                //bool bfuncCloseSystem = funcCloseSystem == true.ToString();
+                //bool bfuncSystemControlMode = funcSystemControlMode == true.ToString();
+                //bool bfuncLogin = funcLogin == true.ToString();
+                //bool bfuncAccountManagement = funcAccountManagement == true.ToString();
+                //bool bfuncVehicleManagement = funcVehicleManagement == true.ToString();
+                //bool bfuncTransferManagement = funcTransferManagement == true.ToString();
+                //bool bfuncAdvancedSetting = funcAdvancedSetting == true.ToString();
+                //bool bfuncPortMaintenance = funcPortMaintenance == true.ToString();
+                //bool bfunDebug = funcDebug == true.ToString();
 
                 try
                 {
@@ -404,21 +459,29 @@ namespace com.mirle.ibg3k0.sc.WebAPI
                     else
                     {
                         List<string> functionList = new List<string>();
-                        if (bfuncCloseSystem) functionList.Add(SCAppConstants.FUNC_CLOSE_SYSTEM);
-                        if (bfuncSystemControlMode) functionList.Add(SCAppConstants.FUNC_SYSTEM_CONCROL_MODE);
-                        if (bfuncLogin) functionList.Add(SCAppConstants.FUNC_LOGIN);
-                        if (bfuncAccountManagement) functionList.Add(SCAppConstants.FUNC_ACCOUNT_MANAGEMENT);
-                        if (bfuncVehicleManagement) functionList.Add(SCAppConstants.FUNC_VEHICLE_MANAGEMENT);
-                        if (bfuncTransferManagement) functionList.Add(SCAppConstants.FUNC_TRANSFER_MANAGEMENT);
-                        if (bfuncAdvancedSetting) functionList.Add(SCAppConstants.FUNC_ADVANCED_SETTING);
-                        if (bfuncPortMaintenance) functionList.Add(SCAppConstants.FUNC_PORT_MAINTENANCE);
-                        if (bfunDebug) functionList.Add(SCAppConstants.FUNC_DEBUG);
+                        foreach (var item in fun_enable)
+                        {
+                            if (item.Value == true)
+                            {
+                                functionList.Add(item.Key);
+                            }
+                        }
+                        //if (bfuncCloseSystem) functionList.Add(SCAppConstants.FUNC_CLOSE_SYSTEM);
+                        //if (bfuncSystemControlMode) functionList.Add(SCAppConstants.FUNC_SYSTEM_CONCROL_MODE);
+                        //if (bfuncLogin) functionList.Add(SCAppConstants.FUNC_LOGIN);
+                        //if (bfuncAccountManagement) functionList.Add(SCAppConstants.FUNC_ACCOUNT_MANAGEMENT);
+                        //if (bfuncVehicleManagement) functionList.Add(SCAppConstants.FUNC_VEHICLE_MANAGEMENT);
+                        //if (bfuncTransferManagement) functionList.Add(SCAppConstants.FUNC_TRANSFER_MANAGEMENT);
+                        //if (bfuncAdvancedSetting) functionList.Add(SCAppConstants.FUNC_ADVANCED_SETTING);
+                        //if (bfuncPortMaintenance) functionList.Add(SCAppConstants.FUNC_PORT_MAINTENANCE);
+                        //if (bfunDebug) functionList.Add(SCAppConstants.FUNC_DEBUG);
 
-                        
-                        Boolean updateSuccess = scApp.UserBLL.registerUserFunc(userGrp, functionList);
+                        bool updateSuccess = false;
+                        if (scApp.UserBLL.IsGrpExist(userGrp))
+                        {
+                            updateSuccess = scApp.UserBLL.registerUserFunc(userGrp, functionList);
+                        }
                         //scApp.UserBLL.addUserGroup(userGrp);
-
-
 
                         if (updateSuccess)
                         {
