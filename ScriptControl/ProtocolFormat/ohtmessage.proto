@@ -764,6 +764,10 @@ message Timestamp {
 	uint32 BatteryCapacity = 50;
 	VhChargeStatus ChargeStatus = 51;
 	int32 BatteryTemperature = 52;
+
+	double X_Axis = 53;
+	double Y_Axis = 54;
+	repeated string ReservedSectionID = 55;
   }
 
 

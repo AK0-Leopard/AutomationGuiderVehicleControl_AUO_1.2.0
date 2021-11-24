@@ -473,7 +473,8 @@ namespace com.mirle.ibg3k0.sc
                 OnPropertyChanged(BCFUtility.getPropertyName(() => this.Status_Info_PLC));
             }
         }
-
+        
+        public virtual List<string> ReservedSectionID { get; set; }
         public virtual List<string> WillPassSectionID { get; set; }
         //public virtual List<string> WillPassAddressID { get; set; }
         public virtual List<string> WillPassAddressID
