@@ -4,8 +4,8 @@ using System;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
-using Mirle.AK0.Hlt.Utils;
-using Mirle.AK0.Hlt.ReserveSection.Map.ViewModels;
+using Mirle.Hlts.Utils;
+using Mirle.Hlts.ReserveSection.Map.ViewModels;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 
 namespace com.mirle.ibg3k0.sc.BLL
@@ -13,7 +13,7 @@ namespace com.mirle.ibg3k0.sc.BLL
     public class ReserveBLL
     {
         NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private MapViewModel mapAPI { get; set; }
+        private HltMapViewModel mapAPI { get; set; }
         private SCApplication SCApp;
 
         private EventHandler reserveStatusChange;
@@ -143,8 +143,9 @@ namespace com.mirle.ibg3k0.sc.BLL
             //HltResult result = mapAPI.TryAddVehicleOrUpdate(vhID, vehicleX, vehicleY, vehicleAngle, sensorDir, forkDir);
             //var hlt_vh = new HltVehicle(vhID, vehicleX, vehicleY, vehicleAngle, speedMmPerSecond, sensorDirection: sensorDir, forkDirection: forkDir);
             var hlt_vh = new HltVehicle(vhID, vehicleX, vehicleY, vehicleAngle, speedMmPerSecond, sensorDirection: sensorDir, forkDirection: forkDir, currentSectionID: currentSectionID);
-            HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh, isKeepRestSection: true);
-            //mapAPI.KeepRestSection(hlt_vh, currentSectionID);
+            //HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh, isKeepRestSection: true);
+            HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh);
+            mapAPI.KeepRestSection(hlt_vh);
             onReserveStatusChange();
 
             return result;
@@ -218,11 +219,11 @@ namespace com.mirle.ibg3k0.sc.BLL
             //int.TryParse(sectionID, out sec_id);
             string sec_id = SCUtility.Trim(sectionID);
             int vehicle_direction = getVehicleDirection(driveDirection);
-            //HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, isAsk);
+            HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, isAsk);
 
             if (SCUtility.isMatche(sec_id, "0162"))
                 sensorDir = HltDirection.None;
-            HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, vehicle_direction, isAsk);
+            //HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, vehicle_direction, isAsk);
             LogHelper.Log(logger: logger, LogLevel: NLog.LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
                Data: $"vh:{vhID} Try add reserve section:{sectionID} sensor dir:{sensorDir} forkDIr:{forkDir} vh dir:{vehicle_direction},result:{result}",
                VehicleID: vhID);
@@ -331,16 +332,19 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
         public override HltResult TryAddVehicleOrUpdateResetSensorForkDir(string vhID)
         {
-            return new HltResult(true);
+            //return new HltResult(true);
+            return new HltResult();
         }
         public override HltResult TryAddVehicleOrUpdate(string vhID, string currentSectionID, double vehicleX, double vehicleY, float vehicleAngle, double speedMmPerSecond,
                                            HltDirection sensorDir, HltDirection forkDir)
         {
-            return new HltResult(true);
+            //return new HltResult(true);
+            return new HltResult();
         }
         public override HltResult TryAddVehicleOrUpdate(string vhID, string adrID, float angle = 0)
         {
-            return new HltResult(true);
+            //return new HltResult(true);
+            return new HltResult();
         }
 
         public override void RemoveManyReservedSectionsByVIDSID(string vhID, string sectionID)
@@ -364,12 +368,14 @@ namespace com.mirle.ibg3k0.sc.BLL
             HltDirection sensorDir = HltDirection.ForwardReverse, HltDirection forkDir = HltDirection.None,
             DriveDirction driveDirection = DriveDirction.DriveDirNone, bool isAsk = false)
         {
-            return new HltResult(true);
+            //return new HltResult(true);
+            return new HltResult();
         }
 
         public override HltResult RemoveAllReservedSectionsBySectionID(string sectionID)
         {
-            return new HltResult(true);
+            //return new HltResult(true);
+            return new HltResult();
         }
 
         public override void RemoveAllReservedSectionsByVehicleID(string vhID)

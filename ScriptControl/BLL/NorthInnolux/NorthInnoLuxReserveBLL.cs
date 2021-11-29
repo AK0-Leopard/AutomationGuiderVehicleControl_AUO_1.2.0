@@ -3,15 +3,15 @@ using com.mirle.ibg3k0.sc.Common;
 using System;
 using System.Text;
 using System.Linq;
-using Mirle.AK0.Hlt.Utils;
-using Mirle.AK0.Hlt.ReserveSection.Map.ViewModels;
+using Mirle.Hlts.Utils;
+using Mirle.Hlts.ReserveSection.Map.ViewModels;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
     public class NorthInnoLuxReserveBLL : ReserveBLL
     {
         NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private MapViewModel mapAPI { get; set; }
+        private HltMapViewModel mapAPI { get; set; }
 
         private EventHandler reserveStatusChange;
         private object _reserveStatusChangeEventLock = new object();
@@ -138,8 +138,8 @@ namespace com.mirle.ibg3k0.sc.BLL
             //int.TryParse(sectionID, out sec_id);
             string sec_id = SCUtility.Trim(sectionID);
 
-            //HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, isAsk);
-            HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, 0, isAsk);//暫時先都填入0之後要再確認 Kevin
+            HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, isAsk);
+            //HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, 0, isAsk);//暫時先都填入0之後要再確認 Kevin
             onReserveStatusChange();
 
             return result;

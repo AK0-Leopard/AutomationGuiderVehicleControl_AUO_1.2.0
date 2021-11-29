@@ -1,7 +1,7 @@
 ﻿using com.mirle.ibg3k0.bc.winform.App;
 using com.mirle.ibg3k0.bc.winform.Common;
 using com.mirle.ibg3k0.sc;
-using Mirle.AK0.Hlt.Utils;
+using Mirle.Hlts.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data;

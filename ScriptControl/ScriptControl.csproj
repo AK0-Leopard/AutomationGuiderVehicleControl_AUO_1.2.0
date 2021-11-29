@@ -152,14 +152,14 @@
     <Reference Include="M2Mqtt.Net">
       <HintPath>DLL\M2Mqtt.Net.dll</HintPath>
     </Reference>
-    <Reference Include="Mirle.AK0.Hlt.ReserveSection.Map">
-      <HintPath>DLL\Mirle.AK0.Hlt.ReserveSection.Map.dll</HintPath>
+    <Reference Include="Mirle.Hlts.ReserveSection.Map">
+      <HintPath>..\..\..\..\Desktop\Mirle.Hlts.ReserveSection.Map.dll</HintPath>
     </Reference>
-    <Reference Include="Mirle.AK0.Hlt.ReserveSection.Vision">
-      <HintPath>DLL\Mirle.AK0.Hlt.ReserveSection.Vision.dll</HintPath>
+    <Reference Include="Mirle.Hlts.ReserveSection.Vision">
+      <HintPath>..\..\..\..\Desktop\Mirle.Hlts.ReserveSection.Vision.dll</HintPath>
     </Reference>
-    <Reference Include="Mirle.AK0.Hlt.Utils">
-      <HintPath>DLL\Mirle.AK0.Hlt.Utils.dll</HintPath>
+    <Reference Include="Mirle.Hlts.Utils">
+      <HintPath>..\..\..\..\Desktop\Mirle.Hlts.Utils.dll</HintPath>
     </Reference>
     <Reference Include="MPLCConnectionControl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

@@ -11,7 +11,7 @@ using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using com.mirle.ibg3k0.sc.RouteKit;
 using Google.Protobuf.Collections;
 using KingAOP;
-using Mirle.AK0.Hlt.Utils;
+using Mirle.Hlts.Utils;
 using Newtonsoft.Json.Linq;
 using NLog;
 using System;

@@ -77,8 +77,8 @@ namespace com.mirle.ibg3k0.sc.App
         private CommObjCacheManager commObjCacheManager;
         private RedisCacheManager redisCacheManager;
         private NatsManager natsManager;
-        private Mirle.AK0.Hlt.ReserveSection.Map.MapAPI _reserveSectionAPI { get; set; }
-        private Mirle.AK0.Hlt.ReserveSection.Map.ViewModels.MapViewModel reserveSectionAPI { get; set; }
+        private Mirle.Hlts.ReserveSection.Map.MapAPI _reserveSectionAPI { get; set; }
+        private Mirle.Hlts.ReserveSection.Map.ViewModels.HltMapViewModel reserveSectionAPI { get; set; }
 
         public HAProxyConnectionTest hAProxyConnectionTest { get; private set; }
         public NancyHost NancyHost { get; private set; }
@@ -565,7 +565,7 @@ namespace com.mirle.ibg3k0.sc.App
 
         private void initialReserveSectionAPI()
         {
-            _reserveSectionAPI = new Mirle.AK0.Hlt.ReserveSection.Map.MapAPI();
+            _reserveSectionAPI = new Mirle.Hlts.ReserveSection.Map.MapAPI();
             reserveSectionAPI = _reserveSectionAPI.MapVM;
 
             setHltVehicleInfo();
@@ -577,10 +577,15 @@ namespace com.mirle.ibg3k0.sc.App
         {
             int vh_highi = getInt("VehicleHeight", 1800);
             int vh_width = getInt("VehicleWidth", 3200);
-            int vh_sensor_wlength = getInt("SensorWLength", 1200);
+            //int vh_sensor_wlength = getInt("SensorWLength", 1200);
+            int vh_sensor_forwardLength = getInt("SensorForwardLength", 1600);
+            int vh_sensor_leftLength = getInt("SensorForwardLength", 600);
+
             reserveSectionAPI.VehicleHeight = vh_highi;
             reserveSectionAPI.VehicleWidth = vh_width;
-            reserveSectionAPI.SensorLength = vh_sensor_wlength;
+            //reserveSectionAPI.SensorLength = vh_sensor_wlength;
+            reserveSectionAPI.SensorForwardLength = vh_sensor_forwardLength;
+            reserveSectionAPI.SensorLeftLength = vh_sensor_leftLength;
         }
 
         private void LoadMapFiles(string addressPath = null, string sectionPath = null)
@@ -1536,7 +1541,7 @@ namespace com.mirle.ibg3k0.sc.App
             return natsManager;
         }
 
-        public Mirle.AK0.Hlt.ReserveSection.Map.ViewModels.MapViewModel getReserveSectionAPI()
+        public Mirle.Hlts.ReserveSection.Map.ViewModels.HltMapViewModel getReserveSectionAPI()
         {
             return reserveSectionAPI;
         }

@@ -7,7 +7,7 @@ using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using com.mirle.iibg3k0.ttc.Common;
-using Mirle.AK0.Hlt.Utils;
+using Mirle.Hlts.Utils;
 using NLog;
 using StackExchange.Redis;
 using STAN.Client;
