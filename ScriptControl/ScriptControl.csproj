@@ -1131,6 +1131,9 @@
     <Content Include="DLL\Mirle.AK0.Hlt.ReserveSection.Map.dll" />
     <Content Include="DLL\Mirle.AK0.Hlt.ReserveSection.Vision.dll" />
     <Content Include="DLL\Mirle.AK0.Hlt.Utils.dll" />
+    <Content Include="DLL\Mirle.Hlts.ReserveSection.Map.dll" />
+    <Content Include="DLL\Mirle.Hlts.ReserveSection.Vision.dll" />
+    <Content Include="DLL\Mirle.Hlts.Utils.dll" />
     <Content Include="DLL\MPLCConnectionControl.dll" />
     <Content Include="DLL\MPLCConnectionControl.pdb" />
     <Content Include="DLL\MPLCConnectionControl.XML" />
