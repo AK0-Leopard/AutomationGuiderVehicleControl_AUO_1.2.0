@@ -98,7 +98,51 @@ namespace com.mirle.ibg3k0.sc.Service
                 vh.LongTimeCarrierInstalled += Vh_LongTimeCarrierInstalled;
             }
             oneDirectPath();
+            scApp.DataWorkerService.alarmHappend += Serivce_alarmHappend1;
         }
+
+        private void Serivce_alarmHappend1(object sender, dataWorkerService.dataWorkService.alarmHappendArgs e)
+        {
+            //先找到車子
+            AVEHICLE vh = scApp.VehicleBLL.cache.getVehicle(e.EQ_ID);
+            if (vh == null)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: $"alarm is happend but vh can not find : {e.EQ_ID}");
+                return;
+            }
+            if (System.Threading.Interlocked.Exchange(ref syncPoint_LongTimeCarrierInstalled, 1) == 0)
+            {
+
+                try
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: $"alarm is happend and alarm Code : {e.ALARM_ID.ToString()}",
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID,
+                       Details: e.ToString());
+
+                    //要再上報Alamr Rerport給MCS
+                    ProcessAlarmReport(vh, e.ALARM_ID.ToString(), ErrorStatus.ErrSet, e.ALARM_DESC);
+
+                    BCFApplication.onWarningMsg($"Vehicle:{vh.VEHICLE_ID} alarm is happend, desc:{e.ALARM_DESC}");
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: ex,
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID,
+                       Details: e.ToString());
+                }
+                finally
+                {
+                    System.Threading.Interlocked.Exchange(ref syncPoint_LongTimeCarrierInstalled, 0);
+                }
+            }
+        }
+
+
         private long syncPoint_LongTimeCarrierInstalled = 0;
         private void Vh_LongTimeCarrierInstalled(object sender, string carrierID)
         {
