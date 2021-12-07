@@ -2450,6 +2450,17 @@ namespace com.mirle.ibg3k0.sc.Service
                 return false;
             }
 
+            AADDRESS destinationAddress = scApp.AddressesBLL.cache.GetAddress(path.destinationAdr);
+            AADDRESS currentBestDestinationAddress = scApp.AddressesBLL.cache.GetAddress(currentBestPath.destinationAdr);
+            if (destinationAddress.IsPort)
+            {
+                return false;
+            }
+            else if (currentBestDestinationAddress.IsPort)
+            {
+                return true;
+            }
+
             if (currentBestPath.cost > path.cost)
             {
                 return true;
