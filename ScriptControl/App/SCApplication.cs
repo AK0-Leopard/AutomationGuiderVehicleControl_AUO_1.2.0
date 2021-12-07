@@ -574,6 +574,8 @@ namespace com.mirle.ibg3k0.sc.App
             SystemParameter.setMaxAllowDistanceOffset_mm(getInt("MAX_ALLOW_DISTANCE_OFFSET_mm", 50));
             SystemParameter.setMAX_ALLOW_VH_ACTION_TIME_SECOND(getInt("MAX_ALLOW_VH_ACTION_TIME_SECOND", 1200));
 
+            SystemParameter.setDataWorkerServerListenPort(getInt("dataWorkerSerberListenPort", 6060));
+
         }
 
         private void initialReserveSectionAPI()
@@ -1311,7 +1313,7 @@ namespace com.mirle.ibg3k0.sc.App
                 dataWorkerServer = new Server()
                 {
                     Services = { Greeter.BindService(dataWorkerService) },
-                    Ports = { new ServerPort(IPAddress.Any.ToString(), 6060, ServerCredentials.Insecure) },
+                    Ports = { new ServerPort(IPAddress.Any.ToString(), SystemParameter.dataWorkerServerListenPort, ServerCredentials.Insecure) },
                 };
             }
         }
@@ -1889,6 +1891,7 @@ namespace com.mirle.ibg3k0.sc.App
         public static int MAX_ALLOW_DISTANCE_OFFSET_mm { get; private set; } = 50;
         public static int MAX_ALLOW_VH_ACTION_TIME_SECOND { get; private set; } = 1200;
 
+        public static int dataWorkerServerListenPort { get; private set; } = 6060;
 
         public static void setSECSConversactionTimeout(int timeout)
         {
@@ -1960,6 +1963,11 @@ namespace com.mirle.ibg3k0.sc.App
         public static void setMAX_ALLOW_VH_ACTION_TIME_SECOND(int maxAllowVhActionTime_sec)
         {
             MAX_ALLOW_VH_ACTION_TIME_SECOND = maxAllowVhActionTime_sec;
+        }
+
+        public static void setDataWorkerServerListenPort(int port)
+        {
+            dataWorkerServerListenPort = port;
         }
 
     }
