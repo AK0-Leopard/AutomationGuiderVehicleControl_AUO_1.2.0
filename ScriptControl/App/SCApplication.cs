@@ -579,7 +579,7 @@ namespace com.mirle.ibg3k0.sc.App
             int vh_width = getInt("VehicleWidth", 3200);
             //int vh_sensor_wlength = getInt("SensorWLength", 1200);
             int vh_sensor_forwardLength = getInt("SensorForwardLength", 1600);
-            int vh_sensor_leftLength = getInt("SensorForwardLength", 600);
+            int vh_sensor_leftLength = getInt("SensorLeftLength", 600);
 
             reserveSectionAPI.VehicleHeight = vh_highi;
             reserveSectionAPI.VehicleWidth = vh_width;
