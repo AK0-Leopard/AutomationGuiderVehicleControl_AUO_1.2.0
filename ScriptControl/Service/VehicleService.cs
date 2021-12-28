@@ -2536,7 +2536,8 @@ namespace com.mirle.ibg3k0.sc.Service
             VehicleInLongCharge,
             VehicleInError,
             VehicleInLoadingUnloading,
-            VehicleInObstacleStop
+            VehicleInObstacleStop,
+            VehicleIsMoving //Chris 移植交管邏輯 from AUO
         }
 
         private (bool is_can, CAN_NOT_AVOID_RESULT result) canCreatDriveOutCommand(AVEHICLE reservedVh)
@@ -2564,6 +2565,17 @@ namespace com.mirle.ibg3k0.sc.Service
                     )
             {
                 return (false, CAN_NOT_AVOID_RESULT.VehicleInLoadingUnloading);
+            }
+            else if (reservedVh.ACT_STATUS == VHActionStatus.Commanding &&
+       reservedVh.ObstacleStatus == VhStopSingle.StopSingleOff &&
+       reservedVh.RESERVE_PAUSE == VhStopSingle.StopSingleOff &&
+       reservedVh.BlockingStatus == VhStopSingle.StopSingleOff &&
+       reservedVh.PauseStatus == VhStopSingle.StopSingleOff &&
+       reservedVh.ERROR == VhStopSingle.StopSingleOff &&
+       reservedVh.EARTHQUAKE_PAUSE == VhStopSingle.StopSingleOff &&
+       reservedVh.SAFETY_DOOR_PAUSE == VhStopSingle.StopSingleOff)
+            {
+                return (false, CAN_NOT_AVOID_RESULT.VehicleIsMoving); //Chris 移植交管邏輯 from AUO : 判斷對方正在移動中先不進行override
             }
             else
             {
@@ -2654,7 +2666,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         {
                             case CAN_NOT_AVOID_RESULT.VehicleInError:
                             case CAN_NOT_AVOID_RESULT.VehicleInLongCharge:
-                            case CAN_NOT_AVOID_RESULT.VehicleInLoadingUnloading:
+                            //case CAN_NOT_AVOID_RESULT.VehicleInLoadingUnloading:
                             case CAN_NOT_AVOID_RESULT.VehicleInObstacleStop:
                                 if (request_vh.IsReservePause)
                                 {
@@ -2673,6 +2685,21 @@ namespace com.mirle.ibg3k0.sc.Service
                                         OvrerideByDriveOutFail(requestVhID, reservedVhID, check_can_creat_avoid_command.result);
                                     }
                                 }
+                                break;
+                            case CAN_NOT_AVOID_RESULT.VehicleInLoadingUnloading: //Chris 移植override 邏輯 from AUO:等待對方完成LoadUnload再決定要不要避車。
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                    Data: $"vh:{requestVhID} of can't reserve section id:{request_vh.CanNotReserveInfo.ReservedSectionID}" +
+                                          $"because reservedVh:{reservedVhID} status is {check_can_creat_avoid_command.result}." +
+                                          $"waiting {reservedVhID} finished",
+                                    VehicleID: requestVhID);
+                                break;
+                            case CAN_NOT_AVOID_RESULT.VehicleIsMoving:
+                                //Chris 移植交管邏輯 from AUO : 對方正在移動，等待對方移動結束。
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                    Data: $"vh:{requestVhID} of can't reserve section id:{request_vh.CanNotReserveInfo.ReservedSectionID}" +
+                                          $"because reservedVh:{reservedVhID} status is {check_can_creat_avoid_command.result}." +
+                                          $"waiting {reservedVhID} moving away",
+                                    VehicleID: requestVhID);
                                 break;
                             default:
                                 if (request_vh.IsReservePause && reserved_vh.IsReservePause)
