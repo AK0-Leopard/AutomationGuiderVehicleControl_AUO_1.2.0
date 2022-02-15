@@ -32,10 +32,13 @@ using com.mirle.ibg3k0.sc.MQTT;
 using com.mirle.ibg3k0.sc.RouteKit;
 using com.mirle.ibg3k0.sc.Scheduler;
 using com.mirle.ibg3k0.sc.Service;
+using com.mirle.ibg3k0.sc.Service.dataWorkerService;
 using com.mirle.ibg3k0.sc.WIF;
 using com.mirle.ibg3k0.stc.Common.SECS;
+using dataWorkServiceProtoBuf;
 using ExcelDataReader;
 using GenericParsing;
+using Grpc.Core;
 using Nancy;
 using Nancy.Hosting.Self;
 using NLog;
@@ -51,6 +54,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 
 namespace com.mirle.ibg3k0.sc.App
@@ -320,6 +324,13 @@ namespace com.mirle.ibg3k0.sc.App
         private TransferService transferService = null;
         public TransferService TransferService { get { return transferService; } }
         private FailOverService failOverService = null;
+        #region GPRC用大數據來回報AGV硬體可能有異常
+        private Server dataWorkerServer = null;
+        public Server DataWorkService { get { return dataWorkerServer; } }
+        private dataWorkService dataWorkerService = new dataWorkService();
+        public dataWorkService DataWorkerService { get { return dataWorkerService; } }
+        #endregion
+
         public FailOverService FailOverService { get { return failOverService; } }
 
         private DataSyncBLL datasynBLL = null;
@@ -1248,6 +1259,12 @@ namespace com.mirle.ibg3k0.sc.App
                 connectionInfoService = new ConnectionInfoService();
                 userControlService = new UserControlService();
                 transferService = new TransferService();
+                dataWorkerServer = new Server()
+                {
+                    Services = { Greeter.BindService(dataWorkerService) },
+                    Ports = { new ServerPort(IPAddress.Any.ToString(), 6060, ServerCredentials.Insecure) },
+                };
+
             }
         }
 
@@ -1300,6 +1317,9 @@ namespace com.mirle.ibg3k0.sc.App
             connectionInfoService.start(this);
             userControlService.start(this);
             transferService.start(this);
+
+            dataWorkerServer.Start();
+
         }
 
         private void initWIF()
