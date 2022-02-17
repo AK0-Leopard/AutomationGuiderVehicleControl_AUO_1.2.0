@@ -575,10 +575,16 @@ namespace com.mirle.ibg3k0.sc.App
         {
             int vh_highi = getInt("VehicleHeight", 1800);
             int vh_width = getInt("VehicleWidth", 3200);
-            int vh_sensor_wlength = getInt("SensorWLength", 1200);
+            //int vh_sensor_wlength = getInt("SensorWLength", 1200);
+            int vh_sensor_forwardLength = getInt("SensorForwardLength", 1200);
+            int vh_sensor_leftLength = getInt("SensorLeftLength", 600);
+
             reserveSectionAPI.VehicleHeight = vh_highi;
             reserveSectionAPI.VehicleWidth = vh_width;
-            reserveSectionAPI.SensorLength = vh_sensor_wlength;
+            //reserveSectionAPI.SensorLength = vh_sensor_wlength;
+            reserveSectionAPI.SensorForwardLength = vh_sensor_forwardLength;
+            reserveSectionAPI.SensorLeftLength = vh_sensor_leftLength;
+            reserveSectionAPI.IsKeepRestSection = true;
         }
 
         private void setRePositionInfo()
