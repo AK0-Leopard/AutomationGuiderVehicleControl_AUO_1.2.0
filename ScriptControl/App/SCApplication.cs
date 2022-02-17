@@ -32,10 +32,13 @@ using com.mirle.ibg3k0.sc.MQTT;
 using com.mirle.ibg3k0.sc.RouteKit;
 using com.mirle.ibg3k0.sc.Scheduler;
 using com.mirle.ibg3k0.sc.Service;
+using com.mirle.ibg3k0.sc.Service.dataWorkerService;
 using com.mirle.ibg3k0.sc.WIF;
 using com.mirle.ibg3k0.stc.Common.SECS;
+using dataWorkServiceProtoBuf;
 using ExcelDataReader;
 using GenericParsing;
+using Grpc.Core;
 using Nancy;
 using Nancy.Hosting.Self;
 using NLog;
@@ -51,6 +54,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 
 namespace com.mirle.ibg3k0.sc.App
@@ -317,8 +321,18 @@ namespace com.mirle.ibg3k0.sc.App
         public UserControlService UserControlService { get { return userControlService; } }
         private TransferService transferService = null;
         public TransferService TransferService { get { return transferService; } }
+
+        #region GPRC用大數據來回報AGV硬體可能有異常
+        private Server dataWorkerServer = null;
+        public Server DataWorkService { get { return dataWorkerServer; } }
+        private dataWorkService dataWorkerService = new dataWorkService();
+        public dataWorkService DataWorkerService { get { return dataWorkerService; } }
+        #endregion
         private FailOverService failOverService = null;
         public FailOverService FailOverService { get { return failOverService; } }
+        
+       
+
 
         private DataSyncBLL datasynBLL = null;
         public DataSyncBLL DataSyncBLL { get { return datasynBLL; } }
@@ -559,6 +573,8 @@ namespace com.mirle.ibg3k0.sc.App
 
             SystemParameter.setMaxAllowDistanceOffset_mm(getInt("MAX_ALLOW_DISTANCE_OFFSET_mm", 50));
             SystemParameter.setMAX_ALLOW_VH_ACTION_TIME_SECOND(getInt("MAX_ALLOW_VH_ACTION_TIME_SECOND", 1200));
+
+            SystemParameter.setDataWorkerServerListenPort(getInt("dataWorkerSerberListenPort", 6060));
 
         }
 
@@ -1300,6 +1316,11 @@ namespace com.mirle.ibg3k0.sc.App
                 connectionInfoService = new ConnectionInfoService();
                 userControlService = new UserControlService();
                 transferService = new TransferService();
+                dataWorkerServer = new Server()
+                {
+                    Services = { Greeter.BindService(dataWorkerService) },
+                    Ports = { new ServerPort(IPAddress.Any.ToString(), SystemParameter.dataWorkerServerListenPort, ServerCredentials.Insecure) },
+                };
             }
         }
 
@@ -1350,6 +1371,9 @@ namespace com.mirle.ibg3k0.sc.App
             connectionInfoService.start(this);
             userControlService.start(this);
             transferService.start(this);
+
+            dataWorkerServer.Start();
+
         }
 
         private void initWIF()
@@ -1873,6 +1897,7 @@ namespace com.mirle.ibg3k0.sc.App
         public static int MAX_ALLOW_DISTANCE_OFFSET_mm { get; private set; } = 50;
         public static int MAX_ALLOW_VH_ACTION_TIME_SECOND { get; private set; } = 1200;
 
+        public static int dataWorkerServerListenPort { get; private set; } = 6060;
 
         public static void setSECSConversactionTimeout(int timeout)
         {
@@ -1944,6 +1969,11 @@ namespace com.mirle.ibg3k0.sc.App
         public static void setMAX_ALLOW_VH_ACTION_TIME_SECOND(int maxAllowVhActionTime_sec)
         {
             MAX_ALLOW_VH_ACTION_TIME_SECOND = maxAllowVhActionTime_sec;
+        }
+
+        public static void setDataWorkerServerListenPort(int port)
+        {
+            dataWorkerServerListenPort = port;
         }
 
     }

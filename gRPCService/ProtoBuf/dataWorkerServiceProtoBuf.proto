@@ -1,0 +1,24 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "dataWorkServiceProtoBuf";
+
+package greet;
+
+service Greeter 
+{
+	rpc IamMethod(reportAGVRequest) returns (reportAGVReply);
+}
+
+message reportAGVRequest{
+	//發送要求要給的參數們，代表client呼叫要求時可以帶給server的參數們
+	string EQ_ID = 1;
+	string UNIT_ID = 2;
+	int32 Alarm_ID = 3;
+	string Alarm_Desc = 4;
+	string Memo = 5;
+}
+
+message reportAGVReply{
+	//伺服器收到要求後回覆給client的訊息
+	string Datetime = 1;
+}
