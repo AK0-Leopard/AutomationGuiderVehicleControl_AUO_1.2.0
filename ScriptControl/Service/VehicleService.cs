@@ -2591,7 +2591,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 //在R2000的路段上，預約方向要帶入
                 if (scApp.ReserveBLL.IsR2000Section(reserveSectionID))
                 {
-                    return Mirle.Hlts.Utils.HltDirection.NS;
+                    return Mirle.Hlts.Utils.HltDirection.NorthSouth;
                 }
                 else
                 {
@@ -3521,20 +3521,24 @@ namespace com.mirle.ibg3k0.sc.Service
                                 if (cmd_mcs?.TRANSFERSTATE == E_TRAN_STATUS.Canceling)
                                 {
                                     isSuccess = scApp.ReportBLL.newReportTransferCancelCompleted(vh.VEHICLE_ID, reportqueues);
+                                    scApp.CMDBLL.updateCMD_MCS_CommandState(finish_mcs_cmd, SCAppConstants.TaskCmdStatus.Abnormal_Finish);//Chris 新增命令狀態至CMD_MCS_CommandState 20220103
                                 }
                                 else
                                 {
                                     isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
+                                    scApp.CMDBLL.updateCMD_MCS_CommandState(finish_mcs_cmd, SCAppConstants.TaskCmdStatus.Finish);//Chris 新增命令狀態至CMD_MCS_CommandState 20220103
                                 }
                                 break;
                             case CompleteStatus.CmpStatusAbort:
                                 if (cmd_mcs?.TRANSFERSTATE == E_TRAN_STATUS.Aborting)
                                 {
                                     isSuccess = scApp.ReportBLL.newReportTransferCommandAbortFinish(vh.VEHICLE_ID, reportqueues);
+                                    scApp.CMDBLL.updateCMD_MCS_CommandState(finish_mcs_cmd, SCAppConstants.TaskCmdStatus.Abnormal_Finish);//Chris 新增命令狀態至CMD_MCS_CommandState 20220103
                                 }
                                 else
                                 {
                                     isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
+                                    scApp.CMDBLL.updateCMD_MCS_CommandState(finish_mcs_cmd, SCAppConstants.TaskCmdStatus.Finish);//Chris 新增命令狀態至CMD_MCS_CommandState 20220103
                                 }
                                 break;
                             case CompleteStatus.CmpStatusLoad:
@@ -3543,8 +3547,12 @@ namespace com.mirle.ibg3k0.sc.Service
                             case CompleteStatus.CmpStatusIdmisMatch:
                             case CompleteStatus.CmpStatusIdreadFailed:
                             case CompleteStatus.CmpStatusVehicleAbort:
+                                isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
+                                scApp.CMDBLL.updateCMD_MCS_CommandState(finish_mcs_cmd, SCAppConstants.TaskCmdStatus.Finish);//Chris 新增命令狀態至CMD_MCS_CommandState 20220103
+                                break;
                             case CompleteStatus.CmpStatusInterlockError:
                                 isSuccess = scApp.ReportBLL.newReportTransferCommandFinish(vh.VEHICLE_ID, reportqueues);
+                                scApp.CMDBLL.updateCMD_MCS_CommandState(finish_mcs_cmd, SCAppConstants.TaskCmdStatus.InterlockError_Finish);//Chris 新增命令狀態至CMD_MCS_CommandState 20220103
                                 break;
                             case CompleteStatus.CmpStatusMove:
                             case CompleteStatus.CmpStatusHome:

@@ -191,6 +191,19 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccess;
         }
 
+        //Chris 新增命令狀態至CMD_MCS_CommandState 20220103
+        public bool updateCMD_MCS_CommandState(string cmd_id, int state)
+        {
+            bool isSuccess = true;
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                ACMD_MCS cmd = cmd_mcsDao.getByID(con, cmd_id);
+                cmd.COMMANDSTATE = state;
+                cmd_mcsDao.update(con, cmd);
+            }
+            return isSuccess;
+        }
+
         public bool updateCMD_MCS_TranStatus2Initial(string cmd_id)
         {
             bool isSuccess = true;
