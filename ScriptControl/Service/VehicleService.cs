@@ -1903,32 +1903,30 @@ namespace com.mirle.ibg3k0.sc.Service
             string reason = string.Empty;
             ID_131_TRANS_RESPONSE receive_gpp = null;
             AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vh_id);
-            if (isSuccess)
+
+            ID_31_TRANS_REQUEST send_gpp = new ID_31_TRANS_REQUEST()
             {
-                ID_31_TRANS_REQUEST send_gpp = new ID_31_TRANS_REQUEST()
-                {
-                    CmdID = cmd_id,
-                    ActType = activeType,
-                    CSTID = cst_id ?? string.Empty,
-                    LoadAdr = fromAdr,
-                    DestinationAdr = destAdr
-                };
-                if (guideSegmentStartToLoad != null)
-                    send_gpp.GuideSegmentsStartToLoad.AddRange(guideSegmentStartToLoad);
-                if (guideSectionsStartToLoad != null)
-                    send_gpp.GuideSectionsStartToLoad.AddRange(guideSectionsStartToLoad);
-                if (guideAddressesStartToLoad != null)
-                    send_gpp.GuideAddressesStartToLoad.AddRange(guideAddressesStartToLoad);
-                if (guideSegmentToDest != null)
-                    send_gpp.GuideSegmentsToDestination.AddRange(guideSegmentToDest);
-                if (guideSectionsToDest != null)
-                    send_gpp.GuideSectionsToDestination.AddRange(guideSectionsToDest);
-                if (guideAddressesToDest != null)
-                    send_gpp.GuideAddressesToDestination.AddRange(guideAddressesToDest);
-                SCUtility.RecodeReportInfo(vh.VEHICLE_ID, 0, send_gpp);
-                isSuccess = vh.sned_Str31(send_gpp, out receive_gpp, out reason);
-                SCUtility.RecodeReportInfo(vh.VEHICLE_ID, 0, receive_gpp, isSuccess.ToString());
-            }
+                CmdID = cmd_id,
+                ActType = activeType,
+                CSTID = cst_id ?? string.Empty,
+                LoadAdr = fromAdr,
+                DestinationAdr = destAdr
+            };
+            if (guideSegmentStartToLoad != null)
+                send_gpp.GuideSegmentsStartToLoad.AddRange(guideSegmentStartToLoad);
+            if (guideSectionsStartToLoad != null)
+                send_gpp.GuideSectionsStartToLoad.AddRange(guideSectionsStartToLoad);
+            if (guideAddressesStartToLoad != null)
+                send_gpp.GuideAddressesStartToLoad.AddRange(guideAddressesStartToLoad);
+            if (guideSegmentToDest != null)
+                send_gpp.GuideSegmentsToDestination.AddRange(guideSegmentToDest);
+            if (guideSectionsToDest != null)
+                send_gpp.GuideSectionsToDestination.AddRange(guideSectionsToDest);
+            if (guideAddressesToDest != null)
+                send_gpp.GuideAddressesToDestination.AddRange(guideAddressesToDest);
+            SCUtility.RecodeReportInfo(vh.VEHICLE_ID, 0, send_gpp);
+            isSuccess = vh.sned_Str31(send_gpp, out receive_gpp, out reason);
+            SCUtility.RecodeReportInfo(vh.VEHICLE_ID, 0, receive_gpp, isSuccess.ToString());
             if (isSuccess)
             {
                 int reply_code = receive_gpp.ReplyCode;
@@ -1942,6 +1940,10 @@ namespace com.mirle.ibg3k0.sc.Service
                                                               vh_id,
                                                               cmd_id,
                                                               reason));
+                }
+                else
+                {
+                    vh.setVhGuideInfo(send_gpp);
                 }
                 vh.NotifyVhExcuteCMDStatusChange();
             }
@@ -2200,6 +2202,13 @@ namespace com.mirle.ibg3k0.sc.Service
             SCUtility.RecodeReportInfo(vh.VEHICLE_ID, 0, send_gpp);
             isSuccess = vh.send_Str51(send_gpp, out receive_gpp);
             SCUtility.RecodeReportInfo(vh.VEHICLE_ID, 0, receive_gpp, isSuccess.ToString());
+            if (isSuccess)
+            {
+                if (receive_gpp.ReplyCode == 0)
+                {
+                    vh.setVhGuideInfo(send_gpp);
+                }
+            }
             return isSuccess;
         }
         #endregion Send Message To Vehicle
@@ -2486,6 +2495,12 @@ namespace com.mirle.ibg3k0.sc.Service
                 if (reserveInfos == null || reserveInfos.Count == 0) return (false, string.Empty, string.Empty);
                 string reserve_section_id = reserveInfos[0].ReserveSectionID;
 
+                //判斷第一段路線，是否要直接下給車子，避免再要求第一段的時候，其實沒有要走但卻會被卡住的問題
+                bool is_force_pass_first_reserve = checkIsForcePassFirstSectionReserve(vh, reserve_section_id);
+                if (is_force_pass_first_reserve)
+                {
+                    return (true, "", reserve_section_id);
+                }
 
                 //Mirle.Hlts.Utils.HltDirection hltDirection = decideReserveDirection(vh, reserve_section_id);
                 Mirle.Hlts.Utils.HltDirection hltDirection = scApp.ReserveBLL.DecideReserveDirection(scApp.SectionBLL, vh, reserve_section_id);
@@ -2512,6 +2527,55 @@ namespace com.mirle.ibg3k0.sc.Service
                 return (false, string.Empty, string.Empty);
             }
         }
+
+        private bool checkIsForcePassFirstSectionReserve(AVEHICLE vh, string reserveSectionID)
+        {
+            var vh_guide_info = vh.guideInfo.tryGetCurrentGuideSection();
+            if (!vh_guide_info.hasInfo)
+                return false;
+            if (vh_guide_info.currentGuideSection.Count < 2)
+            {
+                return false;
+            }
+            string first_section = vh_guide_info.currentGuideSection.FirstOrDefault();
+            if (!SCUtility.isMatche(first_section, reserveSectionID))
+            {
+                return false;
+            }
+            string secend_section = vh_guide_info.currentGuideSection[1];
+            var get_cross_address_result = tryFindCrossAddressID(first_section, secend_section);
+            if (!get_cross_address_result.hasFind)
+            {
+                return false;
+            }
+            string current_adr_id = vh.CUR_ADR_ID;
+            if (SCUtility.isMatche(get_cross_address_result.adrID, current_adr_id))
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                   Data: $"由於 vh:{vh.VEHICLE_ID} 位於address:{vh.CUR_ADR_ID}為 Guide Section的第一段:{first_section}於第二段:{secend_section}的交接口，因此強制放行.",
+                   VehicleID: vh.VEHICLE_ID);
+                return true;
+            }
+            return false;
+        }
+        private (bool hasFind, string adrID) tryFindCrossAddressID(string secID1, string secID2)
+        {
+            ASECTION sec1 = scApp.SectionBLL.cache.GetSection(secID1);
+            ASECTION sec2 = scApp.SectionBLL.cache.GetSection(secID2);
+            if (sec1 == null || sec2 == null)
+            {
+                return (false, "");
+            }
+            List<string> address_temp = new List<string>();
+            address_temp.Add(sec1.FROM_ADR_ID);
+            address_temp.Add(sec1.TO_ADR_ID);
+            if (address_temp.Contains(sec2.FROM_ADR_ID))
+                return (true, sec2.FROM_ADR_ID);
+            if (address_temp.Contains(sec2.TO_ADR_ID))
+                return (true, sec2.TO_ADR_ID);
+            return (false, "");
+        }
+
         private Mirle.Hlts.Utils.HltDirection decideReserveDirection(AVEHICLE reserveVh, string reserveSectionID)
         {
             //先取得目前vh所在的current adr，如果這次要求的Reserve Sec是該Current address連接的其中一點時

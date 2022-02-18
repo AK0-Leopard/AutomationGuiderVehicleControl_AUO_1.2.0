@@ -25,6 +25,71 @@ using static com.mirle.ibg3k0.sc.App.SCAppConstants;
 
 namespace com.mirle.ibg3k0.sc
 {
+    public class GuideInfo
+    {
+        public GuideInfo()
+        {
+            startToLoadGuideAddresse = new List<string>();
+            startToLoadGuideSection = new List<string>();
+            ToDesinationGuideAddresse = new List<string>();
+            ToDesinationGuideSection = new List<string>();
+        }
+        public GuideInfo(AVEHICLE _vh, ID_31_TRANS_REQUEST id_31)
+        {
+            vh = _vh;
+            startToLoadGuideAddresse = id_31.GuideAddressesStartToLoad.ToList();
+            startToLoadGuideSection = id_31.GuideSectionsStartToLoad.ToList();
+            ToDesinationGuideAddresse = id_31.GuideAddressesToDestination.ToList();
+            ToDesinationGuideSection = id_31.GuideSectionsToDestination.ToList();
+            isAvoid = false;
+            isMove = id_31.ActType == ActiveType.Move ||
+                     id_31.ActType == ActiveType.Movetocharger;
+        }
+        public GuideInfo(AVEHICLE _vh, ID_51_AVOID_REQUEST id_51)
+        {
+            vh = _vh;
+            ToDesinationGuideAddresse = id_51.GuideAddresses.ToList();
+            ToDesinationGuideSection = id_51.GuideSections.ToList();
+            isAvoid = true;
+            isMove = false;
+        }
+        AVEHICLE vh;
+        bool isAvoid;
+        bool isMove;
+        List<string> startToLoadGuideAddresse;
+        List<string> startToLoadGuideSection;
+        List<string> ToDesinationGuideAddresse;
+        List<string> ToDesinationGuideSection;
+        public (bool hasInfo, List<string> currentGuideSection) tryGetCurrentGuideSection()
+        {
+            if (isAvoid || isMove)
+            {
+                if (ToDesinationGuideSection != null && ToDesinationGuideSection.Count > 0)
+                    return (true, ToDesinationGuideSection.ToList());
+                else
+                    return (false, null);
+            }
+            else
+            {
+                if (vh.HAS_CST == 0)
+                {
+                    if (startToLoadGuideSection != null && startToLoadGuideSection.Count > 0)
+                        return (true, startToLoadGuideSection.ToList());
+                    else
+                        return (false, null);
+                }
+                else
+                {
+                    if (ToDesinationGuideSection != null && ToDesinationGuideSection.Count > 0)
+                        return (true, ToDesinationGuideSection.ToList());
+                    else
+                        return (false, null);
+                }
+            }
+        }
+    }
+
+
     public class LocationChangeEventArgs : EventArgs
     {
         public string EntrySection;
@@ -359,6 +424,7 @@ namespace com.mirle.ibg3k0.sc
                 GuideAddresses = guideAddresses;
             }
         }
+        public GuideInfo guideInfo { get; set; } = new GuideInfo();
 
 
         public com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage.VhStopSingle RESERVE_PAUSE { get; set; }
@@ -698,6 +764,19 @@ namespace com.mirle.ibg3k0.sc
         public void Stop()
         {
             CurrentCommandExcuteTime.Reset();
+        }
+
+        public void resetVhGuideInfo()
+        {
+            guideInfo = new GuideInfo();
+        }
+        public void setVhGuideInfo(ID_31_TRANS_REQUEST id_31)
+        {
+            guideInfo = new GuideInfo(this, id_31);
+        }
+        public void setVhGuideInfo(ID_51_AVOID_REQUEST id_51)
+        {
+            guideInfo = new GuideInfo(this, id_51);
         }
 
         public void CarrierInstall()
