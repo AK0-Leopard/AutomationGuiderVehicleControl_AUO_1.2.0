@@ -330,8 +330,8 @@ namespace com.mirle.ibg3k0.sc.App
         #endregion
         private FailOverService failOverService = null;
         public FailOverService FailOverService { get { return failOverService; } }
-        
-       
+
+
 
 
         private DataSyncBLL datasynBLL = null;
@@ -600,7 +600,8 @@ namespace com.mirle.ibg3k0.sc.App
             //reserveSectionAPI.SensorLength = vh_sensor_wlength;
             reserveSectionAPI.SensorForwardLength = vh_sensor_forwardLength;
             reserveSectionAPI.SensorLeftLength = vh_sensor_leftLength;
-            reserveSectionAPI.IsKeepRestSection = true;
+            //reserveSectionAPI.IsKeepRestSection = true;
+            reserveSectionAPI.IsKeepRestSection = false;
         }
 
         private void setRePositionInfo()
