@@ -3624,7 +3624,7 @@ namespace com.mirle.ibg3k0.sc.Service
             if (completeStatus != CompleteStatus.CmpStatusVehicleAbort)
                 scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(vh.VEHICLE_ID);
             scApp.CMDBLL.removeAllWillPassSection(vh.VEHICLE_ID);
-
+            vh.resetVhGuideInfo();
             if (reportqueues != null && reportqueues.Count > 0)
                 scApp.ReportBLL.newSendMCSMessage(reportqueues);
 
@@ -4337,7 +4337,7 @@ namespace com.mirle.ibg3k0.sc.Service
                    CarrierID: vh.CST_ID);
                 return;
             }
-
+            vh.resetVhGuideInfo();
             if (is_avoid_complete)
             {
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
