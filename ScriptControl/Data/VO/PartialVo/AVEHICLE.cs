@@ -25,6 +25,94 @@ using static com.mirle.ibg3k0.sc.App.SCAppConstants;
 
 namespace com.mirle.ibg3k0.sc
 {
+    public class GuideInfo
+    {
+        public GuideInfo(AVEHICLE _vh)
+        {
+            vh = _vh;
+            startToLoadGuideAddresse = new List<string>();
+            startToLoadGuideSection = new List<string>();
+            ToDesinationGuideAddresse = new List<string>();
+            ToDesinationGuideSection = new List<string>();
+            AvoidGuideAddresse = new List<string>();
+            AvoidGuideSection = new List<string>();
+        }
+        public void setGuideSection(ID_31_TRANS_REQUEST id_31)
+        {
+            startToLoadGuideAddresse = id_31.GuideAddressesStartToLoad.ToList();
+            startToLoadGuideSection = id_31.GuideSectionsStartToLoad.ToList();
+            ToDesinationGuideAddresse = id_31.GuideAddressesToDestination.ToList();
+            ToDesinationGuideSection = id_31.GuideSectionsToDestination.ToList();
+            isAvoiding = false;
+            isMove = id_31.ActType == ActiveType.Move ||
+                     id_31.ActType == ActiveType.Movetocharger;
+        }
+        public void setAvoidSection(ID_51_AVOID_REQUEST id_51)
+        {
+            AvoidGuideSection = id_51.GuideSections.ToList();
+            AvoidGuideAddresse = id_51.GuideAddresses.ToList();
+            isAvoiding = true;
+        }
+        public void setAvoidComplete()
+        {
+            isAvoiding = false;
+        }
+        public void resetGuideInfo()
+        {
+            startToLoadGuideAddresse = new List<string>();
+            startToLoadGuideSection = new List<string>();
+            ToDesinationGuideAddresse = new List<string>();
+            ToDesinationGuideSection = new List<string>();
+            AvoidGuideAddresse = new List<string>();
+            AvoidGuideSection = new List<string>();
+            isMove = false;
+            isAvoiding = false;
+        }
+
+        AVEHICLE vh;
+        bool isAvoiding;
+        bool isMove;
+        List<string> startToLoadGuideAddresse;
+        List<string> startToLoadGuideSection;
+        List<string> ToDesinationGuideAddresse;
+        List<string> ToDesinationGuideSection;
+        List<string> AvoidGuideAddresse;
+        List<string> AvoidGuideSection;
+        public (bool hasInfo, List<string> currentGuideSection) tryGetCurrentGuideSection()
+        {
+            if (isAvoiding)
+            {
+                if (AvoidGuideSection != null && AvoidGuideSection.Count > 0)
+                    return (true, AvoidGuideSection.ToList());
+                else
+                    return (false, null);
+            }
+            else if (isMove)
+            {
+                if (ToDesinationGuideSection != null && ToDesinationGuideSection.Count > 0)
+                    return (true, ToDesinationGuideSection.ToList());
+                else
+                    return (false, null);
+            }
+            else
+            {
+                if (vh.HAS_CST == 0)
+                {
+                    if (startToLoadGuideSection != null && startToLoadGuideSection.Count > 0)
+                        return (true, startToLoadGuideSection.ToList());
+                    else
+                        return (false, null);
+                }
+                else
+                {
+                    if (ToDesinationGuideSection != null && ToDesinationGuideSection.Count > 0)
+                        return (true, ToDesinationGuideSection.ToList());
+                    else
+                        return (false, null);
+                }
+            }
+        }
+    }
     public class LocationChangeEventArgs : EventArgs
     {
         public string EntrySection;
@@ -207,10 +295,10 @@ namespace com.mirle.ibg3k0.sc
             vhStateMachine = new VehicleStateMachine(() => State, (state) => State = state);
             vhStateMachine.OnTransitioned(TransitionedHandler);
             vhStateMachine.OnUnhandledTrigger(UnhandledTriggerHandler);
-
             CurrentCommandExcuteTime = new Stopwatch();
             CarrierInstalledTime = new Stopwatch();
             IdleTimer = new Stopwatch();
+            guideInfo = new GuideInfo(this);
         }
         public void TimerActionStart()
         {
@@ -367,6 +455,7 @@ namespace com.mirle.ibg3k0.sc
                 GuideAddresses = guideAddresses;
             }
         }
+        private GuideInfo guideInfo { get; set; }
 
 
         public com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage.VhStopSingle RESERVE_PAUSE { get; set; }
@@ -473,7 +562,7 @@ namespace com.mirle.ibg3k0.sc
                 OnPropertyChanged(BCFUtility.getPropertyName(() => this.Status_Info_PLC));
             }
         }
-        
+
         public virtual List<string> ReservedSectionID { get; set; }
         public virtual List<string> WillPassSectionID { get; set; }
         //public virtual List<string> WillPassAddressID { get; set; }
@@ -740,6 +829,32 @@ namespace com.mirle.ibg3k0.sc
         public void Stop()
         {
             CurrentCommandExcuteTime.Reset();
+        }
+
+        object guideInfoSetLock = new object();
+        public void setVhAvoidComplete()
+        {
+            lock (guideInfoSetLock)
+                guideInfo.setAvoidComplete();
+        }
+        public void resetVhGuideInfo()
+        {
+            lock (guideInfoSetLock)
+                guideInfo.resetGuideInfo();
+        }
+        public void setVhGuideInfo(ID_31_TRANS_REQUEST id_31)
+        {
+            lock (guideInfoSetLock)
+                guideInfo.setGuideSection(id_31);
+        }
+        public void setVhGuideInfo(ID_51_AVOID_REQUEST id_51)
+        {
+            lock (guideInfoSetLock)
+                guideInfo.setAvoidSection(id_51);
+        }
+        public (bool hasInfo, List<string> currentGuideSection) tryGetCurrentGuideSection()
+        {
+            return guideInfo.tryGetCurrentGuideSection();
         }
 
         public void CarrierInstall()
