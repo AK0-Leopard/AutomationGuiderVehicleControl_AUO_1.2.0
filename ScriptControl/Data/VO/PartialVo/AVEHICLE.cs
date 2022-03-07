@@ -27,29 +27,69 @@ namespace com.mirle.ibg3k0.sc
 {
     public class GuideInfo
     {
+        public class Section
+        {
+            public string ID;
+            public DriveDirction Dir;
+            public bool isPass { get; private set; }
+            public void setIsPassFlag()
+            {
+                isPass = true;
+            }
+            public Section(string _id, DriveDirction _dir)
+            {
+                ID = _id;
+                Dir = _dir;
+                isPass = false;
+            }
+        }
         public GuideInfo()
         {
             startToLoadGuideAddresse = new List<string>();
-            startToLoadGuideSection = new List<string>();
+            startToLoadGuideSection = new List<Section>();
             ToDesinationGuideAddresse = new List<string>();
-            ToDesinationGuideSection = new List<string>();
+            ToDesinationGuideSection = new List<Section>();
         }
-        public GuideInfo(AVEHICLE _vh, ID_31_TRANS_REQUEST id_31)
+        public GuideInfo(sc.BLL.ReserveBLL reserveBLL, AVEHICLE _vh, ID_31_TRANS_REQUEST id_31)
         {
             vh = _vh;
             startToLoadGuideAddresse = id_31.GuideAddressesStartToLoad.ToList();
-            startToLoadGuideSection = id_31.GuideSectionsStartToLoad.ToList();
+            List<string> startToLoadGuideSectionIDs = id_31.GuideSectionsStartToLoad.ToList();
+            startToLoadGuideSection = convertGuideSectionIDToObject(reserveBLL, startToLoadGuideSectionIDs, startToLoadGuideAddresse);
             ToDesinationGuideAddresse = id_31.GuideAddressesToDestination.ToList();
-            ToDesinationGuideSection = id_31.GuideSectionsToDestination.ToList();
+            List<string> ToDesinationGuideSectionIDs = id_31.GuideSectionsToDestination.ToList();
+            ToDesinationGuideSection = convertGuideSectionIDToObject(reserveBLL, ToDesinationGuideSectionIDs, ToDesinationGuideAddresse);
             isAvoid = false;
             isMove = id_31.ActType == ActiveType.Move ||
                      id_31.ActType == ActiveType.Movetocharger;
         }
-        public GuideInfo(AVEHICLE _vh, ID_51_AVOID_REQUEST id_51)
+        private List<Section> convertGuideSectionIDToObject(sc.BLL.ReserveBLL reserveBLL, List<string> guideSectionIDs, List<string> guideAddresses)
+        {
+            string current_guide_Addresses = string.Join(",", guideAddresses);
+            List<Section> GuideSections = new List<Section>();
+            foreach (string sec_id in guideSectionIDs)
+            {
+                //var sec_obj = sectinoBLL.cache.GetSection(sec_id);
+                var get_result = reserveBLL.GetHltMapSections(sec_id);
+                if (!get_result.isExist)
+                {
+                    continue;
+                }
+                string from_to_addresses = $"{SCUtility.Trim(get_result.section.StartAddressID)},{SCUtility.Trim(get_result.section.EndAddressID)}";
+
+                DriveDirction dir = current_guide_Addresses.Contains(from_to_addresses) ?
+                                DriveDirction.DriveDirForward : DriveDirction.DriveDirReverse;
+                Section sec = new Section(sec_id, dir);
+                GuideSections.Add(sec);
+            }
+            return GuideSections;
+        }
+        public GuideInfo(sc.BLL.ReserveBLL reserveBLL, AVEHICLE _vh, ID_51_AVOID_REQUEST id_51)
         {
             vh = _vh;
             ToDesinationGuideAddresse = id_51.GuideAddresses.ToList();
-            ToDesinationGuideSection = id_51.GuideSections.ToList();
+            List<string> ToDesinationGuideSectionIDs = id_51.GuideSections.ToList();
+            ToDesinationGuideSection = convertGuideSectionIDToObject(reserveBLL, ToDesinationGuideSectionIDs, ToDesinationGuideAddresse);
             isAvoid = true;
             isMove = false;
         }
@@ -57,10 +97,46 @@ namespace com.mirle.ibg3k0.sc
         bool isAvoid;
         bool isMove;
         List<string> startToLoadGuideAddresse;
-        List<string> startToLoadGuideSection;
+        List<Section> startToLoadGuideSection;
         List<string> ToDesinationGuideAddresse;
-        List<string> ToDesinationGuideSection;
+        List<Section> ToDesinationGuideSection;
         public (bool hasInfo, List<string> currentGuideSection) tryGetCurrentGuideSection()
+        {
+            //if (isAvoid || isMove)
+            //{
+            //    if (ToDesinationGuideSection != null && ToDesinationGuideSection.Count > 0)
+            //        return (true, ToDesinationGuideSection.Select(sec => sec.ID).ToList());
+            //    else
+            //        return (false, null);
+            //}
+            //else
+            //{
+            //    if (vh.HAS_CST == 0)
+            //    {
+            //        if (startToLoadGuideSection != null && startToLoadGuideSection.Count > 0)
+            //            return (true, startToLoadGuideSection.Select(sec => sec.ID).ToList());
+            //        else
+            //            return (false, null);
+            //    }
+            //    else
+            //    {
+            //        if (ToDesinationGuideSection != null && ToDesinationGuideSection.Count > 0)
+            //            return (true, ToDesinationGuideSection.Select(sec => sec.ID).ToList());
+            //        else
+            //            return (false, null);
+            //    }
+            //}
+            var try_get_section_obj_result = tryGetCurrentGuideSectionObj();
+            if (try_get_section_obj_result.hasInfo)
+            {
+                return (true, try_get_section_obj_result.currentGuideSection.Select(sec => sec.ID).ToList());
+            }
+            else
+            {
+                return (false, null);
+            }
+        }
+        public (bool hasInfo, List<Section> currentGuideSection) tryGetCurrentGuideSectionObj()
         {
             if (isAvoid || isMove)
             {
@@ -86,6 +162,19 @@ namespace com.mirle.ibg3k0.sc
                         return (false, null);
                 }
             }
+        }
+        public (bool isExist, DriveDirction dir) tryGetWalkDirOnSection(string secID)
+        {
+            var try_get_current_guide_section_obj_result = tryGetCurrentGuideSectionObj();
+            if (!try_get_current_guide_section_obj_result.hasInfo)
+                return (false, DriveDirction.DriveDirNone);
+            var sec_obj = try_get_current_guide_section_obj_result.currentGuideSection.
+                Where(s => SCUtility.isMatche(s.ID, secID)).FirstOrDefault();
+            if (sec_obj == null)
+            {
+                return (false, DriveDirction.DriveDirNone);
+            }
+            return (true, sec_obj.Dir);
         }
     }
 
@@ -770,13 +859,13 @@ namespace com.mirle.ibg3k0.sc
         {
             guideInfo = new GuideInfo();
         }
-        public void setVhGuideInfo(ID_31_TRANS_REQUEST id_31)
+        public void setVhGuideInfo(BLL.ReserveBLL reserveBLL, ID_31_TRANS_REQUEST id_31)
         {
-            guideInfo = new GuideInfo(this, id_31);
+            guideInfo = new GuideInfo(reserveBLL, this, id_31);
         }
-        public void setVhGuideInfo(ID_51_AVOID_REQUEST id_51)
+        public void setVhGuideInfo(BLL.ReserveBLL reserveBLL, ID_51_AVOID_REQUEST id_51)
         {
-            guideInfo = new GuideInfo(this, id_51);
+            guideInfo = new GuideInfo(reserveBLL, this, id_51);
         }
 
         public void CarrierInstall()

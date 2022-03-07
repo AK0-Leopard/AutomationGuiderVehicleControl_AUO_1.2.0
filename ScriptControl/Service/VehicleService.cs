@@ -26,6 +26,7 @@ using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using com.mirle.ibg3k0.sc.RouteKit;
 using Google.Protobuf.Collections;
 using KingAOP;
+using Mirle.Hlts.Utils;
 using Newtonsoft.Json.Linq;
 using NLog;
 using System;
@@ -1943,7 +1944,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 else
                 {
-                    vh.setVhGuideInfo(send_gpp);
+                    vh.setVhGuideInfo(scApp.ReserveBLL, send_gpp);
                 }
                 vh.NotifyVhExcuteCMDStatusChange();
             }
@@ -2206,7 +2207,7 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 if (receive_gpp.ReplyCode == 0)
                 {
-                    vh.setVhGuideInfo(send_gpp);
+                    vh.setVhGuideInfo(scApp.ReserveBLL, send_gpp);
                 }
             }
             return isSuccess;
@@ -2493,31 +2494,91 @@ namespace com.mirle.ibg3k0.sc.Service
                     return (false, string.Empty, string.Empty);
                 }
                 if (reserveInfos == null || reserveInfos.Count == 0) return (false, string.Empty, string.Empty);
-                string reserve_section_id = reserveInfos[0].ReserveSectionID;
-
-                //判斷第一段路線，是否要直接下給車子，避免再要求第一段的時候，其實沒有要走但卻會被卡住的問題
-                bool is_force_pass_first_reserve = checkIsForcePassFirstSectionReserve(vh, reserve_section_id);
-                if (is_force_pass_first_reserve)
+                bool is_reserved_success = true;
+                string reserved_vh_id = "";
+                string reserved_sec_id = "";
+                foreach (var reserve_sec in reserveInfos)
                 {
-                    return (true, "", reserve_section_id);
+                    string reserve_section_id = reserve_sec.ReserveSectionID;
+                    //判斷第一段路線，是否要直接下給車子，避免再要求第一段的時候，其實沒有要走但卻會被卡住的問題
+                    bool is_force_pass_first_reserve = checkIsForcePassFirstSectionReserve(vh, reserve_section_id);
+                    if (is_force_pass_first_reserve)
+                    {
+                        is_reserved_success &= true;
+                        continue;
+                    }
+
+                    //Mirle.Hlts.Utils.HltDirection hltDirection = decideReserveDirection(vh, reserve_section_id);
+                    //Mirle.Hlts.Utils.HltDirection hltDirection = scApp.ReserveBLL.DecideReserveDirection(scApp.SectionBLL, vh, reserve_section_id);
+
+                    Mirle.Hlts.Utils.HltDirection hltDirection = Mirle.Hlts.Utils.HltDirection.ForwardReverse;
+                    var check_result = vh.guideInfo.tryGetWalkDirOnSection(reserve_section_id);
+                    if (check_result.isExist)
+                    {
+                        switch (check_result.dir)
+                        {
+                            case DriveDirction.DriveDirForward:
+                                hltDirection = HltDirection.Forward;
+                                break;
+                            case DriveDirction.DriveDirReverse:
+                                hltDirection = HltDirection.Reverse;
+                                break;
+                        }
+                    }
+
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: $"vh:{vhID} Try add reserve section:{reserve_section_id} hlt dir:{hltDirection}...",
+                       VehicleID: vhID);
+                    var result = scApp.ReserveBLL.TryAddReservedSection(vhID, reserve_section_id,
+                                                                        sensorDir: hltDirection,
+                                                                        isAsk: isAsk);
+
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: $"vh:{vhID} Try add reserve section:{reserve_section_id},result:{result.ToString()}",
+                       VehicleID: vhID);
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: $"current reserve section:{scApp.ReserveBLL.GetCurrentReserveSection()}",
+                       VehicleID: vhID);
+                    if (result.OK)
+                    {
+                        is_reserved_success &= true;
+                    }
+                    else
+                    {
+                        is_reserved_success &= false;
+                        reserved_vh_id = result.VehicleID;
+                        reserved_sec_id = reserve_section_id;
+                        break;
+                    }
                 }
+                return (is_reserved_success, reserved_vh_id, reserved_sec_id);
 
-                //Mirle.Hlts.Utils.HltDirection hltDirection = decideReserveDirection(vh, reserve_section_id);
-                Mirle.Hlts.Utils.HltDirection hltDirection = scApp.ReserveBLL.DecideReserveDirection(scApp.SectionBLL, vh, reserve_section_id);
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                   Data: $"vh:{vhID} Try add reserve section:{reserve_section_id} hlt dir:{hltDirection}...",
-                   VehicleID: vhID);
-                var result = scApp.ReserveBLL.TryAddReservedSection(vhID, reserve_section_id,
-                                                                    sensorDir: hltDirection,
-                                                                    isAsk: isAsk);
 
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                   Data: $"vh:{vhID} Try add reserve section:{reserve_section_id},result:{result.ToString()}",
-                   VehicleID: vhID);
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                   Data: $"current reserve section:{scApp.ReserveBLL.GetCurrentReserveSection()}",
-                   VehicleID: vhID);
-                return (result.OK, result.VehicleID, reserve_section_id);
+                //string reserve_section_id = reserveInfos[0].ReserveSectionID;
+
+                ////判斷第一段路線，是否要直接下給車子，避免再要求第一段的時候，其實沒有要走但卻會被卡住的問題
+                //bool is_force_pass_first_reserve = checkIsForcePassFirstSectionReserve(vh, reserve_section_id);
+                //if (is_force_pass_first_reserve)
+                //{
+                //    return (true, "", reserve_section_id);
+                //}
+
+                ////Mirle.Hlts.Utils.HltDirection hltDirection = decideReserveDirection(vh, reserve_section_id);
+                //Mirle.Hlts.Utils.HltDirection hltDirection = scApp.ReserveBLL.DecideReserveDirection(scApp.SectionBLL, vh, reserve_section_id);
+                //LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                //   Data: $"vh:{vhID} Try add reserve section:{reserve_section_id} hlt dir:{hltDirection}...",
+                //   VehicleID: vhID);
+                //var result = scApp.ReserveBLL.TryAddReservedSection(vhID, reserve_section_id,
+                //                                                    sensorDir: hltDirection,
+                //                                                    isAsk: isAsk);
+
+                //LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                //   Data: $"vh:{vhID} Try add reserve section:{reserve_section_id},result:{result.ToString()}",
+                //   VehicleID: vhID);
+                //LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                //   Data: $"current reserve section:{scApp.ReserveBLL.GetCurrentReserveSection()}",
+                //   VehicleID: vhID);
+                //return (result.OK, result.VehicleID, reserve_section_id);
             }
             catch (Exception ex)
             {

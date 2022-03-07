@@ -1874,11 +1874,13 @@ namespace com.mirle.ibg3k0.sc.BLL
             double dir_angle = report_obj.DirectionAngle;
             double vh_angle = report_obj.VehicleAngle;
             double speed = report_obj.Speed;
-            List<string> current_guide_address = vh.PredictAddresses?.ToList();
-            DriveDirction drive_dirction = report_obj.DrivingDirection;
+
+            //List<string> current_guide_address = vh.PredictAddresses?.ToList();
             //DriveDirction drive_dirction = getDrivingDirection(current_sec_id, current_guide_address);
             //DriveDirction drive_dirction = getDrivingDirection(vh, current_sec_id);
-            speed = drive_dirction == DriveDirction.DriveDirForward ? speed : -speed;
+            //speed = drive_dirction == DriveDirction.DriveDirForward ? speed : -speed;
+            DriveDirction drive_dirction = report_obj.DrivingDirection;
+            double dis_speed = getSpeedValue(vh, speed, current_sec_id);
             //如果這次上報的x、y 為0，則繼續拿上一次地來更新
             x_axis = x_axis == 0 ? vh.X_Axis : x_axis;
             y_axis = y_axis == 0 ? vh.Y_Axis : y_axis;
@@ -1914,11 +1916,12 @@ namespace com.mirle.ibg3k0.sc.BLL
                 updateVheiclePosition_CacheManager(vh, current_adr_id, current_sec_id, current_seg_id, sec_dis, drive_dirction, x_axis, y_axis, dir_angle, vh_angle);
                 //if (!SCUtility.isMatche(current_adr_id, last_adr_id))
                 {
-                    var sensor_dir = decideReserveDirection(vh_angle);
+                    //var sensor_dir = decideReserveDirection(vh_angle);
                     //var update_result = updateVheiclePositionToReserveControlModule(scApp.ReserveBLL, vh, x_axis, y_axis, dir_angle, vh_angle, speed,
                     //                                                                Mirle.Hlts.Utils.HltDirection.NESW, Mirle.Hlts.Utils.HltDirection.None);
-                    var update_result = updateVheiclePositionToReserveControlModule(scApp.ReserveBLL, vh, current_sec_id, x_axis, y_axis, dir_angle, vh_angle, speed,
-                                                                                    sensor_dir, Mirle.Hlts.Utils.HltDirection.None);
+                    //var update_result = updateVheiclePositionToReserveControlModule(scApp.ReserveBLL, vh, current_sec_id, x_axis, y_axis, dir_angle, vh_angle, speed,
+                    var update_result = updateVheiclePositionToReserveControlModule(scApp.ReserveBLL, vh, current_sec_id, x_axis, y_axis, dir_angle, vh_angle, dis_speed,
+                                                                                    Mirle.Hlts.Utils.HltDirection.Forward, Mirle.Hlts.Utils.HltDirection.None);
                     if (!update_result.OK)
                     {
                         string message = $"The vehicles bumped, vh:{vh.VEHICLE_ID} with vh:{update_result.VehicleID}";
@@ -1974,6 +1977,16 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
                 //scApp.VehicleBLL.updateVheiclePosition_CacheManager(vh, current_adr_id, current_sec_id, current_seg_id, sec_dis, drive_dirction);
             }
+        }
+        private double getSpeedValue(AVEHICLE vh, double speed, string currentSectionID)
+        {
+            double speed_temp = speed == 0 ? 1 : speed;
+            DriveDirction drive_dirction = DriveDirction.DriveDirNone;
+            var check_result = vh.guideInfo.tryGetWalkDirOnSection(currentSectionID);
+            if (check_result.isExist)
+                drive_dirction = check_result.dir;
+            double dri_speed = drive_dirction == DriveDirction.DriveDirReverse ? -speed_temp : speed_temp;
+            return dri_speed;
         }
 
         private double getDistance(double x1, double y1, double x2, double y2)
