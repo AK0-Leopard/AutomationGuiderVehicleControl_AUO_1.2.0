@@ -136,16 +136,17 @@ namespace com.mirle.ibg3k0.sc.BLL
                VehicleID: vhID);
             //HltResult result = mapAPI.TryAddVehicleOrUpdate(vhID, vehicleX, vehicleY, vehicleAngle, sensorDir, forkDir);
             //var hlt_vh = new HltVehicle(vhID, vehicleX, vehicleY, vehicleAngle, speedMmPerSecond, sensorDirection: sensorDir, forkDirection: forkDir);
-            var hlt_vh = new HltVehicle(vhID, vehicleX, vehicleY, vehicleAngle, speedMmPerSecond, sensorDirection: sensorDir, forkDirection: forkDir, currentSectionID: currentSectionID);
+            //var hlt_vh = new HltVehicle(vhID, vehicleX, vehicleY, vehicleAngle, speedMmPerSecond, sensorDirection: sensorDir, forkDirection: forkDir, currentSectionID: currentSectionID);
+            var hlt_vh = new HltVehicle(vhID, vehicleX, vehicleY, vehicleAngle, speedMmPerSecond, sensorDirection: sensorDir, forkDirection: forkDir);
             //HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh, isKeepRestSection: true);
             HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh);
 
-            if (!is_vertical_section)
-            {
-                mapAPI.IsKeepRestSection = true;
-                mapAPI.KeepRestSection(hlt_vh);
-            }
-            mapAPI.IsKeepRestSection = false;
+            //if (!is_vertical_section)
+            //{
+            //    mapAPI.IsKeepRestSection = true;
+            //    mapAPI.KeepRestSection(hlt_vh);
+            //}
+            //mapAPI.IsKeepRestSection = false;
             onReserveStatusChange();
 
             return result;
