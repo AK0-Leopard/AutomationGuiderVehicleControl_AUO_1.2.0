@@ -43,8 +43,9 @@ namespace com.mirle.ibg3k0.sc
                 isPass = false;
             }
         }
-        public GuideInfo()
+        public GuideInfo(AVEHICLE _vh)
         {
+            vh = _vh;
             startToLoadGuideAddresse = new List<string>();
             startToLoadGuideSection = new List<Section>();
             ToDesinationGuideAddresse = new List<string>();
@@ -355,7 +356,7 @@ namespace com.mirle.ibg3k0.sc
             vhStateMachine = new VehicleStateMachine(() => State, (state) => State = state);
             vhStateMachine.OnTransitioned(TransitionedHandler);
             vhStateMachine.OnUnhandledTrigger(UnhandledTriggerHandler);
-
+            guideInfo = new GuideInfo(this);
             CurrentCommandExcuteTime = new Stopwatch();
             CarrierInstalledTime = new Stopwatch();
 
@@ -513,7 +514,7 @@ namespace com.mirle.ibg3k0.sc
                 GuideAddresses = guideAddresses;
             }
         }
-        public GuideInfo guideInfo { get; set; } = new GuideInfo();
+        public GuideInfo guideInfo { get; set; }
 
 
         public com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage.VhStopSingle RESERVE_PAUSE { get; set; }
@@ -857,7 +858,7 @@ namespace com.mirle.ibg3k0.sc
 
         public void resetVhGuideInfo()
         {
-            guideInfo = new GuideInfo();
+            guideInfo = new GuideInfo(this);
         }
         public void setVhGuideInfo(BLL.ReserveBLL reserveBLL, ID_31_TRANS_REQUEST id_31)
         {

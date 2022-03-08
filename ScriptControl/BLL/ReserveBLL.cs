@@ -148,10 +148,12 @@ namespace com.mirle.ibg3k0.sc.BLL
             HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh);
             if (!is_vertical_section)
             {
-                mapAPI.IsKeepRestSection = true;
                 mapAPI.KeepRestSection(hlt_vh);
             }
-            mapAPI.IsKeepRestSection = false;
+            else
+            {
+
+            }
             onReserveStatusChange();
 
             return result;
@@ -291,6 +293,46 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             var hlt_section_obj = mapAPI.HltMapSections.Where(sec => SCUtility.isMatche(sec.ID, sectionID)).FirstOrDefault();
             return hlt_section_obj != null && !SCUtility.isEmpty(hlt_section_obj.Type) && hlt_section_obj.Type.Contains(HtlSectionType.Vertical.ToString());
+        }
+
+        public virtual (bool IsFind, HltDirection secDir) tryGetHltSectionDir(string sectionID)
+        {
+            var hlt_section_obj = mapAPI.HltMapSections.Where(sec => SCUtility.isMatche(sec.ID, sectionID)).FirstOrDefault();
+            if (hlt_section_obj == null)
+                return (false, HltDirection.None);
+            HltDirection sec_dir = HltDirection.None;
+            var start_hlt_addresses = mapAPI.HltMapAddresses.Where(adr => SCUtility.isMatche(adr.ID, hlt_section_obj.StartAddressID)).FirstOrDefault();
+            var end_hlt_addresses = mapAPI.HltMapAddresses.Where(adr => SCUtility.isMatche(adr.ID, hlt_section_obj.EndAddressID)).FirstOrDefault();
+            if (start_hlt_addresses != null && end_hlt_addresses != null)
+            {
+                if (start_hlt_addresses.X == end_hlt_addresses.X)
+                {
+                    if (start_hlt_addresses.Y > end_hlt_addresses.Y)
+                    {
+                        sec_dir = HltDirection.North;
+                    }
+                    else
+                    {
+                        sec_dir = HltDirection.South;
+                    }
+                }
+                else if (start_hlt_addresses.Y == end_hlt_addresses.Y)
+                {
+                    if (start_hlt_addresses.X > end_hlt_addresses.X)
+                    {
+                        sec_dir = HltDirection.West;
+                    }
+                    else
+                    {
+                        sec_dir = HltDirection.East;
+                    }
+                }
+                return (true, sec_dir);
+            }
+            else
+            {
+                return (false, HltDirection.None);
+            }
         }
 
         enum HtlSectionType

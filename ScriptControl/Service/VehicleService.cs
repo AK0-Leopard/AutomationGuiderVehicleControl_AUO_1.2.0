@@ -323,12 +323,32 @@ namespace com.mirle.ibg3k0.sc.Service
                    Data: $"vh:{vh.VEHICLE_ID} leave section {leave_section.SEC_ID},remove reserved.",
                    VehicleID: vh.VEHICLE_ID);
             }
+            tryReleaseReservedSection(vh, leave_section, entry_section);
             scApp.CMDBLL.removeAlreadyPassedSection(vh.VEHICLE_ID, e.LeaveSection);
 
             if (DebugParameter.AdvanceDriveAway)
                 Task.Run(() => tryDriveAwayInWTOIdleVh(vh));
 
         }
+
+        private void tryReleaseReservedSection(AVEHICLE vh, ASECTION leave_section, ASECTION entry_section)
+        {
+            string vh_current_sec_id = SCUtility.Trim(vh.CUR_SEC_ID, true);
+            var try_get_cross_address_id = tryFindCrossAddressID(leave_section.SEC_ID, entry_section.SEC_ID);
+            if (!try_get_cross_address_id.hasFind)
+                return;
+            var related_sections = scApp.SectionBLL.cache.GetSectionsByAddress(try_get_cross_address_id.adrID);
+            var will_release_sections = related_sections.Where(sec => !SCUtility.isMatche(sec.SEC_ID, vh_current_sec_id)).ToList();
+            foreach (var section in will_release_sections)
+            {
+                scApp.ReserveBLL.RemoveManyReservedSectionsByVIDSID(vh.VEHICLE_ID, section.SEC_ID);
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                   Data: $"vh:{vh.VEHICLE_ID} release section {section.SEC_ID}" +
+                         $"(By cross adr:{try_get_cross_address_id.adrID},leave_section:{leave_section.SEC_ID},entry_section:{entry_section.SEC_ID}).",
+                   VehicleID: vh.VEHICLE_ID);
+            }
+        }
+
         private void tryDriveAwayInWTOIdleVh(AVEHICLE movingVh)
         {
             try
@@ -2485,6 +2505,7 @@ namespace com.mirle.ibg3k0.sc.Service
                        VehicleID: vhID);
                     return (false, string.Empty, string.Empty);
                 }
+
                 AVEHICLE vh = scApp.VehicleBLL.cache.getVehicle(vhID);
                 if (vh.IsPrepareAvoid)
                 {
@@ -2511,6 +2532,12 @@ namespace com.mirle.ibg3k0.sc.Service
                     //Mirle.Hlts.Utils.HltDirection hltDirection = decideReserveDirection(vh, reserve_section_id);
                     //Mirle.Hlts.Utils.HltDirection hltDirection = scApp.ReserveBLL.DecideReserveDirection(scApp.SectionBLL, vh, reserve_section_id);
 
+                    //Mirle.Hlts.Utils.HltDirection hltDirection = Mirle.Hlts.Utils.HltDirection.ForwardReverse;
+                    //var get_section_dir_result = scApp.ReserveBLL.tryGetHltSectionDir(reserve_section_id);
+                    //if(get_section_dir_result.IsFind)
+                    //{
+                    //    hltDirection = get_section_dir_result.secDir;
+                    //}
                     Mirle.Hlts.Utils.HltDirection hltDirection = Mirle.Hlts.Utils.HltDirection.ForwardReverse;
                     var check_result = vh.guideInfo.tryGetWalkDirOnSection(reserve_section_id);
                     if (check_result.isExist)
