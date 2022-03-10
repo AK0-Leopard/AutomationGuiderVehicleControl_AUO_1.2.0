@@ -2275,6 +2275,12 @@ namespace com.mirle.ibg3k0.sc.BLL
                        Where(vh => vh.ERROR == VhStopSingle.StopSingleOn).
                        Count();
             }
+            public List<AVEHICLE> loadAlarmVhs()
+            {
+                var vhs = eqObjCacheManager.getAllVehicle();
+                return vhs.Where(vh => vh.IsError).
+                           ToList();
+            }
 
 
 

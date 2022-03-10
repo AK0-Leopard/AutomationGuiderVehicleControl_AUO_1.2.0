@@ -49,6 +49,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             numer_num_of_avoid_seg.Value = DebugParameter.NumberOfAvoidanceSegment;
             checkBox_host_offline.Checked = DebugParameter.UseHostOffline;
             cb_advanceDriveAway.Checked = DebugParameter.AdvanceDriveAway;
+            cb_passErrorVH.Checked = sc.App.SystemParameter.IsPassErrorVhWhenGuideRoute;
 
             List<string> lstVh = new List<string>();
             lstVh.Add(string.Empty);
@@ -1556,6 +1557,11 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             var action = chargerM.getMapActionByIdentityKey(nameof(com.mirle.ibg3k0.sc.Data.ValueDefMapAction.ChargerValueDefMapAction)) as
                    com.mirle.ibg3k0.sc.Data.ValueDefMapAction.ChargerValueDefMapAction;
             Task.Run(() => action.MasterChargerAbnormalChargingReport(null, null));
+        }
+
+        private void cb_passErrorVH_CheckedChanged(object sender, EventArgs e)
+        {
+            sc.App.SystemParameter.setIsPassErrorVhWhenGuideRoute(cb_passErrorVH.Checked);
         }
     }
 }

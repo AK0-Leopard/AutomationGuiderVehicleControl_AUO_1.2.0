@@ -1893,6 +1893,7 @@ namespace com.mirle.ibg3k0.sc.App
         public static int TheLongestFullyChargedIntervalTime_Mim = 15;
 
         public static bool AutoOverride = true;
+        public static bool IsPassErrorVhWhenGuideRoute { get; private set; } = false;
 
         public static int MAX_ALLOW_DISTANCE_OFFSET_mm { get; private set; } = 50;
         public static int MAX_ALLOW_VH_ACTION_TIME_SECOND { get; private set; } = 1200;
@@ -1974,6 +1975,10 @@ namespace com.mirle.ibg3k0.sc.App
         public static void setDataWorkerServerListenPort(int port)
         {
             dataWorkerServerListenPort = port;
+        }        
+        public static void setIsPassErrorVhWhenGuideRoute(bool _IsPassErrorVhWhenGuideRoute)
+        {
+            IsPassErrorVhWhenGuideRoute = _IsPassErrorVhWhenGuideRoute;
         }
 
     }

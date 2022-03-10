@@ -115,6 +115,7 @@
             this.btn_forceReleaseAllBlock = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.cb_passErrorVH = new System.Windows.Forms.CheckBox();
             this.cb_advanceDriveAway = new System.Windows.Forms.CheckBox();
             this.grb_Reserve = new System.Windows.Forms.GroupBox();
             this.cb_reserve_pass = new System.Windows.Forms.CheckBox();
@@ -1339,6 +1340,7 @@
             // tabPage1
             // 
             this.tabPage1.AutoScroll = true;
+            this.tabPage1.Controls.Add(this.cb_passErrorVH);
             this.tabPage1.Controls.Add(this.cb_advanceDriveAway);
             this.tabPage1.Controls.Add(this.grb_Reserve);
             this.tabPage1.Controls.Add(this.groupBox7);
@@ -1353,6 +1355,17 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "TcpIp Control";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // cb_passErrorVH
+            // 
+            this.cb_passErrorVH.AutoSize = true;
+            this.cb_passErrorVH.Location = new System.Drawing.Point(1153, 376);
+            this.cb_passErrorVH.Name = "cb_passErrorVH";
+            this.cb_passErrorVH.Size = new System.Drawing.Size(281, 26);
+            this.cb_passErrorVH.TabIndex = 28;
+            this.cb_passErrorVH.Text = "規劃路徑不參考故障車位置";
+            this.cb_passErrorVH.UseVisualStyleBackColor = true;
+            this.cb_passErrorVH.CheckedChanged += new System.EventHandler(this.cb_passErrorVH_CheckedChanged);
             // 
             // cb_advanceDriveAway
             // 
@@ -3992,5 +4005,6 @@
         private System.Windows.Forms.Label label75;
         private System.Windows.Forms.CheckBox cb_advanceDriveAway;
         private System.Windows.Forms.Button btn_charger_alarm_test;
+        private System.Windows.Forms.CheckBox cb_passErrorVH;
     }
 }

@@ -1166,7 +1166,7 @@ namespace com.mirle.ibg3k0.sc.Service
             List<string> guide_start_to_from_segment_ids, List<string> guide_start_to_from_section_ids, List<string> guide_start_to_from_address_ids,
             List<string> guide_to_dest_segment_ids, List<string> guide_to_dest_section_ids, List<string> guide_to_dest_address_ids)
             //FindGuideInfo(string vh_current_address, string source_adr, string dest_adr, ActiveType active_type, bool has_carray = false, List<string> byPassAddressIDs = null)
-            FindGuideInfo(string vh_current_address, string source_adr, string dest_adr, ActiveType active_type, bool has_carray = false, List<string> byPassSectionIDs = null)
+            FindGuideInfo(string vh_current_address, string source_adr, string dest_adr, ActiveType active_type, bool has_carray = false, List<string> additionalByPassSectionIDs = null)
         {
             bool isSuccess = false;
             List<string> guide_start_to_from_segment_ids = null;
@@ -1176,6 +1176,9 @@ namespace com.mirle.ibg3k0.sc.Service
             List<string> guide_to_dest_section_ids = null;
             List<string> guide_to_dest_address_ids = null;
             int total_cost = 0;
+            //多增加過濾掉故障車路線的邏輯
+            List<string> all_by_pass_section_ids = loadAllByPassSection(additionalByPassSectionIDs);
+
             //1.取得行走路徑的詳細資料
             switch (active_type)
             {
@@ -1185,7 +1188,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         if (!SCUtility.isMatche(vh_current_address, dest_adr))
                         {
                             (isSuccess, guide_to_dest_segment_ids, guide_to_dest_section_ids, guide_to_dest_address_ids, total_cost)
-                                = scApp.GuideBLL.getGuideInfo(vh_current_address, dest_adr, byPassSectionIDs);
+                                = scApp.GuideBLL.getGuideInfo(vh_current_address, dest_adr, all_by_pass_section_ids);
                         }
                     }
                     else
@@ -1193,7 +1196,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         if (!SCUtility.isMatche(vh_current_address, source_adr))
                         {
                             (isSuccess, guide_start_to_from_segment_ids, guide_start_to_from_section_ids, guide_start_to_from_address_ids, total_cost)
-                                = scApp.GuideBLL.getGuideInfo(vh_current_address, source_adr, byPassSectionIDs);
+                                = scApp.GuideBLL.getGuideInfo(vh_current_address, source_adr, all_by_pass_section_ids);
                         }
                         else
                         {
@@ -1210,7 +1213,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     if (!SCUtility.isMatche(vh_current_address, source_adr))
                     {
                         (isSuccess, guide_start_to_from_segment_ids, guide_start_to_from_section_ids, guide_start_to_from_address_ids, total_cost)
-                            = scApp.GuideBLL.getGuideInfo(vh_current_address, source_adr, byPassSectionIDs);
+                            = scApp.GuideBLL.getGuideInfo(vh_current_address, source_adr, all_by_pass_section_ids);
                     }
                     else
                     {
@@ -1221,7 +1224,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     if (!SCUtility.isMatche(vh_current_address, dest_adr))
                     {
                         (isSuccess, guide_to_dest_segment_ids, guide_to_dest_section_ids, guide_to_dest_address_ids, total_cost)
-                            = scApp.GuideBLL.getGuideInfo(vh_current_address, dest_adr, byPassSectionIDs);
+                            = scApp.GuideBLL.getGuideInfo(vh_current_address, dest_adr, all_by_pass_section_ids);
                     }
                     else
                     {
@@ -1233,7 +1236,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     if (!SCUtility.isMatche(vh_current_address, dest_adr))
                     {
                         (isSuccess, guide_to_dest_segment_ids, guide_to_dest_section_ids, guide_to_dest_address_ids, total_cost)
-                            = scApp.GuideBLL.getGuideInfo(vh_current_address, dest_adr, byPassSectionIDs);
+                            = scApp.GuideBLL.getGuideInfo(vh_current_address, dest_adr, all_by_pass_section_ids);
                     }
                     else
                     {
@@ -1246,6 +1249,47 @@ namespace com.mirle.ibg3k0.sc.Service
                     guide_start_to_from_segment_ids, guide_start_to_from_section_ids, guide_start_to_from_address_ids,
                     guide_to_dest_segment_ids, guide_to_dest_section_ids, guide_to_dest_address_ids);
         }
+        private List<string> loadAllByPassSection(List<string> originalByPassSection)
+        {
+            List<string> by_pass_section_ids = new List<string>();
+            if (originalByPassSection != null && originalByPassSection.Count > 0)
+                by_pass_section_ids.AddRange(originalByPassSection);
+            if (!SystemParameter.IsPassErrorVhWhenGuideRoute)
+            {
+                List<string> blocked_section_ids = loadBLockedSectionIDs(scApp.VehicleBLL, scApp.UnitBLL);
+                if (blocked_section_ids != null && blocked_section_ids.Count > 0)
+                    by_pass_section_ids.AddRange(blocked_section_ids);
+            }
+            return by_pass_section_ids;
+        }
+
+        private List<string> loadBLockedSectionIDs(VehicleBLL vehicleBLL, UnitBLL unitBLL)
+        {
+            List<string> blocked_section_ids = new List<string>();
+            try
+            {
+                var alarm_vhs = vehicleBLL.cache.loadAlarmVhs();
+
+                foreach (var vh in alarm_vhs)
+                {
+                    string current_sec_id = vh.CUR_SEC_ID;
+                    if (SCUtility.isEmpty(current_sec_id))
+                    {
+                        continue;
+                    }
+                    blocked_section_ids.Add(current_sec_id);
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(GuideBLL), Device: "OHx",
+                       Data: $"vh:{vh.VEHICLE_ID} error at section:{current_sec_id} by pass this section ,when find guide route");
+                }
+                return blocked_section_ids;
+            }
+            catch (Exception ex)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Error(ex, "Exception:");
+                return blocked_section_ids;
+            }
+        }
+
         private void AbnormalProcess(string vhID, ACMD_OHTC cmd)
         {
             if (!SCUtility.isEmpty(cmd.CMD_ID_MCS))
