@@ -109,7 +109,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         //        updateVheiclePosition(vh.VEHICLE_ID, current_adr_id, current_sec_id, sec_dis, vhPassEvent);
 
         //}
-        public bool updateVheiclePosition_CacheManager(AVEHICLE vh, string adr_id, string sec_id, string seg_id, double sce_dis, DriveDirction driveDirction, double xAxis, double yAxis, double dirctionAngle, double vehicleAngle)
+        public bool updateVheiclePosition_CacheManager(AVEHICLE vh, string adr_id, string sec_id, string seg_id, double sce_dis, DriveDirction driveDirction, double xAxis, double yAxis, double dirctionAngle, double vehicleAngle,double speed)
         {
             vh.CUR_ADR_ID = adr_id;
             vh.CUR_SEC_ID = sec_id;
@@ -121,6 +121,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             vh.Y_Axis = yAxis;
             vh.DirctionAngle = dirctionAngle;
             vh.VehicleAngle = vehicleAngle;
+            vh.Speed = speed;
             //var showObj = scApp.getEQObjCacheManager().CommonInfo.ObjectToShow_list.
             //    Where(o => o.VEHICLE_ID == vh.VEHICLE_ID).SingleOrDefault();
             //showObj.NotifyPropertyChanged(nameof(showObj.ACC_SEC_DIST2Show));
@@ -1913,7 +1914,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                        CarrierID: vh.CST_ID);
                     return;
                 }
-                updateVheiclePosition_CacheManager(vh, current_adr_id, current_sec_id, current_seg_id, sec_dis, drive_dirction, x_axis, y_axis, dir_angle, vh_angle);
+                updateVheiclePosition_CacheManager(vh, current_adr_id, current_sec_id, current_seg_id, sec_dis, drive_dirction, x_axis, y_axis, dir_angle, vh_angle, dis_speed);
                 //if (!SCUtility.isMatche(current_adr_id, last_adr_id))
                 {
                     //var sensor_dir = decideReserveDirection(vh_angle);

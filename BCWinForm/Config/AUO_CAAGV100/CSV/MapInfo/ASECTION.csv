@@ -74,7 +74,7 @@ Id,FromAddress,ToAddress,Speed, Type,PermitDirection
 0271,48028,48045,600,Vertical,Forward
 0281,48041,48032,600,Vertical,Forward
 0291,48035,48039,600,Vertical,Forward
-0301,48057,16069,138,R2000,Forward
+0301,48057,16069,138,R2000B,Forward
 0302,16069,16070,600,Horizontal,Forward
 0303,16070,48071,1000,Horizontal,Forward
 0311,48074,20075,1000,Horizontal,Forward
@@ -83,8 +83,8 @@ Id,FromAddress,ToAddress,Speed, Type,PermitDirection
 0314,20077,48078,1000,Horizontal,Forward
 0321,48078,48079,1000,Horizontal,Forward
 0331,48079,16080,600,Horizontal,Forward
-0332,16080,48056,138,R2000,Forward
-0341,48079,48012,138,R2000,Forward
+0332,16080,48056,138,R2000B,Forward
+0341,48079,48012,138,R2000B,Forward
 0351,48071,48078,600,Vertical,Forward
 0361,48081,16082,600,Vertical,Forward
 0362,16082,16083,600,Horizontal,Forward

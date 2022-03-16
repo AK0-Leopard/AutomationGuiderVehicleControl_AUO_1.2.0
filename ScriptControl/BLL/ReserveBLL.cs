@@ -223,9 +223,21 @@ namespace com.mirle.ibg3k0.sc.BLL
             //int sec_id = 0;
             //int.TryParse(sectionID, out sec_id);
             string sec_id = SCUtility.Trim(sectionID);
+            var vh_obj = mapAPI.GetVehicleObjectByID(vhID);
+            double original_speed = 0;
+            if (vh_obj != null)
+            {
+                original_speed = vh_obj.SpeedMmPerSecond;
+                vh_obj.SpeedMmPerSecond = 1;
+            }
 
             HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, isAsk);
             onReserveStatusChange();
+
+            if (vh_obj != null)
+            {
+                vh_obj.SpeedMmPerSecond = original_speed;
+            }
 
             return result;
         }

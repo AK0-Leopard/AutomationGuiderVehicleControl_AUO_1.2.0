@@ -162,8 +162,8 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
 
         private void Taichung()
         {
-            //tryCreatMCSCommand(E_VH_TYPE.None, SourcePorts_None);
-            tryCreatMoveCommand();
+            tryCreatMCSCommand(E_VH_TYPE.None, SourcePorts_None);
+            //tryCreatMoveCommand();
         }
 
         private void tryCreatMoveCommand()
