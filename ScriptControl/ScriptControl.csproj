@@ -1150,9 +1150,6 @@
     </Content>
     <Content Include="DLL\BlockControlFramework.dll" />
     <Content Include="DLL\BlockControlFramework.pdb" />
-    <Content Include="DLL\Mirle.AK0.Hlt.ReserveSection.Map.dll" />
-    <Content Include="DLL\Mirle.AK0.Hlt.ReserveSection.Vision.dll" />
-    <Content Include="DLL\Mirle.AK0.Hlt.Utils.dll" />
     <Content Include="DLL\Mirle.Hlts.ReserveSection.Map.dll" />
     <Content Include="DLL\Mirle.Hlts.ReserveSection.Vision.dll" />
     <Content Include="DLL\Mirle.Hlts.Utils.dll" />

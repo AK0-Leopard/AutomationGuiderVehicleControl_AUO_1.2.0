@@ -120,10 +120,10 @@ namespace com.mirle.ibg3k0.sc.BLL
             var adr_obj = mapAPI.HltMapAddresses.Where(a => SCUtility.isMatche(a.ID, adrID)).FirstOrDefault();
             return (adr_obj != null, adr_obj.X, adr_obj.Y, adr_obj.IsTR50);
         }
-        public virtual HltMapSection GetHltMapSections(string secID)
+        public virtual (bool isExist, HltMapSection section) GetHltMapSections(string secID)
         {
             var sec_obj = mapAPI.HltMapSections.Where(sec => SCUtility.isMatche(sec.ID, secID)).FirstOrDefault();
-            return (sec_obj);
+            return (sec_obj != null, sec_obj);
         }
         public virtual HltResult TryAddVehicleOrUpdateResetSensorForkDir(string vhID)
         {
@@ -222,15 +222,21 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             //int sec_id = 0;
             //int.TryParse(sectionID, out sec_id);
+            var vh_obj = mapAPI.GetVehicleObjectByID(vhID);
+            double original_speed = 0;
+            if (vh_obj != null)
+            {
+                original_speed = vh_obj.SpeedMmPerSecond;
+                vh_obj.SpeedMmPerSecond = 1;
+            }
             string sec_id = SCUtility.Trim(sectionID);
-            int vehicle_direction = getVehicleDirection(driveDirection);
             HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, isAsk);
-
-            if (SCUtility.isMatche(sec_id, "0162"))
-                sensorDir = HltDirection.None;
-            //HltResult result = mapAPI.TryAddReservedSection(vhID, sec_id, sensorDir, forkDir, vehicle_direction, isAsk);
+            if (vh_obj != null)
+            {
+                vh_obj.SpeedMmPerSecond = original_speed;
+            }
             LogHelper.Log(logger: logger, LogLevel: NLog.LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
-               Data: $"vh:{vhID} Try add reserve section:{sectionID} sensor dir:{sensorDir} forkDIr:{forkDir} vh dir:{vehicle_direction},result:{result}",
+               Data: $"vh:{vhID} Try add reserve section:{sectionID} sensor dir:{sensorDir} forkDIr:{forkDir} ,result:{result}",
                VehicleID: vhID);
             onReserveStatusChange();
 
@@ -337,9 +343,9 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             return (true, 0, 0, false);
         }
-        public override HltMapSection GetHltMapSections(string secID)
+        public override (bool isExist, HltMapSection section) GetHltMapSections(string secID)
         {
-            return new HltMapSection();
+            return (true, new HltMapSection());
         }
         public override HltResult TryAddVehicleOrUpdateResetSensorForkDir(string vhID)
         {

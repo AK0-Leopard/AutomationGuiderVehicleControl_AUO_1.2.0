@@ -27,32 +27,73 @@ namespace com.mirle.ibg3k0.sc
 {
     public class GuideInfo
     {
+        public class Section
+        {
+            public string ID;
+            public DriveDirction Dir;
+            public bool isPass { get; private set; }
+            public void setIsPassFlag()
+            {
+                isPass = true;
+            }
+            public Section(string _id, DriveDirction _dir)
+            {
+                ID = _id;
+                Dir = _dir;
+                isPass = false;
+            }
+        }
         public GuideInfo(AVEHICLE _vh)
         {
             vh = _vh;
             startToLoadGuideAddresse = new List<string>();
-            startToLoadGuideSection = new List<string>();
+            startToLoadGuideSection = new List<Section>();
             ToDesinationGuideAddresse = new List<string>();
-            ToDesinationGuideSection = new List<string>();
+            ToDesinationGuideSection = new List<Section>();
             AvoidGuideAddresse = new List<string>();
-            AvoidGuideSection = new List<string>();
+            AvoidGuideSection = new List<Section>();
         }
-        public void setGuideSection(ID_31_TRANS_REQUEST id_31)
+        public void setGuideSection(sc.BLL.ReserveBLL reserveBLL, ID_31_TRANS_REQUEST id_31)
         {
             startToLoadGuideAddresse = id_31.GuideAddressesStartToLoad.ToList();
-            startToLoadGuideSection = id_31.GuideSectionsStartToLoad.ToList();
+            List<string> startToLoadGuideSectionIDs = id_31.GuideSectionsStartToLoad.ToList();
+            startToLoadGuideSection = convertGuideSectionIDToObject(reserveBLL, startToLoadGuideSectionIDs, startToLoadGuideAddresse);
             ToDesinationGuideAddresse = id_31.GuideAddressesToDestination.ToList();
-            ToDesinationGuideSection = id_31.GuideSectionsToDestination.ToList();
+            List<string> ToDesinationGuideSectionIDs = id_31.GuideSectionsToDestination.ToList();
+            ToDesinationGuideSection = convertGuideSectionIDToObject(reserveBLL, ToDesinationGuideSectionIDs, ToDesinationGuideAddresse);
             isAvoiding = false;
             isMove = id_31.ActType == ActiveType.Move ||
                      id_31.ActType == ActiveType.Movetocharger;
         }
-        public void setAvoidSection(ID_51_AVOID_REQUEST id_51)
+        public void setAvoidSection(sc.BLL.ReserveBLL reserveBLL, ID_51_AVOID_REQUEST id_51)
         {
-            AvoidGuideSection = id_51.GuideSections.ToList();
             AvoidGuideAddresse = id_51.GuideAddresses.ToList();
+            List<string> avoidGuideSectionIDs = id_51.GuideSections.ToList();
+            AvoidGuideSection = convertGuideSectionIDToObject(reserveBLL, avoidGuideSectionIDs, AvoidGuideAddresse);
             isAvoiding = true;
         }
+        private List<Section> convertGuideSectionIDToObject(sc.BLL.ReserveBLL reserveBLL, List<string> guideSectionIDs, List<string> guideAddresses)
+        {
+            string current_guide_Addresses = string.Join(",", guideAddresses);
+            List<Section> GuideSections = new List<Section>();
+            foreach (string sec_id in guideSectionIDs)
+            {
+                //var sec_obj = sectinoBLL.cache.GetSection(sec_id);
+                var get_result = reserveBLL.GetHltMapSections(sec_id);
+                if (!get_result.isExist)
+                {
+                    continue;
+                }
+                string from_to_addresses = $"{SCUtility.Trim(get_result.section.StartAddressID)},{SCUtility.Trim(get_result.section.EndAddressID)}";
+
+                DriveDirction dir = current_guide_Addresses.Contains(from_to_addresses) ?
+                                DriveDirction.DriveDirForward : DriveDirction.DriveDirReverse;
+                Section sec = new Section(sec_id, dir);
+                GuideSections.Add(sec);
+            }
+            return GuideSections;
+        }
+
         public void setAvoidComplete()
         {
             isAvoiding = false;
@@ -60,11 +101,11 @@ namespace com.mirle.ibg3k0.sc
         public void resetGuideInfo()
         {
             startToLoadGuideAddresse = new List<string>();
-            startToLoadGuideSection = new List<string>();
+            startToLoadGuideSection = new List<Section>();
             ToDesinationGuideAddresse = new List<string>();
-            ToDesinationGuideSection = new List<string>();
+            ToDesinationGuideSection = new List<Section>();
             AvoidGuideAddresse = new List<string>();
-            AvoidGuideSection = new List<string>();
+            AvoidGuideSection = new List<Section>();
             isMove = false;
             isAvoiding = false;
         }
@@ -73,12 +114,56 @@ namespace com.mirle.ibg3k0.sc
         bool isAvoiding;
         bool isMove;
         List<string> startToLoadGuideAddresse;
-        List<string> startToLoadGuideSection;
+        List<Section> startToLoadGuideSection;
         List<string> ToDesinationGuideAddresse;
-        List<string> ToDesinationGuideSection;
+        List<Section> ToDesinationGuideSection;
         List<string> AvoidGuideAddresse;
-        List<string> AvoidGuideSection;
+        List<Section> AvoidGuideSection;
         public (bool hasInfo, List<string> currentGuideSection) tryGetCurrentGuideSection()
+        {
+            //if (isAvoiding)
+            //{
+            //    if (AvoidGuideSection != null && AvoidGuideSection.Count > 0)
+            //        return (true, AvoidGuideSection.ToList());
+            //    else
+            //        return (false, null);
+            //}
+            //else if (isMove)
+            //{
+            //    if (ToDesinationGuideSection != null && ToDesinationGuideSection.Count > 0)
+            //        return (true, ToDesinationGuideSection.ToList());
+            //    else
+            //        return (false, null);
+            //}
+            //else
+            //{
+            //    if (vh.HAS_CST == 0)
+            //    {
+            //        if (startToLoadGuideSection != null && startToLoadGuideSection.Count > 0)
+            //            return (true, startToLoadGuideSection.ToList());
+            //        else
+            //            return (false, null);
+            //    }
+            //    else
+            //    {
+            //        if (ToDesinationGuideSection != null && ToDesinationGuideSection.Count > 0)
+            //            return (true, ToDesinationGuideSection.ToList());
+            //        else
+            //            return (false, null);
+            //    }
+            //}
+            var try_get_section_obj_result = tryGetCurrentGuideSectionObj();
+            if (try_get_section_obj_result.hasInfo)
+            {
+                return (true, try_get_section_obj_result.currentGuideSection.Select(sec => sec.ID).ToList());
+            }
+            else
+            {
+                return (false, null);
+            }
+
+        }
+        public (bool hasInfo, List<Section> currentGuideSection) tryGetCurrentGuideSectionObj()
         {
             if (isAvoiding)
             {
@@ -111,6 +196,19 @@ namespace com.mirle.ibg3k0.sc
                         return (false, null);
                 }
             }
+        }
+        public (bool isExist, DriveDirction dir) tryGetWalkDirOnSection(string secID)
+        {
+            var try_get_current_guide_section_obj_result = tryGetCurrentGuideSectionObj();
+            if (!try_get_current_guide_section_obj_result.hasInfo)
+                return (false, DriveDirction.DriveDirNone);
+            var sec_obj = try_get_current_guide_section_obj_result.currentGuideSection.
+                Where(s => SCUtility.isMatche(s.ID, secID)).FirstOrDefault();
+            if (sec_obj == null)
+            {
+                return (false, DriveDirction.DriveDirNone);
+            }
+            return (true, sec_obj.Dir);
         }
     }
     public class LocationChangeEventArgs : EventArgs
@@ -842,20 +940,25 @@ namespace com.mirle.ibg3k0.sc
             lock (guideInfoSetLock)
                 guideInfo.resetGuideInfo();
         }
-        public void setVhGuideInfo(ID_31_TRANS_REQUEST id_31)
+        public void setVhGuideInfo(BLL.ReserveBLL reserveBLL, ID_31_TRANS_REQUEST id_31)
         {
             lock (guideInfoSetLock)
-                guideInfo.setGuideSection(id_31);
+                guideInfo.setGuideSection(reserveBLL, id_31);
         }
-        public void setVhGuideInfo(ID_51_AVOID_REQUEST id_51)
+        public void setVhGuideInfo(BLL.ReserveBLL reserveBLL, ID_51_AVOID_REQUEST id_51)
         {
             lock (guideInfoSetLock)
-                guideInfo.setAvoidSection(id_51);
+                guideInfo.setAvoidSection(reserveBLL, id_51);
         }
         public (bool hasInfo, List<string> currentGuideSection) tryGetCurrentGuideSection()
         {
             return guideInfo.tryGetCurrentGuideSection();
         }
+        public (bool isExist, DriveDirction dir) tryGetWalkDirOnSection(string secID)
+        {
+            return guideInfo.tryGetWalkDirOnSection(secID);
+        }
+
 
         public void CarrierInstall()
         {

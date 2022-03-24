@@ -2000,7 +2000,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 else
                 {
-                    vh.setVhGuideInfo(send_gpp);
+                    vh.setVhGuideInfo(scApp.ReserveBLL, send_gpp);
                 }
                 vh.NotifyVhExcuteCMDStatusChange();
             }
@@ -2267,7 +2267,7 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 if (receive_gpp.ReplyCode == 0)
                 {
-                    vh.setVhGuideInfo(send_gpp);
+                    vh.setVhGuideInfo(scApp.ReserveBLL, send_gpp);
                 }
             }
             return isSuccess;
@@ -2546,16 +2546,11 @@ namespace com.mirle.ibg3k0.sc.Service
                 string reserve_section_id = reserveInfos[0].ReserveSectionID;
                 //DriveDirction drive_dirction = reserveInfos[0].DriveDirction;
                 //DriveDirction drive_dirction = scApp.VehicleBLL.getDrivingDirection(reserve_section_id, vh.sWillPassAddressID);
-                DriveDirction drive_dirction = scApp.VehicleBLL.getDrivingDirection(reserve_section_id, vh.WillPassAddressID);
                 //HltDirection sensor_direction = HltDirection.ForwardReverse;
-                HltDirection sensor_direction = decideReserveDirection(vh, reserve_section_id);
-
+                //HltDirection sensor_direction = decideReserveDirection(vh, reserve_section_id);
 
                 //HltDirection hltDirection = decideReserveDirection(vh, reserve_section_id);
                 //HltDirection hltDirection = scApp.ReserveBLL.DecideReserveDirection(scApp.SectionBLL, vh, reserve_section_id);
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                   Data: $"vh:{vhID} Try add reserve section:{reserve_section_id} hlt dir:{sensor_direction}...",
-                   VehicleID: vhID);
                 bool is_one_direct_path = scApp.GuideBLL.isOneDirectPathSection(reserve_section_id);
                 if (is_one_direct_path)
                 {
@@ -2568,13 +2563,14 @@ namespace com.mirle.ibg3k0.sc.Service
                            VehicleID: vhID);
                         foreach (var one_dir_sec in one_direct_paths)
                         {
+                            HltDirection ask_one_direct_paths_sec_sensor_direction = getSensorDirection(vh, reserve_section_id);
                             var check_one_direct_result = scApp.ReserveBLL.TryAddReservedSection(vhID, one_dir_sec.SEC_ID,
-                                                                            sensorDir: HltDirection.ForwardReverse,
+                                                                            sensorDir: ask_one_direct_paths_sec_sensor_direction,
                                                                             isAsk: true);
                             if (!check_one_direct_result.OK)
                             {
                                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                                   Data: $"vh:{vhID} Try add reserve section:{reserve_section_id} hlt dir:{sensor_direction}, it is one direct path" +
+                                   Data: $"vh:{vhID} Try add reserve section:{reserve_section_id} hlt dir:{ask_one_direct_paths_sec_sensor_direction}, it is one direct path" +
                                          $"try to reserve section:{one_dir_sec.SEC_ID}(one of them) fail,result:{check_one_direct_result}.",
                                    VehicleID: vhID);
                                 return (check_one_direct_result.OK, check_one_direct_result.VehicleID, reserve_section_id);
@@ -2593,9 +2589,13 @@ namespace com.mirle.ibg3k0.sc.Service
                        VehicleID: vhID);
                     return (false, reserve_enhance_check_result.reservedVhID, reserve_section_id);
                 }
+
+                HltDirection ask_reserve_sec_sensor_direction = getSensorDirection(vh, reserve_section_id);
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                   Data: $"vh:{vhID} Try add reserve section:{reserve_section_id} hlt dir:{ask_reserve_sec_sensor_direction}...",
+                   VehicleID: vhID);
                 var result = scApp.ReserveBLL.TryAddReservedSection(vhID, reserve_section_id,
-                                                                sensorDir: sensor_direction,
-                                                                driveDirection: drive_dirction,
+                                                                sensorDir: ask_reserve_sec_sensor_direction,
                                                                 isAsk: isAsk);
 
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
@@ -2614,6 +2614,27 @@ namespace com.mirle.ibg3k0.sc.Service
                 return (false, string.Empty, string.Empty);
             }
         }
+
+        private static HltDirection getSensorDirection(AVEHICLE vh, string reserve_section_id)
+        {
+            Mirle.Hlts.Utils.HltDirection sensor_direction = Mirle.Hlts.Utils.HltDirection.ForwardReverse;
+            var check_result = vh.tryGetWalkDirOnSection(reserve_section_id);
+            if (check_result.isExist)
+            {
+                switch (check_result.dir)
+                {
+                    case DriveDirction.DriveDirForward:
+                        sensor_direction = HltDirection.Forward;
+                        break;
+                    case DriveDirction.DriveDirReverse:
+                        sensor_direction = HltDirection.Reverse;
+                        break;
+                }
+            }
+
+            return sensor_direction;
+        }
+
         private HltDirection decideReserveDirection(AVEHICLE reserveVh, string reserveSectionID)
         {
             //先取得目前vh所在的current adr，如果這次要求的Reserve Sec是該Current address連接的其中一點時
