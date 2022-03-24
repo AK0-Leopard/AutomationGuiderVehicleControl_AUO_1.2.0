@@ -653,6 +653,7 @@ namespace com.mirle.ibg3k0.sc.Service
             ID_143_STATUS_RESPONSE receive_gpp;
             ID_43_STATUS_REQUEST send_gpp = new ID_43_STATUS_REQUEST()
             {
+                SystemTime = DateTime.Now.ToString(SCAppConstants.TimestampFormat_16)
             };
             SCUtility.RecodeReportInfo(vh.VEHICLE_ID, 0, send_gpp);
             isSuccess = vh.send_S43(send_gpp, out receive_gpp);
