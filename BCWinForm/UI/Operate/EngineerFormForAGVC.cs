@@ -192,7 +192,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             List<string> guide_start_to_from_section_ids = null;
             List<string> guide_start_to_from_address_ids = null;
             int total_cost = 0;
-            (isSuccess, guide_start_to_from_segment_ids, guide_start_to_from_section_ids, guide_start_to_from_address_ids, total_cost) = mainForm.BCApp.SCApplication.GuideBLL.getGuideInfo(from_adr, to_adr);
+            (isSuccess, guide_start_to_from_segment_ids, guide_start_to_from_section_ids, guide_start_to_from_address_ids, total_cost) = mainForm.BCApp.SCApplication.GuideBLL.getGuideInfo(from_adr, to_adr,new List<string>() {"0023" });
 
             //var vh = mainForm.BCApp.SCApplication.VehicleBLL.getVehicleByID("AGV01");
             //(guide_start_to_from_segment_ids, guide_start_to_from_section_ids, guide_start_to_from_address_ids) = vh.CheckTurningAngleHasOver180(mainForm.BCApp.SCApplication.SegmentBLL, mainForm.BCApp.SCApplication.GuideBLL,

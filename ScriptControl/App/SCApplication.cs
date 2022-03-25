@@ -365,6 +365,7 @@ namespace com.mirle.ibg3k0.sc.App
         public LineWIF LineWIF { get { return lineWIF; } }
 
         public IRouteGuide NewRouteGuide { get; private set; } = null;
+        public IRouteGuide RouteGuideIgnoreCost { get; private set; } = null;
 
         public FloydAlgorithmRouteGuide.TimeWindow TimeWindow { get; private set; } = null;
 
@@ -518,17 +519,22 @@ namespace com.mirle.ibg3k0.sc.App
             //                (SCAppConstants.ZabbixServerInfo.ZABBIX_OHXC_ALIVE, SCAppConstants.ZabbixOHxCAlive.ZABBIX_OHXC_ALIVE_INITIAL);
 
             FloydAlgorithmRouteGuide routeGuide = null;
+            FloydAlgorithmRouteGuide routeGuideForAvoid = null;
             if (algorithm.Trim() == "FLOYD")
             {
                 routeGuide = new FloydAlgorithmRouteGuide(commObjCacheManager.getSegments(), commObjCacheManager.getSections(), commObjCacheManager.getAddresses(),
                                              moveCostForward, moveCostReverse, BC_ID, algorithm);
+                routeGuideForAvoid = routeGuide;
             }
             else
             {
                 routeGuide = new FloydAlgorithmRouteGuide(commObjCacheManager.getSections(), commObjCacheManager.getAddresses(),
-                             moveCostForward, moveCostReverse, BC_ID, algorithm);
+                             moveCostForward, moveCostReverse, BC_ID, algorithm, false);
+                routeGuideForAvoid = new FloydAlgorithmRouteGuide(commObjCacheManager.getSections(), commObjCacheManager.getAddresses(),
+                             moveCostForward, moveCostReverse, BC_ID, algorithm, true);
             }
             NewRouteGuide = routeGuide;
+            RouteGuideIgnoreCost = routeGuideForAvoid;
             TimeWindow = routeGuide.timewindow;
 
             //var segments = mapBLL.loadAllSegments();

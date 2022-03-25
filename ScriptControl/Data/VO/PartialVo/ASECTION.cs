@@ -208,6 +208,10 @@ namespace com.mirle.ibg3k0.sc
                 return new string[] { SCUtility.Trim(FROM_ADR_ID, true), SCUtility.Trim(TO_ADR_ID, true) };
             }
         }
+        public bool IsR2000(BLL.ReserveBLL reserveBLL)
+        {
+            return reserveBLL.IsR2000Section(SEC_ID);
+        }
 
     }
 

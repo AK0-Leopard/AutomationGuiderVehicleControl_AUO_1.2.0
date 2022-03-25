@@ -1247,6 +1247,17 @@ namespace com.mirle.ibg3k0.sc.Service
                     }
                     break;
                 case ActiveType.Move:
+                    if (!SCUtility.isMatche(vh_current_address, dest_adr))
+                    {
+                        (isSuccess, guide_to_dest_segment_ids, guide_to_dest_section_ids, guide_to_dest_address_ids, total_cost)
+                            = scApp.GuideBLL.getGuideInfoIgnoreCost(vh_current_address, dest_adr, byPassSectionIDs);
+                    }
+                    else
+                    {
+                        //isSuccess = false;
+                        isSuccess = true;
+                    }
+                    break;
                 case ActiveType.Movetocharger:
                     if (!SCUtility.isMatche(vh_current_address, dest_adr))
                     {
@@ -2145,7 +2156,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         //(is_success, guide_segment_ids, guide_section_ids, guide_address_ids, total_cost) =
                         //    scApp.GuideBLL.getGuideInfo_New2(vh_current_section, vh_current_address, avoidAddress);
                         (is_success, guide_segment_ids, guide_section_ids, guide_address_ids, total_cost) =
-                                                    scApp.GuideBLL.getGuideInfo(vh_current_address, avoidAddress, need_by_pass_sec_ids);
+                                                    scApp.GuideBLL.getGuideInfoIgnoreCost(vh_current_address, avoidAddress, need_by_pass_sec_ids);
                         next_walk_section = guide_section_ids[0];
                         next_walk_address = guide_address_ids[0];
 
@@ -3346,6 +3357,7 @@ namespace com.mirle.ibg3k0.sc.Service
             return opposite_address;
         }
 
+        const int MAX_GO_THROUGH_R2000_TIMES = 1;
         public const string VehicleVirtualSymbol = "virtual";
         /// <summary>
         /// 為Avoid vh根據 pass vh的路徑找出可以避車的路線。
@@ -3390,6 +3402,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     sensorDir: HltDirection.NESW,
                       forkDir: HltDirection.None);
                 virtual_vh_ids.Add(virtual_vh_id);
+                int r2000_section_count = 0;
                 do
                 {
                     foreach (var search_info in next_search_infos.ToArray())
@@ -3473,6 +3486,18 @@ namespace com.mirle.ibg3k0.sc.Service
                                    VehicleID: avoidVh.VEHICLE_ID);
                                 continue;
                             }
+                            if (sec.IsR2000(scApp.ReserveBLL))
+                            {
+                                r2000_section_count++;
+                                if (r2000_section_count > MAX_GO_THROUGH_R2000_TIMES)
+                                {
+                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                       Data: $"sec id:{SCUtility.Trim(sec.SEC_ID)} 已經是第二次經過R2000的路段，因此跳過他",
+                                       VehicleID: avoidVh.VEHICLE_ID);
+                                    continue;
+                                }
+                            }
+
                             if (!isForceCrossing && passVh != null)
                             {
                                 //確認可以避車的點，是否為Pass vh將要行走的路徑(代表是會相交的路線))，是的話就繼續往下找

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
-    public class SouthInnoLuxGuideBLL: GuideBLL
+    public class SouthInnoLuxGuideBLL : GuideBLL
     {
         //SCApplication scApp;
         Logger logger = LogManager.GetCurrentClassLogger();
@@ -1041,18 +1041,6 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             segment_do = scApp.MapBLL.EnableSegment(segmentID);
             return segment_do;
-        }
-        public ASEGMENT banRouteTwoDirect(string segmentID)
-        {
-            ASEGMENT segment = null;
-            ASEGMENT segment_vo = scApp.SegmentBLL.cache.GetSegment(segmentID);
-            if (segment_vo != null)
-            {
-                foreach (var sec in segment_vo.Sections)
-                    scApp.NewRouteGuide.banRouteTwoDirect(sec.SEC_ID);
-            }
-            segment = scApp.MapBLL.DisableSegment(segmentID);
-            return segment;
         }
 
 

@@ -222,7 +222,7 @@ namespace com.mirle.ibg3k0.sc.RouteKit
 
 
         public FloydAlgorithmRouteGuide(List<ASECTION> sections, List<AADDRESS> addresses,
-            double moveCostForward, double moveCostReverse, string bcID, string algorithm)
+            double moveCostForward, double moveCostReverse, string bcID, string algorithm, bool isIgnoreCost)
         {
             this.algorithm = algorithm;
             move_cost_forward = moveCostForward;
@@ -242,12 +242,16 @@ namespace com.mirle.ibg3k0.sc.RouteKit
             List<int> alternativePathConfig_9 = new List<int>();
             List<int> alternativePathConfig_10 = new List<int>();
 
-            Build(sections, addresses, moveCostForward, moveCostReverse);
+            Build(sections, addresses, moveCostForward, moveCostReverse, isIgnoreCost);
         }
 
-        private void Build(List<ASECTION> sections, List<AADDRESS> addresses, double moveCostForward, double moveCostReverse)
+        private void Build(List<ASECTION> sections, List<AADDRESS> addresses, double moveCostForward, double moveCostReverse, bool isIgnoreCost)
         {
-            sectionList = readDataForSectionList(sections, moveCostForward, moveCostReverse);
+            if (isIgnoreCost)
+                sectionList = readDataForSectionListIgnoreCost(sections, moveCostForward, moveCostReverse);
+            else
+                sectionList = readDataForSectionList(sections, moveCostForward, moveCostReverse);
+
             initialIndexDic(sectionList);
             n = addressIndexDic.Count;
             createInterCostList(sectionList);
@@ -316,6 +320,58 @@ namespace com.mirle.ibg3k0.sc.RouteKit
             }
             return sectionList;
         }
+        private List<Section> readDataForSectionListIgnoreCost(List<ASECTION> sections, double moveCostForward, double moveCostReverse)
+        {
+            List<Section> sectionList = new List<Section>();
+            foreach (ASECTION sec in sections)
+            {
+                string section_id = sec.SEC_ID.Trim();
+                int address_1 = int.Parse(sec.FROM_ADR_ID);
+                int address_2 = int.Parse(sec.TO_ADR_ID);
+
+                double section_dis = sec.SEC_DIS;
+                int moveCost_1 = 0;
+                int moveCost_2 = 0;
+
+                double movecostF_weight = moveCostForward;
+                double movecostR_weight = moveCostReverse;
+
+                if (sec.SEC_DIR == E_RAIL_DIR.F)
+                {
+                    moveCost_1 = moveCost_1 + (int)(section_dis * movecostF_weight);
+                    moveCost_2 = moveCost_2 + (int)(section_dis * movecostR_weight);
+                }
+                else
+                {
+                    moveCost_1 = moveCost_1 + (int)(section_dis * movecostR_weight);
+                    moveCost_2 = moveCost_2 + (int)(section_dis * movecostF_weight);
+                }
+                string changeSec_1 = SCUtility.Trim(sec.ADR1_CHG_SEC_ID_1);
+                int interCost_1 = 0;
+                string changeSec_2 = SCUtility.Trim(sec.ADR1_CHG_SEC_ID_2);
+                int interCost_2 = 0;
+                string changeSec_3 = SCUtility.Trim(sec.ADR1_CHG_SEC_ID_3);
+                int interCost_3 = 0;
+                string changeSec_4 = SCUtility.Trim(sec.ADR2_CHG_SEC_ID_1);
+                int interCost_4 = 0;
+                string changeSec_5 = SCUtility.Trim(sec.ADR2_CHG_SEC_ID_2);
+                int interCost_5 = 0;
+                string changeSec_6 = SCUtility.Trim(sec.ADR2_CHG_SEC_ID_3);
+                int interCost_6 = 0;
+                bool isBanEnd_From2To = sec.ISBANEND_From2To;
+                bool isBanEnd_To2From = sec.ISBANEND_To2From;
+                int direct = (int)sec.SEC_DIR;
+
+                Section section = new Section(section_id, address_1, address_2, moveCost_1, moveCost_2,
+                    changeSec_1, interCost_1, changeSec_2, interCost_2, changeSec_3, interCost_3,
+                    changeSec_4, interCost_4, changeSec_5, interCost_5, changeSec_6, interCost_6,
+                    isBanEnd_From2To, isBanEnd_To2From, direct);
+                sectionList.Add(section);
+
+            }
+            return sectionList;
+        }
+
 
 
         private void initGraph()//M0.06
