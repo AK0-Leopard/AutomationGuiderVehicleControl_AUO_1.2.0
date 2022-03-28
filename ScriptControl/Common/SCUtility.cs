@@ -39,6 +39,10 @@ using Google.Protobuf;
 using com.mirle.ibg3k0.sc.Data.SECS;
 using System.Transactions;
 using System.Runtime.CompilerServices;
+using System.Windows.Media.Imaging;
+using System.IO;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace com.mirle.ibg3k0.sc.Common
 {
@@ -834,7 +838,7 @@ namespace com.mirle.ibg3k0.sc.Common
             System.Threading.ThreadPool.QueueUserWorkItem(new WaitCallback(SCApplication.getInstance().LineService.PublishEQMsgInfo), logEntry);
         }
 
-        static Google.Protobuf.JsonFormatter jsonFormatter = 
+        static Google.Protobuf.JsonFormatter jsonFormatter =
             new JsonFormatter(new JsonFormatter.Settings(true).
                 WithFormatDefaultValues(true).
                 WithTypeRegistry(Google.Protobuf.Reflection.TypeRegistry.FromMessages(ProtocolFormat.NorthInnolux.Agvmessage.ID_36_TRANS_EVENT_RESPONSE_EXTENSION.Descriptor)));
@@ -1587,6 +1591,41 @@ namespace com.mirle.ibg3k0.sc.Common
             }
         }
         #endregion Context
+
+        public static System.Drawing.Bitmap BitmapFromSource(BitmapSource source)
+        {
+            using (MemoryStream outStream = new MemoryStream())
+            {
+                BitmapEncoder enc = new PngBitmapEncoder();
+                enc.Frames.Add(BitmapFrame.Create(source));
+                enc.Save(outStream);
+                System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
+
+                // return bitmap; <-- leads to problems, stream is closed/closing ...
+                return new Bitmap(bitmap);
+            }
+        }
+
+        /// <summary>
+        /// Bitmap圖像格式轉爲字節
+        /// 多線程啓用時經常出問題
+        /// </summary>
+        /// <param name="bitmap"></param>
+        /// <returns></returns>
+        public static byte[] Bitmap2Byte(Bitmap bitmap)
+        {
+            using (Stream stream1 = new MemoryStream())
+            {
+                bitmap.Save(stream1, ImageFormat.Jpeg);
+                byte[] arr = new byte[stream1.Length];
+                stream1.Position = 0;
+                stream1.Read(arr, 0, (int)stream1.Length);
+                stream1.Close();
+                return arr;
+            }
+        }
+
+
     }
 
     public static class nameOfExtension

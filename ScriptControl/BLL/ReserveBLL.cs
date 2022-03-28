@@ -158,6 +158,15 @@ namespace com.mirle.ibg3k0.sc.BLL
 
             return result;
         }
+
+        public void RecordReserveBitmap2Log()
+        {
+            var map_bit_source = mapAPI.MapBitmapSource;
+            var map_bit = SCUtility.BitmapFromSource(map_bit_source);
+            var bit_array = SCUtility.Bitmap2Byte(map_bit);
+
+        }
+
         public virtual HltResult TryAddVehicleOrUpdate(string vhID, string adrID, float angle = 0)
         {
             var adr_obj = mapAPI.GetAddressObjectByID(adrID);
