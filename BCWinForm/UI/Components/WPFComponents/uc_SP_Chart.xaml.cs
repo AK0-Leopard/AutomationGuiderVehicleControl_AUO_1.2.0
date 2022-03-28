@@ -1794,6 +1794,7 @@ string.Format("{0}h{1}m{2}s ({3:P})", (int)(chartPoint.Participation * 24), (int
                     pie_index++;
                 }
 
+                Directory.CreateDirectory(System.Environment.CurrentDirectory + "\\Export\\");
                 string filepath = System.Environment.CurrentDirectory + "\\Export\\" + selected_day.Date.ToString("yyyyMMdd") + ".csv";
                 //File.WriteAllText(System.Environment.CurrentDirectory+"\\Export\\"+ selected_day.Date, csv.ToString());
                 File.WriteAllText(filepath, csv.ToString());
