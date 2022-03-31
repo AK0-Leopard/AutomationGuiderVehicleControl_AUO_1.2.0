@@ -53,7 +53,7 @@ namespace com.mirle.ibg3k0.sc
             AvoidGuideAddresse = new List<string>();
             AvoidGuideSection = new List<Section>();
         }
-        public void setGuideSection(sc.BLL.ReserveBLL reserveBLL, ID_31_TRANS_REQUEST id_31)
+        public void setGuideSection(sc.BLL.ReserveBLL reserveBLL, ID_31_TRANS_REQUEST id_31, ActiveType originalAactiveType )
         {
             startToLoadGuideAddresse = id_31.GuideAddressesStartToLoad.ToList();
             List<string> startToLoadGuideSectionIDs = id_31.GuideSectionsStartToLoad.ToList();
@@ -62,9 +62,23 @@ namespace com.mirle.ibg3k0.sc
             List<string> ToDesinationGuideSectionIDs = id_31.GuideSectionsToDestination.ToList();
             ToDesinationGuideSection = convertGuideSectionIDToObject(reserveBLL, ToDesinationGuideSectionIDs, ToDesinationGuideAddresse);
             isAvoiding = false;
-            isMove = id_31.ActType == ActiveType.Move ||
-                     id_31.ActType == ActiveType.Movetocharger;
+            judgeIsMoveCommand(id_31, originalAactiveType);
         }
+
+        private void judgeIsMoveCommand(ID_31_TRANS_REQUEST id_31, ActiveType originalAactiveType)
+        {
+            if (id_31.ActType == ActiveType.Override)
+            {
+                isMove = originalAactiveType == ActiveType.Move ||
+                         originalAactiveType == ActiveType.Movetocharger;
+            }
+            else
+            {
+                isMove = id_31.ActType == ActiveType.Move ||
+                         id_31.ActType == ActiveType.Movetocharger;
+            }
+        }
+
         public void setAvoidSection(sc.BLL.ReserveBLL reserveBLL, ID_51_AVOID_REQUEST id_51)
         {
             AvoidGuideAddresse = id_51.GuideAddresses.ToList();
@@ -940,10 +954,10 @@ namespace com.mirle.ibg3k0.sc
             lock (guideInfoSetLock)
                 guideInfo.resetGuideInfo();
         }
-        public void setVhGuideInfo(BLL.ReserveBLL reserveBLL, ID_31_TRANS_REQUEST id_31)
+        public void setVhGuideInfo(BLL.ReserveBLL reserveBLL, ID_31_TRANS_REQUEST id_31, ActiveType originalAactiveType)
         {
             lock (guideInfoSetLock)
-                guideInfo.setGuideSection(reserveBLL, id_31);
+                guideInfo.setGuideSection(reserveBLL, id_31, originalAactiveType);
         }
         public void setVhGuideInfo(BLL.ReserveBLL reserveBLL, ID_51_AVOID_REQUEST id_51)
         {

@@ -1317,7 +1317,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 string source_adr = cmd.SOURCE;
                 string dest_adr = cmd.DESTINATION;
                 bool has_carry = assignVH.HAS_CST == 1;
-                ActiveType active_type = scApp.CMDBLL.convertECmdType2ActiveType(cmd.CMD_TPYE);
+                ActiveType original_active_type = scApp.CMDBLL.convertECmdType2ActiveType(cmd.CMD_TPYE);
                 //List<string> need_by_pass_adr_ids = new List<string>() { byPassAdr };
                 //List<string> need_by_pass_sec_ids = new List<string>() { byPassSection };
                 List<string> need_by_pass_sec_ids = new List<string>();
@@ -1373,7 +1373,7 @@ namespace com.mirle.ibg3k0.sc.Service
                      guide_to_dest_section_ids,
                      guide_to_dest_address_ids)
                     //= FindGuideInfo(vh_current_address, source_adr, dest_adr, active_type, has_carry, need_by_pass_adr_ids);
-                    = FindGuideInfo(vh_current_address, source_adr, dest_adr, active_type, has_carry, need_by_pass_sec_ids);
+                    = FindGuideInfo(vh_current_address, source_adr, dest_adr, original_active_type, has_carry, need_by_pass_sec_ids);
                     //如果有找到路徑則確認一下段是否可以預約的到
                     if (isSuccess)
                     {
@@ -1597,7 +1597,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                       guide_start_to_from_address_ids, guide_to_dest_address_ids);
                     isSuccess = ProcSendTransferCommandToVh(cmd, assignVH, ActiveType.Override,
                      guide_start_to_from_segment_ids?.ToArray(), guide_start_to_from_section_ids?.ToArray(), guide_start_to_from_address_ids?.ToArray(),
-                     guide_to_dest_segment_ids?.ToArray(), guide_to_dest_section_ids?.ToArray(), guide_to_dest_address_ids?.ToArray());
+                     guide_to_dest_segment_ids?.ToArray(), guide_to_dest_section_ids?.ToArray(), guide_to_dest_address_ids?.ToArray(), original_active_type);
                     //4.更新命令狀態(HOST CMD)
                     if (isSuccess)
                     {
@@ -1629,12 +1629,12 @@ namespace com.mirle.ibg3k0.sc.Service
                     else
                     {
                         scApp.CMDBLL.setInitialVhExcuteCmdToShow(vh_id);
-                        BCFApplication.onWarningMsg($"doSendOverrideCommandToVh fail.vh:{vh_id}, cmd id:{cmd_id},from:{source_adr},to:{dest_adr},active type:{active_type}." +
+                        BCFApplication.onWarningMsg($"doSendOverrideCommandToVh fail.vh:{vh_id}, cmd id:{cmd_id},from:{source_adr},to:{dest_adr},active type:{original_active_type}." +
                                 $"vh current adr:{vh_current_address},start section:{vh_current_section}");
                     }
                 }
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                   Data: $"find the override path result:{isSuccess}, cmd id:{cmd_id},from:{source_adr},to:{dest_adr},active type:{active_type}." +
+                   Data: $"find the override path result:{isSuccess}, cmd id:{cmd_id},from:{source_adr},to:{dest_adr},active type:{original_active_type}." +
                          $"vh current adr:{vh_current_address},start section:{vh_current_section}." +
                          $" by pass section:{string.Join(",", need_by_pass_sec_ids)}",
                    VehicleID: assignVH.VEHICLE_ID,
@@ -1875,8 +1875,8 @@ namespace com.mirle.ibg3k0.sc.Service
 
         private bool ProcSendTransferCommandToVh(ACMD_OHTC cmd, AVEHICLE assignVH, ActiveType activeType,
             string[] guideSegmentStartToLoad, string[] guideSectionsStartToLoad, string[] guideAddressesStartToLoad,
-            string[] guideSegmentToDest, string[] guideSectionsToDest, string[] guideAddressesToDest
-            )
+            string[] guideSegmentToDest, string[] guideSectionsToDest, string[] guideAddressesToDest,
+            ActiveType originalActiveType = ActiveType.Home)
         {
             bool isSuccess = true;
             string vh_id = assignVH.VEHICLE_ID;
@@ -1929,7 +1929,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                 (cmd.VH_ID, cmd.CMD_ID, activeType, cmd.CARRIER_ID,
                                guideSegmentStartToLoad, guideSectionsStartToLoad, guideAddressesStartToLoad,
                                guideSegmentToDest, guideSectionsToDest, guideAddressesToDest,
-                                cmd.SOURCE, cmd.DESTINATION);
+                                cmd.SOURCE, cmd.DESTINATION, originalActiveType);
                             //isSuccess &= assignVH.sned_Str31(cmd.CMD_ID, activeType, cmd.CARRIER_ID, routeSections, cycleRunSections
                             //    , cmd.SOURCE, cmd.DESTINATION, out Reason);
                         }
@@ -1965,7 +1965,7 @@ namespace com.mirle.ibg3k0.sc.Service
         public bool TransferRequset(string vh_id, string cmd_id, ActiveType activeType, string cst_id,
             string[] guideSegmentStartToLoad, string[] guideSectionsStartToLoad, string[] guideAddressesStartToLoad,
             string[] guideSegmentToDest, string[] guideSectionsToDest, string[] guideAddressesToDest,
-            string fromAdr, string destAdr)
+            string fromAdr, string destAdr, ActiveType originalAactiveType = ActiveType.Home)
         {
             //TODO 要在加入Transfer Command的確認 scApp.CMDBLL.TransferCommandCheck(activeType,) 
             bool isSuccess = true;
@@ -2011,7 +2011,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 else
                 {
-                    vh.setVhGuideInfo(scApp.ReserveBLL, send_gpp);
+                    vh.setVhGuideInfo(scApp.ReserveBLL, send_gpp, originalAactiveType);
                 }
                 vh.NotifyVhExcuteCMDStatusChange();
             }
