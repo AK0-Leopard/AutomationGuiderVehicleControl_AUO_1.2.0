@@ -36,10 +36,13 @@ Id,FromAddress,ToAddress,Speed,Type,PermitDirection
 0151,48012,48008,600,Vertical,Forward
 0211,48009,48011,600,Vertical,Forward
 0063,16029,48030,600,Vertical,Forward
-0162,16018,16019,600,Horizontal,Forward
-0163,16019,48016,138,R2000C,Forward
+0162,16018,16042,600,Horizontal,Forward
+0163,16042,16043,600,Horizontal,Forward
+0164,16043,16019,600,Horizontal,Forward
+0165,16019,48016,138,R2000C,Forward
 0171,48015,16020,138,R2000C,Forward
-0172,16020,48021,600,Horizontal,Forward
+0173,16020,16044,600,Horizontal,Forward
+0172,16044,48021,600,Horizontal,Forward
 0181,16022,48021,400,Vertical,Forward
 0161,48021,16018,400,Vertical,Forward
 0182,16022,68023,600,Horizontal,Forward
