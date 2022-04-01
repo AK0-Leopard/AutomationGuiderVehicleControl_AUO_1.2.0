@@ -2131,7 +2131,10 @@ namespace com.mirle.ibg3k0.sc.BLL
                             }
 
                             bool is_send_success = scApp.VehicleService.doSendCommandToVh(assignVH, cmd);
-
+                            if(is_send_success)
+                            {
+                                assignVH.VehicleAlarmConfirmComplete();
+                            }
                         }
                         //else
                         //{

@@ -94,11 +94,33 @@ namespace com.mirle.ibg3k0.sc.Service
                 vh.ModeStatusChange += Vh_ModeStatusChange;
                 vh.Idling += Vh_Idling;
                 vh.LongTimeCarrierInstalled += Vh_LongTimeCarrierInstalled;
+                vh.VhErrorStatusChange += Vh_VhErrorStatusChange;
             }
             oneDirectPath();
             scApp.DataWorkerService.alarmHappend += Serivce_alarmHappend1;
 
         }
+
+        private void Vh_VhErrorStatusChange(object sender, VhStopSingle e)
+        {
+            try
+            {
+                AVEHICLE vh = sender as AVEHICLE;
+                if (e == VhStopSingle.StopSingleOff)
+                {
+                    vh.VechileAlarmClean();
+                }
+                else
+                {
+                    vh.VehicleAlarmSet();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+            }
+        }
+
         private void Serivce_alarmHappend1(object sender, dataWorkerService.dataWorkService.alarmHappendArgs e)
         {
             //先找到車子
@@ -749,6 +771,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 VhStopSingle pauseStat = receive_gpp.PauseStatus;
                 VhStopSingle errorStat = receive_gpp.ErrorStatus;
                 VhLoadCSTStatus loadCSTStatus = receive_gpp.HasCST;
+                VhChargeStatus vhChargeStatus = receive_gpp.ChargeStatus;
                 //VhGuideStatus leftGuideStat = recive_str.LeftGuideLockStatus;
                 //VhGuideStatus rightGuideStat = recive_str.RightGuideLockStatus;
 
@@ -761,7 +784,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 //  scApp.VehicleBLL.getAndProcPositionReportFromRedis(vh.VEHICLE_ID);
 
                 //checkCurrentCmdStatusWithVhActionStat(vh.VEHICLE_ID, actionStat);
-
+                vh.ChargeStatus = vhChargeStatus;
                 if (modeStat != vh.MODE_STATUS)
                 {
                     //checkRemoveReserveStatusByModeChange(vh, modeStat, vh.MODE_STATUS);
@@ -775,6 +798,11 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     vh.CarrierRemove();
                 }
+                if (vh.ERROR != errorStat)
+                {
+                    vh.onErrorStatusChange(errorStat);
+                }
+
                 if (!scApp.VehicleBLL.doUpdateVehicleStatus(vh,
                                       cst_id, modeStat, actionStat,
                                        blockingStat, pauseStat, obstacleStat, VhStopSingle.StopSingleOff, errorStat, loadCSTStatus,
@@ -3865,6 +3893,7 @@ namespace com.mirle.ibg3k0.sc.Service
             VhStopSingle pauseStat = recive_str.PauseStatus;
             VhStopSingle errorStat = recive_str.ErrorStatus;
             VhLoadCSTStatus loadCSTStatus = recive_str.HasCST;
+            VhChargeStatus chargeStatus = recive_str.ChargeStatus;
             int obstacleDIST = recive_str.ObstDistance;
             string obstacleVhID = recive_str.ObstVehicleID;
             int steeringWheel = recive_str.SteeringWheel;
@@ -3878,6 +3907,8 @@ namespace com.mirle.ibg3k0.sc.Service
                                 eqpt.HAS_CST != (int)loadCSTStatus ||
                                 eqpt.BatteryCapacity != batteryCapacity ||
                                 eqpt.STEERINGWHEELANGLE != steeringWheel;
+
+            eqpt.ChargeStatus = chargeStatus;
 
             if (loadCSTStatus == VhLoadCSTStatus.Exist)
             {
@@ -3905,6 +3936,11 @@ namespace com.mirle.ibg3k0.sc.Service
                 //    scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(eqpt.VEHICLE_ID);
                 //}
             }
+            if (eqpt.ERROR != errorStat)
+            {
+                eqpt.onErrorStatusChange(errorStat);
+            }
+
             if (hasdifferent && !scApp.VehicleBLL.doUpdateVehicleStatus(eqpt,
                                    cstID, modeStat, actionStat,
                                    blockingStat, pauseStat, obstacleStat, VhStopSingle.StopSingleOff, errorStat, loadCSTStatus,
@@ -3917,10 +3953,6 @@ namespace com.mirle.ibg3k0.sc.Service
                 return;
             }
 
-            if (eqpt.ERROR != errorStat)
-            {
-                //todo 在error flag 有變化時，上報S5F1 alarm set/celar
-            }
 
             //  reply_status_event_report(bcfApp, eqpt, seq_num);
         }
