@@ -2582,6 +2582,126 @@ namespace com.mirle.ibg3k0.sc.Service
                     return (false, string.Empty, string.Empty);
                 }
                 if (reserveInfos == null || reserveInfos.Count == 0) return (false, string.Empty, string.Empty);
+                //string reserve_section_id = reserveInfos[0].ReserveSectionID;
+                bool is_reserved_success = true;
+                string reserved_vh_id = "";
+                string reserved_sec_id = "";
+                foreach (var reserve_sec in reserveInfos)
+                {
+                    string reserve_section_id = reserve_sec.ReserveSectionID;
+                    //DriveDirction drive_dirction = reserveInfos[0].DriveDirction;
+                    //DriveDirction drive_dirction = scApp.VehicleBLL.getDrivingDirection(reserve_section_id, vh.sWillPassAddressID);
+                    //HltDirection sensor_direction = HltDirection.ForwardReverse;
+                    //HltDirection sensor_direction = decideReserveDirection(vh, reserve_section_id);
+
+                    //HltDirection hltDirection = decideReserveDirection(vh, reserve_section_id);
+                    //HltDirection hltDirection = scApp.ReserveBLL.DecideReserveDirection(scApp.SectionBLL, vh, reserve_section_id);
+                    bool is_one_direct_path = scApp.GuideBLL.isOneDirectPathSection(reserve_section_id);
+                    if (is_one_direct_path)
+                    {
+                        List<ASECTION> one_direct_paths = scApp.GuideBLL.getOneDirectPathBySectionID(reserve_section_id);
+                        List<string> one_direct_paths_sec_ids = one_direct_paths.Select(sec => SCUtility.Trim(sec.SEC_ID, true)).ToList();
+                        if (!one_direct_paths_sec_ids.Contains(current_section_id))
+                        {
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                               Data: $"section:{reserve_section_id} is one direct path, group:{string.Join(",", one_direct_paths_sec_ids)}",
+                               VehicleID: vhID);
+                            foreach (var one_dir_sec in one_direct_paths)
+                            {
+                                HltDirection ask_one_direct_paths_sec_sensor_direction = getSensorDirection(vh, reserve_section_id);
+                                var check_one_direct_result = scApp.ReserveBLL.TryAddReservedSection(vhID, one_dir_sec.SEC_ID,
+                                                                                sensorDir: ask_one_direct_paths_sec_sensor_direction,
+                                                                                isAsk: true);
+                                if (!check_one_direct_result.OK)
+                                {
+                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                       Data: $"vh:{vhID} Try add reserve section:{reserve_section_id} hlt dir:{ask_one_direct_paths_sec_sensor_direction}, it is one direct path" +
+                                             $"try to reserve section:{one_dir_sec.SEC_ID}(one of them) fail,result:{check_one_direct_result}.",
+                                       VehicleID: vhID);
+                                    return (check_one_direct_result.OK, check_one_direct_result.VehicleID, reserve_section_id);
+                                }
+                            }
+                        }
+                    }
+                    //確認ReserveEnhance的Section是否都可以預約到
+                    //var reserve_enhance_check_result = IsReserveBlockSuccess(vh, reserve_section_id);
+                    var reserve_enhance_check_result = IsReserveBlockSuccessNew(vh, reserve_section_id);
+                    //var reserve_enhance_check_result = IsReserveBlockSuccessNew(vh, reserve_section_id, drive_dirction);
+                    if (!reserve_enhance_check_result.isSuccess)
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                           Data: $"vh:{vhID} Try add reserve enhance section:{reserve_section_id} fail. reserved vh id:{reserve_enhance_check_result.reservedVhID}",
+                           VehicleID: vhID);
+                        return (false, reserve_enhance_check_result.reservedVhID, reserve_section_id);
+                    }
+
+                    HltDirection ask_reserve_sec_sensor_direction = getSensorDirection(vh, reserve_section_id);
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: $"vh:{vhID} Try add reserve section:{reserve_section_id} hlt dir:{ask_reserve_sec_sensor_direction}...",
+                       VehicleID: vhID);
+                    var result = scApp.ReserveBLL.TryAddReservedSection(vhID, reserve_section_id,
+                                                                    sensorDir: ask_reserve_sec_sensor_direction,
+                                                                    isAsk: isAsk);
+
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: $"vh:{vhID} Try add reserve section:{reserve_section_id},result:{result}",
+                       VehicleID: vhID);
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: $"current reserve section:{scApp.ReserveBLL.GetCurrentReserveSection()}",
+                       VehicleID: vhID);
+                    if (result.OK)
+                    {
+                        is_reserved_success &= true;
+                    }
+                    else
+                    {
+                        is_reserved_success &= false;
+                        reserved_vh_id = result.VehicleID;
+                        reserved_sec_id = reserve_section_id;
+                        break;
+                    }
+                }
+                //return (result.OK, result.VehicleID, reserve_section_id);
+                return (is_reserved_success, reserved_vh_id, reserved_sec_id);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                   Data: ex,
+                   Details: $"process function:{nameof(IsReserveSuccessNew)} Exception");
+                return (false, string.Empty, string.Empty);
+            }
+        }
+        private (bool isSuccess, string reservedVhID, string reservedSecID) IsReserveSuccessOld(string vhID, RepeatedField<ReserveInfo> reserveInfos, bool isAsk = false)
+        {
+            try
+            {
+                if (DebugParameter.isForcedPassReserve)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: "test flag: Force pass reserve is open, will driect reply to vh pass",
+                       VehicleID: vhID);
+                    return (true, string.Empty, string.Empty);
+                }
+
+                //強制拒絕Reserve的要求
+                if (DebugParameter.isForcedRejectReserve)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: "test flag: Force reject reserve is open, will driect reply to vh can't pass",
+                       VehicleID: vhID);
+                    return (false, string.Empty, string.Empty);
+                }
+                AVEHICLE vh = scApp.VehicleBLL.cache.getVehicle(vhID);
+                string current_section_id = SCUtility.Trim(vh.CUR_SEC_ID, true);
+                if (vh.IsPrepareAvoid)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: $"vh:{vhID} is prepare excute avoid action, will reject reserve request.",
+                       VehicleID: vhID);
+                    return (false, string.Empty, string.Empty);
+                }
+                if (reserveInfos == null || reserveInfos.Count == 0) return (false, string.Empty, string.Empty);
                 string reserve_section_id = reserveInfos[0].ReserveSectionID;
                 //DriveDirction drive_dirction = reserveInfos[0].DriveDirction;
                 //DriveDirction drive_dirction = scApp.VehicleBLL.getDrivingDirection(reserve_section_id, vh.sWillPassAddressID);
