@@ -109,7 +109,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         //        updateVheiclePosition(vh.VEHICLE_ID, current_adr_id, current_sec_id, sec_dis, vhPassEvent);
 
         //}
-        public bool updateVheiclePosition_CacheManager(AVEHICLE vh, string adr_id, string sec_id, string seg_id, double sce_dis, DriveDirction driveDirction, double xAxis, double yAxis, double dirctionAngle, double vehicleAngle,double speed)
+        public bool updateVheiclePosition_CacheManager(AVEHICLE vh, string adr_id, string sec_id, string seg_id, double sce_dis, DriveDirction driveDirction, double xAxis, double yAxis, double dirctionAngle, double vehicleAngle, double speed)
         {
             vh.CUR_ADR_ID = adr_id;
             vh.CUR_SEC_ID = sec_id;
@@ -1922,7 +1922,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                     //                                                                Mirle.Hlts.Utils.HltDirection.NESW, Mirle.Hlts.Utils.HltDirection.None);
                     //var update_result = updateVheiclePositionToReserveControlModule(scApp.ReserveBLL, vh, current_sec_id, x_axis, y_axis, dir_angle, vh_angle, speed,
                     var update_result = updateVheiclePositionToReserveControlModule(scApp.ReserveBLL, vh, current_sec_id, x_axis, y_axis, dir_angle, vh_angle, dis_speed,
-                                                                                    Mirle.Hlts.Utils.HltDirection.Forward, Mirle.Hlts.Utils.HltDirection.None);
+                                                                                    Mirle.Hlts.Utils.HltDirection.None, Mirle.Hlts.Utils.HltDirection.None);
                     if (!update_result.OK)
                     {
                         string message = $"The vehicles bumped, vh:{vh.VEHICLE_ID} with vh:{update_result.VehicleID}";
