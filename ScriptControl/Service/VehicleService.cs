@@ -1331,6 +1331,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 string source_adr = cmd.SOURCE;
                 string dest_adr = cmd.DESTINATION;
                 bool has_carry = assignVH.HAS_CST == 1;
+                ActiveType original_active_type = scApp.CMDBLL.convertECmdType2ActiveType(cmd.CMD_TPYE);
                 ActiveType active_type = scApp.CMDBLL.convertECmdType2ActiveType(cmd.CMD_TPYE);
                 //List<string> need_by_pass_adr_ids = new List<string>() { byPassAdr };
                 //List<string> need_by_pass_sec_ids = new List<string>() { byPassSection };
@@ -1592,7 +1593,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(assignVH.VEHICLE_ID, cmd.CMD_ID, E_CMD_STATUS.Sending);
                     isSuccess = ProcSendTransferCommandToVh(cmd, assignVH, ActiveType.Override,
                      guide_start_to_from_segment_ids?.ToArray(), guide_start_to_from_section_ids?.ToArray(), guide_start_to_from_address_ids?.ToArray(),
-                     guide_to_dest_segment_ids?.ToArray(), guide_to_dest_section_ids?.ToArray(), guide_to_dest_address_ids?.ToArray());
+                     guide_to_dest_segment_ids?.ToArray(), guide_to_dest_section_ids?.ToArray(), guide_to_dest_address_ids?.ToArray(),
+                     original_active_type);
                     //4.更新命令狀態(HOST CMD)
                     if (isSuccess)
                     {
@@ -1871,8 +1873,8 @@ namespace com.mirle.ibg3k0.sc.Service
 
         private bool ProcSendTransferCommandToVh(ACMD_OHTC cmd, AVEHICLE assignVH, ActiveType activeType,
             string[] guideSegmentStartToLoad, string[] guideSectionsStartToLoad, string[] guideAddressesStartToLoad,
-            string[] guideSegmentToDest, string[] guideSectionsToDest, string[] guideAddressesToDest
-            )
+            string[] guideSegmentToDest, string[] guideSectionsToDest, string[] guideAddressesToDest,
+            ActiveType originalActiveType = ActiveType.Home)
         {
             bool isSuccess = true;
             string vh_id = assignVH.VEHICLE_ID;
@@ -1925,7 +1927,8 @@ namespace com.mirle.ibg3k0.sc.Service
                                 (cmd.VH_ID, cmd.CMD_ID, activeType, cmd.CARRIER_ID,
                                guideSegmentStartToLoad, guideSectionsStartToLoad, guideAddressesStartToLoad,
                                guideSegmentToDest, guideSectionsToDest, guideAddressesToDest,
-                                cmd.SOURCE, cmd.DESTINATION);
+                                cmd.SOURCE, cmd.DESTINATION,
+                                originalActiveType);
                             //isSuccess &= assignVH.sned_Str31(cmd.CMD_ID, activeType, cmd.CARRIER_ID, routeSections, cycleRunSections
                             //    , cmd.SOURCE, cmd.DESTINATION, out Reason);
                         }
@@ -1961,7 +1964,7 @@ namespace com.mirle.ibg3k0.sc.Service
         public bool TransferRequset(string vh_id, string cmd_id, ActiveType activeType, string cst_id,
             string[] guideSegmentStartToLoad, string[] guideSectionsStartToLoad, string[] guideAddressesStartToLoad,
             string[] guideSegmentToDest, string[] guideSectionsToDest, string[] guideAddressesToDest,
-            string fromAdr, string destAdr)
+            string fromAdr, string destAdr, ActiveType originalAactiveType = ActiveType.Home)
         {
             //TODO 要在加入Transfer Command的確認 scApp.CMDBLL.TransferCommandCheck(activeType,) 
             bool isSuccess = true;
@@ -2008,7 +2011,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 else
                 {
-                    vh.setVhGuideInfo(scApp.ReserveBLL, send_gpp);
+                    vh.setVhGuideInfo(scApp.ReserveBLL, send_gpp, originalAactiveType);
                 }
                 vh.NotifyVhExcuteCMDStatusChange();
             }
@@ -2583,7 +2586,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     //    hltDirection = get_section_dir_result.secDir;
                     //}
                     Mirle.Hlts.Utils.HltDirection hltDirection = Mirle.Hlts.Utils.HltDirection.ForwardReverse;
-                    var check_result = vh.guideInfo.tryGetWalkDirOnSection(reserve_section_id);
+                    var check_result = vh.tryGetWalkDirOnSection(reserve_section_id);
                     if (check_result.isExist)
                     {
                         switch (check_result.dir)
@@ -2662,7 +2665,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
         private bool checkIsForcePassFirstSectionReserve(AVEHICLE vh, string reserveSectionID)
         {
-            var vh_guide_info = vh.guideInfo.tryGetCurrentGuideSection();
+            var vh_guide_info = vh.tryGetCurrentGuideSection();
             if (!vh_guide_info.hasInfo)
                 return false;
             if (vh_guide_info.currentGuideSection.Count < 2)

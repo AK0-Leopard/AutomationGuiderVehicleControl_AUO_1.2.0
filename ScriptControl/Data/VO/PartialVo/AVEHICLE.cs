@@ -50,19 +50,41 @@ namespace com.mirle.ibg3k0.sc
             startToLoadGuideSection = new List<Section>();
             ToDesinationGuideAddresse = new List<string>();
             ToDesinationGuideSection = new List<Section>();
+            AvoidGuideAddresse = new List<string>();
+            AvoidGuideSection = new List<Section>();
         }
-        public GuideInfo(sc.BLL.ReserveBLL reserveBLL, AVEHICLE _vh, ID_31_TRANS_REQUEST id_31)
+        public void setGuideSection(sc.BLL.ReserveBLL reserveBLL, ID_31_TRANS_REQUEST id_31, ActiveType originalAactiveType)
         {
-            vh = _vh;
             startToLoadGuideAddresse = id_31.GuideAddressesStartToLoad.ToList();
             List<string> startToLoadGuideSectionIDs = id_31.GuideSectionsStartToLoad.ToList();
             startToLoadGuideSection = convertGuideSectionIDToObject(reserveBLL, startToLoadGuideSectionIDs, startToLoadGuideAddresse);
             ToDesinationGuideAddresse = id_31.GuideAddressesToDestination.ToList();
             List<string> ToDesinationGuideSectionIDs = id_31.GuideSectionsToDestination.ToList();
             ToDesinationGuideSection = convertGuideSectionIDToObject(reserveBLL, ToDesinationGuideSectionIDs, ToDesinationGuideAddresse);
-            isAvoid = false;
-            isMove = id_31.ActType == ActiveType.Move ||
-                     id_31.ActType == ActiveType.Movetocharger;
+            isAvoiding = false;
+            judgeIsMoveCommand(id_31, originalAactiveType);
+        }
+
+        private void judgeIsMoveCommand(ID_31_TRANS_REQUEST id_31, ActiveType originalAactiveType)
+        {
+            if (id_31.ActType == ActiveType.Override)
+            {
+                isMove = originalAactiveType == ActiveType.Move ||
+                         originalAactiveType == ActiveType.Movetocharger;
+            }
+            else
+            {
+                isMove = id_31.ActType == ActiveType.Move ||
+                         id_31.ActType == ActiveType.Movetocharger;
+            }
+        }
+
+        public void setAvoidSection(sc.BLL.ReserveBLL reserveBLL, ID_51_AVOID_REQUEST id_51)
+        {
+            AvoidGuideAddresse = id_51.GuideAddresses.ToList();
+            List<string> avoidGuideSectionIDs = id_51.GuideSections.ToList();
+            AvoidGuideSection = convertGuideSectionIDToObject(reserveBLL, avoidGuideSectionIDs, AvoidGuideAddresse);
+            isAvoiding = true;
         }
         private List<Section> convertGuideSectionIDToObject(sc.BLL.ReserveBLL reserveBLL, List<string> guideSectionIDs, List<string> guideAddresses)
         {
@@ -85,28 +107,45 @@ namespace com.mirle.ibg3k0.sc
             }
             return GuideSections;
         }
-        public GuideInfo(sc.BLL.ReserveBLL reserveBLL, AVEHICLE _vh, ID_51_AVOID_REQUEST id_51)
+
+        public void setAvoidComplete()
         {
-            vh = _vh;
-            ToDesinationGuideAddresse = id_51.GuideAddresses.ToList();
-            List<string> ToDesinationGuideSectionIDs = id_51.GuideSections.ToList();
-            ToDesinationGuideSection = convertGuideSectionIDToObject(reserveBLL, ToDesinationGuideSectionIDs, ToDesinationGuideAddresse);
-            isAvoid = true;
-            isMove = false;
+            isAvoiding = false;
         }
+        public void resetGuideInfo()
+        {
+            startToLoadGuideAddresse = new List<string>();
+            startToLoadGuideSection = new List<Section>();
+            ToDesinationGuideAddresse = new List<string>();
+            ToDesinationGuideSection = new List<Section>();
+            AvoidGuideAddresse = new List<string>();
+            AvoidGuideSection = new List<Section>();
+            isMove = false;
+            isAvoiding = false;
+        }
+
         AVEHICLE vh;
-        bool isAvoid;
+        bool isAvoiding;
         bool isMove;
         List<string> startToLoadGuideAddresse;
         List<Section> startToLoadGuideSection;
         List<string> ToDesinationGuideAddresse;
         List<Section> ToDesinationGuideSection;
+        List<string> AvoidGuideAddresse;
+        List<Section> AvoidGuideSection;
         public (bool hasInfo, List<string> currentGuideSection) tryGetCurrentGuideSection()
         {
-            //if (isAvoid || isMove)
+            //if (isAvoiding)
+            //{
+            //    if (AvoidGuideSection != null && AvoidGuideSection.Count > 0)
+            //        return (true, AvoidGuideSection.ToList());
+            //    else
+            //        return (false, null);
+            //}
+            //else if (isMove)
             //{
             //    if (ToDesinationGuideSection != null && ToDesinationGuideSection.Count > 0)
-            //        return (true, ToDesinationGuideSection.Select(sec => sec.ID).ToList());
+            //        return (true, ToDesinationGuideSection.ToList());
             //    else
             //        return (false, null);
             //}
@@ -115,14 +154,14 @@ namespace com.mirle.ibg3k0.sc
             //    if (vh.HAS_CST == 0)
             //    {
             //        if (startToLoadGuideSection != null && startToLoadGuideSection.Count > 0)
-            //            return (true, startToLoadGuideSection.Select(sec => sec.ID).ToList());
+            //            return (true, startToLoadGuideSection.ToList());
             //        else
             //            return (false, null);
             //    }
             //    else
             //    {
             //        if (ToDesinationGuideSection != null && ToDesinationGuideSection.Count > 0)
-            //            return (true, ToDesinationGuideSection.Select(sec => sec.ID).ToList());
+            //            return (true, ToDesinationGuideSection.ToList());
             //        else
             //            return (false, null);
             //    }
@@ -136,10 +175,18 @@ namespace com.mirle.ibg3k0.sc
             {
                 return (false, null);
             }
+
         }
         public (bool hasInfo, List<Section> currentGuideSection) tryGetCurrentGuideSectionObj()
         {
-            if (isAvoid || isMove)
+            if (isAvoiding)
+            {
+                if (AvoidGuideSection != null && AvoidGuideSection.Count > 0)
+                    return (true, AvoidGuideSection.ToList());
+                else
+                    return (false, null);
+            }
+            else if (isMove)
             {
                 if (ToDesinationGuideSection != null && ToDesinationGuideSection.Count > 0)
                     return (true, ToDesinationGuideSection.ToList());
@@ -855,18 +902,35 @@ namespace com.mirle.ibg3k0.sc
         {
             CurrentCommandExcuteTime.Reset();
         }
-
+        object guideInfoSetLock = new object();
+        public void setVhAvoidComplete()
+        {
+            lock (guideInfoSetLock)
+                guideInfo.setAvoidComplete();
+        }
         public void resetVhGuideInfo()
         {
-            guideInfo = new GuideInfo(this);
+            lock (guideInfoSetLock)
+                guideInfo.resetGuideInfo();
         }
-        public void setVhGuideInfo(BLL.ReserveBLL reserveBLL, ID_31_TRANS_REQUEST id_31)
+        public void setVhGuideInfo(BLL.ReserveBLL reserveBLL, ID_31_TRANS_REQUEST id_31, ActiveType originalAactiveType)
         {
-            guideInfo = new GuideInfo(reserveBLL, this, id_31);
+            lock (guideInfoSetLock)
+                guideInfo.setGuideSection(reserveBLL, id_31, originalAactiveType);
         }
         public void setVhGuideInfo(BLL.ReserveBLL reserveBLL, ID_51_AVOID_REQUEST id_51)
         {
-            guideInfo = new GuideInfo(reserveBLL, this, id_51);
+            lock (guideInfoSetLock)
+                guideInfo.setAvoidSection(reserveBLL, id_51);
+        }
+
+        public (bool hasInfo, List<string> currentGuideSection) tryGetCurrentGuideSection()
+        {
+            return guideInfo.tryGetCurrentGuideSection();
+        }
+        public (bool isExist, DriveDirction dir) tryGetWalkDirOnSection(string secID)
+        {
+            return guideInfo.tryGetWalkDirOnSection(secID);
         }
 
         public void CarrierInstall()
