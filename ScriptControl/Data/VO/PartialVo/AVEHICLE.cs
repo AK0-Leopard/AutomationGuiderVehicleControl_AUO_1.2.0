@@ -414,7 +414,7 @@ namespace com.mirle.ibg3k0.sc
             eqptObjectCate = SCAppConstants.EQPT_OBJECT_CATE_EQPT;
             PositionRefreshTimer.Restart();
             initialVhStateMachine();
-
+            initialVhErrorStateMachine();
             CurrentCommandExcuteTime = new Stopwatch();
             CarrierInstalledTime = new Stopwatch();
             IdleTimer = new Stopwatch();
@@ -430,7 +430,7 @@ namespace com.mirle.ibg3k0.sc
         }
         private void initialVhErrorStateMachine()
         {
-            vhErrorStateMachine = new VehicleErrorStateMachine(() => errorState, (errorstate) => errorstate = errorState);
+            vhErrorStateMachine = new VehicleErrorStateMachine(() => errorState, (errorstate) => errorState = errorstate);
             vhErrorStateMachine.OnTransitioned(TransitionedHandler);
             vhErrorStateMachine.OnUnhandledTrigger(UnhandledTriggerHandler);
         }
@@ -1880,12 +1880,12 @@ namespace com.mirle.ibg3k0.sc
                 this.Configure(VehicleErrorState.NoAlarm)
                     .PermitIf(VehicleErrorTrigger.VehicleAlarmSet, VehicleErrorState.AlarmHappending);//guardClause為真才會執行狀態變化
                 this.Configure(VehicleErrorState.AlarmHappending)
-                    .PermitIf(VehicleErrorTrigger.VehicleAlarmClean, VehicleErrorState.AlarmConfirm);
+                    .PermitIf(VehicleErrorTrigger.VehicleAlarmClean, VehicleErrorState.AlarmConfirm)
+                    .PermitIf(VehicleErrorTrigger.VehicleConfirmComplete, VehicleErrorState.NoAlarm);
                 this.Configure(VehicleErrorState.AlarmConfirm)
                     .PermitIf(VehicleErrorTrigger.VehicleConfirmComplete, VehicleErrorState.NoAlarm)
                     .PermitIf(VehicleErrorTrigger.VehicleAlarmSet, VehicleErrorState.AlarmHappending);
             }
-
         }
 
         public enum VehicleErrorState //有哪些State

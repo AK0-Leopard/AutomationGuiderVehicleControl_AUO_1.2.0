@@ -38,15 +38,23 @@ namespace com.mirle.ibg3k0.sc.Data.VO.PartialVo
         }
         enum VhErrorStatus
         {
-            AlarmClean,
+            NoAlarm,
             AlarmSet,
-            AlarmConfirm
+            WaittingAlarmConfirm
         }
         enum ChargeStatus
         {
             NoCharge,
             Charging
         }
+        enum OpreationsTime
+        {
+            Idle,
+            Run,
+            ScheduledDowntime,
+            UnscheduleDowntime
+        }
+
 
 
 
@@ -63,6 +71,7 @@ namespace com.mirle.ibg3k0.sc.Data.VO.PartialVo
                 switch (vh.MODE_STATUS)
                 {
                     case ProtocolFormat.OHTMessage.VHModeStatus.AutoLocal:
+                    case ProtocolFormat.OHTMessage.VHModeStatus.AutoCharging:
                         return ControlStatus.Local;
                     case ProtocolFormat.OHTMessage.VHModeStatus.AutoRemote:
                         return ControlStatus.Remote;
@@ -80,6 +89,7 @@ namespace com.mirle.ibg3k0.sc.Data.VO.PartialVo
                 {
                     case ProtocolFormat.OHTMessage.VHModeStatus.AutoCharging:
                     case ProtocolFormat.OHTMessage.VHModeStatus.AutoLocal:
+                    case ProtocolFormat.OHTMessage.VHModeStatus.AutoRemote:
                         return VehicleStatus.Auto;
                     default:
                         return VehicleStatus.Manual;
@@ -124,7 +134,10 @@ namespace com.mirle.ibg3k0.sc.Data.VO.PartialVo
         {
             get
             {
-                return RepairStatus.Matain;
+                if (vh.IS_INSTALLED)
+                    return RepairStatus.None;
+                else
+                    return RepairStatus.Matain;
             }
         }
 
@@ -136,13 +149,13 @@ namespace com.mirle.ibg3k0.sc.Data.VO.PartialVo
                 switch (vh.errorState)
                 {
                     case AVEHICLE.VehicleErrorState.AlarmConfirm:
-                        return VhErrorStatus.AlarmConfirm;
+                        return VhErrorStatus.WaittingAlarmConfirm;
                     case AVEHICLE.VehicleErrorState.AlarmHappending:
                         return VhErrorStatus.AlarmSet;
                     case AVEHICLE.VehicleErrorState.NoAlarm:
-                        return VhErrorStatus.AlarmClean;
+                        return VhErrorStatus.NoAlarm;
                     default:
-                        return VhErrorStatus.AlarmClean;
+                        return VhErrorStatus.NoAlarm;
                 }
 
             }
@@ -193,6 +206,57 @@ namespace com.mirle.ibg3k0.sc.Data.VO.PartialVo
                     return false;
             }
         }
+        OpreationsTime opreationsTime
+        {
+            get
+            {
+                switch (vehicleState)
+                {
+                    case VehicleState.Install:
+                        if (IsConnected &&
+                            errorStatus == VhErrorStatus.NoAlarm &&
+                            vehicleStatus == VehicleStatus.Auto)
+                        {
+                            if (IsIdle)
+                            {
+                                return OpreationsTime.Idle;
+                            }
+                            else
+                            {
+                                return OpreationsTime.Run;
+                            }
+                        }
+                        else
+                        {
+                            return OpreationsTime.UnscheduleDowntime;
+                        }
+                    case VehicleState.Remove:
+                        return OpreationsTime.UnscheduleDowntime;
+                    default:
+                        return OpreationsTime.UnscheduleDowntime;
+                }
+            }
+        }
+
+        private bool IsIdle
+        {
+            get
+            {
+                if (IsConnected &&
+                     errorStatus == VhErrorStatus.NoAlarm &&
+                   controlStatus == ControlStatus.Remote &&
+                   vehicleStatus == VehicleStatus.Auto &&
+                   commandStatus == CommandStatus.NoCommand)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
 
 
         StringBuilder sb = new StringBuilder();
@@ -214,7 +278,7 @@ namespace com.mirle.ibg3k0.sc.Data.VO.PartialVo
         public override string ToString()
         {
             sb.Clear();
-            sb.Append(DateTime.Now.ToString(App.SCAppConstants.DateTimeFormat_19));
+            sb.Append(DateTime.Now.ToString(App.SCAppConstants.DateTimeFormat_19)).Append(",");
             sb.Append(vh.VEHICLE_ID).Append(",");
             sb.Append(IsConnected).Append(",");
             sb.Append(controlStatus).Append(",");
@@ -225,7 +289,8 @@ namespace com.mirle.ibg3k0.sc.Data.VO.PartialVo
             sb.Append(errorStatus).Append(",");
             sb.Append(chargeStatus).Append(",");
             sb.Append(IsLongCharging).Append(",");
-            sb.Append(IsCSTInstall);
+            sb.Append(IsCSTInstall).Append(",");
+            sb.Append(opreationsTime);
             string record_message = sb.ToString();
             return record_message;
         }
