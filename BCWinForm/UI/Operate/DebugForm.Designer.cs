@@ -145,6 +145,7 @@
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btn_refresf_portsation_info = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.btn_charger_alarm_test = new System.Windows.Forms.Button();
             this.groupBox18 = new System.Windows.Forms.GroupBox();
             this.checkBox_host_offline = new System.Windows.Forms.CheckBox();
             this.btn_cmp_vh_abort = new System.Windows.Forms.Button();
@@ -329,7 +330,7 @@
             this.label45 = new System.Windows.Forms.Label();
             this.label44 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.btn_charger_alarm_test = new System.Windows.Forms.Button();
+            this.cb_IsAvoidSearchGuide = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1334,6 +1335,7 @@
             // tabPage1
             // 
             this.tabPage1.AutoScroll = true;
+            this.tabPage1.Controls.Add(this.cb_IsAvoidSearchGuide);
             this.tabPage1.Controls.Add(this.label97);
             this.tabPage1.Controls.Add(this.num_vh_idle_time);
             this.tabPage1.Controls.Add(this.grb_Reserve);
@@ -1565,7 +1567,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 8);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 3);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(164, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -1691,6 +1693,16 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Test Tool";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // btn_charger_alarm_test
+            // 
+            this.btn_charger_alarm_test.Location = new System.Drawing.Point(432, 723);
+            this.btn_charger_alarm_test.Name = "btn_charger_alarm_test";
+            this.btn_charger_alarm_test.Size = new System.Drawing.Size(201, 30);
+            this.btn_charger_alarm_test.TabIndex = 56;
+            this.btn_charger_alarm_test.Text = "Charger Alarm Set";
+            this.btn_charger_alarm_test.UseVisualStyleBackColor = true;
+            this.btn_charger_alarm_test.Click += new System.EventHandler(this.btn_charger_alarm_test_Click);
             // 
             // groupBox18
             // 
@@ -3520,15 +3532,16 @@
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // btn_charger_alarm_test
+            // cb_IsAvoidSearchGuide
             // 
-            this.btn_charger_alarm_test.Location = new System.Drawing.Point(432, 723);
-            this.btn_charger_alarm_test.Name = "btn_charger_alarm_test";
-            this.btn_charger_alarm_test.Size = new System.Drawing.Size(201, 30);
-            this.btn_charger_alarm_test.TabIndex = 56;
-            this.btn_charger_alarm_test.Text = "Charger Alarm Set";
-            this.btn_charger_alarm_test.UseVisualStyleBackColor = true;
-            this.btn_charger_alarm_test.Click += new System.EventHandler(this.btn_charger_alarm_test_Click);
+            this.cb_IsAvoidSearchGuide.AutoSize = true;
+            this.cb_IsAvoidSearchGuide.Location = new System.Drawing.Point(1124, 591);
+            this.cb_IsAvoidSearchGuide.Name = "cb_IsAvoidSearchGuide";
+            this.cb_IsAvoidSearchGuide.Size = new System.Drawing.Size(323, 26);
+            this.cb_IsAvoidSearchGuide.TabIndex = 2;
+            this.cb_IsAvoidSearchGuide.Text = "避車時使用搜尋的方式規劃路線";
+            this.cb_IsAvoidSearchGuide.UseVisualStyleBackColor = true;
+            this.cb_IsAvoidSearchGuide.CheckedChanged += new System.EventHandler(this.cb_IsAvoidSearchGuide_CheckedChanged);
             // 
             // DebugForm
             // 
@@ -3923,5 +3936,6 @@
         private System.Windows.Forms.Label label97;
         private System.Windows.Forms.NumericUpDown num_vh_idle_time;
         private System.Windows.Forms.Button btn_charger_alarm_test;
+        private System.Windows.Forms.CheckBox cb_IsAvoidSearchGuide;
     }
 }

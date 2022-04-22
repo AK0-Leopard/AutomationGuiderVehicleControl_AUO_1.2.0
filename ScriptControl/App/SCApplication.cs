@@ -1999,6 +1999,7 @@ namespace com.mirle.ibg3k0.sc.App
         public static Boolean isForcedRejectReserve = false;
 
         public static int NumberOfAvoidanceSegment = 3;
+        public static bool AvoidGuideBySearch = true;
 
     }
 }

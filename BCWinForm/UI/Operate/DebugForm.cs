@@ -50,6 +50,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             checkBox_host_offline.Checked = DebugParameter.UseHostOffline;
             cb_reserve_reject.Checked = DebugParameter.isForcedRejectReserve;
             cb_reserve_pass.Checked = DebugParameter.isForcedPassReserve;
+            cb_IsAvoidSearchGuide.Checked = DebugParameter.AvoidGuideBySearch;
 
 
             List<string> lstVh = new List<string>();
@@ -1531,6 +1532,11 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             var action = chargerM.getMapActionByIdentityKey(nameof(com.mirle.ibg3k0.sc.Data.ValueDefMapAction.ChargerValueDefMapAction)) as
                    com.mirle.ibg3k0.sc.Data.ValueDefMapAction.ChargerValueDefMapAction;
             Task.Run(() => action.MasterChargerAbnormalChargingReport(null, null));
+        }
+
+        private void cb_IsAvoidSearchGuide_CheckedChanged(object sender, EventArgs e)
+        {
+            DebugParameter.AvoidGuideBySearch = cb_IsAvoidSearchGuide.Checked;
         }
     }
 }
