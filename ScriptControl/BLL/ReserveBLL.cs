@@ -307,6 +307,8 @@ namespace com.mirle.ibg3k0.sc.BLL
         public bool IsR2000Section(string sectionID)
         {
             var hlt_section_obj = mapAPI.HltMapSections.Where(sec => SCUtility.isMatche(sec.ID, sectionID)).FirstOrDefault();
+            if (hlt_section_obj == null)
+                return false;
             return SCUtility.isMatche(hlt_section_obj.Type, HtlSectionType.R2000.ToString());
         }
 

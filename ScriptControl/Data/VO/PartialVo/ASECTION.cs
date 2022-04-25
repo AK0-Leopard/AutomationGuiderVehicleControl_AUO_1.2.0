@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using com.mirle.ibg3k0.sc.Common;
 using NLog;
+using com.mirle.ibg3k0.sc.BLL;
 
 namespace com.mirle.ibg3k0.sc
 {
@@ -209,6 +210,10 @@ namespace com.mirle.ibg3k0.sc
             }
         }
 
+        internal bool IsR2000(ReserveBLL reserveBLL)
+        {
+            return reserveBLL.IsR2000Section(SEC_ID);
+        }
     }
 
 

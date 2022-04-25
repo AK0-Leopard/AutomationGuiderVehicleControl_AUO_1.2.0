@@ -222,7 +222,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                         foreach (var vh_passive in vhs_ReserveStop)
                         {
                             if (vh_active == vh_passive) continue;
-                            if (!vh_active.IsReservePause || !vh_active.IsReservePause) continue;
+                            if (!vh_active.IsReservePause || !vh_passive.IsReservePause) continue;
                             if ((vh_active.CanNotReserveInfo != null && vh_passive.CanNotReserveInfo != null))
                             {
                                 List<AVEHICLE> sort_vhs = new List<AVEHICLE>() { vh_active, vh_passive };
@@ -265,7 +265,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                                            VehicleID: avoid_vh.VEHICLE_ID,
                                            CarrierID: avoid_vh.CST_ID);
 
-                                        bool is_override_success = scApp.VehicleService.trydoAvoidCommandToVh(avoid_vh, key_blocked_vh);
+                                        bool is_override_success = scApp.VehicleService.trydoAvoidCommandToVhGuideBySearch(avoid_vh, key_blocked_vh);
                                         if (is_override_success)
                                         {
                                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
