@@ -133,6 +133,40 @@ namespace com.mirle.ibg3k0.sc
         List<Section> ToDesinationGuideSection;
         List<string> AvoidGuideAddresse;
         List<Section> AvoidGuideSection;
+        public (bool hasInfo, List<string> currentGuideAddresses) tryGetCurrentGuideAddresses()
+        {
+            if (isAvoiding)
+            {
+                if (AvoidGuideAddresse != null && AvoidGuideAddresse.Count > 0)
+                    return (true, AvoidGuideAddresse.ToList());
+                else
+                    return (false, null);
+            }
+            else if (isMove)
+            {
+                if (ToDesinationGuideAddresse != null && ToDesinationGuideAddresse.Count > 0)
+                    return (true, ToDesinationGuideAddresse.ToList());
+                else
+                    return (false, null);
+            }
+            else
+            {
+                if (vh.HAS_CST == 0)
+                {
+                    if (startToLoadGuideAddresse != null && startToLoadGuideAddresse.Count > 0)
+                        return (true, startToLoadGuideAddresse.ToList());
+                    else
+                        return (false, null);
+                }
+                else
+                {
+                    if (ToDesinationGuideAddresse != null && ToDesinationGuideAddresse.Count > 0)
+                        return (true, ToDesinationGuideAddresse.ToList());
+                    else
+                        return (false, null);
+                }
+            }
+        }
         public (bool hasInfo, List<string> currentGuideSection) tryGetCurrentGuideSection()
         {
             //if (isAvoiding)
@@ -924,6 +958,10 @@ namespace com.mirle.ibg3k0.sc
                 guideInfo.setAvoidSection(reserveBLL, id_51);
         }
 
+        public (bool hasInfo, List<string> currentGuideAddresses) tryGetCurrentGuideAddresses()
+        {
+            return guideInfo.tryGetCurrentGuideAddresses();
+        }
         public (bool hasInfo, List<string> currentGuideSection) tryGetCurrentGuideSection()
         {
             return guideInfo.tryGetCurrentGuideSection();

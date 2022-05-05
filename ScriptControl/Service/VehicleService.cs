@@ -3098,7 +3098,17 @@ namespace com.mirle.ibg3k0.sc.Service
             ASECTION avoid_vh_current_section = scApp.SectionBLL.cache.GetSection(avoidVh.CUR_SEC_ID);
             //先找出哪個Address是距離pass vh比較遠的距離，即代表是反方向
             //就可以先從那邊開始往上找
-            string first_search_adr = findTheOppositeOfAddress(pass_vh_cur_adr, avoid_vh_current_section);
+            var find_opposite_of_address_result = findTheOppositeOfAddress(avoidVh, avoid_vh_current_section);
+            string first_search_adr = "";
+            if (find_opposite_of_address_result.isFind)
+            {
+                first_search_adr = find_opposite_of_address_result.opposite_address;
+            }
+            else
+            {
+                first_search_adr = findTheOppositeOfAddress(pass_vh_cur_adr, avoid_vh_current_section);
+            }
+
 
             List<string> need_by_pass_section_ids = new List<string>() { needByPassSectionID };
 
@@ -3143,6 +3153,46 @@ namespace com.mirle.ibg3k0.sc.Service
                 opposite_address = find_avoid_vh_current_section.TO_ADR_ID;
             }
             return opposite_address;
+        }
+        private (bool isFind, string opposite_address) findTheOppositeOfAddress(AVEHICLE vh, ASECTION find_avoid_vh_current_section)
+        {
+            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+               Data: $"開始找尋逆向的Address...",
+               VehicleID: vh.VEHICLE_ID);
+            string from_adr = SCUtility.Trim(find_avoid_vh_current_section.FROM_ADR_ID);
+            string to_adr = SCUtility.Trim(find_avoid_vh_current_section.TO_ADR_ID);
+
+            var get_guide_addresses_result = vh.tryGetCurrentGuideAddresses();
+            if (!get_guide_addresses_result.hasInfo)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                   Data: $"沒有目前的Guide address，無法找尋",
+                   VehicleID: vh.VEHICLE_ID);
+                return (false, "");
+            }
+            var guide_addresses = get_guide_addresses_result.currentGuideAddresses;
+            string s_guide_addresses = string.Join(",", guide_addresses);
+            string from_to = $"{from_adr},{to_adr}";
+            if (s_guide_addresses.Contains(from_to))
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                   Data: $"該車要往To:{to_adr}的方向移動，因此往From:{from_adr}的方向避車",
+                   VehicleID: vh.VEHICLE_ID);
+                return (true, from_adr);
+            }
+            string to_from = $"{to_adr},{from_adr}";
+
+            if (s_guide_addresses.Contains(to_from))
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                   Data: $"該車要From:{from_adr}的方向移動，因此往To:{to_adr}的方向避車",
+                   VehicleID: vh.VEHICLE_ID);
+                return (true, to_adr);
+            }
+            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+               Data: $"From:{from_adr}，To:{to_adr}與Guide address無相關:{s_guide_addresses}，無法找尋",
+               VehicleID: vh.VEHICLE_ID);
+            return (false, "");
         }
 
         public const string VehicleVirtualSymbol = "virtual";
@@ -3627,10 +3677,34 @@ namespace com.mirle.ibg3k0.sc.Service
                             {
                                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                                    Data: $"sec id:{SCUtility.Trim(sec.SEC_ID)} try to reserve fail,result:{reserve_check_result.Description}. continue find next address{orther_end_point}.",
-                                   VehicleID: avoidVh.VEHICLE_ID);
-                                //next_search_address_temp.Add((orther_end_point, sec));
-                                next_search_address_temp.Add((orther_end_point_obj, sec));
-                                continue;
+                                   VehicleID: passVh.VEHICLE_ID);
+                                //如果擋住的不是一台實際的車或者是要強行通過的話，才要繼續往預約不到的路線尋找
+                                if (isForceCrossing)
+                                {
+                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                       Data: $"sec id:{SCUtility.Trim(sec.SEC_ID)} try to reserve fail,result:{reserve_check_result.Description}. 但要強制穿越，continue find next address{orther_end_point}..",
+                                       VehicleID: passVh.VEHICLE_ID);
+                                    next_search_address_temp.Add((orther_end_point_obj, sec));
+                                    continue;
+                                }
+                                var blocked_this_section_vh = scApp.VehicleBLL.cache.getVehicle(reserve_check_result.VehicleID);
+
+                                if (blocked_this_section_vh == null)
+                                {
+                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                       Data: $"sec id:{SCUtility.Trim(sec.SEC_ID)} try to reserve fail,result:{reserve_check_result.Description}. 但是被虛擬車:{reserve_check_result.VehicleID}擋住，continue find next address{orther_end_point}..",
+                                       VehicleID: passVh.VEHICLE_ID);
+                                    next_search_address_temp.Add((orther_end_point_obj, sec));
+                                    continue;
+                                }
+                                //如果預約不到的路線跟準備讓路的車子一樣的話，就不要再往這條路尋找
+                                if (blocked_this_section_vh == passVh)
+                                {
+                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                       Data: $"sec id:{SCUtility.Trim(sec.SEC_ID)} try to reserve fail,result:{reserve_check_result.Description}.由於是被vh:{reserve_check_result.VehicleID}擋住，不在繼續往下找.",
+                                       VehicleID: passVh.VEHICLE_ID);
+                                    continue;
+                                }
                             }
                             else
                             {
