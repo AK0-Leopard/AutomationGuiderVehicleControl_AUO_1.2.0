@@ -1139,6 +1139,8 @@ namespace com.mirle.ibg3k0.sc.Service
                                                       guide_start_to_from_section_ids, guide_to_dest_section_ids);
 
                     assignVH.sw_speed.Restart();
+                    assignVH.CurrentContinueAvoidTimes = 0;
+
                 }
                 else
                 {
@@ -5028,7 +5030,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 SeqNum = seq_num,
                 AvoidCompleteResp = send_str
             };
-
+            
             //Boolean resp_cmp = ITcpIpControl.sendGoogleMsg(bcfApp, tcpipAgentName, wrapper, true);
             Boolean resp_cmp = vh.sendMessage(wrapper, true);
 
@@ -5054,10 +5056,12 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(vh.VEHICLE_ID);
 
-                bool is_success = trydoOverrideCommandToVh(vh, cmd_ohtc, "", true);
+                //bool is_success = trydoOverrideCommandToVh(vh, cmd_ohtc, "", true);
+                bool is_success = trydoOverrideCommandToVh(vh, cmd_ohtc, "", false);
                 if (is_success)
                 {
                     vh.VhAvoidInfo = null;
+                    vh.CurrentContinueAvoidTimes = 0;
                 }
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                    Data: $"end override avoid complete of vh current address:{vh.CUR_ADR_ID}, current section:{vh.CUR_SEC_ID} ,result:{is_success}",

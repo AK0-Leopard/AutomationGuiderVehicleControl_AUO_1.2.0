@@ -237,15 +237,15 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                                         continue;
                                     }
 
-                                    if (avoid_vh.VhAvoidInfo != null)
-                                    {
-                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
-                                           Data: $"dead lock happend ,but vh:{avoid_vh.VEHICLE_ID} has been avoid command , continue next vh." +
-                                                 $"blocked section:{avoid_vh.VhAvoidInfo.BlockedSectionID} blocked vh id:{avoid_vh.VhAvoidInfo.BlockedVehicleID}",
-                                           VehicleID: avoid_vh.VEHICLE_ID,
-                                           CarrierID: avoid_vh.CST_ID);
-                                        continue;
-                                    }
+                                    //if (avoid_vh.VhAvoidInfo != null)
+                                    //{
+                                    //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
+                                    //       Data: $"dead lock happend ,but vh:{avoid_vh.VEHICLE_ID} has been avoid command , continue next vh." +
+                                    //             $"blocked section:{avoid_vh.VhAvoidInfo.BlockedSectionID} blocked vh id:{avoid_vh.VhAvoidInfo.BlockedVehicleID}",
+                                    //       VehicleID: avoid_vh.VEHICLE_ID,
+                                    //       CarrierID: avoid_vh.CST_ID);
+                                    //    continue;
+                                    //}
                                     AVEHICLE pass_vh = avoid_vh == vh_active ? vh_passive : vh_active;
 
 
@@ -267,6 +267,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                                                VehicleID: avoid_vh.VEHICLE_ID,
                                                CarrierID: avoid_vh.CST_ID);
                                             System.Threading.SpinWait.SpinUntil(() => false, 15000);
+                                            avoid_vh.CurrentContinueAvoidTimes++;
                                             return;
                                         }
                                         else
@@ -373,6 +374,14 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
             //{
             //    return 1;
             //}
+            if (vh1.CurrentContinueAvoidTimes > vh2.CurrentContinueAvoidTimes)
+            {
+                return 1;
+            }
+            else if (vh1.CurrentContinueAvoidTimes > vh2.CurrentContinueAvoidTimes)
+            {
+                return -1;
+            }
 
 
             if (!SCUtility.isEmpty(vh1.MCS_CMD) && !SCUtility.isEmpty(vh2.MCS_CMD))

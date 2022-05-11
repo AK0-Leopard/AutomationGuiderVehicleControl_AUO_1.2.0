@@ -494,6 +494,7 @@ namespace com.mirle.ibg3k0.sc
         public virtual string ObsVehicleID { get; set; }
         [JsonIgnore]
         public virtual int CurrentFailOverrideTimes { get; set; } = 0;
+        public virtual int CurrentContinueAvoidTimes { get; set; } = 0;
         [JsonIgnore]
         public virtual double X_Axis { get; set; }
         [JsonIgnore]
