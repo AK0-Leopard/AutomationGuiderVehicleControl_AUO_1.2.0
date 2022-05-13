@@ -2664,7 +2664,7 @@ namespace com.mirle.ibg3k0.sc.Service
                        VehicleID: vhID);
                     var result = scApp.ReserveBLL.TryAddReservedSection(vhID, reserve_section_id,
                                                                         sensorDir: hltDirection,
-                                                                        isAsk: isAsk);
+                                                                        isAsk: true);
 
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                        Data: $"vh:{vhID} Try add reserve section:{reserve_section_id},result:{result.ToString()}",
@@ -2682,6 +2682,30 @@ namespace com.mirle.ibg3k0.sc.Service
                         reserved_vh_id = result.VehicleID;
                         reserved_sec_id = reserve_section_id;
                         break;
+                    }
+                }
+                if (is_reserved_success)
+                {
+                    foreach (var reserve_sec in reserveInfos)
+                    {
+                        string reserve_section_id = reserve_sec.ReserveSectionID;
+                        Mirle.Hlts.Utils.HltDirection hltDirection = Mirle.Hlts.Utils.HltDirection.ForwardReverse;
+                        var check_result = vh.tryGetWalkDirOnSection(reserve_section_id);
+                        if (check_result.isExist)
+                        {
+                            switch (check_result.dir)
+                            {
+                                case DriveDirction.DriveDirForward:
+                                    hltDirection = HltDirection.Forward;
+                                    break;
+                                case DriveDirction.DriveDirReverse:
+                                    hltDirection = HltDirection.Reverse;
+                                    break;
+                            }
+                        }
+                        var result = scApp.ReserveBLL.TryAddReservedSection(vhID, reserve_section_id,
+                                                                        sensorDir: hltDirection,
+                                                                        isAsk: false);
                     }
                 }
                 return (is_reserved_success, reserved_vh_id, reserved_sec_id);
@@ -3689,23 +3713,33 @@ namespace com.mirle.ibg3k0.sc.Service
                                     next_search_address_temp.Add((orther_end_point_obj, sec));
                                     continue;
                                 }
-                                var blocked_this_section_vh = scApp.VehicleBLL.cache.getVehicle(reserve_check_result.VehicleID);
+                                else
+                                {
+                                    var blocked_this_section_vh = scApp.VehicleBLL.cache.getVehicle(reserve_check_result.VehicleID);
 
-                                if (blocked_this_section_vh == null)
-                                {
-                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                                       Data: $"sec id:{SCUtility.Trim(sec.SEC_ID)} try to reserve fail,result:{reserve_check_result.Description}. 但是被虛擬車:{reserve_check_result.VehicleID}擋住，continue find next address{orther_end_point}..",
-                                       VehicleID: passVh.VEHICLE_ID);
-                                    next_search_address_temp.Add((orther_end_point_obj, sec));
-                                    continue;
-                                }
-                                //如果預約不到的路線跟準備讓路的車子一樣的話，就不要再往這條路尋找
-                                if (blocked_this_section_vh == passVh)
-                                {
-                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                                       Data: $"sec id:{SCUtility.Trim(sec.SEC_ID)} try to reserve fail,result:{reserve_check_result.Description}.由於是被vh:{reserve_check_result.VehicleID}擋住，不在繼續往下找.",
-                                       VehicleID: passVh.VEHICLE_ID);
-                                    continue;
+                                    if (blocked_this_section_vh == null)
+                                    {
+                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                           Data: $"sec id:{SCUtility.Trim(sec.SEC_ID)} try to reserve fail,result:{reserve_check_result.Description}. 但是被虛擬車:{reserve_check_result.VehicleID}擋住，continue find next address{orther_end_point}..",
+                                           VehicleID: passVh.VEHICLE_ID);
+                                        next_search_address_temp.Add((orther_end_point_obj, sec));
+                                        continue;
+                                    }
+                                    else//如果是被實體車擋住的話，就不要在往下找
+                                    {
+                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                           Data: $"sec id:{SCUtility.Trim(sec.SEC_ID)} try to reserve fail,result:{reserve_check_result.Description}.由於是被vh:{reserve_check_result.VehicleID}擋住，不在繼續往下找.",
+                                           VehicleID: passVh.VEHICLE_ID);
+                                        continue;
+                                    }
+                                    //如果預約不到的路線跟準備讓路的車子一樣的話，就不要再往這條路尋找
+                                    //if (blocked_this_section_vh == passVh)
+                                    //{
+                                    //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                    //       Data: $"sec id:{SCUtility.Trim(sec.SEC_ID)} try to reserve fail,result:{reserve_check_result.Description}.由於是被vh:{reserve_check_result.VehicleID}擋住，不在繼續往下找.",
+                                    //       VehicleID: passVh.VEHICLE_ID);
+                                    //    continue;
+                                    //}
                                 }
                             }
                             else
@@ -5030,7 +5064,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 SeqNum = seq_num,
                 AvoidCompleteResp = send_str
             };
-            
+
             //Boolean resp_cmp = ITcpIpControl.sendGoogleMsg(bcfApp, tcpipAgentName, wrapper, true);
             Boolean resp_cmp = vh.sendMessage(wrapper, true);
 

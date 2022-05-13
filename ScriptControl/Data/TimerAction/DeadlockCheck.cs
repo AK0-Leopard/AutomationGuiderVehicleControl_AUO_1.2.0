@@ -378,7 +378,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
             {
                 return 1;
             }
-            else if (vh1.CurrentContinueAvoidTimes > vh2.CurrentContinueAvoidTimes)
+            else if (vh1.CurrentContinueAvoidTimes < vh2.CurrentContinueAvoidTimes)
             {
                 return -1;
             }
