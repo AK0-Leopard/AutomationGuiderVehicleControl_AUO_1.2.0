@@ -213,75 +213,148 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                                           .ToList();
                     foreach (var vh_active in vhs_ReserveStop)
                     {
-                        foreach (var vh_passive in vhs_ReserveStop)
+                        var vh_passive = vhs_ReserveStop.Where(v => v != vh_active &&
+                                                                    v.CanNotReserveInfo != null &&
+                                                                    SCUtility.isMatche(v.VEHICLE_ID, v.CanNotReserveInfo.ReservedVhID))
+                                                        .FirstOrDefault();
+                        if(vh_passive == null)
                         {
-                            if (vh_active == vh_passive) continue;
-                            if (!vh_active.IsReservePause || !vh_passive.IsReservePause) continue;
-                            if ((vh_active.CanNotReserveInfo != null && vh_passive.CanNotReserveInfo != null))
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
+                               Data: $"dead lock happend ,but vh:{vh_active.VEHICLE_ID} 找不到被他擋住的車子，繼續往找下一台車...",
+                               VehicleID: vh_active.VEHICLE_ID,
+                               CarrierID: vh_active.CST_ID);
+                            continue;
+                        }
+
+                        List<AVEHICLE> sort_vhs = new List<AVEHICLE>() { vh_active, vh_passive };
+
+                        //將找出來的vh進行排序，用來幫忙決定要讓哪一台車進行退避
+                        //比條件有
+                        //1.是否有執行MCS命令(沒執行的會先避車)
+                        //2.是否有搬送CST(沒載CST的會先避車)
+                        sort_vhs.Sort(SortOverrideOfVehicle);
+                        foreach (AVEHICLE avoid_vh in sort_vhs)
+                        {
+                            if (avoid_vh.CurrentFailOverrideTimes >= AVEHICLE.MAX_FAIL_OVERRIDE_TIMES_IN_ONE_CASE)
                             {
-                                List<AVEHICLE> sort_vhs = new List<AVEHICLE>() { vh_active, vh_passive };
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
+                                   Data: $"dead lock happend ,but vh:{avoid_vh.VEHICLE_ID} has been override more than {AVEHICLE.MAX_FAIL_OVERRIDE_TIMES_IN_ONE_CASE} times, continue next vh.",
+                                   VehicleID: avoid_vh.VEHICLE_ID,
+                                   CarrierID: avoid_vh.CST_ID);
+                                continue;
+                            }
 
-                                //將找出來的vh進行排序，用來幫忙決定要讓哪一台車進行退避
-                                //比條件有
-                                //1.是否有執行MCS命令(沒執行的會先避車)
-                                //2.是否有搬送CST(沒載CST的會先避車)
-                                sort_vhs.Sort(SortOverrideOfVehicle);
-                                foreach (AVEHICLE avoid_vh in sort_vhs)
+                            //if (avoid_vh.VhAvoidInfo != null)
+                            //{
+                            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
+                            //       Data: $"dead lock happend ,but vh:{avoid_vh.VEHICLE_ID} has been avoid command , continue next vh." +
+                            //             $"blocked section:{avoid_vh.VhAvoidInfo.BlockedSectionID} blocked vh id:{avoid_vh.VhAvoidInfo.BlockedVehicleID}",
+                            //       VehicleID: avoid_vh.VEHICLE_ID,
+                            //       CarrierID: avoid_vh.CST_ID);
+                            //    continue;
+                            //}
+                            AVEHICLE pass_vh = avoid_vh == vh_active ? vh_passive : vh_active;
+
+
+                            if (avoid_vh.isTcpIpConnect)
+                            {
+                                ACMD_OHTC cmd_ohtc = scApp.CMDBLL.GetCMD_OHTCByID(avoid_vh.OHTC_CMD);
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(DeadlockCheck), Device: "AGVC",
+                                   Data: $"dead lock happend ,ask vh:{avoid_vh.VEHICLE_ID} chnage path.",
+                                   VehicleID: avoid_vh.VEHICLE_ID,
+                                   CarrierID: avoid_vh.CST_ID);
+
+                                bool is_override_success = scApp.VehicleService.trydoAvoidCommandToVhGuideBySearch(avoid_vh, pass_vh);
+                                if (is_override_success)
                                 {
-                                    if (avoid_vh.CurrentFailOverrideTimes >= AVEHICLE.MAX_FAIL_OVERRIDE_TIMES_IN_ONE_CASE)
-                                    {
-                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
-                                           Data: $"dead lock happend ,but vh:{avoid_vh.VEHICLE_ID} has been override more than {AVEHICLE.MAX_FAIL_OVERRIDE_TIMES_IN_ONE_CASE} times, continue next vh.",
-                                           VehicleID: avoid_vh.VEHICLE_ID,
-                                           CarrierID: avoid_vh.CST_ID);
-                                        continue;
-                                    }
-
-                                    //if (avoid_vh.VhAvoidInfo != null)
-                                    //{
-                                    //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
-                                    //       Data: $"dead lock happend ,but vh:{avoid_vh.VEHICLE_ID} has been avoid command , continue next vh." +
-                                    //             $"blocked section:{avoid_vh.VhAvoidInfo.BlockedSectionID} blocked vh id:{avoid_vh.VhAvoidInfo.BlockedVehicleID}",
-                                    //       VehicleID: avoid_vh.VEHICLE_ID,
-                                    //       CarrierID: avoid_vh.CST_ID);
-                                    //    continue;
-                                    //}
-                                    AVEHICLE pass_vh = avoid_vh == vh_active ? vh_passive : vh_active;
-
-
-                                    var key_blocked_vh = findTheKeyBlockVhID(avoid_vh, pass_vh);
-                                    if (key_blocked_vh == null) continue;
-                                    if (avoid_vh.isTcpIpConnect)
-                                    {
-                                        ACMD_OHTC cmd_ohtc = scApp.CMDBLL.GetCMD_OHTCByID(avoid_vh.OHTC_CMD);
-                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(DeadlockCheck), Device: "AGVC",
-                                           Data: $"dead lock happend ,ask vh:{avoid_vh.VEHICLE_ID} chnage path.",
-                                           VehicleID: avoid_vh.VEHICLE_ID,
-                                           CarrierID: avoid_vh.CST_ID);
-
-                                        bool is_override_success = scApp.VehicleService.trydoAvoidCommandToVhGuideBySearch(avoid_vh, key_blocked_vh);
-                                        if (is_override_success)
-                                        {
-                                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
-                                               Data: $"dead lock happend ,ask vh:{avoid_vh.VEHICLE_ID} chnage path success.",
-                                               VehicleID: avoid_vh.VEHICLE_ID,
-                                               CarrierID: avoid_vh.CST_ID);
-                                            System.Threading.SpinWait.SpinUntil(() => false, 15000);
-                                            avoid_vh.CurrentContinueAvoidTimes++;
-                                            return;
-                                        }
-                                        else
-                                        {
-                                            avoid_vh.CurrentFailOverrideTimes++;
-                                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
-                                               Data: $"dead lock happend ,ask vh:{avoid_vh.VEHICLE_ID} chnage path fail, fail times:{avoid_vh.CurrentFailOverrideTimes}.",
-                                               VehicleID: avoid_vh.VEHICLE_ID,
-                                               CarrierID: avoid_vh.CST_ID);
-                                        }
-                                    }
+                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
+                                       Data: $"dead lock happend ,ask vh:{avoid_vh.VEHICLE_ID} chnage path success.",
+                                       VehicleID: avoid_vh.VEHICLE_ID,
+                                       CarrierID: avoid_vh.CST_ID);
+                                    System.Threading.SpinWait.SpinUntil(() => false, 15000);
+                                    avoid_vh.CurrentContinueAvoidTimes++;
+                                    return;
+                                }
+                                else
+                                {
+                                    avoid_vh.CurrentFailOverrideTimes++;
+                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
+                                       Data: $"dead lock happend ,ask vh:{avoid_vh.VEHICLE_ID} chnage path fail, fail times:{avoid_vh.CurrentFailOverrideTimes}.",
+                                       VehicleID: avoid_vh.VEHICLE_ID,
+                                       CarrierID: avoid_vh.CST_ID);
                                 }
                             }
                         }
+
+                        //foreach (var vh_passive in vhs_ReserveStop)
+                        //{
+                        //    if (vh_active == vh_passive) continue;
+                        //    if (!vh_active.IsReservePause || !vh_passive.IsReservePause) continue;
+                        //    if ((vh_active.CanNotReserveInfo != null && vh_passive.CanNotReserveInfo != null))
+                        //    {
+                        //        List<AVEHICLE> sort_vhs = new List<AVEHICLE>() { vh_active, vh_passive };
+
+                        //        //將找出來的vh進行排序，用來幫忙決定要讓哪一台車進行退避
+                        //        //比條件有
+                        //        //1.是否有執行MCS命令(沒執行的會先避車)
+                        //        //2.是否有搬送CST(沒載CST的會先避車)
+                        //        sort_vhs.Sort(SortOverrideOfVehicle);
+                        //        foreach (AVEHICLE avoid_vh in sort_vhs)
+                        //        {
+                        //            if (avoid_vh.CurrentFailOverrideTimes >= AVEHICLE.MAX_FAIL_OVERRIDE_TIMES_IN_ONE_CASE)
+                        //            {
+                        //                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
+                        //                   Data: $"dead lock happend ,but vh:{avoid_vh.VEHICLE_ID} has been override more than {AVEHICLE.MAX_FAIL_OVERRIDE_TIMES_IN_ONE_CASE} times, continue next vh.",
+                        //                   VehicleID: avoid_vh.VEHICLE_ID,
+                        //                   CarrierID: avoid_vh.CST_ID);
+                        //                continue;
+                        //            }
+
+                        //            //if (avoid_vh.VhAvoidInfo != null)
+                        //            //{
+                        //            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
+                        //            //       Data: $"dead lock happend ,but vh:{avoid_vh.VEHICLE_ID} has been avoid command , continue next vh." +
+                        //            //             $"blocked section:{avoid_vh.VhAvoidInfo.BlockedSectionID} blocked vh id:{avoid_vh.VhAvoidInfo.BlockedVehicleID}",
+                        //            //       VehicleID: avoid_vh.VEHICLE_ID,
+                        //            //       CarrierID: avoid_vh.CST_ID);
+                        //            //    continue;
+                        //            //}
+                        //            AVEHICLE pass_vh = avoid_vh == vh_active ? vh_passive : vh_active;
+
+
+                        //            var key_blocked_vh = findTheKeyBlockVhID(avoid_vh, pass_vh);
+                        //            if (key_blocked_vh == null) continue;
+                        //            if (avoid_vh.isTcpIpConnect)
+                        //            {
+                        //                ACMD_OHTC cmd_ohtc = scApp.CMDBLL.GetCMD_OHTCByID(avoid_vh.OHTC_CMD);
+                        //                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(DeadlockCheck), Device: "AGVC",
+                        //                   Data: $"dead lock happend ,ask vh:{avoid_vh.VEHICLE_ID} chnage path.",
+                        //                   VehicleID: avoid_vh.VEHICLE_ID,
+                        //                   CarrierID: avoid_vh.CST_ID);
+
+                        //                bool is_override_success = scApp.VehicleService.trydoAvoidCommandToVhGuideBySearch(avoid_vh, key_blocked_vh);
+                        //                if (is_override_success)
+                        //                {
+                        //                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
+                        //                       Data: $"dead lock happend ,ask vh:{avoid_vh.VEHICLE_ID} chnage path success.",
+                        //                       VehicleID: avoid_vh.VEHICLE_ID,
+                        //                       CarrierID: avoid_vh.CST_ID);
+                        //                    System.Threading.SpinWait.SpinUntil(() => false, 15000);
+                        //                    avoid_vh.CurrentContinueAvoidTimes++;
+                        //                    return;
+                        //                }
+                        //                else
+                        //                {
+                        //                    avoid_vh.CurrentFailOverrideTimes++;
+                        //                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
+                        //                       Data: $"dead lock happend ,ask vh:{avoid_vh.VEHICLE_ID} chnage path fail, fail times:{avoid_vh.CurrentFailOverrideTimes}.",
+                        //                       VehicleID: avoid_vh.VEHICLE_ID,
+                        //                       CarrierID: avoid_vh.CST_ID);
+                        //                }
+                        //            }
+                        //        }
+                        //    }
+                        //}
                     }
                 }
                 catch (Exception ex)
