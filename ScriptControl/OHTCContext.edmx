@@ -102,7 +102,7 @@
             <PropertyRef Name="CEID" />
             <PropertyRef Name="RPTID" />
           </Key>
-          <Property Name="CEID" Type="char" MaxLength="7" Nullable="false" />
+          <Property Name="CEID" Type="char" MaxLength="4" Nullable="false" />
           <Property Name="RPTID" Type="char" MaxLength="4" Nullable="false" />
           <Property Name="ORDER_NUM" Type="int" Nullable="false" />
           <Property Name="NAME" Type="char" MaxLength="20" />
@@ -149,6 +149,7 @@
           <Property Name="ESTIMATED_TIME" Type="int" Nullable="false" />
           <Property Name="ESTIMATED_EXCESS_TIME" Type="int" Nullable="false" />
           <Property Name="REAL_CMP_TIME" Type="int" />
+          <Property Name="COMPLETE_STATUS" Type="int" />
         </EntityType>
         <EntityType Name="ACMD_OHTC_DETAIL">
           <Key>
@@ -366,7 +367,7 @@
           <Property Name="INTER_TIME" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="REPORT_TIME" Type="datetime2" Precision="7" />
           <Property Name="STREAMFUNCTION_NAME" Type="varchar" MaxLength="60" Nullable="false" />
-          <Property Name="STREAMFUNCTION_CEID" Type="char" MaxLength="7" />
+          <Property Name="STREAMFUNCTION_CEID" Type="char" MaxLength="5" />
           <Property Name="MCS_CMD_ID" Type="char" MaxLength="64" />
           <Property Name="VEHICLE_ID" Type="char" MaxLength="8" />
           <Property Name="PORT_ID" Type="char" MaxLength="64" />
@@ -972,6 +973,7 @@
           <Property Name="ESTIMATED_TIME" Type="int" Nullable="false" />
           <Property Name="ESTIMATED_EXCESS_TIME" Type="int" Nullable="false" />
           <Property Name="REAL_CMP_TIME" Type="int" />
+          <Property Name="COMPLETE_STATUS" Type="int" />
         </EntityType>
         <EntityType Name="HOPERATION">
           <Key>
@@ -982,7 +984,7 @@
           <Property Name="USER_ID" Type="char" MaxLength="20" />
           <Property Name="FORM_NAME" Type="char" MaxLength="30" />
           <Property Name="ACTION" Type="varchar(max)" />
-          <Property Name="INSERT_TIME" Type="datetime" />
+          <Property Name="INSERT_TIME" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="SCALE_BASE_DATA">
           <Key>
@@ -1037,7 +1039,7 @@
           <Property Name="USER_GRP" Type="char" MaxLength="20" Nullable="false" />
         </EntityType>
         <!--產生期間發現錯誤:
-警告 6002: 資料表/檢視 'AGVC_North_Innolux_Test_Site.dbo.VSECTION_100' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
+警告 6002: 資料表/檢視 'AGVC_CAAGV100_v4.dbo.VSECTION_100' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
         <EntityType Name="VSECTION_100">
           <Key>
             <PropertyRef Name="SEC_ID" />
@@ -1122,7 +1124,7 @@
           <Property Name="LAST_TECH_TIME" Type="smalldatetime" />
         </EntityType>
         <!--產生期間發現錯誤:
-警告 6002: 資料表/檢視 'AGVC_North_Innolux_Test_Site.dbo.VACMD_MCS' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
+警告 6002: 資料表/檢視 'AGVC_CAAGV100_v4.dbo.VACMD_MCS' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
         <EntityType Name="VACMD_MCS">
           <Key>
             <PropertyRef Name="CMD_ID" />
@@ -1156,7 +1158,7 @@
           <Property Name="PORT_PRIORITY" Type="int" Nullable="false" />
           <Property Name="REPLACE" Type="int" Nullable="false" />
           <Property Name="OHTC_CMD" Type="char" MaxLength="64" />
-          <Property Name="VH_ID" Type="char" MaxLength="5" />
+          <Property Name="VH_ID" Type="char" MaxLength="8" />
         </EntityType>
         <EntityContainer Name="OHTC_DevModelStoreContainer">
           <EntitySet Name="AADDRESS" EntityType="Self.AADDRESS" Schema="dbo" store:Type="Tables" />
@@ -1618,13 +1620,14 @@
           <Property Type="Int32" Name="ESTIMATED_TIME" Nullable="false" />
           <Property Type="Int32" Name="ESTIMATED_EXCESS_TIME" Nullable="false" />
           <Property Type="Int32" Name="REAL_CMP_TIME" />
+          <Property Name="COMPLETE_STATUS" Type="OHTC_DevModel.CompleteStatus" />
         </EntityType>
         <EntityType Name="ACEID">
           <Key>
             <PropertyRef Name="CEID" />
             <PropertyRef Name="RPTID" />
           </Key>
-          <Property Type="String" Name="CEID" Nullable="false" MaxLength="7" FixedLength="true" Unicode="false" />
+          <Property Type="String" Name="CEID" Nullable="false" MaxLength="4" FixedLength="true" Unicode="false" />
           <Property Type="String" Name="RPTID" Nullable="false" MaxLength="4" FixedLength="true" Unicode="false" />
           <Property Type="Int32" Name="ORDER_NUM" Nullable="false" />
           <Property Type="String" Name="NAME" MaxLength="20" FixedLength="true" Unicode="false" />
@@ -1865,7 +1868,7 @@
           <Property Name="USER_ID" Type="String" MaxLength="20" FixedLength="true" Unicode="false" />
           <Property Name="FORM_NAME" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
           <Property Name="ACTION" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="INSERT_TIME" Type="DateTime" Precision="3" />
+          <Property Name="INSERT_TIME" Type="DateTime" Precision="3" Nullable="false" />
         </EntityType>
         <EntityType Name="ASHEET">
           <Key>
@@ -2001,7 +2004,7 @@
           <Property Name="INTER_TIME" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="REPORT_TIME" Type="DateTime" Precision="7" />
           <Property Name="STREAMFUNCTION_NAME" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="false" />
-          <Property Name="STREAMFUNCTION_CEID" Type="String" MaxLength="7" FixedLength="true" Unicode="false" />
+          <Property Name="STREAMFUNCTION_CEID" Type="String" MaxLength="5" FixedLength="true" Unicode="false" />
           <Property Name="MCS_CMD_ID" Type="String" MaxLength="64" FixedLength="true" Unicode="false" />
           <Property Name="VEHICLE_ID" Type="String" MaxLength="8" FixedLength="true" Unicode="false" />
           <Property Name="PORT_ID" Type="String" MaxLength="64" FixedLength="true" Unicode="false" />
@@ -2613,6 +2616,7 @@
           <Property Name="ESTIMATED_TIME" Type="Int32" Nullable="false" />
           <Property Name="ESTIMATED_EXCESS_TIME" Type="Int32" Nullable="false" />
           <Property Name="REAL_CMP_TIME" Type="Int32" />
+          <Property Name="COMPLETE_STATUS" Type="OHTC_DevModel.CompleteStatus" />
         </EntityType>
         <EntityType Name="VACMD_MCS">
           <Key>
@@ -2647,8 +2651,9 @@
           <Property Name="PORT_PRIORITY" Type="Int32" Nullable="false" />
           <Property Name="REPLACE" Type="Int32" Nullable="false" />
           <Property Name="OHTC_CMD" Type="String" MaxLength="64" FixedLength="true" Unicode="false" />
-          <Property Name="VH_ID" Type="String" MaxLength="5" FixedLength="true" Unicode="false" />
+          <Property Name="VH_ID" Type="String" MaxLength="8" FixedLength="true" Unicode="false" />
         </EntityType>
+        <EnumType Name="CompleteStatus" a:ExternalTypeName="com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage.CompleteStatus" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2811,7 +2816,8 @@
     <EntitySetMapping Name="ACMD_OHTC">
       <EntityTypeMapping TypeName="IsTypeOf(OHTC_DevModel.ACMD_OHTC)">
         <MappingFragment StoreEntitySet="ACMD_OHTC">
-          <ScalarProperty Name="CMD_ID" ColumnName="CMD_ID" />
+          <ScalarProperty Name="COMPLETE_STATUS" ColumnName="COMPLETE_STATUS" />
+                <ScalarProperty Name="CMD_ID" ColumnName="CMD_ID" />
           <ScalarProperty Name="VH_ID" ColumnName="VH_ID" />
           <ScalarProperty Name="CARRIER_ID" ColumnName="CARRIER_ID" />
           <ScalarProperty Name="CMD_ID_MCS" ColumnName="CMD_ID_MCS" />
@@ -3755,6 +3761,7 @@
           <EntitySetMapping Name="HCMD_OHTC">
             <EntityTypeMapping TypeName="OHTC_DevModel.HCMD_OHTC">
               <MappingFragment StoreEntitySet="HCMD_OHTC">
+                <ScalarProperty Name="COMPLETE_STATUS" ColumnName="COMPLETE_STATUS" />
                 <ScalarProperty Name="REAL_CMP_TIME" ColumnName="REAL_CMP_TIME" />
                 <ScalarProperty Name="ESTIMATED_EXCESS_TIME" ColumnName="ESTIMATED_EXCESS_TIME" />
                 <ScalarProperty Name="ESTIMATED_TIME" ColumnName="ESTIMATED_TIME" />

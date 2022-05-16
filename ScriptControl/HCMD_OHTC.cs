@@ -30,5 +30,6 @@ namespace com.mirle.ibg3k0.sc
         public int ESTIMATED_TIME { get; set; }
         public int ESTIMATED_EXCESS_TIME { get; set; }
         public Nullable<int> REAL_CMP_TIME { get; set; }
+        public Nullable<com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage.CompleteStatus> COMPLETE_STATUS { get; set; }
     }
 }

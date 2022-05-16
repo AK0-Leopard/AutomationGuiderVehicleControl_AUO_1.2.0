@@ -1786,6 +1786,29 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             return isSuccess;
         }
+        public bool updateCommand_OHTC_StatusToFinishByCmdID(string vhID, string cmd_id, E_CMD_STATUS status, CompleteStatus completeStatus)
+        {
+            bool isSuccess = false;
+            //using (DBConnection_EF con = new DBConnection_EF())
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                ACMD_OHTC cmd = cmd_ohtcDAO.getByID(con, cmd_id);
+                if (cmd != null)
+                {
+
+                    cmd.COMPLETE_STATUS = completeStatus;
+                    cmd.CMD_END_TIME = DateTime.Now;
+                    cmd_ohtc_detailDAO.DeleteByBatch(con, cmd.CMD_ID);
+                    cmd.CMD_STAUS = status;
+                    cmd_ohtcDAO.Update(con, cmd);
+
+                    scApp.VehicleBLL.updateVehicleExcuteCMD(vhID, string.Empty, string.Empty);
+
+                }
+                isSuccess = true;
+            }
+            return isSuccess;
+        }
         public virtual bool updateCommand_OHTC_CarrierID(string cmd_id, string new_carrier_id)
         {
             bool isSuccess = false;
@@ -1975,7 +1998,8 @@ namespace com.mirle.ibg3k0.sc.BLL
                     foreach (ACMD_OHTC cmd in cmds)
                     {
                         //updateCommand_OHTC_StatusByCmdID(cmd.CMD_ID, E_CMD_STATUS.AbnormalEndByOHTC);
-                        updateCommand_OHTC_StatusByCmdID(vh_id, cmd.CMD_ID, E_CMD_STATUS.AbnormalEndByOHTC);
+                        //updateCommand_OHTC_StatusByCmdID(vh_id, cmd.CMD_ID, E_CMD_STATUS.AbnormalEndByOHTC);
+                        updateCommand_OHTC_StatusToFinishByCmdID(vh_id, cmd.CMD_ID, E_CMD_STATUS.AbnormalEndByOHTC, CompleteStatus.CmpStatusForceFinishByOp);
                         if (!SCUtility.isEmpty(cmd.CMD_ID_MCS))
                         {
                             scApp.CMDBLL.updateCMD_MCS_TranStatus2Complete(cmd.CMD_ID_MCS, E_TRAN_STATUS.Aborted);

@@ -30,6 +30,7 @@ namespace com.mirle.ibg3k0.sc
                 ESTIMATED_TIME = this.ESTIMATED_TIME,
                 ESTIMATED_EXCESS_TIME = this.ESTIMATED_EXCESS_TIME,
                 REAL_CMP_TIME = this.REAL_CMP_TIME,
+                COMPLETE_STATUS = this.COMPLETE_STATUS
             };
         }
 

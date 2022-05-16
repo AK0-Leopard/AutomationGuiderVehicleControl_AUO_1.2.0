@@ -89,8 +89,8 @@ message Timestamp {
 	CmpStatusIDMisMatch = 23;
 	CmpStatusIDReadFailed = 24;
 	CmpStatusInterlockError = 64;
-
-	CmpStatusLongTimeInaction = 98;
+	CmpStatusCommandInitailFail = 96;
+	CmpStatusLongTimeInaction = 97;
 	CmpStatusForceFinishByOp = 99;
   }
   	enum CMDCancelType {
