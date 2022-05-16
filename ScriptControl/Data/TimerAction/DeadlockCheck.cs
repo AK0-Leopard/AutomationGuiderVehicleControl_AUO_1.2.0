@@ -215,7 +215,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                     {
                         var vh_passive = vhs_ReserveStop.Where(v => v != vh_active &&
                                                                     v.CanNotReserveInfo != null &&
-                                                                    SCUtility.isMatche(v.VEHICLE_ID, v.CanNotReserveInfo.ReservedVhID))
+                                                                    SCUtility.isMatche(vh_active.VEHICLE_ID, v.CanNotReserveInfo.ReservedVhID))
                                                         .FirstOrDefault();
                         if(vh_passive == null)
                         {
