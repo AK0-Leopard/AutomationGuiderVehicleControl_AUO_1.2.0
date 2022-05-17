@@ -1536,7 +1536,8 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                 //isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(cmd_id, E_CMD_STATUS.NormalEnd);
                 //isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(cmd_id, ohtc_cmd_status);
-                isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(vh_id, cmd_id, ohtc_cmd_status);
+                //isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(vh_id, cmd_id, ohtc_cmd_status);
+                isSuccess &= scApp.CMDBLL.updateCommand_OHTC_StatusToFinishByCmdID(vh_id, cmd_id, ohtc_cmd_status, completeStatus);
 
                 if (!SCUtility.isEmpty(mcs_cmd_id))
                 {

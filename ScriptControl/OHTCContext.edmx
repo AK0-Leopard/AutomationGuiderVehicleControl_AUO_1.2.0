@@ -149,6 +149,7 @@
           <Property Name="ESTIMATED_TIME" Type="int" Nullable="false" />
           <Property Name="ESTIMATED_EXCESS_TIME" Type="int" Nullable="false" />
           <Property Name="REAL_CMP_TIME" Type="int" />
+          <Property Name="COMPLETE_STATUS" Type="int" />
         </EntityType>
         <EntityType Name="ACMD_OHTC_DETAIL">
           <Key>
@@ -980,6 +981,7 @@
           <Property Name="ESTIMATED_TIME" Type="int" Nullable="false" />
           <Property Name="ESTIMATED_EXCESS_TIME" Type="int" Nullable="false" />
           <Property Name="REAL_CMP_TIME" Type="int" />
+          <Property Name="COMPLETE_STATUS" Type="int" />
         </EntityType>
         <EntityType Name="HOPERATION">
           <Key>
@@ -1045,7 +1047,7 @@
           <Property Name="USER_GRP" Type="char" MaxLength="20" Nullable="false" />
         </EntityType>
         <!--產生期間發現錯誤:
-警告 6002: 資料表/檢視 'AGVC_CAAGV100_v4.dbo.VSECTION_100' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
+警告 6002: 資料表/檢視 'AGVC_CAAGV200_v53.dbo.VSECTION_100' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
         <EntityType Name="VSECTION_100">
           <Key>
             <PropertyRef Name="SEC_ID" />
@@ -1130,7 +1132,7 @@
           <Property Name="LAST_TECH_TIME" Type="smalldatetime" />
         </EntityType>
         <!--產生期間發現錯誤:
-警告 6002: 資料表/檢視 'AGVC_CAAGV100_v4.dbo.VACMD_MCS' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
+警告 6002: 資料表/檢視 'AGVC_CAAGV200_v53.dbo.VACMD_MCS' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
         <EntityType Name="VACMD_MCS">
           <Key>
             <PropertyRef Name="CMD_ID" />
@@ -1628,6 +1630,7 @@
           <Property Type="Int32" Name="ESTIMATED_TIME" Nullable="false" />
           <Property Type="Int32" Name="ESTIMATED_EXCESS_TIME" Nullable="false" />
           <Property Type="Int32" Name="REAL_CMP_TIME" />
+          <Property Name="COMPLETE_STATUS" Type="OHTC_DevModel.CompleteStatus" />
         </EntityType>
         <EntityType Name="ACEID">
           <Key>
@@ -2624,6 +2627,7 @@
           <Property Name="ESTIMATED_TIME" Type="Int32" Nullable="false" />
           <Property Name="ESTIMATED_EXCESS_TIME" Type="Int32" Nullable="false" />
           <Property Name="REAL_CMP_TIME" Type="Int32" />
+          <Property Name="COMPLETE_STATUS" Type="OHTC_DevModel.CompleteStatus" />
         </EntityType>
         <EntityType Name="VACMD_MCS">
           <Key>
@@ -2668,6 +2672,7 @@
           <Property Name="TYPE" Type="OHTC_DevModel.GroupPortType" Nullable="false" />
         </EntityType>
         <EnumType Name="GroupPortType" a:ExternalTypeName="mirle.ibg3k0.sc.ProtocolFormat.OHTMessage.GroupPortType" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
+        <EnumType Name="CompleteStatus" a:ExternalTypeName="com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage.CompleteStatus" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2830,7 +2835,8 @@
     <EntitySetMapping Name="ACMD_OHTC">
       <EntityTypeMapping TypeName="IsTypeOf(OHTC_DevModel.ACMD_OHTC)">
         <MappingFragment StoreEntitySet="ACMD_OHTC">
-          <ScalarProperty Name="CMD_ID" ColumnName="CMD_ID" />
+          <ScalarProperty Name="COMPLETE_STATUS" ColumnName="COMPLETE_STATUS" />
+                <ScalarProperty Name="CMD_ID" ColumnName="CMD_ID" />
           <ScalarProperty Name="VH_ID" ColumnName="VH_ID" />
           <ScalarProperty Name="CARRIER_ID" ColumnName="CARRIER_ID" />
           <ScalarProperty Name="CMD_ID_MCS" ColumnName="CMD_ID_MCS" />
@@ -3775,6 +3781,7 @@
           <EntitySetMapping Name="HCMD_OHTC">
             <EntityTypeMapping TypeName="OHTC_DevModel.HCMD_OHTC">
               <MappingFragment StoreEntitySet="HCMD_OHTC">
+                <ScalarProperty Name="COMPLETE_STATUS" ColumnName="COMPLETE_STATUS" />
                 <ScalarProperty Name="REAL_CMP_TIME" ColumnName="REAL_CMP_TIME" />
                 <ScalarProperty Name="ESTIMATED_EXCESS_TIME" ColumnName="ESTIMATED_EXCESS_TIME" />
                 <ScalarProperty Name="ESTIMATED_TIME" ColumnName="ESTIMATED_TIME" />
