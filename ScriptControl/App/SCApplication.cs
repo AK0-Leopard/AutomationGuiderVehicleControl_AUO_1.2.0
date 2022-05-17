@@ -1101,177 +1101,76 @@ namespace com.mirle.ibg3k0.sc.App
         }
         private void initBLL(string algorithm)
         {
-            if (BC_ID == "NORTH_INNOLUX" || BC_ID == "NORTH_INNOLUX_Test_Site")
+            bcSystemBLL = new BCSystemBLL();
+            lineBLL = new LineBLL();
+            alarmBLL = new AlarmBLL();
+
+            sequenceBLL = new SequenceBLL();
+            eventBLL = new EventBLL();
+            reportBLL = new ReportBLL();
+            userBLL = new UserBLL();
+
+            mapBLL = new MapBLL();
+            AddressesBLL = new AddressesBLL();
+            SectionBLL = new SectionBLL();
+            SegmentBLL = new SegmentBLL();
+            cmdBLL = new CMDBLL();
+            parkBLL = new ParkBLL();
+            cycleBLL = new CycleRunBLL();
+            ceidBLL = new CEIDBLL();
+            vidBLL = new VIDBLL();
+            vehicleBLL = new VehicleBLL();
+            networkqualityBLL = new NetworkQualityBLL();
+            sysexcutequalityBLL = new SysExcuteQualityBLL();
+            blockcontrolBLL = new BlockControlBLL();
+
+            datasynBLL = new DataSyncBLL();
+
+            hidBLL = new HIDBLL();
+            groupPortStationBLL = new GroupPortStationBLL();
+            if (algorithm.Trim() == "FLOYD")
             {
-                bcSystemBLL = new NorthInnoLuxBCSystemBLL();
-                lineBLL = new NorthInnoLuxLineBLL();
-                alarmBLL = new NorthInnoLuxAlarmBLL();
-                sequenceBLL = new NorthInnoLuxSequenceBLL();
-                eventBLL = new NorthInnoLuxEventBLL();
-                reportBLL = new NorthInnoLuxReportBLL();
-                userBLL = new NorthInnoLuxUserBLL();
-
-                mapBLL = new NorthInnoLuxMapBLL();
-                AddressesBLL = new NorthInnoLuxAddressesBLL();
-                SectionBLL = new NorthInnoLuxSectionBLL();
-                SegmentBLL = new NorthInnoLuxSegmentBLL();
-                cmdBLL = new NorthInnoLuxCMDBLL();
-                parkBLL = new NorthInnoLuxParkBLL();
-                cycleBLL = new NorthInnoLuxCycleRunBLL();
-                ceidBLL = new NorthInnoLuxCEIDBLL();
-                vidBLL = new NorthInnoLuxVIDBLL();
-                vehicleBLL = new NorthInnoLuxVehicleBLL();
-                networkqualityBLL = new NorthInnoLuxNetworkQualityBLL();
-                sysexcutequalityBLL = new NorthInnoLuxSysExcuteQualityBLL();
-                blockcontrolBLL = new NorthInnoLuxBlockControlBLL();
-
-                datasynBLL = new NorthInnoLuxDataSyncBLL();
-
-                hidBLL = new NorthInnoLuxHIDBLL();
-                guideBLL = new NorthInnoLuxGuideBLL();
-
-                CheckSystemEventHandler = new CheckSystemEventHandler();
-
-                PortBLL = new NorthInnoLuxPortBLL();
-                PortStationBLL = new NorthInnoLuxPortStationBLL();
-                TrafficControlBLL = new NorthInnoLuxTrafficControlBLL();
-                UnitBLL = new NorthInnoLuxUnitBLL();
-                ReserveBLL = new NorthInnoLuxReserveBLL();
-            }
-            else if (BC_ID == "SOUTH_INNOLUX")
-            {
-                bcSystemBLL = new SouthInnoLuxBCSystemBLL();
-                lineBLL = new SouthInnoLuxLineBLL();
-                alarmBLL = new SouthInnoLuxAlarmBLL();
-                sequenceBLL = new SouthInnoLuxSequenceBLL();
-                eventBLL = new SouthInnoLuxEventBLL();
-                reportBLL = new SouthInnoLuxReportBLL();
-                userBLL = new SouthInnoLuxUserBLL();
-
-                mapBLL = new SouthInnoLuxMapBLL();
-                AddressesBLL = new SouthInnoLuxAddressesBLL();
-                SectionBLL = new SouthInnoLuxSectionBLL();
-                SegmentBLL = new SouthInnoLuxSegmentBLL();
-                cmdBLL = new SouthInnoLuxCMDBLL();
-                parkBLL = new SouthInnoLuxParkBLL();
-                cycleBLL = new SouthInnoLuxCycleRunBLL();
-                ceidBLL = new SouthInnoLuxCEIDBLL();
-                vidBLL = new SouthInnoLuxVIDBLL();
-                vehicleBLL = new SouthInnoLuxVehicleBLL();
-                networkqualityBLL = new SouthInnoLuxNetworkQualityBLL();
-                sysexcutequalityBLL = new SouthInnoLuxSysExcuteQualityBLL();
-                blockcontrolBLL = new SouthInnoLuxBlockControlBLL();
-
-                datasynBLL = new SouthInnoLuxDataSyncBLL();
-
-                hidBLL = new SouthInnoLuxHIDBLL();
-                guideBLL = new SouthInnoLuxGuideBLL();
-
-                CheckSystemEventHandler = new CheckSystemEventHandler();
-
-                PortBLL = new SouthInnoLuxPortBLL();
-                PortStationBLL = new SouthInnoLuxPortStationBLL();
-                TrafficControlBLL = new SouthInnoLuxTrafficControlBLL();
-                UnitBLL = new SouthInnoLuxUnitBLL();
-                ReserveBLL = new SouthInnoLuxReserveBLL();
+                guideBLL = new GuldeBLLForFloy();
             }
             else
             {
-                bcSystemBLL = new BCSystemBLL();
-                lineBLL = new LineBLL();
-                alarmBLL = new AlarmBLL();
+                guideBLL = new GuideBLL();
+            }
 
-                sequenceBLL = new SequenceBLL();
-                eventBLL = new EventBLL();
-                reportBLL = new ReportBLL();
-                userBLL = new UserBLL();
+            CheckSystemEventHandler = new CheckSystemEventHandler();
 
-                mapBLL = new MapBLL();
-                AddressesBLL = new AddressesBLL();
-                SectionBLL = new SectionBLL();
-                SegmentBLL = new SegmentBLL();
-                cmdBLL = new CMDBLL();
-                parkBLL = new ParkBLL();
-                cycleBLL = new CycleRunBLL();
-                ceidBLL = new CEIDBLL();
-                vidBLL = new VIDBLL();
-                vehicleBLL = new VehicleBLL();
-                networkqualityBLL = new NetworkQualityBLL();
-                sysexcutequalityBLL = new SysExcuteQualityBLL();
-                blockcontrolBLL = new BlockControlBLL();
-
-                datasynBLL = new DataSyncBLL();
-
-                hidBLL = new HIDBLL();
-                groupPortStationBLL = new GroupPortStationBLL();
-                if (algorithm.Trim() == "FLOYD")
-                {
-                    guideBLL = new GuldeBLLForFloy();
-                }
-                else
-                {
-                    guideBLL = new GuideBLL();
-                }
-
-                CheckSystemEventHandler = new CheckSystemEventHandler();
-
-                PortBLL = new PortBLL();
-                PortStationBLL = new PortStationBLL();
-                TrafficControlBLL = new TrafficControlBLL();
-                UnitBLL = new UnitBLL();
-                switch (BC_ID)
-                {
-                    case SCAppConstants.WorkVersion.VERSION_NAME_AUO_CAAGVC00:
-                    //case SCAppConstants.WorkVersion.VERSION_NAME_AUO_CAAGV200:
-                    case SCAppConstants.WorkVersion.VERSION_NAME_AUO_FAXAGV03:
-                        ReserveBLL = new ReserveBLLForByPass();
-                        break;
-                    default:
-                        ReserveBLL = new ReserveBLL();
-                        break;
-                }
+            PortBLL = new PortBLL();
+            PortStationBLL = new PortStationBLL();
+            TrafficControlBLL = new TrafficControlBLL();
+            UnitBLL = new UnitBLL();
+            switch (BC_ID)
+            {
+                case SCAppConstants.WorkVersion.VERSION_NAME_AUO_CAAGVC00:
+                //case SCAppConstants.WorkVersion.VERSION_NAME_AUO_CAAGV200:
+                case SCAppConstants.WorkVersion.VERSION_NAME_AUO_FAXAGV03:
+                    ReserveBLL = new ReserveBLLForByPass();
+                    break;
+                default:
+                    ReserveBLL = new ReserveBLL();
+                    break;
             }
 
         }
 
         public void initServer()
         {
-            if (BC_ID == "NORTH_INNOLUX" || BC_ID == "NORTH_INNOLUX_Test_Site")
+            vehicleService = new VehicleService();
+            lineService = new LineService();
+            portStationService = new PortStationService();
+            failOverService = new FailOverService();
+            connectionInfoService = new ConnectionInfoService();
+            userControlService = new UserControlService();
+            transferService = new TransferService();
+            dataWorkerServer = new Server()
             {
-                vehicleService = new NorthInnoLuxVehicleService();
-                lineService = new NorthInnoLuxLineService();
-                portStationService = new NorthInnoLuxPortStationService();
-                failOverService = new NorthInnoLuxFailOverService();
-                connectionInfoService = new NorthInnoLuxConnectionInfoService();
-                userControlService = new NorthInnoLuxUserControlService();
-                transferService = new NorthInnoLuxTransferService();
-            }
-            else if (BC_ID == "SOUTH_INNOLUX")
-            {
-                vehicleService = new SouthInnoLuxVehicleService();
-                lineService = new SouthInnoLuxLineService();
-                portStationService = new SouthInnoLuxPortStationService();
-                failOverService = new SouthInnoLuxFailOverService();
-                connectionInfoService = new SouthInnoLuxConnectionInfoService();
-                userControlService = new SouthInnoLuxUserControlService();
-                transferService = new SouthInnoLuxTransferService();
-            }
-            else
-            {
-                vehicleService = new VehicleService();
-                lineService = new LineService();
-                portStationService = new PortStationService();
-                failOverService = new FailOverService();
-                connectionInfoService = new ConnectionInfoService();
-                userControlService = new UserControlService();
-                transferService = new TransferService();
-                dataWorkerServer = new Server()
-                {
-                    Services = { Greeter.BindService(dataWorkerService) },
-                    Ports = { new ServerPort(IPAddress.Any.ToString(), 6060, ServerCredentials.Insecure) },
-                };
-
-            }
+                Services = { Greeter.BindService(dataWorkerService) },
+                Ports = { new ServerPort(IPAddress.Any.ToString(), 6060, ServerCredentials.Insecure) },
+            };
         }
 
         private void startBLL()
