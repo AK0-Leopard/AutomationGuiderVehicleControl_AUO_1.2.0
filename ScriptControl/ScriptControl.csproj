@@ -1201,6 +1201,7 @@
     <Content Include="DLL\System.Data.SQLite.dll" />
     <Content Include="DLL\System.Data.SQLite.Linq.dll" />
     <Content Include="DLL\System.IO.Abstractions.dll" />
+    <Content Include="SQLFile\[2022_05_17] AUO 600Bay  View Create.sql" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -1222,7 +1223,6 @@
   <ItemGroup>
     <Folder Include="Data\TcpIp\" />
     <Folder Include="docs\" />
-    <Folder Include="SQLFile\" />
     <Folder Include="ValueHandler\Vo\" />
   </ItemGroup>
   <ItemGroup>
