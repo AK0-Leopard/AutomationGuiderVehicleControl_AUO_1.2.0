@@ -95,5 +95,6 @@ namespace com.mirle.ibg3k0.sc
         public DbSet<HCMD_OHTC> HCMD_OHTC { get; set; }
         public DbSet<VACMD_MCS> VACMD_MCS { get; set; }
         public DbSet<AGROUPPORTSTATION> AGROUPPORTSTATION { get; set; }
+        public DbSet<VHCMD_OHTC_MCS> VHCMD_OHTC_MCS { get; set; }
     }
 }
