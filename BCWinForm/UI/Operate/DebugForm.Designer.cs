@@ -115,6 +115,7 @@
             this.btn_forceReleaseAllBlock = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.cb_IsAvoidSearchGuide = new System.Windows.Forms.CheckBox();
             this.label97 = new System.Windows.Forms.Label();
             this.num_vh_idle_time = new System.Windows.Forms.NumericUpDown();
             this.grb_Reserve = new System.Windows.Forms.GroupBox();
@@ -330,7 +331,6 @@
             this.label45 = new System.Windows.Forms.Label();
             this.label44 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.cb_IsAvoidSearchGuide = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1352,6 +1352,17 @@
             this.tabPage1.Text = "TcpIp Control";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // cb_IsAvoidSearchGuide
+            // 
+            this.cb_IsAvoidSearchGuide.AutoSize = true;
+            this.cb_IsAvoidSearchGuide.Location = new System.Drawing.Point(1124, 591);
+            this.cb_IsAvoidSearchGuide.Name = "cb_IsAvoidSearchGuide";
+            this.cb_IsAvoidSearchGuide.Size = new System.Drawing.Size(323, 26);
+            this.cb_IsAvoidSearchGuide.TabIndex = 2;
+            this.cb_IsAvoidSearchGuide.Text = "避車時使用搜尋的方式規劃路線";
+            this.cb_IsAvoidSearchGuide.UseVisualStyleBackColor = true;
+            this.cb_IsAvoidSearchGuide.CheckedChanged += new System.EventHandler(this.cb_IsAvoidSearchGuide_CheckedChanged);
+            // 
             // label97
             // 
             this.label97.AutoSize = true;
@@ -1567,7 +1578,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 3);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 8);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(164, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -3531,17 +3542,6 @@
             // 
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // cb_IsAvoidSearchGuide
-            // 
-            this.cb_IsAvoidSearchGuide.AutoSize = true;
-            this.cb_IsAvoidSearchGuide.Location = new System.Drawing.Point(1124, 591);
-            this.cb_IsAvoidSearchGuide.Name = "cb_IsAvoidSearchGuide";
-            this.cb_IsAvoidSearchGuide.Size = new System.Drawing.Size(323, 26);
-            this.cb_IsAvoidSearchGuide.TabIndex = 2;
-            this.cb_IsAvoidSearchGuide.Text = "避車時使用搜尋的方式規劃路線";
-            this.cb_IsAvoidSearchGuide.UseVisualStyleBackColor = true;
-            this.cb_IsAvoidSearchGuide.CheckedChanged += new System.EventHandler(this.cb_IsAvoidSearchGuide_CheckedChanged);
             // 
             // DebugForm
             // 
