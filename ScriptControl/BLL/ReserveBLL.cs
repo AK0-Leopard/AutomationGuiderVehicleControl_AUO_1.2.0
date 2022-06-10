@@ -341,7 +341,8 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         public override (bool isExist, double x, double y, bool isTR50) GetHltMapAddress(string adrID)
         {
-            return (true, 0, 0, false);
+            //return (true, 0, 0, false);
+            return (false, 0, 0, false);
         }
         public override (bool isExist, HltMapSection section) GetHltMapSections(string secID)
         {
