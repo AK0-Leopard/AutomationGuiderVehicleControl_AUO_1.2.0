@@ -97,9 +97,30 @@ namespace com.mirle.ibg3k0.sc.Service
                 vh.LongTimeDisconnection += Vh_LongTimeDisconnection;
                 vh.ModeStatusChange += Vh_ModeStatusChange;
                 vh.LongTimeCarrierInstalled += Vh_LongTimeCarrierInstalled;
+                vh.VhErrorStatusChange += Vh_VhErrorStatusChange;
             }
             oneDirectPath();
             scApp.DataWorkerService.alarmHappend += Serivce_alarmHappend1;
+        }
+
+        private void Vh_VhErrorStatusChange(object sender, VhStopSingle e)
+        {
+            try
+            {
+                AVEHICLE vh = sender as AVEHICLE;
+                if (e == VhStopSingle.StopSingleOff)
+                {
+                    vh.VechileAlarmClean();
+                }
+                else
+                {
+                    vh.VehicleAlarmSet();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+            }
         }
 
         private void Serivce_alarmHappend1(object sender, dataWorkerService.dataWorkService.alarmHappendArgs e)
@@ -789,6 +810,11 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     vh.CarrierRemove();
                 }
+                if (vh.ERROR != errorStat)
+                {
+                    vh.onErrorStatusChange(errorStat);
+                }
+
                 if (!scApp.VehicleBLL.doUpdateVehicleStatus(vh,
                                       cst_id, modeStat, actionStat,
                                        blockingStat, pauseStat, obstacleStat, VhStopSingle.StopSingleOff, errorStat, loadCSTStatus,
@@ -4137,6 +4163,12 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 scApp.VehicleBLL.cache.SetReservePause(eqpt.VEHICLE_ID, reserveStatus);
             }
+            if (eqpt.ERROR != errorStat)
+            {
+                eqpt.onErrorStatusChange(errorStat);
+            }
+
+
             if (hasdifferent && !scApp.VehicleBLL.doUpdateVehicleStatus(eqpt,
                                    cstID, modeStat, actionStat,
                                    blockingStat, pauseStat, obstacleStat, VhStopSingle.StopSingleOff, errorStat, loadCSTStatus,
@@ -5096,7 +5128,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 if (is_success)
                 {
                     vh.VhAvoidInfo = null;
-                    vh.CurrentContinueAvoidTimes = 0;
+                    //vh.CurrentContinueAvoidTimes = 0;
                 }
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                    Data: $"end override avoid complete of vh current address:{vh.CUR_ADR_ID}, current section:{vh.CUR_SEC_ID} ,result:{is_success}",

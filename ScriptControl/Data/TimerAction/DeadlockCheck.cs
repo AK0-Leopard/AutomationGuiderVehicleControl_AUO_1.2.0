@@ -439,14 +439,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
         private int SortOverrideOfVehicle(AVEHICLE vh1, AVEHICLE vh2)
         {
             int result;
-            //if (vh1.VhAvoidInfo != null)
-            //{
-            //    return -1;
-            //}
-            //if (vh2.VhAvoidInfo != null)
-            //{
-            //    return 1;
-            //}
+
             if (vh1.CurrentContinueAvoidTimes > vh2.CurrentContinueAvoidTimes)
             {
                 return 1;
@@ -465,11 +458,11 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                 }
                 else if (vh1.HAS_CST == 1)
                 {
-                    result = 1;
+                    result = -1;
                 }
                 else if (vh2.HAS_CST == 1)
                 {
-                    result = -1;
+                    result = 1;
                 }
                 else
                 {
@@ -478,11 +471,11 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
             }
             else if (!SCUtility.isEmpty(vh1.MCS_CMD))
             {
-                result = 1;
+                result = -1;
             }
             else if (!SCUtility.isEmpty(vh2.MCS_CMD))
             {
-                result = -1;
+                result = 1;
             }
             else
             {

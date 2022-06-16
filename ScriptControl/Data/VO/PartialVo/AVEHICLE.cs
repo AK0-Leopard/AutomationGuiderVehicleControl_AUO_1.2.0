@@ -9,6 +9,7 @@ using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data.PLC_Functions;
 using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.sc.Data.VO;
+using com.mirle.ibg3k0.sc.Data.VO.PartialVo;
 using com.mirle.ibg3k0.sc.ObjectRelay;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using Google.Protobuf.Collections;
@@ -328,10 +329,13 @@ namespace com.mirle.ibg3k0.sc
         public event EventHandler LongTimeDisconnection;
         public event EventHandler<VHModeStatus> ModeStatusChange;
         public event EventHandler<string> LongTimeCarrierInstalled;
+        public event EventHandler<VhStopSingle> VhErrorStatusChange;
 
         VehicleTimerAction vehicleTimer = null;
 
         public VehicleStateMachine vhStateMachine;
+        public VehicleErrorStateMachine vhErrorStateMachine;
+        VehicleStatusInfo vehicleStatusInfo;
 
         private Stopwatch CurrentCommandExcuteTime;
         private Stopwatch CarrierInstalledTime;
@@ -429,19 +433,37 @@ namespace com.mirle.ibg3k0.sc
         {
             LongTimeCarrierInstalled?.Invoke(this, carrierID);
         }
+        public void onErrorStatusChange(VhStopSingle vhStopSingle)
+        {
+            Task.Run(() => VhErrorStatusChange?.Invoke(this, vhStopSingle));
+        }
 
         public AVEHICLE()
         {
             eqptObjectCate = SCAppConstants.EQPT_OBJECT_CATE_EQPT;
             PositionRefreshTimer.Restart();
-            vhStateMachine = new VehicleStateMachine(() => State, (state) => State = state);
-            vhStateMachine.OnTransitioned(TransitionedHandler);
-            vhStateMachine.OnUnhandledTrigger(UnhandledTriggerHandler);
+            initialVhStateMachine();
+            initialVhErrorStateMachine();
             guideInfo = new GuideInfo(this);
             CurrentCommandExcuteTime = new Stopwatch();
             CarrierInstalledTime = new Stopwatch();
-
+            vehicleStatusInfo = new VehicleStatusInfo(this);
         }
+
+        private void initialVhStateMachine()
+        {
+            vhStateMachine = new VehicleStateMachine(() => State, (state) => State = state);
+            vhStateMachine.OnTransitioned(TransitionedHandler);
+            vhStateMachine.OnUnhandledTrigger(UnhandledTriggerHandler);
+        }
+
+        private void initialVhErrorStateMachine()
+        {
+            vhErrorStateMachine = new VehicleErrorStateMachine(() => errorState, (errorstate) => errorState = errorstate);
+            vhErrorStateMachine.OnTransitioned(TransitionedHandler);
+            vhErrorStateMachine.OnUnhandledTrigger(UnhandledTriggerHandler);
+        }
+
         public void TimerActionStart()
         {
             vehicleTimer = new VehicleTimerAction(this, "VehicleTimerAction", 1000);
@@ -668,6 +690,7 @@ namespace com.mirle.ibg3k0.sc
 
         public BCRReadResult BCRReadResult = BCRReadResult.BcrNormal;
         public VehicleState State = VehicleState.REMOVED;
+        public VehicleErrorState errorState = VehicleErrorState.NoAlarm;
 
         private string tcpip_msg_satae;
         [JsonIgnore]
@@ -1260,6 +1283,11 @@ namespace com.mirle.ibg3k0.sc
         {
 
         }
+        public string getVhStatusInfo()
+        {
+            return vehicleStatusInfo.ToString();
+        }
+
         public override void doShareMemoryInit(BCFAppConstants.RUN_LEVEL runLevel)
         {
             foreach (IValueDefMapAction action in valueDefMapActionDic.Values)
@@ -1474,7 +1502,7 @@ namespace com.mirle.ibg3k0.sc
         public override string Real_ID { get; set; }
 
 
-        void TransitionedHandler(Stateless.StateMachine<VehicleState, VehicleTrigger>.Transition transition)
+        void TransitionedHandler<TState, TTrigger>(Stateless.StateMachine<TState, TTrigger>.Transition transition)
         {
             string Destination = transition.Destination.ToString();
             string Source = transition.Source.ToString();
@@ -1482,18 +1510,18 @@ namespace com.mirle.ibg3k0.sc
             string IsReentry = transition.IsReentry.ToString();
 
             LogHelper.Log(logger: NLog.LogManager.GetCurrentClassLogger(), LogLevel: NLog.LogLevel.Debug, Class: nameof(AVEHICLE), Device: DEVICE_NAME_AGV,
-                           Data: $"Vh:{VEHICLE_ID} message state,From:{Source} to:{Destination} by:{Trigger}.IsReentry:{IsReentry}",
+                           Data: $"Vh:{VEHICLE_ID}  state,From:{Source} to:{Destination} by:{Trigger}.IsReentry:{IsReentry}",
                            VehicleID: VEHICLE_ID,
                            CarrierID: CST_ID);
         }
 
-        void UnhandledTriggerHandler(VehicleState state, VehicleTrigger trigger)
+        void UnhandledTriggerHandler<TState, TTrigger>(TState state, TTrigger trigger)
         {
             string SourceState = state.ToString();
             string Trigger = trigger.ToString();
 
             LogHelper.Log(logger: NLog.LogManager.GetCurrentClassLogger(), LogLevel: NLog.LogLevel.Debug, Class: nameof(AVEHICLE), Device: DEVICE_NAME_AGV,
-                           Data: $"Vh:{VEHICLE_ID} message state ,unhandled trigger happend ,source state:{SourceState} trigger:{Trigger}",
+                           Data: $"Vh:{VEHICLE_ID}  state ,unhandled trigger happend ,source state:{SourceState} trigger:{Trigger}",
                            VehicleID: VEHICLE_ID,
                            CarrierID: CST_ID);
         }
@@ -1860,9 +1888,125 @@ namespace com.mirle.ibg3k0.sc
 
         #endregion Vehicle state machine
 
+        #region Vehicle Error Status
+
+        public class VehicleErrorStateMachine : StateMachine<VehicleErrorState, VehicleErrorTrigger>
+        {
+            public VehicleErrorStateMachine(Func<VehicleErrorState> stateAccessor, Action<VehicleErrorState> stateMutator)
+                : base(stateAccessor, stateMutator)
+            {
+                VehicleErrorStateMachineConfigInitial();
+            }
+            internal IEnumerable<VehicleErrorTrigger> getPermittedTriggers()//回傳當前狀態可以進行的Trigger，且會檢查GaurdClause。
+            {
+                return this.PermittedTriggers;
+            }
+
+
+            internal VehicleErrorState getCurrentState()//回傳當前的狀態
+            {
+                return this.State;
+            }
+            public List<string> getNextStateStrList()
+            {
+                List<string> nextStateStrList = new List<string>();
+                foreach (VehicleTrigger item in this.PermittedTriggers)
+                {
+                    nextStateStrList.Add(item.ToString());
+                }
+                return nextStateStrList;
+            }
+            private void VehicleErrorStateMachineConfigInitial()
+            {
+                this.Configure(VehicleErrorState.NoAlarm)
+                    .PermitIf(VehicleErrorTrigger.VehicleAlarmSet, VehicleErrorState.AlarmHappending);//guardClause為真才會執行狀態變化
+                this.Configure(VehicleErrorState.AlarmHappending)
+                    .PermitIf(VehicleErrorTrigger.VehicleAlarmClean, VehicleErrorState.AlarmConfirm)
+                    .PermitIf(VehicleErrorTrigger.VehicleConfirmComplete, VehicleErrorState.NoAlarm);
+                this.Configure(VehicleErrorState.AlarmConfirm)
+                    .PermitIf(VehicleErrorTrigger.VehicleConfirmComplete, VehicleErrorState.NoAlarm)
+                    .PermitIf(VehicleErrorTrigger.VehicleAlarmSet, VehicleErrorState.AlarmHappending);
+            }
+        }
+
+        public enum VehicleErrorState //有哪些State
+        {
+            NoAlarm = 0,
+            AlarmHappending = 1,
+            AlarmConfirm = 2,
+        }
+
+        public enum VehicleErrorTrigger //有哪些Trigger
+        {
+            VehicleAlarmClean,
+            VehicleAlarmSet,
+            VehicleConfirmComplete
+        }
+
+        public bool VechileAlarmClean()
+        {
+            try
+            {
+                if (vhErrorStateMachine.CanFire(VehicleErrorTrigger.VehicleAlarmClean))
+                {
+                    vhErrorStateMachine.Fire(VehicleErrorTrigger.VehicleAlarmClean);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public bool VehicleAlarmSet()
+        {
+            try
+            {
+                if (vhErrorStateMachine.CanFire(VehicleErrorTrigger.VehicleAlarmSet))
+                {
+                    vhErrorStateMachine.Fire(VehicleErrorTrigger.VehicleAlarmSet);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        public bool VehicleAlarmConfirmComplete()
+        {
+            try
+            {
+                if (vhErrorStateMachine.CanFire(VehicleErrorTrigger.VehicleConfirmComplete))
+                {
+                    vhErrorStateMachine.Fire(VehicleErrorTrigger.VehicleConfirmComplete);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        #endregion Vehicle Error Status
 
         public class VehicleTimerAction : ITimerAction
         {
+            private static Logger VehicleStatusInfoLogger = NLog.LogManager.GetLogger("VehicleStatusInfo");
             private static Logger logger = LogManager.GetCurrentClassLogger();
             AVEHICLE vh = null;
             SCApplication scApp = null;
@@ -1880,6 +2024,7 @@ namespace com.mirle.ibg3k0.sc
             private long syncPoint = 0;
             public override void doProcess(object obj)
             {
+                VehicleStatusInfoLogger.Info(vh.getVhStatusInfo());
                 if (System.Threading.Interlocked.Exchange(ref syncPoint, 1) == 0)
                 {
                     try

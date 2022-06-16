@@ -2062,7 +2062,12 @@ namespace com.mirle.ibg3k0.sc.BLL
                                 continue;
                             }
 
-                            scApp.VehicleService.doSendCommandToVh(assignVH, cmd);
+                            bool is_send_success = scApp.VehicleService.doSendCommandToVh(assignVH, cmd);
+                            if (is_send_success)
+                            {
+                                assignVH.VehicleAlarmConfirmComplete();
+                            }
+
                         }
                         //else
                         //{
@@ -2422,7 +2427,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             vh.Action();
             vh.NotifyVhExcuteCMDStatusChange();
             //_vhCatchObject.VID_Collection.VID_58_CommandID.COMMAND_ID = acmd_ohtc.CMD_ID_MCS;
-        }   
+        }
         public void setWillPassSectionInfo(string vhID, List<string> willPassSection)
         {
             AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vhID);
