@@ -1557,7 +1557,7 @@ namespace com.mirle.ibg3k0.sc.Service
         }
 
 
-        public bool trydoAvoidCommandToVh(AVEHICLE avoidVh, AVEHICLE passVh)
+        public virtual bool trydoAvoidCommandToVh(AVEHICLE avoidVh, AVEHICLE passVh)
         {
             var find_avoid_result = findNotConflictSectionAndAvoidAddressNew(passVh, avoidVh, true);
             string blocked_section = avoidVh.CanNotReserveInfo.ReservedSectionID;

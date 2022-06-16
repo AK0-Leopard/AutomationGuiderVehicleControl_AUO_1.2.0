@@ -1805,6 +1805,37 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             return isSuccess;
         }
+        public bool updateCommand_OHTC_CompleteStatusByCmdID(string vhID, string cmd_id, E_CMD_STATUS status, CompleteStatus completeStatus)
+        {
+            bool isSuccess = false;
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                ACMD_OHTC cmd = cmd_ohtcDAO.getByID(con, cmd_id);
+                if (cmd != null)
+                {
+                    if (status == E_CMD_STATUS.Execution)
+                    {
+                        cmd.CMD_START_TIME = DateTime.Now;
+                    }
+                    else if (status >= E_CMD_STATUS.NormalEnd)
+                    {
+                        cmd.CMD_END_TIME = DateTime.Now;
+                        cmd.COMPLETE_STATUS = completeStatus;
+                        cmd_ohtc_detailDAO.DeleteByBatch(con, cmd.CMD_ID);
+                    }
+                    cmd.CMD_STAUS = status;
+                    cmd_ohtcDAO.Update(con, cmd);
+
+                    if (status >= E_CMD_STATUS.NormalEnd)
+                    {
+                        scApp.VehicleBLL.updateVehicleExcuteCMD(vhID, string.Empty, string.Empty);
+                    }
+                }
+                isSuccess = true;
+            }
+            return isSuccess;
+        }
+
         public virtual bool updateCommand_OHTC_CarrierID(string cmd_id, string new_carrier_id)
         {
             bool isSuccess = false;
