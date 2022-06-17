@@ -1154,6 +1154,9 @@
     </Compile>
     <Compile Include="ValueHandler\ProcessDataValueHandler.cs" />
     <Compile Include="ValueHandler\ValueHandlerBase.cs" />
+    <Compile Include="VHCMD_OHTC_MCS.cs">
+      <DependentUpon>OHTCContext.tt</DependentUpon>
+    </Compile>
     <Compile Include="VSECTION_100.cs">
       <DependentUpon>OHTCContext.tt</DependentUpon>
     </Compile>
@@ -1275,6 +1278,7 @@
     <Content Include="DLL\System.Data.SQLite.dll" />
     <Content Include="DLL\System.Data.SQLite.Linq.dll" />
     <Content Include="DLL\System.IO.Abstractions.dll" />
+    <Content Include="SqlSchema\[2022-06-17]North Innolux Viewer Create.sql" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
