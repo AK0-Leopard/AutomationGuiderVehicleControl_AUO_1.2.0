@@ -252,9 +252,12 @@
           <Property Name="FR_ID" Type="char" MaxLength="10" Nullable="false" />
           <Property Name="REL_TYPE" Type="char" MaxLength="1" Nullable="false" />
         </EntityType>
+        <!--產生期間發現錯誤:
+警告 6002: 資料表/檢視 'AGVC_CAAGV200_v53.dbo.AGROUPPORTSTATION' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
         <EntityType Name="AGROUPPORTSTATION">
           <Key>
             <PropertyRef Name="GROUP_ID" />
+            
           </Key>
           <Property Name="GROUP_ID" Type="char" MaxLength="20" Nullable="false" />
           <Property Name="TYPE" Type="int" Nullable="false" />
@@ -1168,6 +1171,31 @@
           <Property Name="OHTC_CMD" Type="char" MaxLength="64" />
           <Property Name="VH_ID" Type="char" MaxLength="8" />
         </EntityType>
+        <!--產生期間發現錯誤:
+警告 6002: 資料表/檢視 'AGVC_CAAGV200_v53.dbo.VHCMD_OHTC_MCS' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
+        <EntityType Name="VHCMD_OHTC_MCS">
+          <Key>
+            <PropertyRef Name="CMD_ID_MCS" />
+            <PropertyRef Name="VH_ID" />
+            <PropertyRef Name="OHTC_CMD_STATUS" />
+            <PropertyRef Name="OHTC_CMD_TYPE" />
+            <PropertyRef Name="OHTC_CMD_END_TIME" />
+          </Key>
+          <Property Name="CMD_ID_MCS" Type="char" MaxLength="64" Nullable="false" />
+          <Property Name="VH_ID" Type="char" MaxLength="8" Nullable="false" />
+          <Property Name="CARRIER_ID" Type="char" MaxLength="64" />
+          <Property Name="HOSTSOURCE" Type="char" MaxLength="64" />
+          <Property Name="HOSTDESTINATION" Type="char" MaxLength="64" />
+          <Property Name="MCS_CMD_INSER_TIME" Type="datetime2" Precision="7" />
+          <Property Name="MCS_CMD_START_TIME" Type="datetime2" Precision="7" />
+          <Property Name="MCS_CMD_FINISH_TIME" Type="datetime2" Precision="7" />
+          <Property Name="MCS_COMMANDSTATE" Type="int" />
+          <Property Name="OHTC_CMD_STATUS" Type="int" Nullable="false" />
+          <Property Name="OHTC_CMD_TYPE" Type="int" Nullable="false" />
+          <Property Name="OHTC_CMD_START_TIME" Type="datetime2" Precision="7" />
+          <Property Name="OHTC_CMD_END_TIME" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="OHTC_COMPLETE_STATUS" Type="int" />
+        </EntityType>
         <EntityContainer Name="OHTC_DevModelStoreContainer">
           <EntitySet Name="AADDRESS" EntityType="Self.AADDRESS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AADDRESS_DATA" EntityType="Self.AADDRESS_DATA" Schema="dbo" store:Type="Tables" />
@@ -1188,7 +1216,6 @@
           <EntitySet Name="AEQPT" EntityType="Self.AEQPT" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AEVENTRPTCOND" EntityType="Self.AEVENTRPTCOND" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AFLOW_REL" EntityType="Self.AFLOW_REL" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="AGROUPPORTSTATION" EntityType="Self.AGROUPPORTSTATION" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AGROUPRAILS" EntityType="Self.AGROUPRAILS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AHIDZONEDETAIL" EntityType="Self.AHIDZONEDETAIL" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AHIDZONEMASTER" EntityType="Self.AHIDZONEMASTER" Schema="dbo" store:Type="Tables" />
@@ -1237,6 +1264,12 @@
           <EntitySet Name="UASUFNC" EntityType="Self.UASUFNC" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UASUSR" EntityType="Self.UASUSR" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UASUSRGRP" EntityType="Self.UASUSRGRP" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AGROUPPORTSTATION" EntityType="Self.AGROUPPORTSTATION" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [AGROUPPORTSTATION].[GROUP_ID] AS [GROUP_ID], 
+    [AGROUPPORTSTATION].[TYPE] AS [TYPE]
+    FROM [dbo].[AGROUPPORTSTATION] AS [AGROUPPORTSTATION]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="VSECTION_100" EntityType="Self.VSECTION_100" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [VSECTION_100].[SEC_ID] AS [SEC_ID], 
@@ -1308,6 +1341,24 @@
     [VACMD_MCS].[OHTC_CMD] AS [OHTC_CMD], 
     [VACMD_MCS].[VH_ID] AS [VH_ID]
     FROM [dbo].[VACMD_MCS] AS [VACMD_MCS]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="VHCMD_OHTC_MCS" EntityType="Self.VHCMD_OHTC_MCS" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [VHCMD_OHTC_MCS].[CMD_ID_MCS] AS [CMD_ID_MCS], 
+    [VHCMD_OHTC_MCS].[VH_ID] AS [VH_ID], 
+    [VHCMD_OHTC_MCS].[CARRIER_ID] AS [CARRIER_ID], 
+    [VHCMD_OHTC_MCS].[HOSTSOURCE] AS [HOSTSOURCE], 
+    [VHCMD_OHTC_MCS].[HOSTDESTINATION] AS [HOSTDESTINATION], 
+    [VHCMD_OHTC_MCS].[MCS_CMD_INSER_TIME] AS [MCS_CMD_INSER_TIME], 
+    [VHCMD_OHTC_MCS].[MCS_CMD_START_TIME] AS [MCS_CMD_START_TIME], 
+    [VHCMD_OHTC_MCS].[MCS_CMD_FINISH_TIME] AS [MCS_CMD_FINISH_TIME], 
+    [VHCMD_OHTC_MCS].[MCS_COMMANDSTATE] AS [MCS_COMMANDSTATE], 
+    [VHCMD_OHTC_MCS].[OHTC_CMD_STATUS] AS [OHTC_CMD_STATUS], 
+    [VHCMD_OHTC_MCS].[OHTC_CMD_TYPE] AS [OHTC_CMD_TYPE], 
+    [VHCMD_OHTC_MCS].[OHTC_CMD_START_TIME] AS [OHTC_CMD_START_TIME], 
+    [VHCMD_OHTC_MCS].[OHTC_CMD_END_TIME] AS [OHTC_CMD_END_TIME], 
+    [VHCMD_OHTC_MCS].[OHTC_COMPLETE_STATUS] AS [OHTC_COMPLETE_STATUS]
+    FROM [dbo].[VHCMD_OHTC_MCS] AS [VHCMD_OHTC_MCS]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -1385,6 +1436,7 @@
           <EntitySet Name="HCMD_OHTC" EntityType="OHTC_DevModel.HCMD_OHTC" />
           <EntitySet Name="VACMD_MCS" EntityType="OHTC_DevModel.VACMD_MCS" />
           <EntitySet Name="AGROUPPORTSTATION" EntityType="OHTC_DevModel.AGROUPPORTSTATION" />
+          <EntitySet Name="VHCMD_OHTC_MCS" EntityType="OHTC_DevModel.VHCMD_OHTC_MCS" />
           </EntityContainer>
         <EntityType Name="ABASEDATA_VER">
           <Key>
@@ -2673,6 +2725,29 @@
         </EntityType>
         <EnumType Name="GroupPortType" a:ExternalTypeName="mirle.ibg3k0.sc.ProtocolFormat.OHTMessage.GroupPortType" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
         <EnumType Name="CompleteStatus" a:ExternalTypeName="com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage.CompleteStatus" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
+        <EntityType Name="VHCMD_OHTC_MCS">
+          <Key>
+            <PropertyRef Name="CMD_ID_MCS" />
+            <PropertyRef Name="VH_ID" />
+            <PropertyRef Name="OHTC_CMD_STATUS" />
+            <PropertyRef Name="OHTC_CMD_TYPE" />
+            <PropertyRef Name="OHTC_CMD_END_TIME" />
+          </Key>
+          <Property Name="CMD_ID_MCS" Type="String" Nullable="false" MaxLength="64" FixedLength="true" Unicode="false" />
+          <Property Name="VH_ID" Type="String" Nullable="false" MaxLength="8" FixedLength="true" Unicode="false" />
+          <Property Name="CARRIER_ID" Type="String" MaxLength="64" FixedLength="true" Unicode="false" />
+          <Property Name="HOSTSOURCE" Type="String" MaxLength="64" FixedLength="true" Unicode="false" />
+          <Property Name="HOSTDESTINATION" Type="String" MaxLength="64" FixedLength="true" Unicode="false" />
+          <Property Name="MCS_CMD_INSER_TIME" Type="DateTime" Precision="7" />
+          <Property Name="MCS_CMD_START_TIME" Type="DateTime" Precision="7" />
+          <Property Name="MCS_CMD_FINISH_TIME" Type="DateTime" Precision="7" />
+          <Property Name="MCS_COMMANDSTATE" Type="Int32" />
+          <Property Name="OHTC_CMD_STATUS" Type="Int32" Nullable="false" />
+          <Property Name="OHTC_CMD_TYPE" Type="Int32" Nullable="false" />
+          <Property Name="OHTC_CMD_START_TIME" Type="DateTime" Precision="7" />
+          <Property Name="OHTC_CMD_END_TIME" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="OHTC_COMPLETE_STATUS" Type="Int32" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3830,6 +3905,26 @@
               <MappingFragment StoreEntitySet="AGROUPPORTSTATION">
                 <ScalarProperty Name="TYPE" ColumnName="TYPE" />
                 <ScalarProperty Name="GROUP_ID" ColumnName="GROUP_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VHCMD_OHTC_MCS">
+            <EntityTypeMapping TypeName="OHTC_DevModel.VHCMD_OHTC_MCS">
+              <MappingFragment StoreEntitySet="VHCMD_OHTC_MCS">
+                <ScalarProperty Name="OHTC_COMPLETE_STATUS" ColumnName="OHTC_COMPLETE_STATUS" />
+                <ScalarProperty Name="OHTC_CMD_END_TIME" ColumnName="OHTC_CMD_END_TIME" />
+                <ScalarProperty Name="OHTC_CMD_START_TIME" ColumnName="OHTC_CMD_START_TIME" />
+                <ScalarProperty Name="OHTC_CMD_TYPE" ColumnName="OHTC_CMD_TYPE" />
+                <ScalarProperty Name="OHTC_CMD_STATUS" ColumnName="OHTC_CMD_STATUS" />
+                <ScalarProperty Name="MCS_COMMANDSTATE" ColumnName="MCS_COMMANDSTATE" />
+                <ScalarProperty Name="MCS_CMD_FINISH_TIME" ColumnName="MCS_CMD_FINISH_TIME" />
+                <ScalarProperty Name="MCS_CMD_START_TIME" ColumnName="MCS_CMD_START_TIME" />
+                <ScalarProperty Name="MCS_CMD_INSER_TIME" ColumnName="MCS_CMD_INSER_TIME" />
+                <ScalarProperty Name="HOSTDESTINATION" ColumnName="HOSTDESTINATION" />
+                <ScalarProperty Name="HOSTSOURCE" ColumnName="HOSTSOURCE" />
+                <ScalarProperty Name="CARRIER_ID" ColumnName="CARRIER_ID" />
+                <ScalarProperty Name="VH_ID" ColumnName="VH_ID" />
+                <ScalarProperty Name="CMD_ID_MCS" ColumnName="CMD_ID_MCS" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
