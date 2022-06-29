@@ -341,7 +341,8 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         public override (bool isExist, double x, double y, bool isTR50) GetHltMapAddress(string adrID)
         {
-            return (true, 0, 0, false);
+            //return (true, 0, 0, false);
+            return (false, 0, 0, false);
         }
         public override (bool isExist, HltMapSection section) GetHltMapSections(string secID)
         {
@@ -350,18 +351,18 @@ namespace com.mirle.ibg3k0.sc.BLL
         public override HltResult TryAddVehicleOrUpdateResetSensorForkDir(string vhID)
         {
             //return new HltResult(true);
-            return new HltResult();
+            return new HltResult(true,"");
         }
         public override HltResult TryAddVehicleOrUpdate(string vhID, string currentSectionID, double vehicleX, double vehicleY, float vehicleAngle, double speedMmPerSecond,
                                            HltDirection sensorDir, HltDirection forkDir)
         {
             //return new HltResult(true);
-            return new HltResult();
+            return new HltResult(true, "");
         }
         public override HltResult TryAddVehicleOrUpdate(string vhID, string adrID, float angle = 0)
         {
             //return new HltResult(true);
-            return new HltResult();
+            return new HltResult(true, "");
         }
 
         public override void RemoveManyReservedSectionsByVIDSID(string vhID, string sectionID)
@@ -386,13 +387,13 @@ namespace com.mirle.ibg3k0.sc.BLL
             DriveDirction driveDirection = DriveDirction.DriveDirNone, bool isAsk = false)
         {
             //return new HltResult(true);
-            return new HltResult();
+            return new HltResult(true, "");
         }
 
         public override HltResult RemoveAllReservedSectionsBySectionID(string sectionID)
         {
             //return new HltResult(true);
-            return new HltResult();
+            return new HltResult(true, "");
         }
 
         public override void RemoveAllReservedSectionsByVehicleID(string vhID)

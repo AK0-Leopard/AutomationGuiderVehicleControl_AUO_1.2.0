@@ -27,7 +27,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         //    return (stratFromRouteInfoList.First(), fromToRouteInfoList.First());
         //}
         public virtual (bool isSuccess, List<string> guideSegmentIds, List<string> guideSectionIds, List<string> guideAddressIds, int totalCost)
-            getGuideInfo(string startAddress, string targetAddress, List<string> byPassSectionIDs = null, string startSection = null)
+            getGuideInfo(string startAddress, string targetAddress, List<string> byPassSectionIDs = null)
         {
             if (SCUtility.isMatche(startAddress, targetAddress))
             {
@@ -226,7 +226,12 @@ namespace com.mirle.ibg3k0.sc.BLL
     public class GuldeBLLForFloy : GuideBLL
     {
         public override (bool isSuccess, List<string> guideSegmentIds, List<string> guideSectionIds, List<string> guideAddressIds, int totalCost)
-        getGuideInfo(string startAddress, string targetAddress, List<string> byPassSectionIDs = null, string startSection = null)
+        getGuideInfoIgnoreCost(string startAddress, string targetAddress, List<string> byPassSectionIDs = null)
+        {
+            return getGuideInfo(startAddress, targetAddress, byPassSectionIDs);
+        }
+        public override (bool isSuccess, List<string> guideSegmentIds, List<string> guideSectionIds, List<string> guideAddressIds, int totalCost)
+        getGuideInfo(string startAddress, string targetAddress, List<string> byPassSectionIDs = null)
         {
             AADDRESS start_adr = scApp.getCommObjCacheManager().getAddress(startAddress);
             AADDRESS target_adr = scApp.getCommObjCacheManager().getAddress(targetAddress);
@@ -337,16 +342,9 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
                 else
                 {
-                    if (!SCUtility.isEmpty(startSection))
-                    {
-                        start_adr_section = scApp.SectionBLL.cache.GetSection(startSection);
-                    }
-                    else
-                    {
-                        start_adr_section = scApp.SectionBLL.cache.GetSectionsByToAddress(start_adr.ADR_ID).FirstOrDefault();
-                        if (start_adr_section == null)
-                            start_adr_section = scApp.SectionBLL.cache.GetSectionsByFromAddress(start_adr.ADR_ID).FirstOrDefault();
-                    }
+                    start_adr_section = scApp.SectionBLL.cache.GetSectionsByToAddress(start_adr.ADR_ID).FirstOrDefault();
+                    if (start_adr_section == null)
+                        start_adr_section = scApp.SectionBLL.cache.GetSectionsByFromAddress(start_adr.ADR_ID).FirstOrDefault();
                 }
                 if (target_adr.IsControl)
                 {
