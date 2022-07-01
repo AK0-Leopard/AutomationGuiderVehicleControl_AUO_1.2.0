@@ -102,7 +102,10 @@ namespace com.mirle.ibg3k0.sc
                 }
                 else
                 {
-                    return IsCoupler || IsPort;
+                    if (ADRTYPE != 4)
+                        return false;
+                    else
+                        return IsCoupler || IsPort;
                 }
                 //return IsCoupler || IsPort || (!IsSegment && IsSection);
             }
