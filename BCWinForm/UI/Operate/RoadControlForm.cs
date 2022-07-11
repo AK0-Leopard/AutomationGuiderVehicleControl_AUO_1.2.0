@@ -177,6 +177,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                                     List<AVEHICLE> listVH = bcApp.SCApplication.getEQObjCacheManager().getAllVehicle();
                                     foreach (AVEHICLE vh in listVH)
                                     {
+                                        if (vh.IsOnAdr) continue;
                                         ASECTION vh_current_sec = bcApp.SCApplication.MapBLL.getSectiontByID(vh.CUR_SEC_ID);
                                         if (vh_current_sec != null && SCUtility.isMatche(vh_current_sec.SEG_NUM, seg.SEG_ID))
                                         {

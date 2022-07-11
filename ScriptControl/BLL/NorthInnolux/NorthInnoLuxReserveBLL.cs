@@ -238,28 +238,39 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             AVEHICLE vh = scApp.VehicleBLL.cache.getVehicle(vhID);
             string vh_id = vh.VEHICLE_ID;
-            string cur_sec_id = SCUtility.Trim(vh.CUR_SEC_ID, true);
             var block_control_check_result = scApp.getCommObjCacheManager().IsBlockControlSection(reserveSectionID);
             if (block_control_check_result.isBlockControlSec)
             {
-                var current_vh_section_is_in_req_block_control_check_result =
-                    scApp.getCommObjCacheManager().IsBlockControlSection(block_control_check_result.enhanceInfo.BlockID, cur_sec_id);
-                if (current_vh_section_is_in_req_block_control_check_result.isBlockControlSec)
-                {
-                    return (true, "");
-                }
-
                 List<string> reserve_enhance_sections = block_control_check_result.enhanceInfo.EnhanceControlSections.ToList();
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
                    Data: $"reserve section:{reserveSectionID} is reserve enhance section, group:{string.Join(",", reserve_enhance_sections)}",
                    VehicleID: vh_id);
-
+                //用來判斷是否車子是否有在Block裡面，決定是否要直接讓車子通過
+                bool can_direct_pass = true;
+                var related_sec = scApp.SectionBLL.cache.GetSectionsByAddress(vh.CUR_ADR_ID);
+                foreach (var sec in related_sec)
+                {
+                    var current_vh_section_is_in_req_block_control_check_result =
+                        scApp.getCommObjCacheManager().IsBlockControlSection(block_control_check_result.enhanceInfo.BlockID, sec.SEC_ID);
+                    if (!current_vh_section_is_in_req_block_control_check_result.isBlockControlSec)
+                    {
+                        can_direct_pass = false;
+                        break;
+                    }
+                }
+                if (can_direct_pass)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
+                        Data: $"reserve section:{reserveSectionID} is reserve enhance section, vh:{vh.VEHICLE_ID} is in here, direct pass.",
+                        VehicleID: vh_id);
+                    return (true, "");
+                }
 
                 foreach (var enhance_section in reserve_enhance_sections)
                 {
-                    var check_one_direct_result = TryAddReservedSectionNew(vh_id, enhance_section,
-                                                        sensorDir: HltDirection.None,
-                                                        isAsk: true);
+                    var check_one_direct_result = scApp.ReserveBLL.TryAddReservedSection(vh_id, enhance_section,
+                        sensorDir: HltDirection.Forward,
+                        isAsk: true);
                     if (!check_one_direct_result.OK)
                     {
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
@@ -350,7 +361,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                             AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vhID);
                             if(vh!= null)
                             {
-                                if (SCUtility.isMatche(vh.CUR_SEC_ID, reserve_section_id))
+                                if (!vh.IsOnAdr && SCUtility.isMatche(vh.CUR_SEC_ID, reserve_section_id))
                                 {
                                     if (reserveInfos.Count >= 2)
                                     {

@@ -925,44 +925,50 @@ namespace com.mirle.ibg3k0.sc.Service
                 bool start_section_is_same = true;
                 if (guide_start_to_from_section_ids != null && guide_start_to_from_section_ids.Count > 0)
                 {
-                    start_section_is_same = SCUtility.isMatche(guide_start_to_from_section_ids[0], start_section);
-                    if (!start_section_is_same)
+                    if (!assignVH.IsOnAdr)
                     {
-                        guide_start_to_from_section_ids.Insert(0, start_section);
-                        ASECTION new_start_section = scApp.SectionBLL.cache.GetSection(start_section);
-                        if (SCUtility.isMatche(guide_start_to_from_address_ids[0], new_start_section.FROM_ADR_ID))
+                        start_section_is_same = SCUtility.isMatche(guide_start_to_from_section_ids[0], start_section);
+                        if (!start_section_is_same)
                         {
-                            guide_start_to_from_address_ids.Insert(0, new_start_section.TO_ADR_ID);
+                            guide_start_to_from_section_ids.Insert(0, start_section);
+                            ASECTION new_start_section = scApp.SectionBLL.cache.GetSection(start_section);
+                            if (SCUtility.isMatche(guide_start_to_from_address_ids[0], new_start_section.FROM_ADR_ID))
+                            {
+                                guide_start_to_from_address_ids.Insert(0, new_start_section.TO_ADR_ID);
+                            }
+                            else
+                            {
+                                guide_start_to_from_address_ids.Insert(0, new_start_section.FROM_ADR_ID);
+                            }
+                            //if (!SCUtility.isMatche(guide_start_to_from_segment_ids[0], new_start_section.SEG_NUM))
+                            //{
+                            //    guide_start_to_from_segment_ids.Insert(0, new_start_section.SEG_NUM);
+                            //}
                         }
-                        else
-                        {
-                            guide_start_to_from_address_ids.Insert(0, new_start_section.FROM_ADR_ID);
-                        }
-                        //if (!SCUtility.isMatche(guide_start_to_from_segment_ids[0], new_start_section.SEG_NUM))
-                        //{
-                        //    guide_start_to_from_segment_ids.Insert(0, new_start_section.SEG_NUM);
-                        //}
                     }
                 }
                 else if (guide_to_dest_section_ids != null && guide_to_dest_section_ids.Count > 0)
                 {
-                    start_section_is_same = SCUtility.isMatche(guide_to_dest_section_ids[0], start_section);
-                    if (!start_section_is_same)
+                    if (!assignVH.IsOnAdr)
                     {
-                        guide_to_dest_section_ids.Insert(0, start_section);
-                        ASECTION new_start_section = scApp.SectionBLL.cache.GetSection(start_section);
-                        if (SCUtility.isMatche(guide_to_dest_address_ids[0], new_start_section.FROM_ADR_ID))
+                        start_section_is_same = SCUtility.isMatche(guide_to_dest_section_ids[0], start_section);
+                        if (!start_section_is_same)
                         {
-                            guide_to_dest_address_ids.Insert(0, new_start_section.TO_ADR_ID);
+                            guide_to_dest_section_ids.Insert(0, start_section);
+                            ASECTION new_start_section = scApp.SectionBLL.cache.GetSection(start_section);
+                            if (SCUtility.isMatche(guide_to_dest_address_ids[0], new_start_section.FROM_ADR_ID))
+                            {
+                                guide_to_dest_address_ids.Insert(0, new_start_section.TO_ADR_ID);
+                            }
+                            else
+                            {
+                                guide_to_dest_address_ids.Insert(0, new_start_section.FROM_ADR_ID);
+                            }
+                            //if (!SCUtility.isMatche(guide_to_dest_segment_ids[0], new_start_section.SEG_NUM))
+                            //{
+                            //    guide_to_dest_segment_ids.Insert(0, new_start_section.SEG_NUM);
+                            //}
                         }
-                        else
-                        {
-                            guide_to_dest_address_ids.Insert(0, new_start_section.FROM_ADR_ID);
-                        }
-                        //if (!SCUtility.isMatche(guide_to_dest_segment_ids[0], new_start_section.SEG_NUM))
-                        //{
-                        //    guide_to_dest_segment_ids.Insert(0, new_start_section.SEG_NUM);
-                        //}
                     }
                 }
 
@@ -1078,6 +1084,9 @@ namespace com.mirle.ibg3k0.sc.Service
             List<string> guide_to_dest_section_ids = null;
             List<string> guide_to_dest_address_ids = null;
             int total_cost = 0;
+            //多增加過濾掉故障車路線的邏輯
+            List<string> all_by_pass_section_ids = loadAllByPassSection(byPassSectionIDs);
+
             //1.取得行走路徑的詳細資料
             switch (active_type)
             {
@@ -1147,6 +1156,55 @@ namespace com.mirle.ibg3k0.sc.Service
                     guide_start_to_from_segment_ids, guide_start_to_from_section_ids, guide_start_to_from_address_ids,
                     guide_to_dest_segment_ids, guide_to_dest_section_ids, guide_to_dest_address_ids);
         }
+
+        private List<string> loadAllByPassSection(List<string> originalByPassSection)
+        {
+            List<string> by_pass_section_ids = new List<string>();
+            if (originalByPassSection != null && originalByPassSection.Count > 0)
+                by_pass_section_ids.AddRange(originalByPassSection);
+            List<string> blocked_section_ids = loadBlockedSectionIDs(scApp.VehicleBLL, scApp.UnitBLL);
+            if (blocked_section_ids != null && blocked_section_ids.Count > 0)
+                by_pass_section_ids.AddRange(blocked_section_ids);
+            return by_pass_section_ids;
+        }
+
+        private List<string> loadBlockedSectionIDs(VehicleBLL vehicleBLL, UnitBLL unitBLL)
+        {
+            List<string> blocked_section_ids = new List<string>();
+            try
+            {
+                var alarm_vhs = vehicleBLL.cache.loadAlarmVhs();
+
+                foreach (var vh in alarm_vhs)
+                {
+                    if (vh.IsOnAdr)
+                    {
+                        var sectionIDs = scApp.SectionBLL.cache.GetSectionsByAddress(vh.CUR_ADR_ID).Select(s => s.SEC_ID);
+                        blocked_section_ids.AddRange(sectionIDs);
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(GuideBLL), Device: "OHx",
+                            Data: $"vh:{vh.VEHICLE_ID} error at address:{vh.CUR_ADR_ID}, bypass sections connected to this address when finding guide route");
+                    }
+                    else
+                    {
+                        string current_sec_id = vh.CUR_SEC_ID;
+                        if (SCUtility.isEmpty(current_sec_id))
+                        {
+                            continue;
+                        }
+                        blocked_section_ids.Add(current_sec_id);
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(GuideBLL), Device: "OHx",
+                            Data: $"vh:{vh.VEHICLE_ID} error at section:{current_sec_id} by pass this section ,when find guide route");
+                    }
+                }
+                return blocked_section_ids;
+            }
+            catch (Exception ex)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Error(ex, "Exception:");
+                return blocked_section_ids;
+            }
+        }
+
         private void AbnormalProcess(string vhID, ACMD_OHTC cmd)
         {
             if (!SCUtility.isEmpty(cmd.CMD_ID_MCS))
@@ -1333,44 +1391,50 @@ namespace com.mirle.ibg3k0.sc.Service
                     bool start_section_is_same = true;
                     if (guide_start_to_from_section_ids != null && guide_start_to_from_section_ids.Count > 0)
                     {
-                        start_section_is_same = SCUtility.isMatche(guide_start_to_from_section_ids[0], vh_current_section);
-                        if (!start_section_is_same)
+                        if (!assignVH.IsOnAdr)
                         {
-                            guide_start_to_from_section_ids.Insert(0, vh_current_section);
-                            ASECTION new_start_section = scApp.SectionBLL.cache.GetSection(vh_current_section);
-                            if (SCUtility.isMatche(guide_start_to_from_address_ids[0], new_start_section.FROM_ADR_ID))
+                            start_section_is_same = SCUtility.isMatche(guide_start_to_from_section_ids[0], vh_current_section);
+                            if (!start_section_is_same)
                             {
-                                guide_start_to_from_address_ids.Insert(0, new_start_section.TO_ADR_ID);
+                                guide_start_to_from_section_ids.Insert(0, vh_current_section);
+                                ASECTION new_start_section = scApp.SectionBLL.cache.GetSection(vh_current_section);
+                                if (SCUtility.isMatche(guide_start_to_from_address_ids[0], new_start_section.FROM_ADR_ID))
+                                {
+                                    guide_start_to_from_address_ids.Insert(0, new_start_section.TO_ADR_ID);
+                                }
+                                else
+                                {
+                                    guide_start_to_from_address_ids.Insert(0, new_start_section.FROM_ADR_ID);
+                                }
+                                //if (!SCUtility.isMatche(guide_start_to_from_segment_ids[0], new_start_section.SEG_NUM))
+                                //{
+                                //    guide_start_to_from_segment_ids.Insert(0, new_start_section.SEG_NUM);
+                                //}
                             }
-                            else
-                            {
-                                guide_start_to_from_address_ids.Insert(0, new_start_section.FROM_ADR_ID);
-                            }
-                            //if (!SCUtility.isMatche(guide_start_to_from_segment_ids[0], new_start_section.SEG_NUM))
-                            //{
-                            //    guide_start_to_from_segment_ids.Insert(0, new_start_section.SEG_NUM);
-                            //}
                         }
                     }
                     else if (guide_to_dest_section_ids != null && guide_to_dest_section_ids.Count > 0)
                     {
-                        start_section_is_same = SCUtility.isMatche(guide_to_dest_section_ids[0], vh_current_section);
-                        if (!start_section_is_same)
+                        if (!assignVH.IsOnAdr)
                         {
-                            guide_to_dest_section_ids.Insert(0, vh_current_section);
-                            ASECTION new_start_section = scApp.SectionBLL.cache.GetSection(vh_current_section);
-                            if (SCUtility.isMatche(guide_to_dest_address_ids[0], new_start_section.FROM_ADR_ID))
+                            start_section_is_same = SCUtility.isMatche(guide_to_dest_section_ids[0], vh_current_section);
+                            if (!start_section_is_same)
                             {
-                                guide_to_dest_address_ids.Insert(0, new_start_section.TO_ADR_ID);
+                                guide_to_dest_section_ids.Insert(0, vh_current_section);
+                                ASECTION new_start_section = scApp.SectionBLL.cache.GetSection(vh_current_section);
+                                if (SCUtility.isMatche(guide_to_dest_address_ids[0], new_start_section.FROM_ADR_ID))
+                                {
+                                    guide_to_dest_address_ids.Insert(0, new_start_section.TO_ADR_ID);
+                                }
+                                else
+                                {
+                                    guide_to_dest_address_ids.Insert(0, new_start_section.FROM_ADR_ID);
+                                }
+                                //if (!SCUtility.isMatche(guide_to_dest_segment_ids[0], new_start_section.SEG_NUM))
+                                //{
+                                //    guide_to_dest_segment_ids.Insert(0, new_start_section.SEG_NUM);
+                                //}
                             }
-                            else
-                            {
-                                guide_to_dest_address_ids.Insert(0, new_start_section.FROM_ADR_ID);
-                            }
-                            //if (!SCUtility.isMatche(guide_to_dest_segment_ids[0], new_start_section.SEG_NUM))
-                            //{
-                            //    guide_to_dest_segment_ids.Insert(0, new_start_section.SEG_NUM);
-                            //}
                         }
                     }
 
@@ -2058,23 +2122,26 @@ namespace com.mirle.ibg3k0.sc.Service
                         bool start_section_is_same = true;
                         if (guide_section_ids != null && guide_section_ids.Count > 0)
                         {
-                            start_section_is_same = SCUtility.isMatche(guide_section_ids[0], vh_current_section);
-                            if (!start_section_is_same)
+                            if (!vh.IsOnAdr)
                             {
-                                guide_section_ids.Insert(0, vh_current_section);
-                                ASECTION new_start_section = scApp.SectionBLL.cache.GetSection(vh_current_section);
-                                if (SCUtility.isMatche(guide_address_ids[0], new_start_section.FROM_ADR_ID))
+                                start_section_is_same = SCUtility.isMatche(guide_section_ids[0], vh_current_section);
+                                if (!start_section_is_same)
                                 {
-                                    guide_address_ids.Insert(0, new_start_section.TO_ADR_ID);
+                                    guide_section_ids.Insert(0, vh_current_section);
+                                    ASECTION new_start_section = scApp.SectionBLL.cache.GetSection(vh_current_section);
+                                    if (SCUtility.isMatche(guide_address_ids[0], new_start_section.FROM_ADR_ID))
+                                    {
+                                        guide_address_ids.Insert(0, new_start_section.TO_ADR_ID);
+                                    }
+                                    else
+                                    {
+                                        guide_address_ids.Insert(0, new_start_section.FROM_ADR_ID);
+                                    }
+                                    //if (!SCUtility.isMatche(guide_segment_ids[0], new_start_section.SEG_NUM))
+                                    //{
+                                    //    guide_segment_ids.Insert(0, new_start_section.SEG_NUM);
+                                    //}
                                 }
-                                else
-                                {
-                                    guide_address_ids.Insert(0, new_start_section.FROM_ADR_ID);
-                                }
-                                //if (!SCUtility.isMatche(guide_segment_ids[0], new_start_section.SEG_NUM))
-                                //{
-                                //    guide_segment_ids.Insert(0, new_start_section.SEG_NUM);
-                                //}
                             }
                         }
                         vh.IsPrepareAvoid = true;
@@ -2376,23 +2443,26 @@ namespace com.mirle.ibg3k0.sc.Service
                     bool start_section_is_same = true;
                     if (finalRepositionPath.guide_sections != null && finalRepositionPath.guide_sections.Count > 0)
                     {
-                        start_section_is_same = SCUtility.isMatche(finalRepositionPath.guide_sections[0], eqpt.CUR_SEC_ID);
-                        if (!start_section_is_same)
+                        if (!eqpt.IsOnAdr)
                         {
-                            finalRepositionPath.guide_sections.Insert(0, eqpt.CUR_SEC_ID);
-                            ASECTION new_start_section = scApp.SectionBLL.cache.GetSection(eqpt.CUR_SEC_ID);
-                            if (SCUtility.isMatche(finalRepositionPath.guide_addresses[0], new_start_section.FROM_ADR_ID))
+                            start_section_is_same = SCUtility.isMatche(finalRepositionPath.guide_sections[0], eqpt.CUR_SEC_ID);
+                            if (!start_section_is_same)
                             {
-                                finalRepositionPath.guide_addresses.Insert(0, new_start_section.TO_ADR_ID);
+                                finalRepositionPath.guide_sections.Insert(0, eqpt.CUR_SEC_ID);
+                                ASECTION new_start_section = scApp.SectionBLL.cache.GetSection(eqpt.CUR_SEC_ID);
+                                if (SCUtility.isMatche(finalRepositionPath.guide_addresses[0], new_start_section.FROM_ADR_ID))
+                                {
+                                    finalRepositionPath.guide_addresses.Insert(0, new_start_section.TO_ADR_ID);
+                                }
+                                else
+                                {
+                                    finalRepositionPath.guide_addresses.Insert(0, new_start_section.FROM_ADR_ID);
+                                }
+                                //if (!SCUtility.isMatche(guide_segment_ids[0], new_start_section.SEG_NUM))
+                                //{
+                                //    guide_segment_ids.Insert(0, new_start_section.SEG_NUM);
+                                //}
                             }
-                            else
-                            {
-                                finalRepositionPath.guide_addresses.Insert(0, new_start_section.FROM_ADR_ID);
-                            }
-                            //if (!SCUtility.isMatche(guide_segment_ids[0], new_start_section.SEG_NUM))
-                            //{
-                            //    guide_segment_ids.Insert(0, new_start_section.SEG_NUM);
-                            //}
                         }
                     }
                 }
@@ -2784,16 +2854,17 @@ namespace com.mirle.ibg3k0.sc.Service
                     if (check_can_creat_avoid_command.is_can)
                     {
                         string reserved_vh_current_section = reserved_vh.CUR_SEC_ID;
+                        string reserved_vh_current_address = reserved_vh.CUR_ADR_ID;
 
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                           Data: $"start search section:{reserved_vh_current_section}",
+                           Data: $"start search section:{reserved_vh_current_section}, address:{reserved_vh_current_address}",
                            VehicleID: requestVhID);
 
                         var findResult = findNotConflictSectionAndAvoidAddressNew(request_vh, reserved_vh, false);
                         if (!findResult.isFind)
                         {
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                               Data: $"find not conflict section fail. reserved section:{reserved_vh_current_section},",
+                               Data: $"find not conflict section fail. reserved section:{reserved_vh_current_section}, address:{reserved_vh_current_address}",
                                VehicleID: requestVhID);
                             return;
                         }
@@ -2995,7 +3066,14 @@ namespace com.mirle.ibg3k0.sc.Service
             ASECTION req_vh_current_section = scApp.SectionBLL.cache.GetSection(requestVh.CUR_SEC_ID);
             ASECTION find_avoid_vh_current_section = scApp.SectionBLL.cache.GetSection(findAvoidAdrOfVh.CUR_SEC_ID);
             //先找出哪個Address是距離即將到來的車子比較遠，即反方向
-            string first_search_adr = findTheOppositeOfAddress(req_vh_cur_adr, find_avoid_vh_current_section);
+            string first_search_adr;
+            if (findAvoidAdrOfVh.IsOnAdr)
+            {
+                first_search_adr = find_avoid_vh_cur_adr;
+                find_avoid_vh_current_section = scApp.SectionBLL.cache.GetSectionsByAddress(find_avoid_vh_cur_adr).FirstOrDefault();
+            }
+            else
+                first_search_adr = findTheOppositeOfAddress(req_vh_cur_adr, find_avoid_vh_current_section);
 
             (string next_address, ASECTION source_section) first_search_section_infos = (first_search_adr, find_avoid_vh_current_section);
             var searchResult = tryFindAvoidAddressByOneWay(requestVh, findAvoidAdrOfVh, first_search_section_infos, false);
@@ -4341,25 +4419,50 @@ namespace com.mirle.ibg3k0.sc.Service
                        VehicleID: vhID);
                     return (false, message);
                 }
-                ASECTION current_section = scApp.SectionBLL.cache.GetSection(vh_vo.CUR_SEC_ID);
-                if (current_section == null)
+                if (vh_vo.IsOnAdr)
                 {
-                    string message = $"vh:{vhID} current section:{SCUtility.Trim(vh_vo.CUR_SEC_ID, true)} is not exist, can't excute action:Install";
-                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                       Data: message,
-                       VehicleID: vhID);
-                    return (false, message);
+                    AADDRESS currentAddress = scApp.AddressesBLL.cache.GetAddress(vh_vo.CUR_ADR_ID);
+                    if (currentAddress is null)
+                    {
+                        string message = $"vh:{vhID} current address:{SCUtility.Trim(vh_vo.CUR_ADR_ID, true)} is not exist, can't excute action:Install";
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                           Data: message,
+                           VehicleID: vhID);
+                        return (false, message);
+                    }
+                    var addResult = scApp.ReserveBLL.TryAddVehicleOrUpdate(vh_vo.VEHICLE_ID, vh_vo.CUR_ADR_ID);
+                    if (!addResult.OK)
+                    {
+                        string message = $"vh:{vhID} current address:{SCUtility.Trim(vh_vo.CUR_ADR_ID, true)} can't reserved," +
+                            $" can't excute action:Install";
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                           Data: message,
+                           VehicleID: vhID);
+                        return (false, message);
+                    }
                 }
-
-                var ReserveResult = askReserveSuccess(vhID, vh_vo.CUR_SEC_ID, vh_vo.CUR_ADR_ID);
-                if (!ReserveResult.isSuccess)
+                else
                 {
-                    string message = $"vh:{vhID} current section:{SCUtility.Trim(vh_vo.CUR_SEC_ID, true)} can't reserved," +
-                                     $" can't excute action:Install";
-                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                       Data: message,
-                       VehicleID: vhID);
-                    return (false, message);
+                    ASECTION current_section = scApp.SectionBLL.cache.GetSection(vh_vo.CUR_SEC_ID);
+                    if (current_section == null)
+                    {
+                        string message = $"vh:{vhID} current section:{SCUtility.Trim(vh_vo.CUR_SEC_ID, true)} is not exist, can't excute action:Install";
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                           Data: message,
+                           VehicleID: vhID);
+                        return (false, message);
+                    }
+
+                    var ReserveResult = askReserveSuccess(vhID, vh_vo.CUR_SEC_ID, vh_vo.CUR_ADR_ID);
+                    if (!ReserveResult.isSuccess)
+                    {
+                        string message = $"vh:{vhID} current section:{SCUtility.Trim(vh_vo.CUR_SEC_ID, true)} can't reserved," +
+                                         $" can't excute action:Install";
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                           Data: message,
+                           VehicleID: vhID);
+                        return (false, message);
+                    }
                 }
 
                 bool is_success = true;

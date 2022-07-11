@@ -2709,9 +2709,9 @@ namespace com.mirle.ibg3k0.sc.BLL
                 AVEHICLE vh = scApp.VehicleBLL.getVehicleByID(vh_id);
                 if (!SCUtility.isEmpty(vh.OHTC_CMD))
                 {
-                    //ACMD_OHTC_DETAL cmd_detal = cmd_ohtc_detalDAO.getByCmdIDAndAdrID(con, cmd_oht.CMD_ID, add_id);
+                    ACMD_OHTC_DETAIL cmd_detail = cmd_ohtc_detailDAO.getByCmdIDAndAdrID(con, vh.OHTC_CMD, add_id);
                     //ACMD_OHTC_DETAIL cmd_detail = cmd_ohtc_detailDAO.getByCmdIDAndSecID(con, cmd_oht.CMD_ID, sec_id);
-                    ACMD_OHTC_DETAIL cmd_detail = cmd_ohtc_detailDAO.getByCmdIDAndSecID(con, vh.OHTC_CMD, sec_id);
+                    //ACMD_OHTC_DETAIL cmd_detail = cmd_ohtc_detailDAO.getByCmdIDAndSecID(con, vh.OHTC_CMD, sec_id);
                     if (cmd_detail == null)
                         return false;
                     DateTime nowTime = DateTime.Now;

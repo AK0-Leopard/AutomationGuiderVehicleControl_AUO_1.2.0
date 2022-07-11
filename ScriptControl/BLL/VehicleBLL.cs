@@ -1941,8 +1941,8 @@ namespace com.mirle.ibg3k0.sc.BLL
                         AVEHICLE will_bumped_vh = cache.getVehicle(update_result.VehicleID);
 
                         //2020/02/05 由於目前在行走R2000的時候，車子的角度還無法時時上報，因此先ByPass R2000的檢查
-                        bool one_of_them_is_in_r2000 = scApp.ReserveBLL.IsR2000Section(vh.CUR_SEC_ID) ||
-                                                       scApp.ReserveBLL.IsR2000Section(will_bumped_vh.CUR_SEC_ID);
+                        bool one_of_them_is_in_r2000 = (!vh.IsOnAdr && scApp.ReserveBLL.IsR2000Section(vh.CUR_SEC_ID)) ||
+                                                       (!will_bumped_vh.IsOnAdr && scApp.ReserveBLL.IsR2000Section(will_bumped_vh.CUR_SEC_ID));
                         //如果發生碰撞或踩入別人預約的不是虛擬車的話，則就要對兩台車下達EMS
                         if (!one_of_them_is_in_r2000 &&
                             !update_result.VehicleID.StartsWith(Service.VehicleService.VehicleVirtualSymbol))
@@ -2269,7 +2269,12 @@ namespace com.mirle.ibg3k0.sc.BLL
                        Count();
             }
 
-
+            public List<AVEHICLE> loadAlarmVhs()
+            {
+                var vhs = eqObjCacheManager.getAllVehicle();
+                return vhs.Where(vh => vh.IsError).
+                           ToList();
+            }
 
         }
 

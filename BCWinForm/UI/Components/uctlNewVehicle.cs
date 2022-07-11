@@ -581,9 +581,16 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
             {
                 try
                 {
-
                     GroupRails groupRails = Uctl_Map.getGroupRailBySecID(vh.CUR_SEC_ID);
-                    if (groupRails != null)
+                    if (vh.IsOnAdr)
+                    {
+                        uctlAddress uctlAdr = Uctl_Map.getuctAddressByAdrID(vh.CUR_ADR_ID);
+                        if (uctlAdr != null)
+                            PrcSetLocation(uctlAdr.p_LocX, uctlAdr.p_LocY);
+                        else
+                            PrcSetLocation((UNKNOW_DEFAULT_X_LOCATION_VALUE * Num) + 2, UNKNOW_DEFAULT_Y_LOCATION_VALUE);
+                    }
+                    else if (groupRails != null)
                     {
                         //switch (vh.VhRecentTranEvent)
                         //{
