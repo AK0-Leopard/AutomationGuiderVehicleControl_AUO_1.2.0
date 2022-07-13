@@ -1563,5 +1563,13 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             sc.App.SystemParameter.setIsPassErrorVhWhenGuideRoute(cb_passErrorVH.Checked);
         }
+
+        private void label73_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.Control)
+            {
+                grp_cycleRunBlock.Visible = true;
+            }
+        }
     }
 }
