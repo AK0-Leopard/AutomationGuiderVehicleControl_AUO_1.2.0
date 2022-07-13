@@ -66,10 +66,6 @@
             this.btn_release_block = new System.Windows.Forms.Button();
             this.label41 = new System.Windows.Forms.Label();
             this.button11 = new System.Windows.Forms.Button();
-            this.groupBox17 = new System.Windows.Forms.GroupBox();
-            this.label39 = new System.Windows.Forms.Label();
-            this.num_cycle_run_interval_time = new System.Windows.Forms.NumericUpDown();
-            this.ck_CycleRunTest = new System.Windows.Forms.CheckBox();
             this.btn_auto_remote = new System.Windows.Forms.Button();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.rad_134_test_b = new System.Windows.Forms.RadioButton();
@@ -112,6 +108,10 @@
             this.uctl_SendFun21 = new com.mirle.ibg3k0.bc.winform.UI.Components.uctlButton();
             this.uctl_SendFun23 = new com.mirle.ibg3k0.bc.winform.UI.Components.uctlButton();
             this.uctl_SendAllFun = new com.mirle.ibg3k0.bc.winform.UI.Components.uctlButton();
+            this.grb_cycleRunBlock = new System.Windows.Forms.GroupBox();
+            this.label39 = new System.Windows.Forms.Label();
+            this.num_cycle_run_interval_time = new System.Windows.Forms.NumericUpDown();
+            this.ck_CycleRunTest = new System.Windows.Forms.CheckBox();
             this.btn_forceReleaseAllBlock = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -336,13 +336,13 @@
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox6.SuspendLayout();
-            this.groupBox17.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.num_cycle_run_interval_time)).BeginInit();
             this.groupBox12.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_134_test_dis)).BeginInit();
             this.groupBox9.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.groupBox5.SuspendLayout();
+            this.grb_cycleRunBlock.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.num_cycle_run_interval_time)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_vh_idle_time)).BeginInit();
@@ -581,7 +581,7 @@
             // cb_StartGenAntoCmd
             // 
             this.cb_StartGenAntoCmd.AutoSize = true;
-            this.cb_StartGenAntoCmd.Location = new System.Drawing.Point(1131, 18);
+            this.cb_StartGenAntoCmd.Location = new System.Drawing.Point(6, 113);
             this.cb_StartGenAntoCmd.Name = "cb_StartGenAntoCmd";
             this.cb_StartGenAntoCmd.Size = new System.Drawing.Size(349, 26);
             this.cb_StartGenAntoCmd.TabIndex = 18;
@@ -625,7 +625,6 @@
             this.groupBox4.Controls.Add(this.cmb_reserve_section2);
             this.groupBox4.Controls.Add(this.cmb_reserve_section1);
             this.groupBox4.Controls.Add(this.groupBox6);
-            this.groupBox4.Controls.Add(this.groupBox17);
             this.groupBox4.Controls.Add(this.btn_auto_remote);
             this.groupBox4.Controls.Add(this.groupBox12);
             this.groupBox4.Controls.Add(this.btn_reserve_clear);
@@ -704,6 +703,7 @@
             this.label73.Size = new System.Drawing.Size(120, 22);
             this.label73.TabIndex = 50;
             this.label73.Text = "Is Install:";
+            this.label73.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.label73_MouseDoubleClick);
             // 
             // btn_auto_local
             // 
@@ -803,61 +803,6 @@
             this.button11.Text = "Current Reserve Segment";
             this.button11.UseVisualStyleBackColor = true;
             this.button11.Click += new System.EventHandler(this.button11_Click_1);
-            // 
-            // groupBox17
-            // 
-            this.groupBox17.Controls.Add(this.label39);
-            this.groupBox17.Controls.Add(this.num_cycle_run_interval_time);
-            this.groupBox17.Controls.Add(this.ck_CycleRunTest);
-            this.groupBox17.Location = new System.Drawing.Point(826, 25);
-            this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(224, 138);
-            this.groupBox17.TabIndex = 40;
-            this.groupBox17.TabStop = false;
-            this.groupBox17.Text = "Cycle Run Test";
-            // 
-            // label39
-            // 
-            this.label39.AutoSize = true;
-            this.label39.Location = new System.Drawing.Point(132, 52);
-            this.label39.Name = "label39";
-            this.label39.Size = new System.Drawing.Size(50, 22);
-            this.label39.TabIndex = 40;
-            this.label39.Text = "(ms)";
-            // 
-            // num_cycle_run_interval_time
-            // 
-            this.num_cycle_run_interval_time.Location = new System.Drawing.Point(6, 44);
-            this.num_cycle_run_interval_time.Maximum = new decimal(new int[] {
-            10000000,
-            0,
-            0,
-            0});
-            this.num_cycle_run_interval_time.Minimum = new decimal(new int[] {
-            3000,
-            0,
-            0,
-            0});
-            this.num_cycle_run_interval_time.Name = "num_cycle_run_interval_time";
-            this.num_cycle_run_interval_time.Size = new System.Drawing.Size(120, 30);
-            this.num_cycle_run_interval_time.TabIndex = 39;
-            this.num_cycle_run_interval_time.Value = new decimal(new int[] {
-            3000,
-            0,
-            0,
-            0});
-            this.num_cycle_run_interval_time.ValueChanged += new System.EventHandler(this.num_cycle_run_interval_time_ValueChanged);
-            // 
-            // ck_CycleRunTest
-            // 
-            this.ck_CycleRunTest.AutoSize = true;
-            this.ck_CycleRunTest.Location = new System.Drawing.Point(6, 89);
-            this.ck_CycleRunTest.Name = "ck_CycleRunTest";
-            this.ck_CycleRunTest.Size = new System.Drawing.Size(169, 26);
-            this.ck_CycleRunTest.TabIndex = 37;
-            this.ck_CycleRunTest.Text = "Cycle Run Test";
-            this.ck_CycleRunTest.UseVisualStyleBackColor = true;
-            this.ck_CycleRunTest.CheckedChanged += new System.EventHandler(this.ck_CycleRunTest_CheckedChanged);
             // 
             // btn_auto_remote
             // 
@@ -1305,9 +1250,66 @@
             this.uctl_SendAllFun.UseVisualStyleBackColor = true;
             this.uctl_SendAllFun.Click += new System.EventHandler(this.uctl_SendAllFun_Click);
             // 
+            // grb_cycleRunBlock
+            // 
+            this.grb_cycleRunBlock.Controls.Add(this.label39);
+            this.grb_cycleRunBlock.Controls.Add(this.num_cycle_run_interval_time);
+            this.grb_cycleRunBlock.Controls.Add(this.ck_CycleRunTest);
+            this.grb_cycleRunBlock.Controls.Add(this.cb_StartGenAntoCmd);
+            this.grb_cycleRunBlock.Location = new System.Drawing.Point(1124, 6);
+            this.grb_cycleRunBlock.Name = "grb_cycleRunBlock";
+            this.grb_cycleRunBlock.Size = new System.Drawing.Size(365, 151);
+            this.grb_cycleRunBlock.TabIndex = 40;
+            this.grb_cycleRunBlock.TabStop = false;
+            this.grb_cycleRunBlock.Text = "Cycle Run Test";
+            this.grb_cycleRunBlock.Visible = false;
+            // 
+            // label39
+            // 
+            this.label39.AutoSize = true;
+            this.label39.Location = new System.Drawing.Point(132, 52);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(50, 22);
+            this.label39.TabIndex = 40;
+            this.label39.Text = "(ms)";
+            // 
+            // num_cycle_run_interval_time
+            // 
+            this.num_cycle_run_interval_time.Location = new System.Drawing.Point(6, 44);
+            this.num_cycle_run_interval_time.Maximum = new decimal(new int[] {
+            10000000,
+            0,
+            0,
+            0});
+            this.num_cycle_run_interval_time.Minimum = new decimal(new int[] {
+            3000,
+            0,
+            0,
+            0});
+            this.num_cycle_run_interval_time.Name = "num_cycle_run_interval_time";
+            this.num_cycle_run_interval_time.Size = new System.Drawing.Size(120, 30);
+            this.num_cycle_run_interval_time.TabIndex = 39;
+            this.num_cycle_run_interval_time.Value = new decimal(new int[] {
+            3000,
+            0,
+            0,
+            0});
+            this.num_cycle_run_interval_time.ValueChanged += new System.EventHandler(this.num_cycle_run_interval_time_ValueChanged);
+            // 
+            // ck_CycleRunTest
+            // 
+            this.ck_CycleRunTest.AutoSize = true;
+            this.ck_CycleRunTest.Location = new System.Drawing.Point(186, 45);
+            this.ck_CycleRunTest.Name = "ck_CycleRunTest";
+            this.ck_CycleRunTest.Size = new System.Drawing.Size(169, 26);
+            this.ck_CycleRunTest.TabIndex = 37;
+            this.ck_CycleRunTest.Text = "Cycle Run Test";
+            this.ck_CycleRunTest.UseVisualStyleBackColor = true;
+            this.ck_CycleRunTest.CheckedChanged += new System.EventHandler(this.ck_CycleRunTest_CheckedChanged);
+            // 
             // btn_forceReleaseAllBlock
             // 
-            this.btn_forceReleaseAllBlock.Location = new System.Drawing.Point(1124, 175);
+            this.btn_forceReleaseAllBlock.Location = new System.Drawing.Point(1124, 297);
             this.btn_forceReleaseAllBlock.Name = "btn_forceReleaseAllBlock";
             this.btn_forceReleaseAllBlock.Size = new System.Drawing.Size(284, 41);
             this.btn_forceReleaseAllBlock.TabIndex = 22;
@@ -1329,7 +1331,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1463, 865);
+            this.tabControl1.Size = new System.Drawing.Size(1527, 865);
             this.tabControl1.TabIndex = 23;
             // 
             // tabPage1
@@ -1343,11 +1345,11 @@
             this.tabPage1.Controls.Add(this.gb_blockControl);
             this.tabPage1.Controls.Add(this.groupBox4);
             this.tabPage1.Controls.Add(this.btn_forceReleaseAllBlock);
-            this.tabPage1.Controls.Add(this.cb_StartGenAntoCmd);
+            this.tabPage1.Controls.Add(this.grb_cycleRunBlock);
             this.tabPage1.Location = new System.Drawing.Point(4, 31);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1455, 830);
+            this.tabPage1.Size = new System.Drawing.Size(1519, 830);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "TcpIp Control";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -1355,7 +1357,7 @@
             // cb_IsAvoidSearchGuide
             // 
             this.cb_IsAvoidSearchGuide.AutoSize = true;
-            this.cb_IsAvoidSearchGuide.Location = new System.Drawing.Point(1124, 591);
+            this.cb_IsAvoidSearchGuide.Location = new System.Drawing.Point(1124, 713);
             this.cb_IsAvoidSearchGuide.Name = "cb_IsAvoidSearchGuide";
             this.cb_IsAvoidSearchGuide.Size = new System.Drawing.Size(323, 26);
             this.cb_IsAvoidSearchGuide.TabIndex = 2;
@@ -1366,7 +1368,7 @@
             // label97
             // 
             this.label97.AutoSize = true;
-            this.label97.Location = new System.Drawing.Point(1127, 530);
+            this.label97.Location = new System.Drawing.Point(1127, 652);
             this.label97.Name = "label97";
             this.label97.Size = new System.Drawing.Size(170, 22);
             this.label97.TabIndex = 56;
@@ -1374,7 +1376,7 @@
             // 
             // num_vh_idle_time
             // 
-            this.num_vh_idle_time.Location = new System.Drawing.Point(1137, 555);
+            this.num_vh_idle_time.Location = new System.Drawing.Point(1137, 677);
             this.num_vh_idle_time.Maximum = new decimal(new int[] {
             600000,
             0,
@@ -1389,7 +1391,7 @@
             // 
             this.grb_Reserve.Controls.Add(this.cb_reserve_pass);
             this.grb_Reserve.Controls.Add(this.cb_reserve_reject);
-            this.grb_Reserve.Location = new System.Drawing.Point(1128, 232);
+            this.grb_Reserve.Location = new System.Drawing.Point(1128, 354);
             this.grb_Reserve.Name = "grb_Reserve";
             this.grb_Reserve.Size = new System.Drawing.Size(253, 102);
             this.grb_Reserve.TabIndex = 26;
@@ -1424,7 +1426,7 @@
             this.groupBox7.Controls.Add(this.btn_portInServeice);
             this.groupBox7.Controls.Add(this.label18);
             this.groupBox7.Controls.Add(this.cb_PortID);
-            this.groupBox7.Location = new System.Drawing.Point(1128, 340);
+            this.groupBox7.Location = new System.Drawing.Point(1128, 462);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Size = new System.Drawing.Size(257, 177);
             this.groupBox7.TabIndex = 25;
@@ -1472,7 +1474,7 @@
             // 
             this.gb_blockControl.Controls.Add(this.cb_FroceBlockReject);
             this.gb_blockControl.Controls.Add(this.cb_FroceBlockPass);
-            this.gb_blockControl.Location = new System.Drawing.Point(1124, 60);
+            this.gb_blockControl.Location = new System.Drawing.Point(1124, 182);
             this.gb_blockControl.Name = "gb_blockControl";
             this.gb_blockControl.Size = new System.Drawing.Size(257, 104);
             this.gb_blockControl.TabIndex = 23;
@@ -1497,7 +1499,7 @@
             this.table_cache_data_pisplay.Location = new System.Drawing.Point(4, 31);
             this.table_cache_data_pisplay.Name = "table_cache_data_pisplay";
             this.table_cache_data_pisplay.Padding = new System.Windows.Forms.Padding(3);
-            this.table_cache_data_pisplay.Size = new System.Drawing.Size(1455, 830);
+            this.table_cache_data_pisplay.Size = new System.Drawing.Size(1519, 830);
             this.table_cache_data_pisplay.TabIndex = 3;
             this.table_cache_data_pisplay.Text = "Cache Data Display";
             this.table_cache_data_pisplay.UseVisualStyleBackColor = true;
@@ -1518,7 +1520,7 @@
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.61165F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 95.38835F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1449, 824);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(1513, 824);
             this.tableLayoutPanel2.TabIndex = 3;
             // 
             // dgv_cache_object_data
@@ -1536,7 +1538,7 @@
             this.dgv_cache_object_data.Name = "dgv_cache_object_data";
             this.dgv_cache_object_data.RowTemplate.Height = 24;
             this.dgv_cache_object_data.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgv_cache_object_data.Size = new System.Drawing.Size(1217, 781);
+            this.dgv_cache_object_data.Size = new System.Drawing.Size(1281, 781);
             this.dgv_cache_object_data.TabIndex = 0;
             this.dgv_cache_object_data.Visible = false;
             this.dgv_cache_object_data.EditModeChanged += new System.EventHandler(this.dgv_cache_object_data_EditModeChanged);
@@ -1578,7 +1580,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 8);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(274, 8);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(164, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -1588,7 +1590,7 @@
             // 
             this.label22.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(44, 7);
+            this.label22.Location = new System.Drawing.Point(108, 7);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(160, 22);
             this.label22.TabIndex = 2;
@@ -1596,7 +1598,7 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(1226, 40);
+            this.button7.Location = new System.Drawing.Point(1290, 40);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(123, 54);
             this.button7.TabIndex = 3;
@@ -1609,7 +1611,7 @@
             this.tabPage5.Controls.Add(this.tableLayoutPanel1);
             this.tabPage5.Location = new System.Drawing.Point(4, 31);
             this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(1455, 830);
+            this.tabPage5.Size = new System.Drawing.Size(1519, 830);
             this.tabPage5.TabIndex = 7;
             this.tabPage5.Text = "Cache Data Display";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -1628,7 +1630,7 @@
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 830F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1455, 830);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1519, 830);
             this.tableLayoutPanel1.TabIndex = 4;
             // 
             // dgv_cache_object_data_portstation
@@ -1645,7 +1647,7 @@
             this.dgv_cache_object_data_portstation.Name = "dgv_cache_object_data_portstation";
             this.dgv_cache_object_data_portstation.RowTemplate.Height = 24;
             this.dgv_cache_object_data_portstation.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgv_cache_object_data_portstation.Size = new System.Drawing.Size(1223, 824);
+            this.dgv_cache_object_data_portstation.Size = new System.Drawing.Size(1287, 824);
             this.dgv_cache_object_data_portstation.TabIndex = 0;
             // 
             // dataGridViewTextBoxColumn1
@@ -1674,7 +1676,7 @@
             // 
             // btn_refresf_portsation_info
             // 
-            this.btn_refresf_portsation_info.Location = new System.Drawing.Point(1232, 3);
+            this.btn_refresf_portsation_info.Location = new System.Drawing.Point(1296, 3);
             this.btn_refresf_portsation_info.Name = "btn_refresf_portsation_info";
             this.btn_refresf_portsation_info.Size = new System.Drawing.Size(123, 54);
             this.btn_refresf_portsation_info.TabIndex = 3;
@@ -1700,7 +1702,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 31);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(1455, 830);
+            this.tabPage3.Size = new System.Drawing.Size(1519, 830);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Test Tool";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -2089,7 +2091,7 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 31);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(1455, 830);
+            this.tabPage4.Size = new System.Drawing.Size(1519, 830);
             this.tabPage4.TabIndex = 4;
             this.tabPage4.Text = "Charger Control";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -3275,7 +3277,7 @@
             this.DIO_DEVICE_TEST.Controls.Add(this.comboBox_port11);
             this.DIO_DEVICE_TEST.Location = new System.Drawing.Point(4, 31);
             this.DIO_DEVICE_TEST.Name = "DIO_DEVICE_TEST";
-            this.DIO_DEVICE_TEST.Size = new System.Drawing.Size(1455, 830);
+            this.DIO_DEVICE_TEST.Size = new System.Drawing.Size(1519, 830);
             this.DIO_DEVICE_TEST.TabIndex = 5;
             this.DIO_DEVICE_TEST.Text = "PortEnableSet";
             this.DIO_DEVICE_TEST.UseVisualStyleBackColor = true;
@@ -3376,7 +3378,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 31);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1455, 830);
+            this.tabPage2.Size = new System.Drawing.Size(1519, 830);
             this.tabPage2.TabIndex = 6;
             this.tabPage2.Text = "ON-LINE";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -3411,7 +3413,7 @@
             this.tabPage6.Location = new System.Drawing.Point(4, 31);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(1455, 830);
+            this.tabPage6.Size = new System.Drawing.Size(1519, 830);
             this.tabPage6.TabIndex = 8;
             this.tabPage6.Text = "ECID";
             this.tabPage6.UseVisualStyleBackColor = true;
@@ -3547,7 +3549,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 22F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1463, 865);
+            this.ClientSize = new System.Drawing.Size(1527, 865);
             this.Controls.Add(this.tabControl1);
             this.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -3565,9 +3567,6 @@
             this.groupBox4.PerformLayout();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
-            this.groupBox17.ResumeLayout(false);
-            this.groupBox17.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.num_cycle_run_interval_time)).EndInit();
             this.groupBox12.ResumeLayout(false);
             this.groupBox12.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_134_test_dis)).EndInit();
@@ -3577,6 +3576,9 @@
             this.groupBox8.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
+            this.grb_cycleRunBlock.ResumeLayout(false);
+            this.grb_cycleRunBlock.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.num_cycle_run_interval_time)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
@@ -3773,7 +3775,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn adrID;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
-        private System.Windows.Forms.GroupBox groupBox17;
+        private System.Windows.Forms.GroupBox grb_cycleRunBlock;
         private System.Windows.Forms.NumericUpDown num_cycle_run_interval_time;
         private System.Windows.Forms.Label label39;
         private System.Windows.Forms.GroupBox grb_Reserve;

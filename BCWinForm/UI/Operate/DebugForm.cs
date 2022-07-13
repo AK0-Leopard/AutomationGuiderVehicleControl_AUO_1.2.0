@@ -1538,5 +1538,13 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         {
             DebugParameter.AvoidGuideBySearch = cb_IsAvoidSearchGuide.Checked;
         }
+
+        private void label73_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.Control)
+            {
+                grb_cycleRunBlock.Visible = true;
+            }
+        }
     }
 }

@@ -1571,10 +1571,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
         }
 
-        public bool creatVehicleMoveCommand(string vhID, string destinationAdr)
-        {
-            return doCreatTransferCommand(vhID, cmd_type: E_CMD_TYPE.Move, destination: destinationAdr);
-        }
+
         public bool doCreatTransferCommand(string vh_id, string cmd_id_mcs = "", string carrier_id = "", E_CMD_TYPE cmd_type = E_CMD_TYPE.Move,
                                    string source = "", string destination = "", int priority = 0, int estimated_time = 0, SCAppConstants.GenOHxCCommandType gen_cmd_type = SCAppConstants.GenOHxCCommandType.Auto)
         {

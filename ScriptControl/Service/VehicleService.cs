@@ -369,6 +369,8 @@ namespace com.mirle.ibg3k0.sc.Service
                    VehicleID: vh.VEHICLE_ID);
             }
             scApp.CMDBLL.removeAlreadyPassedSection(vh.VEHICLE_ID, e.LeaveSection);
+            tryReleaseReservedSection(vh, leave_section, entry_section);
+
             //在位置有改變的時候，去確認即將要前往的目的地是否為單行道
             //若是單行道，則要確認裡面是否有idle vh在裡面
             //是的話則要將他趕出來
@@ -388,6 +390,41 @@ namespace com.mirle.ibg3k0.sc.Service
                     }
                 }
             }
+        }
+        private void tryReleaseReservedSection(AVEHICLE vh, ASECTION leave_section, ASECTION entry_section)
+        {
+            string vh_current_sec_id = SCUtility.Trim(vh.CUR_SEC_ID, true);
+            var try_get_cross_address_id = tryFindCrossAddressID(leave_section.SEC_ID, entry_section.SEC_ID);
+            if (!try_get_cross_address_id.hasFind)
+                return;
+            var related_sections = scApp.SectionBLL.cache.GetSectionsByAddress(try_get_cross_address_id.adrID);
+            var will_release_sections = related_sections.Where(sec => !SCUtility.isMatche(sec.SEC_ID, vh_current_sec_id)).ToList();
+            foreach (var section in will_release_sections)
+            {
+                scApp.ReserveBLL.RemoveManyReservedSectionsByVIDSID(vh.VEHICLE_ID, section.SEC_ID);
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                   Data: $"vh:{vh.VEHICLE_ID} release section {section.SEC_ID}" +
+                         $"(By cross adr:{try_get_cross_address_id.adrID},leave_section:{leave_section.SEC_ID},entry_section:{entry_section.SEC_ID}).",
+                   VehicleID: vh.VEHICLE_ID);
+            }
+        }
+
+        private (bool hasFind, string adrID) tryFindCrossAddressID(string secID1, string secID2)
+        {
+            ASECTION sec1 = scApp.SectionBLL.cache.GetSection(secID1);
+            ASECTION sec2 = scApp.SectionBLL.cache.GetSection(secID2);
+            if (sec1 == null || sec2 == null)
+            {
+                return (false, "");
+            }
+            List<string> address_temp = new List<string>();
+            address_temp.Add(sec1.FROM_ADR_ID);
+            address_temp.Add(sec1.TO_ADR_ID);
+            if (address_temp.Contains(sec2.FROM_ADR_ID))
+                return (true, sec2.FROM_ADR_ID);
+            if (address_temp.Contains(sec2.TO_ADR_ID))
+                return (true, sec2.TO_ADR_ID);
+            return (false, "");
         }
 
 
@@ -1275,17 +1312,6 @@ namespace com.mirle.ibg3k0.sc.Service
                     }
                     break;
                 case ActiveType.Move:
-                    if (!SCUtility.isMatche(vh_current_address, dest_adr))
-                    {
-                        (isSuccess, guide_to_dest_segment_ids, guide_to_dest_section_ids, guide_to_dest_address_ids, total_cost)
-                            = scApp.GuideBLL.getGuideInfoIgnoreCost(vh_current_address, dest_adr, byPassSectionIDs);
-                    }
-                    else
-                    {
-                        //isSuccess = false;
-                        isSuccess = true;
-                    }
-                    break;
                 case ActiveType.Movetocharger:
                     if (!SCUtility.isMatche(vh_current_address, dest_adr))
                     {
