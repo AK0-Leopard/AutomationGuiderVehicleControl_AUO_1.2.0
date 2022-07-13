@@ -1990,7 +1990,8 @@ namespace com.mirle.ibg3k0.sc
                     {
                         //檢查斷線時間是否已經大於容許的最大值
                         double disconnection_time = vh.getDisconnectionIntervalTime(scApp.getBCFApplication());
-                        if (disconnection_time > AVEHICLE.MAX_ALLOW_NO_CONNECTION_TIME_SECOND)
+                        //if (disconnection_time > AVEHICLE.MAX_ALLOW_NO_CONNECTION_TIME_SECOND)
+                        if (disconnection_time > SystemParameter.MAX_ALLOW_VH_NO_CONNECTION_TIME_SECOND)
                         {
                             vh.onLongTimeDisConnection();
                         }

@@ -578,6 +578,7 @@ namespace com.mirle.ibg3k0.sc.App
             SystemParameter.setLongestFullyChargedIntervalTime(getInt("LongestFullyChargedIntervalTime", 15));
             SystemParameter.setMaxAllowDistanceOffset_mm(getInt("MAX_ALLOW_DISTANCE_OFFSET_mm", 50));
             SystemParameter.setMAX_ALLOW_VH_ACTION_TIME_SECOND(getInt("MAX_ALLOW_VH_ACTION_TIME_SECOND", 1200));
+            SystemParameter.setMAX_ALLOW_VH_NO_CONNECTION_TIME_SECOND(getInt("MAX_ALLOW_VH_NO_CONNECTION_TIME_SECOND", 30));
         }
 
         private void initialReserveSectionAPI()
@@ -1747,6 +1748,7 @@ namespace com.mirle.ibg3k0.sc.App
         public static int AllowVhIdleTime_ms = 0;
         public static int MAX_ALLOW_DISTANCE_OFFSET_mm { get; private set; } = 50;
         public static int MAX_ALLOW_VH_ACTION_TIME_SECOND { get; private set; } = 1200;
+        public static int MAX_ALLOW_VH_NO_CONNECTION_TIME_SECOND { get; private set; } = 30;
 
         public static void setSECSConversactionTimeout(int timeout)
         {
@@ -1821,6 +1823,10 @@ namespace com.mirle.ibg3k0.sc.App
         public static void setMAX_ALLOW_VH_ACTION_TIME_SECOND(int maxAllowVhActionTime_sec)
         {
             MAX_ALLOW_VH_ACTION_TIME_SECOND = maxAllowVhActionTime_sec;
+        }
+        public static void setMAX_ALLOW_VH_NO_CONNECTION_TIME_SECOND(int value)
+        {
+            MAX_ALLOW_VH_NO_CONNECTION_TIME_SECOND = value;
         }
 
 
