@@ -234,15 +234,17 @@ namespace com.mirle.ibg3k0.sc.Module
             try
             {
                 coupler_addresses.ForEach(coupler_address => coupler_address.setDistanceWithTargetAdr(guideBLL, vh_current_address));
+                coupler_addresses.Sort(CouplerCompareForNormalCharge);
+
                 //coupler_addresses.Sort();
-                if (isNeedToLongCharge)
-                {
-                    coupler_addresses.Sort(CouplerCompareForLongCharge);
-                }
-                else
-                {
-                    coupler_addresses.Sort(CouplerCompareForNormalCharge);
-                }
+                //if (isNeedToLongCharge)
+                //{
+                //    coupler_addresses.Sort(CouplerCompareForLongCharge);
+                //}
+                //else
+                //{
+                //    coupler_addresses.Sort(CouplerCompareForNormalCharge);
+                //}
             }
             catch { }
             List<KeyValuePair<string, int>> all_coupler_adr_and_distance = new List<KeyValuePair<string, int>>();
@@ -305,33 +307,57 @@ namespace com.mirle.ibg3k0.sc.Module
 
         public int CouplerCompareForNormalCharge(CouplerAddress coupler1, CouplerAddress coupler2)
         {
-            int result;
-            if (coupler1.Priority == coupler2.Priority && coupler1.DistanceWithTargetAdr == coupler2.DistanceWithTargetAdr)
+            if (coupler1.Priority > coupler2.Priority)
             {
-                result = 0;
+                return -1;
+            }
+            else if (coupler1.Priority < coupler2.Priority)
+            {
+                return 1;
             }
             else
             {
-                if (coupler1.Priority > coupler2.Priority)
+                //如果權重一樣，比距離
+                if (coupler1.DistanceWithTargetAdr > coupler2.DistanceWithTargetAdr)
                 {
-                    result = 1;
+                    return 1;
                 }
-                else if (coupler1.Priority < coupler2.Priority)
+                else if (coupler1.DistanceWithTargetAdr < coupler2.DistanceWithTargetAdr)
                 {
-                    result = -1;
-                }
-                else if (coupler1.Priority == coupler2.Priority && coupler1.DistanceWithTargetAdr > coupler2.DistanceWithTargetAdr)
-                {
-                    result = 1;
+                    return -1;
                 }
                 else
                 {
-                    result = -1;
+                    //如果距離也一樣，不移動
+                    return 0;
                 }
             }
-            return result;
+            //int result;
+            //if (coupler1.Priority == coupler2.Priority && coupler1.DistanceWithTargetAdr == coupler2.DistanceWithTargetAdr)
+            //{
+            //    result = 0;
+            //}
+            //else
+            //{
+            //    if (coupler1.Priority > coupler2.Priority)
+            //    {
+            //        result = 1;
+            //    }
+            //    else if (coupler1.Priority < coupler2.Priority)
+            //    {
+            //        result = -1;
+            //    }
+            //    else if (coupler1.Priority == coupler2.Priority && coupler1.DistanceWithTargetAdr > coupler2.DistanceWithTargetAdr)
+            //    {
+            //        result = 1;
+            //    }
+            //    else
+            //    {
+            //        result = -1;
+            //    }
+            //}
+            //return result;
         }
-
 
         public void CouplerTimingCheck()
         {
