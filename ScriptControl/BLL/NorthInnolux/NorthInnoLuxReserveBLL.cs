@@ -310,8 +310,9 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                 if (reserveInfos == null || reserveInfos.Count == 0) return (false, string.Empty, string.Empty, null);
 
+                //2022.7.12 TODO: 北群創不允許部分放行，不是全程都可以預約就要算成全部不過
                 var reserve_success_section = new RepeatedField<ReserveInfo>();
-                bool has_success = false;
+                bool has_success = true;
                 string final_blocked_vh_id = string.Empty;
                 string reserve_fail_section = "";
                 bool isFirst = true;
@@ -330,7 +331,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
                            Data: $"vh:{vhID} Try add reserve enhance section:{reserve_section_id} fail. reserved vh id:{reserve_enhance_check_result.reservedVhID}",
                            VehicleID: vhID);
-                        has_success |= false;
+                        has_success &= false;
                         final_blocked_vh_id = reserve_enhance_check_result.reservedVhID;
                         reserve_fail_section = reserve_section_id;
 
@@ -383,16 +384,21 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                     isFirst = false;
 
-                    if (result.OK|| already_pass)
+                    if (result.OK || already_pass)
                     {
                         reserve_success_section.Add(reserve_info);
-                        has_success |= true;
+                        has_success &= true;
                     }
                     else
                     {
-                        has_success |= false;
+                        has_success &= false;
                         final_blocked_vh_id = result.VehicleID;
                         reserve_fail_section = reserve_section_id;
+                        //中途失敗，放掉所有這次已預約成功的路段
+                        foreach (var giveupSection in reserve_success_section)
+                        {
+                            mapAPI.RemoveManyReservedSectionsByVIDSID(hltvh.ID, giveupSection.ReserveSectionID);
+                        }
                         break;
                     }
                 }

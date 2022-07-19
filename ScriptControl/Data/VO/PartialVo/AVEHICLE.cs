@@ -473,6 +473,9 @@ namespace com.mirle.ibg3k0.sc
 
         public virtual List<string> WillPassSectionID { get; set; }
         public virtual List<string> WillPassAddressID { get; set; }
+        public virtual List<string> RedundantSectionIdForCross { get; set; }
+        public virtual string WayOutSectionIdForCross { get; set; }
+        public bool IsCrossing => !string.IsNullOrEmpty(WayOutSectionIdForCross);
 
         private int procprogress_percen;
         [JsonIgnore]

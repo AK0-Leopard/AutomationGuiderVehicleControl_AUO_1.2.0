@@ -1937,6 +1937,22 @@ namespace com.mirle.ibg3k0.sc.BLL
                             //scApp.VehicleService.doAbortCommand(will_bumped_vh, will_bumped_vh.OHTC_CMD, CMDCancelType.CmdEms);
                         }
                     }
+                    else
+                    {
+                        //2022.7.13 過彎完成後放掉多預約的反折段
+                        if (vh.IsCrossing)
+                        {
+                            if (current_sec_id.Equals(vh.WayOutSectionIdForCross))
+                            {
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: Service.VehicleService.DEVICE_NAME_AGV,
+                                    Data: $"Vehicle reached section {vh.WayOutSectionIdForCross}. Release sections after cross.",
+                                    VehicleID: vh.VEHICLE_ID,
+                                    CarrierID: vh.CST_ID);
+                                foreach (var sec in vh.RedundantSectionIdForCross)
+                                    scApp.ReserveBLL.RemoveManyReservedSectionsByVIDSID(vhID, sec);
+                            }
+                        }
+                    }
                 }
                 ALINE line = scApp.getEQObjCacheManager().getLine();
                 if (line.ServiceMode == SCAppConstants.AppServiceMode.Active)
