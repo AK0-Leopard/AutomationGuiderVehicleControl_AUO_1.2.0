@@ -124,6 +124,9 @@ namespace com.mirle.ibg3k0.sc.BLL
             //int.TryParse(sectionID, out sec_id);
             string sec_id = SCUtility.Trim(sectionID);
             mapAPI.RemoveManyReservedSectionsByVIDSID(vhID, sec_id);
+            LogHelper.Log(logger: logger, LogLevel: NLog.LogLevel.Debug, Class: nameof(ReserveBLL), Device: "AGV",
+                Data: $"RemoveManyReservedSectionsByVIDSID. vh:{vhID},section ID:{sec_id}",
+                VehicleID: vhID);
             onReserveStatusChange();
         }
 
@@ -200,7 +203,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 //在R2000的路段上，預約方向要帶入
                 if (IsR2000Section(reserveSectionID))
                 {
-                    return Mirle.Hlts.Utils.HltDirection.NS;
+                    return Mirle.Hlts.Utils.HltDirection.NorthSouth;
                 }
                 else
                 {

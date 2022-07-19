@@ -174,7 +174,7 @@
       <HintPath>..\ScriptControl\DLL\M2Mqtt.Net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Mirle.Hlts.Utils, Version=1.0.7292.26460, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Mirle.Hlts.Utils, Version=1.0.7342.18198, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ScriptControl\DLL\Mirle.Hlts.Utils.dll</HintPath>
     </Reference>

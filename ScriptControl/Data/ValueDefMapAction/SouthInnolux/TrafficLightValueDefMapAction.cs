@@ -93,7 +93,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         private void addVirtualVehicle()
         {
             scApp.ReserveBLL.TryAddVehicleOrUpdate(eqpt.EQPT_ID, "", 99999, 99999,0, 0,
-        sensorDir: Mirle.Hlts.Utils.HltDirection.NS,
+        sensorDir: Mirle.Hlts.Utils.HltDirection.NorthSouth,
           forkDir: Mirle.Hlts.Utils.HltDirection.None);
         }
         private void initTrafficLight()

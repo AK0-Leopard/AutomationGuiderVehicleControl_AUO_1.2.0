@@ -516,7 +516,7 @@ namespace com.mirle.ibg3k0.sc.Service
         public void addVirtualVehicle()
         {
             scApp.ReserveBLL.TryAddVehicleOrUpdate("trafficlight_v_car", "", 99999, 99999, 0, 0,
-        sensorDir: Mirle.Hlts.Utils.HltDirection.NS,
+        sensorDir: Mirle.Hlts.Utils.HltDirection.NorthSouth,
           forkDir: Mirle.Hlts.Utils.HltDirection.None);
         }
         #endregion Trafficlight Control

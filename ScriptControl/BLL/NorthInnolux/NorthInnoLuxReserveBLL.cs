@@ -8,6 +8,10 @@ using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using Google.Protobuf.Collections;
 using NLog;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using System.Globalization;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
@@ -48,6 +52,9 @@ namespace com.mirle.ibg3k0.sc.BLL
         public override void start(SCApplication _app)
         {
             mapAPI = _app.getReserveSectionAPI();
+
+            mapAPI.HltReservedSections.CollectionChanged += onCollecionChangedEvent;
+            mapAPI.HltVehicles.CollectionChanged += onCollecionChangedEvent;
         }
 
         public override bool DrawAllReserveSectionInfo()
@@ -118,14 +125,14 @@ namespace com.mirle.ibg3k0.sc.BLL
                Data: $"add vh in reserve system: vh:{vhID},x:{vehicleX},y:{vehicleY},angle:{vehicleAngle},speedMmPerSecond:{speedMmPerSecond},sensorDir:{sensorDir},forkDir:{forkDir}",
                VehicleID: vhID);
             //HltResult result = mapAPI.TryAddVehicleOrUpdate(vhID, vehicleX, vehicleY, vehicleAngle, sensorDir, forkDir);
-            var hlt_vh = new HltVehicle(vhID, vehicleX, vehicleY, vehicleAngle, speedMmPerSecond, sensorDirection: sensorDir, forkDirection: forkDir);
+            var hlt_vh = new HltVehicle(vhID, vehicleX, vehicleY, vehicleAngle, speedMmPerSecond, sensorDirection: sensorDir, forkDirection: forkDir, currentSectionID: currentSectionID);
             HltResult result = mapAPI.TryAddOrUpdateVehicle(hlt_vh);
-            //mapAPI.KeepRestSection(hlt_vh, currentSectionID);
+            mapAPI.KeepRestSection(hlt_vh);
             onReserveStatusChange();
 
             return result;
         }
-        public override HltResult TryAddVehicleOrUpdate(string vhID, string adrID, float angle = 0, Mirle.Hlts.Utils.HltDirection direction = HltDirection.NESW)
+        public override HltResult TryAddVehicleOrUpdate(string vhID, string adrID, float angle = 0, Mirle.Hlts.Utils.HltDirection direction = HltDirection.FRLR)
         {
             var adr_obj = mapAPI.GetAddressObjectByID(adrID);
             var hlt_vh = new HltVehicle(vhID, adr_obj.X, adr_obj.Y, angle, sensorDirection: direction);
@@ -146,6 +153,9 @@ namespace com.mirle.ibg3k0.sc.BLL
             //int.TryParse(sectionID, out sec_id);
             string sec_id = SCUtility.Trim(sectionID);
             mapAPI.RemoveManyReservedSectionsByVIDSID(vhID, sec_id);
+            LogHelper.Log(logger: logger, LogLevel: NLog.LogLevel.Debug, Class: nameof(ReserveBLL), Device: "AGV",
+                Data: $"RemoveManyReservedSectionsByVIDSID. vh:{vhID},section ID:{sec_id}",
+                VehicleID: vhID);
             onReserveStatusChange();
         }
 
@@ -418,26 +428,27 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         public override HltDirection DecideReserveDirection(SectionBLL sectionBLL, AVEHICLE reserveVh, string reserveSectionID)
         {
-            //先取得目前vh所在的current adr，如果這次要求的Reserve Sec是該Current address連接的其中一點時
-            //就不用增加Secsor預約的範圍，預防發生車子預約不到本身路段的問題
-            string cur_adr = reserveVh.CUR_ADR_ID;
-            var related_sections_id = sectionBLL.cache.GetSectionsByAddress(cur_adr).Select(sec => sec.SEC_ID.Trim()).ToList();
-            if (related_sections_id.Contains(reserveSectionID))
-            {
-                return Mirle.Hlts.Utils.HltDirection.None;
-            }
-            else
-            {
-                //在R2000的路段上，預約方向要帶入
-                if (IsR2000Section(reserveSectionID))
-                {
-                    return Mirle.Hlts.Utils.HltDirection.NS;
-                }
-                else
-                {
-                    return Mirle.Hlts.Utils.HltDirection.NESW;
-                }
-            }
+            ////先取得目前vh所在的current adr，如果這次要求的Reserve Sec是該Current address連接的其中一點時
+            ////就不用增加Secsor預約的範圍，預防發生車子預約不到本身路段的問題
+            //string cur_adr = reserveVh.CUR_ADR_ID;
+            //var related_sections_id = sectionBLL.cache.GetSectionsByAddress(cur_adr).Select(sec => sec.SEC_ID.Trim()).ToList();
+            //if (related_sections_id.Contains(reserveSectionID))
+            //{
+            //    return Mirle.Hlts.Utils.HltDirection.None;
+            //}
+            //else
+            //{
+            //    //在R2000的路段上，預約方向要帶入
+            //    if (IsR2000Section(reserveSectionID))
+            //    {
+            //        return Mirle.Hlts.Utils.HltDirection.NorthSouth;
+            //    }
+            //    else
+            //    {
+            //        return Mirle.Hlts.Utils.HltDirection.NESW;
+            //    }
+            //}
+            return HltDirection.Forward;
         }
 
         public override bool IsR2000Address(string adrID)
@@ -458,6 +469,54 @@ namespace com.mirle.ibg3k0.sc.BLL
             Horizontal,
             Vertical,
             R2000
+        }
+
+
+        class ReservedVehicleData
+        {
+            //public string VehicleID { get; set; }
+            public double X { get; set; }
+            public double Y { get; set; }
+            public double Angle { get; set; }
+            public List<string> Sections { get; set; }
+        }
+
+        protected void onCollecionChangedEvent(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            Dictionary<string, ReservedVehicleData> reservedSections = new Dictionary<string, ReservedVehicleData>();
+            foreach (var vehicle in mapAPI.HltVehicles)
+            {
+                var vehicleData = new ReservedVehicleData()
+                {
+                    X = vehicle.X,
+                    Y = vehicle.Y,
+                    Angle = vehicle.Angle,
+                    Sections = new List<string>()
+                };
+                reservedSections.Add(vehicle.ID, vehicleData);
+            }
+            foreach (HltReservedSection result in mapAPI.HltReservedSections)
+            {
+                reservedSections[result.RSVehicleID].Sections.Add(result.RSMapSectionID);
+            }
+
+            Task.Run(() =>
+            {
+                JObject logEntry = new JObject();
+                logEntry.Add("ReportTime", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz", CultureInfo.InvariantCulture));
+                foreach (var reserveData in reservedSections)
+                {
+                    JObject logData = new JObject();
+                    logData.Add("VehicleX", reserveData.Value.X);
+                    logData.Add("VehicleY", reserveData.Value.Y);
+                    logData.Add("VehicleTheta", reserveData.Value.Angle);
+                    logData.Add("ReservedSection", new JArray(reserveData.Value.Sections.ToArray()));
+                    logEntry.Add($"{reserveData.Key}", logData);
+                }
+                logEntry.Add("Index", "ReserveSectionInfo");
+                var json = logEntry.ToString(Newtonsoft.Json.Formatting.None);
+                LogManager.GetLogger("ReserveSectionInfo").Info(json);
+            });
         }
     }
     public class ReserveCheckResult

@@ -1881,6 +1881,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             string last_adr_id = vh.CUR_ADR_ID;
             string last_sec_id = vh.CUR_SEC_ID;
             string last_seg_id = vh.CUR_SEG_ID;
+            string reserveModuleSecID = SCUtility.isEmpty(current_sec_id) ? last_sec_id : current_sec_id;
 
             uint sec_dis = report_obj.SecDistance;
 
@@ -1902,10 +1903,10 @@ namespace com.mirle.ibg3k0.sc.BLL
                 //if (!SCUtility.isMatche(current_adr_id, last_adr_id))
                 {
                     var sensor_dir = decideReserveDirection(vh_angle);
-                    //var update_result = updateVheiclePositionToReserveControlModule(scApp.ReserveBLL, vh, x_axis, y_axis, dir_angle, vh_angle, speed,
-                    //                                                                Mirle.Hlts.Utils.HltDirection.NESW, Mirle.Hlts.Utils.HltDirection.None);
-                    var update_result = updateVheiclePositionToReserveControlModule(scApp.ReserveBLL, vh, current_sec_id, x_axis, y_axis, dir_angle, vh_angle, speed,
-                                                                                    sensor_dir, Mirle.Hlts.Utils.HltDirection.None);
+                    //var update_result = updateVheiclePositionToReserveControlModule(scApp.ReserveBLL, vh, current_sec_id, x_axis, y_axis, dir_angle, vh_angle, speed,
+                    //                                                                sensor_dir, Mirle.Hlts.Utils.HltDirection.None);
+                    var update_result = updateVheiclePositionToReserveControlModule(scApp.ReserveBLL, vh, reserveModuleSecID, x_axis, y_axis, dir_angle, vh_angle, speed,
+                                                                sensor_dir, Mirle.Hlts.Utils.HltDirection.None);
                     if (!update_result.OK)
                     {
                         string message = $"The vehicles bumped, vh:{vh.VEHICLE_ID} with vh:{update_result.VehicleID}";

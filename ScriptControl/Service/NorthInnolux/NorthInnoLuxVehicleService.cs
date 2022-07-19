@@ -2666,7 +2666,7 @@ namespace com.mirle.ibg3k0.sc.Service
             List<string> crossSections = new List<string>();
             string afterCrossingSectionID = string.Empty;
             int i = 0, j = 0;
-            //while ((i < eqpt.WillPassSectionID.Count) && (eqpt.WillPassSectionID[i] != reserveInfos[j].ReserveSectionID)) i++;
+            while ((i < eqpt.WillPassSectionID.Count) && (eqpt.WillPassSectionID[i] != reserveInfos[j].ReserveSectionID)) i++;
             //while ((i < eqpt.WillPassSectionID.Count) && (j < reserveInfos.Count)
             //    && (eqpt.WillPassSectionID[i] == reserveInfos[j].ReserveSectionID))
             //{
@@ -2681,12 +2681,22 @@ namespace com.mirle.ibg3k0.sc.Service
             //}
             //if (crossSections.Count > 0)
             //    afterCrossingSectionID = reserveInfos[j].ReserveSectionID;
+            if (i < eqpt.WillPassSectionID.Count)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                    Data: $"WillPassSectionID: {string.Join(",", eqpt.WillPassSectionID)}, startIndex: {i}, startSection: {eqpt.WillPassSectionID[i]}",
+                    VehicleID: eqpt.VEHICLE_ID,
+                    CarrierID: eqpt.CST_ID);
+            }
             while ((i < eqpt.WillPassSectionID.Count) && (j < reserveInfos.Count))
             {
                 if (eqpt.WillPassSectionID[i].Equals(reserveInfos[j].ReserveSectionID))
                 {
                     if (crossSections.Count > 0)
+                    {
                         afterCrossingSectionID = reserveInfos[j].ReserveSectionID;
+                        break;
+                    }
                     else
                         i++;
                 }
@@ -2695,6 +2705,13 @@ namespace com.mirle.ibg3k0.sc.Service
                     crossSections.Add(reserveInfos[j].ReserveSectionID);
                 }
                 j++;
+            }
+            if (j < reserveInfos.Count)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                    Data: $"WillPassSectionID: {string.Join(",", eqpt.WillPassSectionID)}, endIndex: {j}, endSection: {afterCrossingSectionID}",
+                    VehicleID: eqpt.VEHICLE_ID,
+                    CarrierID: eqpt.CST_ID);
             }
 
             lock (reserve_lock)
@@ -2826,7 +2843,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 //在R2000的路段上，預約方向要帶入
                 if (scApp.ReserveBLL.IsR2000Section(reserveSectionID))
                 {
-                    return Mirle.Hlts.Utils.HltDirection.NS;
+                    return Mirle.Hlts.Utils.HltDirection.NorthSouth;
                 }
                 else
                 {
@@ -3184,7 +3201,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 //    sensorDir: Mirle.Hlts.Utils.HltDirection.NESW,
                 //      forkDir: Mirle.Hlts.Utils.HltDirection.None);
                 scApp.ReserveBLL.TryAddVehicleOrUpdate(virtual_vh_id, "", hlt_vh_obj.X, hlt_vh_obj.Y, hlt_vh_obj.Angle, 0,
-    sensorDir: Mirle.Hlts.Utils.HltDirection.NS,
+    sensorDir: Mirle.Hlts.Utils.HltDirection.NorthSouth,
       forkDir: Mirle.Hlts.Utils.HltDirection.None);
                 virtual_vh_ids.Add(virtual_vh_id);
                 do

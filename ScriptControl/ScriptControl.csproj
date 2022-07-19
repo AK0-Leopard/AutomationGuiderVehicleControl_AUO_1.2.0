@@ -148,15 +148,15 @@
     <Reference Include="M2Mqtt.Net">
       <HintPath>DLL\M2Mqtt.Net.dll</HintPath>
     </Reference>
-    <Reference Include="Mirle.Hlts.ReserveSection.Map, Version=1.0.7292.27279, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Mirle.Hlts.ReserveSection.Map, Version=1.0.8062.24914, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLL\Mirle.Hlts.ReserveSection.Map.dll</HintPath>
     </Reference>
-    <Reference Include="Mirle.Hlts.ReserveSection.Vision, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+    <Reference Include="Mirle.Hlts.ReserveSection.Vision, Version=1.0.8062.24751, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLL\Mirle.Hlts.ReserveSection.Vision.dll</HintPath>
     </Reference>
-    <Reference Include="Mirle.Hlts.Utils, Version=1.0.7292.26460, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Mirle.Hlts.Utils, Version=1.0.8062.24746, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLL\Mirle.Hlts.Utils.dll</HintPath>
     </Reference>

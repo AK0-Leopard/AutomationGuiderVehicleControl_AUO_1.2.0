@@ -2520,7 +2520,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 //在R2000的路段上，預約方向要帶入
                 if (scApp.ReserveBLL.IsR2000Section(reserveSectionID))
                 {
-                    return Mirle.Hlts.Utils.HltDirection.NS;
+                    return Mirle.Hlts.Utils.HltDirection.NorthSouth;
                 }
                 else
                 {
