@@ -2662,25 +2662,11 @@ namespace com.mirle.ibg3k0.sc.Service
                VehicleID: eqpt.VEHICLE_ID,
                CarrierID: eqpt.CST_ID);
 
-            //2022.7.12 TODO: 辨認為了反折過彎多要的路權
+            //2022.7.12 辨認為了反折過彎多要的路權
             List<string> crossSections = new List<string>();
             string afterCrossingSectionID = string.Empty;
             int i = 0, j = 0;
             while ((i < eqpt.WillPassSectionID.Count) && (eqpt.WillPassSectionID[i] != reserveInfos[j].ReserveSectionID)) i++;
-            //while ((i < eqpt.WillPassSectionID.Count) && (j < reserveInfos.Count)
-            //    && (eqpt.WillPassSectionID[i] == reserveInfos[j].ReserveSectionID))
-            //{
-            //    i++;
-            //    j++;
-            //}
-            //while ((j < reserveInfos.Count)
-            //    && (eqpt.WillPassSectionID[i] != reserveInfos[j].ReserveSectionID))
-            //{
-            //    crossSections.Add(reserveInfos[j].ReserveSectionID);
-            //    j++;
-            //}
-            //if (crossSections.Count > 0)
-            //    afterCrossingSectionID = reserveInfos[j].ReserveSectionID;
             if (i < eqpt.WillPassSectionID.Count)
             {
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
@@ -2713,6 +2699,15 @@ namespace com.mirle.ibg3k0.sc.Service
                     VehicleID: eqpt.VEHICLE_ID,
                     CarrierID: eqpt.CST_ID);
             }
+            AVEHICLE.RedundantSectionData redundantData = null;
+            if (crossSections.Count > 0)
+            {
+                redundantData = new AVEHICLE.RedundantSectionData()
+                {
+                    RedundantSectionIds = crossSections,
+                    WayOutSectionIdForCross = afterCrossingSectionID,
+                };
+            }
 
             lock (reserve_lock)
             {
@@ -2727,8 +2722,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     //    //Task. scApp.getCommObjCacheManager().sectionReserveAtFireDoorArea(reserveInfo.Value);
                     //    Task.Run(() => scApp.getCommObjCacheManager().sectionReserveAtFireDoorArea(ReserveResult.reservedSecID));
                     //}
-                    eqpt.RedundantSectionIdForCross = crossSections;
-                    eqpt.WayOutSectionIdForCross = afterCrossingSectionID;
+                    if (redundantData != null)
+                        eqpt.RedundantSections.Add(redundantData);
                     if (eqpt.IsCrossing)
                     {
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
@@ -3821,7 +3816,8 @@ namespace com.mirle.ibg3k0.sc.Service
             //tryReleaseReservedControl(vh_id, cur_sec_id);
             string start_adr = vh.startAdr;
             scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(vh.VEHICLE_ID);
-            if(completeStatus != CompleteStatus.CmpStatusIdmisMatch&& completeStatus != CompleteStatus.CmpStatusIdreadFailed)
+            vh.RedundantSections.Clear();
+            if (completeStatus != CompleteStatus.CmpStatusIdmisMatch&& completeStatus != CompleteStatus.CmpStatusIdreadFailed)
             {
                 using (TransactionScope tx = SCUtility.getTransactionScope())
                 {

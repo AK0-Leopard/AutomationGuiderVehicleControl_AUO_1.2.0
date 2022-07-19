@@ -471,11 +471,18 @@ namespace com.mirle.ibg3k0.sc
             }
         }
 
+        public class RedundantSectionData
+        {
+            public List<string> RedundantSectionIds;
+            public string WayOutSectionIdForCross;
+        }
         public virtual List<string> WillPassSectionID { get; set; }
         public virtual List<string> WillPassAddressID { get; set; }
-        public virtual List<string> RedundantSectionIdForCross { get; set; }
-        public virtual string WayOutSectionIdForCross { get; set; }
-        public bool IsCrossing => !string.IsNullOrEmpty(WayOutSectionIdForCross);
+        //public virtual List<string> RedundantSectionIdForCross { get; set; }
+        //public virtual string WayOutSectionIdForCross { get; set; }
+        //public bool IsCrossing => !string.IsNullOrEmpty(WayOutSectionIdForCross);
+        public virtual List<RedundantSectionData> RedundantSections { get; set; } = new List<RedundantSectionData>();
+        public bool IsCrossing => RedundantSections != null && RedundantSections.Count > 0;
 
         private int procprogress_percen;
         [JsonIgnore]

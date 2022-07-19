@@ -1943,15 +1943,35 @@ namespace com.mirle.ibg3k0.sc.BLL
                         //2022.7.13 過彎完成後放掉多預約的反折段
                         if (vh.IsCrossing)
                         {
-                            if (current_sec_id.Equals(vh.WayOutSectionIdForCross))
+                            //foreach (var secData in vh.RedundantSections)
+                            //{
+                            //    if (current_sec_id.Equals(secData.WayOutSectionIdForCross))
+                            //    {
+                            //        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: Service.VehicleService.DEVICE_NAME_AGV,
+                            //            Data: $"Vehicle reached section {secData.WayOutSectionIdForCross}. Release sections after cross.",
+                            //            VehicleID: vh.VEHICLE_ID,
+                            //            CarrierID: vh.CST_ID);
+                            //        foreach (var sec in secData.RedundantSectionIds)
+                            //            scApp.ReserveBLL.RemoveManyReservedSectionsByVIDSID(vhID, sec);
+                            //    }
+                            //}
+                            int index = 0;
+                            while (index < vh.RedundantSections.Count)
                             {
-                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: Service.VehicleService.DEVICE_NAME_AGV,
-                                    Data: $"Vehicle reached section {vh.WayOutSectionIdForCross}. Release sections after cross.",
-                                    VehicleID: vh.VEHICLE_ID,
-                                    CarrierID: vh.CST_ID);
-                                foreach (var sec in vh.RedundantSectionIdForCross)
-                                    scApp.ReserveBLL.RemoveManyReservedSectionsByVIDSID(vhID, sec);
+                                if (current_sec_id.Equals(vh.RedundantSections[index].WayOutSectionIdForCross))
+                                {
+                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: Service.VehicleService.DEVICE_NAME_AGV,
+                                        Data: $"Vehicle reached section {vh.RedundantSections[index].WayOutSectionIdForCross}. Release sections after cross.",
+                                        VehicleID: vh.VEHICLE_ID,
+                                        CarrierID: vh.CST_ID);
+                                    foreach (var sec in vh.RedundantSections[index].RedundantSectionIds)
+                                        scApp.ReserveBLL.RemoveManyReservedSectionsByVIDSID(vhID, sec);
+                                    break;
+                                }
+                                index++;
                             }
+                            if (index < vh.RedundantSections.Count)
+                                vh.RedundantSections.RemoveAt(index);
                         }
                     }
                 }
