@@ -17,6 +17,7 @@ using System;
 
 namespace com.mirle.ibg3k0.sc.Data.TimerAction
 {
+
     public class TransferCommandTimerAction : ITimerAction
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();

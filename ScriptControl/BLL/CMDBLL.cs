@@ -1,6 +1,7 @@
 ﻿using com.mirle.ibg3k0.bcf.App;
 using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.Common;
+using com.mirle.ibg3k0.sc.Common.AOP;
 using com.mirle.ibg3k0.sc.Data;
 using com.mirle.ibg3k0.sc.Data.DAO;
 using com.mirle.ibg3k0.sc.Data.DAO.EntityFramework;
@@ -19,6 +20,7 @@ using System.Transactions;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
+    [TeaceMethodAspect]
     public class CMDBLL
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();

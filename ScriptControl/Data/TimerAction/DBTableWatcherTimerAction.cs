@@ -14,6 +14,7 @@
 using com.mirle.ibg3k0.bcf.Data.TimerAction;
 using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.BLL;
+using com.mirle.ibg3k0.sc.Common.AOP;
 using NLog;
 
 namespace com.mirle.ibg3k0.sc.Data.TimerAction
@@ -22,6 +23,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
     /// Class TraceDataReportTimer.
     /// </summary>
     /// <seealso cref="com.mirle.ibg3k0.bcf.Data.TimerAction.ITimerAction" />
+    [TeaceMethodAspect]
     public class DBTableWatcherTimerAction : ITimerAction
     {
         /// <summary>

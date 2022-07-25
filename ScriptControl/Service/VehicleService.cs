@@ -18,6 +18,7 @@ using com.mirle.ibg3k0.bcf.Common;
 using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.BLL;
 using com.mirle.ibg3k0.sc.Common;
+using com.mirle.ibg3k0.sc.Common.AOP;
 using com.mirle.ibg3k0.sc.Data;
 using com.mirle.ibg3k0.sc.Data.PLC_Functions;
 using com.mirle.ibg3k0.sc.Data.VO;
@@ -54,7 +55,7 @@ namespace com.mirle.ibg3k0.sc.Service
             Vehicle2 = vehicle2;
         }
     }
-
+    [TeaceMethodAspect]
     public class VehicleService : IDynamicMetaObjectProvider
     {
         public DynamicMetaObject GetMetaObject(Expression parameter)
@@ -2368,7 +2369,6 @@ namespace com.mirle.ibg3k0.sc.Service
         #endregion Send Message To Vehicle
 
         #region Position Report
-        [ClassAOPAspect]
         public void PositionReport(BCFApplication bcfApp, AVEHICLE vh, ID_134_TRANS_EVENT_REP receiveStr)
         {
             if (scApp.getEQObjCacheManager().getLine().ServerPreStop)
@@ -2410,7 +2410,6 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         #endregion Position Report
         #region Transfer Report
-        [ClassAOPAspect]
         public virtual void TranEventReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_136_TRANS_EVENT_REP recive_str, int seq_num)
         {
             if (scApp.getEQObjCacheManager().getLine().ServerPreStop)
@@ -4104,7 +4103,6 @@ namespace com.mirle.ibg3k0.sc.Service
             scApp.VehicleBLL.cache.SetReservePause(vhID, is_reserve_stop ? VhStopSingle.StopSingleOn : VhStopSingle.StopSingleOff);
             //vh.NotifyVhStatusChange();
         }
-        [ClassAOPAspect]
         public virtual void StatusReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_144_STATUS_CHANGE_REP recive_str, int seq_num)
         {
             if (scApp.getEQObjCacheManager().getLine().ServerPreStop)
@@ -4239,7 +4237,6 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         #endregion Status Report
         #region Command Complete Report
-        [ClassAOPAspect]
         public virtual void CommandCompleteReport(string tcpipAgentName, BCFApplication bcfApp, AVEHICLE vh, ID_132_TRANS_COMPLETE_REPORT recive_str, int seq_num)
         {
             if (scApp.getEQObjCacheManager().getLine().ServerPreStop)
@@ -4649,7 +4646,6 @@ namespace com.mirle.ibg3k0.sc.Service
         #endregion Command Complete Report
         #region Alarm
 
-        [ClassAOPAspect]
         public void AlarmReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_194_ALARM_REPORT recive_str, int seq_num)
         {
             //LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
@@ -4806,7 +4802,6 @@ namespace com.mirle.ibg3k0.sc.Service
         #endregion Alarm
 
         #region Range Teach
-        [ClassAOPAspect]
         public void RangeTeachingCompleteReport(string tcpipAgentName, BCFApplication bcfApp, AVEHICLE eqpt, ID_172_RANGE_TEACHING_COMPLETE_REPORT recive_str, int seq_num)
         {
             ID_72_RANGE_TEACHING_COMPLETE_RESPONSE response = null;
@@ -4926,7 +4921,6 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         #endregion Vehicle Change The Path
         #region Vh connection / disconnention
-        [ClassAOPAspect]
         public void Connection(BCFApplication bcfApp, AVEHICLE vh)
         {
             //scApp.getEQObjCacheManager().refreshVh(eqpt.VEHICLE_ID);
@@ -4949,7 +4943,6 @@ namespace com.mirle.ibg3k0.sc.Service
                 SCAppConstants.RecodeConnectionInfo_Type.Connection.ToString(),
                 vh.getDisconnectionIntervalTime(bcfApp));
         }
-        [ClassAOPAspect]
         public void Disconnection(BCFApplication bcfApp, AVEHICLE vh)
         {
             vh.isTcpIpConnect = false;

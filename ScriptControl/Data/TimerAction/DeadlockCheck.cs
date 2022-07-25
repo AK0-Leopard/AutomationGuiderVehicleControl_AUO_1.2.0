@@ -12,6 +12,7 @@
 using com.mirle.ibg3k0.bcf.Data.TimerAction;
 using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.Common;
+using com.mirle.ibg3k0.sc.Common.AOP;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -193,6 +194,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
         //        }
         //    }
         //}
+        [TeaceMethodAspect]
         public override void doProcess(object obj)
         {
             if (!SystemParameter.AutoOverride)

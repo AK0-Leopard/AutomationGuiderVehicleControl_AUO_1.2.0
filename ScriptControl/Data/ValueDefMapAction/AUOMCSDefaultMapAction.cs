@@ -21,6 +21,7 @@ using com.mirle.ibg3k0.bcf.Data.VO;
 using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.BLL;
 using com.mirle.ibg3k0.sc.Common;
+using com.mirle.ibg3k0.sc.Common.AOP;
 using com.mirle.ibg3k0.sc.Data.SECS.AGVC;
 using com.mirle.ibg3k0.sc.Data.SECSDriver;
 using com.mirle.ibg3k0.sc.Data.VO;
@@ -35,6 +36,7 @@ using System.Transactions;
 
 namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 {
+    [TeaceMethodAspect]
     public class AUOMCSDefaultMapAction : IBSEMDriver, IValueDefMapAction
     {
         const string DEVICE_NAME_MCS = "MCS";

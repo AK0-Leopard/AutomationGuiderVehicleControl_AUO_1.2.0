@@ -5,9 +5,11 @@ using System;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using com.mirle.ibg3k0.sc.Common.AOP;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
+    [TeaceMethodAspect]
     public class ReserveBLL
     {
         NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
