@@ -4543,7 +4543,24 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 for (int j = 0; j < oneDirectPaths[i].Count; j++)
                 {
-                    oneDirectPathDic.Add(oneDirectPaths[i][j].SEC_ID, oneDirectPaths[i]);
+                    if (oneDirectPathDic.ContainsKey(oneDirectPaths[i][j].SEC_ID))
+                    {
+                        var newData = new List<ASECTION>(oneDirectPathDic[oneDirectPaths[i][j].SEC_ID]);
+                        HashSet<string> traversed = new HashSet<string>(newData.Select(d => d.SEC_ID));
+                        foreach (var item in oneDirectPaths[i])
+                        {
+                            if (!traversed.Contains(item.SEC_ID))
+                            {
+                                newData.Add(item);
+                                traversed.Add(item.SEC_ID);
+                            }
+                        }
+                        oneDirectPathDic[oneDirectPaths[i][j].SEC_ID] = newData;
+                    }
+                    else
+                    {
+                        oneDirectPathDic.Add(oneDirectPaths[i][j].SEC_ID, oneDirectPaths[i]);
+                    }
                 }
             }
             scApp.getCommObjCacheManager().oneDirectPathList = oneDirectPaths;
