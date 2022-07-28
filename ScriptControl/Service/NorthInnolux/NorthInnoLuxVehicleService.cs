@@ -1223,7 +1223,7 @@ namespace com.mirle.ibg3k0.sc.Service
         /// </summary>
         object reserve_lock = new object();
         //public bool doSendOverrideCommandToVh(AVEHICLE assignVH, ACMD_OHTC cmd, string byPassAdr)
-        public bool trydoOverrideCommandToVh(AVEHICLE assignVH, ACMD_OHTC cmd, string byPassSection, bool isAvoidComplete = false)
+        public override bool trydoOverrideCommandToVh(AVEHICLE assignVH, ACMD_OHTC cmd, string byPassSection, bool isAvoidComplete = false)
         {
             bool isSuccess = false;
             try
@@ -1295,7 +1295,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             next_walk_address = guide_to_dest_address_ids[0];
                         }
 
-                        if (isSuccess && is_need_check_reserve_status)
+                        if (isSuccess /*&& is_need_check_reserve_status*/)
                         {
                             var reserve_result = askReserveSuccess(assignVH.VEHICLE_ID, next_walk_section, next_walk_address);
                             if (reserve_result.isSuccess)
@@ -1362,7 +1362,6 @@ namespace com.mirle.ibg3k0.sc.Service
                                $" by pass section:{string.Join(",", need_by_pass_sec_ids)},clear all by pass section and then continue find override path.",
                                VehicleID: assignVH.VEHICLE_ID,
                                CarrierID: assignVH.CST_ID);
-
                         }
                         else
                         {
@@ -2163,6 +2162,10 @@ namespace com.mirle.ibg3k0.sc.Service
                                Data: $"Avoid success append vh:{vh_id} current section:{vh_current_section}.",
                                VehicleID: vh.VEHICLE_ID,
                                CarrierID: vh.CST_ID);
+
+                            //2022.7.28 避車時同步更新路徑cache(WillPassSectionInfo & RedundantSections)
+                            vh.RedundantSections.Clear();
+                            scApp.CMDBLL.setWillPassSectionInfo(vh_id, guide_section_ids);
                         }
                     }
                     else
@@ -2861,18 +2864,24 @@ namespace com.mirle.ibg3k0.sc.Service
         {
             Normal,
             VehicleInLongCharge,
-            VehicleInError
+            VehicleInError,
+            BlockingForCouplerSafety
         }
 
         private (bool is_can, CAN_NOT_AVOID_RESULT result) canCreatAvoidCommand(AVEHICLE reservedVh)
         {
-            if (reservedVh.ACT_STATUS == VHActionStatus.NoCommand &&
+            if (reservedVh is null)
+            {
+                //reservedVh為保護充電站用的假車，繞過去
+                return (false, CAN_NOT_AVOID_RESULT.BlockingForCouplerSafety);
+            }
+            else if (reservedVh.ACT_STATUS == VHActionStatus.NoCommand &&
                 reservedVh.IsOnCharge(scApp.AddressesBLL) &&
                 reservedVh.IsNeedToLongCharge())
             {
                 return (false, CAN_NOT_AVOID_RESULT.VehicleInLongCharge);
             }
-            else if (reservedVh.IsError)
+            else if (!reservedVh.isTcpIpConnect || reservedVh.IsError || reservedVh.MODE_STATUS == VHModeStatus.Manual)
             {
                 return (false, CAN_NOT_AVOID_RESULT.VehicleInError);
             }
@@ -2885,7 +2894,6 @@ namespace com.mirle.ibg3k0.sc.Service
                        !scApp.CMDBLL.HasCMD_MCSInQueue();
                 return (is_can, CAN_NOT_AVOID_RESULT.Normal);
             }
-
         }
 
         private void tryNotifyVhAvoid_New(string requestVhID, string reservedVhID)
@@ -2956,9 +2964,9 @@ namespace com.mirle.ibg3k0.sc.Service
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                            Data: $"Try to notify vh avoid,requestVh:{requestVhID} reservedVh:{reservedVhID}," +
                                  $"but reservedVh:{reservedVhID} status not ready." +
-                                 $" isTcpIpConnect:{reserved_vh.isTcpIpConnect}" +
-                                 $" MODE_STATUS:{reserved_vh.MODE_STATUS}" +
-                                 $" ACT_STATUS:{reserved_vh.ACT_STATUS}" +
+                                 $" isTcpIpConnect:{reserved_vh?.isTcpIpConnect}" +
+                                 $" MODE_STATUS:{reserved_vh?.MODE_STATUS}" +
+                                 $" ACT_STATUS:{reserved_vh?.ACT_STATUS}" +
                                  $" result:{check_can_creat_avoid_command.result}",
                            VehicleID: requestVhID);
 
@@ -2966,6 +2974,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         {
                             case CAN_NOT_AVOID_RESULT.VehicleInError:
                             case CAN_NOT_AVOID_RESULT.VehicleInLongCharge:
+                            case CAN_NOT_AVOID_RESULT.BlockingForCouplerSafety:
                                 if (request_vh.IsReservePause)
                                 {
                                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,

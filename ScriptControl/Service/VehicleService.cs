@@ -1227,7 +1227,7 @@ namespace com.mirle.ibg3k0.sc.Service
         /// </summary>
         object reserve_lock = new object();
         //public bool doSendOverrideCommandToVh(AVEHICLE assignVH, ACMD_OHTC cmd, string byPassAdr)
-        public bool trydoOverrideCommandToVh(AVEHICLE assignVH, ACMD_OHTC cmd, string byPassSection, bool isAvoidComplete = false)
+        public virtual bool trydoOverrideCommandToVh(AVEHICLE assignVH, ACMD_OHTC cmd, string byPassSection, bool isAvoidComplete = false)
         {
             bool isSuccess = false;
             try

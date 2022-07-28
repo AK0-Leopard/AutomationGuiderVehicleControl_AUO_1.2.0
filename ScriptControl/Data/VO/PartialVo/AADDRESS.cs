@@ -20,6 +20,7 @@ namespace com.mirle.ibg3k0.sc
         private const int BIT_INDEX_COUPLER = 3;
         private const int BIT_INDEX_SECTION = 4;
         private const int BIT_INDEX_SEGMENT = 5;
+        private const int BIT_INDEX_CANNOT_AVOID = 6;
 
         public Boolean[] AddressTypeFlags { get; set; }
         public string[] SegmentIDs { get; set; }
@@ -97,8 +98,9 @@ namespace com.mirle.ibg3k0.sc
             {
                 if (SCApplication.getInstance().BC_ID == "NORTH_INNOLUX") //暫時都return ok
                 {
-                    return true;
+                    //return true;
                     //如果是該廠的話先一律回復True，因為是台中的Demo Site
+                    return !AddressTypeFlags[BIT_INDEX_CANNOT_AVOID];
                 }
                 else
                 {
