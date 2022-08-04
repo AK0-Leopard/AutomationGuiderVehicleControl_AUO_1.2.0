@@ -588,61 +588,62 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         public void insertMCSReport(List<AMCSREPORTQUEUE> mcsQueues)
         {
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            {
-                mcsReportQueueDao.AddByBatch(con, mcsQueues);
-            }
+            //using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            //{
+            //    mcsReportQueueDao.AddByBatch(con, mcsQueues);
+            //}
         }
 
         public void insertMCSReport(AMCSREPORTQUEUE mcs_queue)
         {
             //lock (mcs_report_lock_obj)
             //{
-            SCUtility.LockWithTimeout(mcs_report_lock_obj, SCAppConstants.LOCK_TIMEOUT_MS,
-                () =>
-                {
-                    //DBConnection_EF con = DBConnection_EF.GetContext();
-                    //using (DBConnection_EF con = new DBConnection_EF())
-                    using (DBConnection_EF con = DBConnection_EF.GetUContext())
-                    {
-                        mcsReportQueueDao.add(con, mcs_queue);
-                    }
-                });
+            //SCUtility.LockWithTimeout(mcs_report_lock_obj, SCAppConstants.LOCK_TIMEOUT_MS,
+            //    () =>
+            //    {
+            //        //DBConnection_EF con = DBConnection_EF.GetContext();
+            //        //using (DBConnection_EF con = new DBConnection_EF())
+            //        using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            //        {
+            //            mcsReportQueueDao.add(con, mcs_queue);
+            //        }
+            //    });
             //}
         }
         object mcs_report_lock_obj = new object();
 
         public bool updateMCSReportTime2Empty(AMCSREPORTQUEUE ReportQueue)
         {
-            bool isSuccess = false;
-            //DBConnection_EF con = DBConnection_EF.GetContext();
-            try
-            {
-                //using (DBConnection_EF con = new DBConnection_EF())
-                using (DBConnection_EF con = DBConnection_EF.GetUContext())
-                {
-                    //con.BeginTransaction();
-                    con.AMCSREPORTQUEUE.Attach(ReportQueue);
-                    ReportQueue.REPORT_TIME = null;
-                    con.Entry(ReportQueue).Property(p => p.REPORT_TIME).IsModified = true;
-                    mcsReportQueueDao.Update(con, ReportQueue);
-                    con.Entry(ReportQueue).State = System.Data.Entity.EntityState.Detached;
+            return true;
+            //bool isSuccess = false;
+            ////DBConnection_EF con = DBConnection_EF.GetContext();
+            //try
+            //{
+            //    //using (DBConnection_EF con = new DBConnection_EF())
+            //    using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            //    {
+            //        //con.BeginTransaction();
+            //        con.AMCSREPORTQUEUE.Attach(ReportQueue);
+            //        ReportQueue.REPORT_TIME = null;
+            //        con.Entry(ReportQueue).Property(p => p.REPORT_TIME).IsModified = true;
+            //        mcsReportQueueDao.Update(con, ReportQueue);
+            //        con.Entry(ReportQueue).State = System.Data.Entity.EntityState.Detached;
 
-                    //con.Commit();
-                }
-                isSuccess = true;
-            }
-            catch (Exception ex)
-            {
-                //if (con != null) { try { con.Rollback(); } catch (Exception ex_rollback) { logger.Error(ex_rollback, "Exception"); } }
-                logger.Error(ex, "Exception");
-                return isSuccess;
-            }
-            finally
-            {
-                //if (con != null) { try { con.Close(); } catch (Exception ex_close) { logger.Error(ex_close, "Exception"); } }
-            }
-            return isSuccess;
+            //        //con.Commit();
+            //    }
+            //    isSuccess = true;
+            //}
+            //catch (Exception ex)
+            //{
+            //    //if (con != null) { try { con.Rollback(); } catch (Exception ex_rollback) { logger.Error(ex_rollback, "Exception"); } }
+            //    logger.Error(ex, "Exception");
+            //    return isSuccess;
+            //}
+            //finally
+            //{
+            //    //if (con != null) { try { con.Close(); } catch (Exception ex_close) { logger.Error(ex_close, "Exception"); } }
+            //}
+            //return isSuccess;
         }
 
 
@@ -652,16 +653,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
 
 
-        public List<AMCSREPORTQUEUE> loadNonReportEvent()
-        {
-            List<AMCSREPORTQUEUE> AMCSREPORTQUEUEs;
-            using (DBConnection_EF con = DBConnection_EF.GetUContext())
-            {
-                AMCSREPORTQUEUEs = mcsReportQueueDao.loadByNonReport(con);
-            }
-
-            return AMCSREPORTQUEUEs;
-        }
+     
         #endregion MCS SXFY Report
 
 
