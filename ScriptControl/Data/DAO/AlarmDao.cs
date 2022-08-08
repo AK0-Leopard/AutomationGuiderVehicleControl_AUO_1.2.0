@@ -232,7 +232,20 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
             }
         }
 
-
+        public List<ALARM> loadBefore6Months(DBConnection_EF con)
+        {
+            DateTime before_6_months = DateTime.Now.AddMonths(-6);
+            var query = from queue in con.ALARM
+                        where queue.ALAM_STAT == ProtocolFormat.OHTMessage.ErrorStatus.ErrReset && queue.RPT_DATE_TIME < before_6_months
+                        select queue;
+            return query.ToList();
+        }
+        public void RemoveByBatch(DBConnection_EF con, List<ALARM> alarms)
+        {
+            alarms.ForEach(entity => con.Entry(entity).State = System.Data.Entity.EntityState.Deleted);
+            con.ALARM.RemoveRange(alarms);
+            con.SaveChanges();
+        }
 
     }
 }

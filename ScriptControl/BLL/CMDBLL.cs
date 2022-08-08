@@ -2928,6 +2928,23 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             return hcmds;
         }
+        public List<HCMD_MCS> loadHCMD_MCSBefore6Months()
+        {
+            List<HCMD_MCS> AMCSREPORTQUEUEs;
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                AMCSREPORTQUEUEs = hcmd_mcsDao.loadBefore6Months(con);
+            }
+            return AMCSREPORTQUEUEs;
+        }
+
+        public void RemoveHCMD_MCSByBatch(List<HCMD_MCS> hCmdMcs)
+        {
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                hcmd_mcsDao.RemoveByBatch(con, hCmdMcs);
+            }
+        }
         #endregion HCMD_MCS
         #region HCMD_OHTC
         public void CreatHCMD_OHTCs(List<HCMD_OHTC> HCMD_OHTC)
@@ -2958,7 +2975,23 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             return cmds;
         }
+        public List<HCMD_OHTC> loadHCMD_OHTCBefore6Months()
+        {
+            List<HCMD_OHTC> hcmd_ohtc;
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                hcmd_ohtc = hcmd_ohtcDao.loadBefore6Months(con);
+            }
+            return hcmd_ohtc;
+        }
 
+        public void RemoveHCMD_OHTCByBatch(List<HCMD_OHTC> hcmdOHTC)
+        {
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                hcmd_ohtcDao.RemoveByBatch(con, hcmdOHTC);
+            }
+        }
         #endregion HCMD_OHTC
 
 

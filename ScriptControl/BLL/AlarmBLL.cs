@@ -509,5 +509,22 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
         }
 
+        public List<ALARM> loadClearedAlarmBefore6Months()
+        {
+            List<ALARM> alarms;
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                alarms = alarmDao.loadBefore6Months(con);
+            }
+            return alarms;
+        }
+
+        public void RemoveOldClearedAlarmByBatch(List<ALARM> alarms)
+        {
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                alarmDao.RemoveByBatch(con, alarms);
+            }
+        }
     }
 }
