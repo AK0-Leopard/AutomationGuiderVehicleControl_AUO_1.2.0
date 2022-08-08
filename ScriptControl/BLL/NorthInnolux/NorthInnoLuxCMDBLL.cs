@@ -1193,7 +1193,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                                     if (v.VEHICLE_ID == "AGV01")
                                     {
                                         string park_adr = scApp.VehicleService.parkAdr1;
-                                        if (!string.IsNullOrWhiteSpace(park_adr))
+                                        if (!string.IsNullOrWhiteSpace(park_adr) && !SCUtility.isMatche(v.CUR_ADR_ID, park_adr))
                                         {
                                             doCreatTransferCommand(v.VEHICLE_ID, string.Empty, string.Empty,
                                               E_CMD_TYPE.Move,
@@ -1204,7 +1204,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                                     else if (v.VEHICLE_ID == "AGV02")
                                     {
                                         string park_adr = scApp.VehicleService.parkAdr2;
-                                        if (!string.IsNullOrWhiteSpace(park_adr))
+                                        if (!string.IsNullOrWhiteSpace(park_adr) && !SCUtility.isMatche(v.CUR_ADR_ID, park_adr))
                                         {
                                             doCreatTransferCommand(v.VEHICLE_ID, string.Empty, string.Empty,
                                               E_CMD_TYPE.Move,
