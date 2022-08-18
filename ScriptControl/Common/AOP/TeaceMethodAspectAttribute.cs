@@ -1,17 +1,9 @@
 ﻿using AspectInjector.Broker;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NLog;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace com.mirle.ibg3k0.sc.Common.AOP
 {
@@ -37,13 +29,15 @@ namespace com.mirle.ibg3k0.sc.Common.AOP
         {
             string name_full_name = tryGetNameSpace(methodBase);
             string thread_id = System.Threading.Thread.CurrentThread.ManagedThreadId.ToString();
-            logger.Debug($"{action},full name:[{name_full_name}], method name:[{name}] , thread id:[{thread_id}]");
+            string time = DateTime.Now.ToString(App.SCAppConstants.DateTimeFormat_22);
+            logger.Debug($"{time},{action},{name_full_name},{name},{thread_id}");
         }
         private void LogWarn(string action, string name, MethodBase methodBase, long processTime)
         {
             string name_full_name = tryGetNameSpace(methodBase);
             string thread_id = System.Threading.Thread.CurrentThread.ManagedThreadId.ToString();
-            logger.Warn($"{action},full name:[{name_full_name}], method name:[{name}] , thread id:[{thread_id}] ,process time:[{processTime}]");
+            string time = DateTime.Now.ToString(App.SCAppConstants.DateTimeFormat_22);
+            logger.Warn($"{time},{action},{name_full_name},{name},{thread_id},{processTime}");
         }
         private string tryGetNameSpace(MethodBase methodBase)
         {

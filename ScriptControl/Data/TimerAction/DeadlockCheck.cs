@@ -194,7 +194,6 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
         //        }
         //    }
         //}
-        [TeaceMethodAspect]
         public override void doProcess(object obj)
         {
             if (!SystemParameter.AutoOverride)
