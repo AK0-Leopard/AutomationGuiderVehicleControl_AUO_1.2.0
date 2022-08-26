@@ -21,6 +21,9 @@ namespace com.mirle.ibg3k0.sc
         private const int BIT_INDEX_SECTION = 4;
         private const int BIT_INDEX_SEGMENT = 5;
 
+        private const int ADR_TYPE_NUM_CAN_AVOID_ADR = 4;
+
+
         public Boolean[] AddressTypeFlags { get; set; }
         public string[] SegmentIDs { get; set; }
 
@@ -90,7 +93,7 @@ namespace com.mirle.ibg3k0.sc
                 return AddressTypeFlags[BIT_INDEX_SECTION];
             }
         }
-
+        
         public bool canAvoidVhecle
         {
             get
@@ -102,7 +105,8 @@ namespace com.mirle.ibg3k0.sc
                 }
                 else
                 {
-                    if (ADRTYPE != 4)
+                    //if (ADRTYPE != 4)
+                    if (ADRTYPE != ADR_TYPE_NUM_CAN_AVOID_ADR)
                         return false;
                     else
                         return IsCoupler || IsPort;
