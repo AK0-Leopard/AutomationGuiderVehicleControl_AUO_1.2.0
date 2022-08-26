@@ -23,6 +23,7 @@ namespace com.mirle.ibg3k0.sc
         private const int BIT_INDEX_CANNOT_AVOID = 6;
 
         public Boolean[] AddressTypeFlags { get; set; }
+        public Boolean[] AddressTypeFlagsExtended { get; set; }
         public string[] SegmentIDs { get; set; }
 
         public event EventHandler<string> VehicleRelease;
@@ -37,6 +38,13 @@ namespace com.mirle.ibg3k0.sc
             BitArray b = new BitArray(new int[] { type });
             AddressTypeFlags = new bool[b.Count];
             b.CopyTo(AddressTypeFlags, 0);
+            loadAdrTypeExtended();
+        }
+        private void loadAdrTypeExtended()
+        {
+            BitArray b = new BitArray(new int[] { this.ADRTYPE });
+            AddressTypeFlagsExtended = new bool[b.Count];
+            b.CopyTo(AddressTypeFlagsExtended, 0);
         }
         public void initialSegmentID(SectionBLL sectionBLL)
         {
@@ -100,7 +108,7 @@ namespace com.mirle.ibg3k0.sc
                 {
                     //return true;
                     //如果是該廠的話先一律回復True，因為是台中的Demo Site
-                    return !AddressTypeFlags[BIT_INDEX_CANNOT_AVOID];
+                    return !AddressTypeFlagsExtended[BIT_INDEX_CANNOT_AVOID];
                 }
                 else
                 {
