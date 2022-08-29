@@ -607,6 +607,29 @@ namespace com.mirle.ibg3k0.sc.BLL
             return query.ToList();
         }
 
+        public bool HasUnloadCMD_MCSInQueue(string vehicleId)
+        {
+            try
+            {
+                var cmds = loadMCS_Command_Queue();
+                bool result = false;
+                foreach (var cmd in cmds)
+                {
+                    var vh = scApp.VehicleBLL.cache.getVehicleByRealID(cmd.HOSTSOURCE.Trim());
+                    if (vh != null && vh.VEHICLE_ID.Equals(vehicleId))
+                    {
+                        result = true;
+                        break;
+                    }
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+                return false;
+            }
+        }
         public List<ACMD_MCS> loadMCS_Command_Queue()
         {
             List<ACMD_MCS> ACMD_MCSs = list();

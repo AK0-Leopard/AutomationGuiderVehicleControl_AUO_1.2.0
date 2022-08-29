@@ -1243,15 +1243,6 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     need_by_pass_sec_ids.Add(byPassSection);
                 }
-                //if (isNeedByPassSection)
-                //{
-                //    switch (scApp.BC_ID)
-                //    {
-                //        case WorkVersion.VERSION_NAME_AUO_CAAGV100:
-                //            need_by_pass_sec_ids.AddRange(SpecifyOverrideFixedByPassSection_AUO_CAAGV100);
-                //            break;
-                //    }
-                //}
                 List<string> guide_start_to_from_segment_ids = null;
                 List<string> guide_start_to_from_section_ids = null;
                 List<string> guide_start_to_from_address_ids = null;
@@ -1266,7 +1257,7 @@ namespace com.mirle.ibg3k0.sc.Service
                    CarrierID: assignVH.CST_ID);
                 int current_find_count = 0;
                 int max_find_count = 10;
-                bool is_need_check_reserve_status = isAvoidComplete;
+                bool is_need_check_reserve_status = !isAvoidComplete;
                 do
                 {
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
@@ -1307,24 +1298,8 @@ namespace com.mirle.ibg3k0.sc.Service
                             newAddressIDs = guide_to_dest_address_ids;
                         }
 
-                        if (isSuccess /*&& is_need_check_reserve_status*/)
+                        if (isSuccess && is_need_check_reserve_status)
                         {
-                            //var reserve_result = askReserveSuccess(assignVH.VEHICLE_ID, next_walk_section, next_walk_address);
-                            //if (reserve_result.isSuccess)
-                            //{
-                            //    isSuccess = true;
-                            //}
-                            //else
-                            //{
-                            //    isSuccess = false;
-                            //    //need_by_pass_adr_ids.Add(reserve_result.reserveUnsuccessInfo.ReservedAdrID);
-                            //    need_by_pass_sec_ids.Add(next_walk_section);
-                            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                            //       Data: $"find the override path ,but section:{next_walk_section} is reserved for vh:{reserve_result.reservedVhID}" +
-                            //             $"add to need by pass sec ids",
-                            //       VehicleID: assignVH.VEHICLE_ID,
-                            //       CarrierID: assignVH.CST_ID);
-                            //}
                             for (int i = 0; i < newSectionIDs.Count; i++)
                             {
                                 var reserve_result = askReserveSuccess(assignVH.VEHICLE_ID, newSectionIDs[i], newAddressIDs[i]);
@@ -1346,10 +1321,45 @@ namespace com.mirle.ibg3k0.sc.Service
                                 }
                             }
 
-                            //4.在準備送出前，如果是因Avoid完成所下的Over ride，要判斷原本block section是否已經可以預約到了，事才可以下給車子
-                            //if (isSuccess && isAvoidComplete)
-                            //if (isSuccess && is_need_check_reserve_status)
+                            ////4.在準備送出前，如果是因Avoid完成所下的Over ride，要判斷原本block section是否已經可以預約到了，事才可以下給車子
+                            ////if (isSuccess && isAvoidComplete)
+                            ////if (isSuccess && is_need_check_reserve_status)
+                            ////{
+                            ////先判斷，新的路徑是否會在經過之前Blocked的Section
+                            //if (assignVH.VhAvoidInfo != null)
                             //{
+                            //    bool is_pass_before_blocked_section = true;
+                            //    if (guide_start_to_from_section_ids != null)
+                            //    {
+                            //        is_pass_before_blocked_section &= guide_start_to_from_section_ids.Contains(assignVH.VhAvoidInfo.BlockedSectionID);
+                            //    }
+                            //    if (guide_to_dest_section_ids != null)
+                            //    {
+                            //        is_pass_before_blocked_section &= guide_to_dest_section_ids.Contains(assignVH.VhAvoidInfo.BlockedSectionID);
+                            //    }
+                            //    if (is_pass_before_blocked_section)
+                            //    {
+                            //        //如果有則要嘗試去預約，如果等了20秒還是沒有釋放出來則嘗試別條路徑
+                            //        string before_block_section_id = assignVH.VhAvoidInfo.BlockedSectionID;
+                            //        //if (!SpinWait.SpinUntil(() => scApp.ReserveBLL.TryAddReservedSection(vh_id, before_block_section_id, isAsk: true).OK, 20000))
+                            //        //if (!SpinWait.SpinUntil(() => checkWillPassSectionIsClear(vh_id, before_block_section_id), 20000))
+                            //        //2022.8.26 當下不過就加入排除列表了，不再等待20秒
+                            //        if (!scApp.ReserveBLL.TryAddReservedSection(vh_id, before_block_section_id, isAsk: true).OK)
+                            //        {
+                            //            isSuccess = false;
+                            //            //need_by_pass_sec_ids.Add(next_walk_section);
+                            //            need_by_pass_sec_ids.Add(before_block_section_id);
+                            //            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                            //               Data: $"block section id:{before_block_section_id} not release, by pass section:{before_block_section_id} find next path.current by pass section:{string.Join(",", need_by_pass_sec_ids)}",
+                            //               VehicleID: assignVH.VEHICLE_ID,
+                            //               CarrierID: assignVH.CST_ID);
+                            //        }
+                            //    }
+                            //}
+                        }
+                        //4.在準備送出前，如果是因Avoid完成所下的Over ride，要判斷原本block section是否已經可以預約到了，事才可以下給車子
+                        else if (isSuccess && isAvoidComplete)
+                        {
                             //先判斷，新的路徑是否會在經過之前Blocked的Section
                             if (assignVH.VhAvoidInfo != null)
                             {
@@ -1366,7 +1376,6 @@ namespace com.mirle.ibg3k0.sc.Service
                                 {
                                     //如果有則要嘗試去預約，如果等了20秒還是沒有釋放出來則嘗試別條路徑
                                     string before_block_section_id = assignVH.VhAvoidInfo.BlockedSectionID;
-                                    //if (!SpinWait.SpinUntil(() => scApp.ReserveBLL.TryAddReservedSection(vh_id, before_block_section_id, isAsk: true).OK, 20000))
                                     if (!SpinWait.SpinUntil(() => checkWillPassSectionIsClear(vh_id, before_block_section_id), 20000))
                                     {
                                         isSuccess = false;
@@ -1385,7 +1394,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         ////如果在找不到路的時候，就把原本By pass的路徑給打開，然後再找一次
                         ////該次就不檢查原本預約不到的路是否已經可以過了，即使不能過也再下一次走看看
-                        if (need_by_pass_sec_ids != null && need_by_pass_sec_ids.Count > 0)
+                        //if (need_by_pass_sec_ids != null && need_by_pass_sec_ids.Count > 0)
+                        if (isAvoidComplete)
                         {
                             isSuccess = false;
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
@@ -1395,7 +1405,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                 CarrierID: assignVH.CST_ID);
 
                             need_by_pass_sec_ids.Clear();
-                            is_need_check_reserve_status = false;
+                            //is_need_check_reserve_status = false;
                         }
                         else
                         {
@@ -1496,9 +1506,6 @@ namespace com.mirle.ibg3k0.sc.Service
                         if (guide_to_dest_segment_ids != null)
                             guide_segment_ids.AddRange(guide_to_dest_segment_ids);
                     }
-
-
-
 
                     //3.發送命令給VH
                     //在發送Override之前要先判斷目前的產生的路徑是否跟車子正在執行的路徑相同，如果還是一樣的話代表產生了一筆相同的路徑
@@ -2928,9 +2935,21 @@ namespace com.mirle.ibg3k0.sc.Service
                        (reservedVh.MODE_STATUS == VHModeStatus.AutoRemote || reservedVh.MODE_STATUS == VHModeStatus.AutoCharging) &&
                        reservedVh.ACT_STATUS == VHActionStatus.NoCommand &&
                        !scApp.CMDBLL.isCMD_OHTCQueueByVh(reservedVh.VEHICLE_ID) &&
-                       !scApp.CMDBLL.HasCMD_MCSInQueue();
+                       /* !scApp.CMDBLL.HasCMD_MCSInQueue() && */
+                       !canAvoidCheckByMCSCommand(reservedVh);
                 return (is_can, CAN_NOT_AVOID_RESULT.Normal);
             }
+        }
+
+        private bool canAvoidCheckByMCSCommand(AVEHICLE checkVh)
+        {
+            if (checkVh is null)
+                return true;
+            if (!scApp.CMDBLL.HasCMD_MCSInQueue())
+                return true;
+            if (scApp.CMDBLL.HasUnloadCMD_MCSInQueue(checkVh.VEHICLE_ID))
+                return true;
+            return false;
         }
 
         private void tryNotifyVhAvoid_New(string requestVhID, string reservedVhID)
@@ -3004,7 +3023,8 @@ namespace com.mirle.ibg3k0.sc.Service
                                  $" isTcpIpConnect:{reserved_vh?.isTcpIpConnect}" +
                                  $" MODE_STATUS:{reserved_vh?.MODE_STATUS}" +
                                  $" ACT_STATUS:{reserved_vh?.ACT_STATUS}" +
-                                 $" result:{check_can_creat_avoid_command.result}",
+                                 $" result:{check_can_creat_avoid_command.result}" + 
+                                 $" canAvoidCheckByMCSCommand: {canAvoidCheckByMCSCommand(reserved_vh)}",
                            VehicleID: requestVhID);
 
                         switch (check_can_creat_avoid_command.result)
@@ -4638,6 +4658,8 @@ namespace com.mirle.ibg3k0.sc.Service
         #endregion Vehicle Install/Remove
 
         #region Avoid Control
+        const int MaxOverrideCountAfterAvoid = 5;
+        const int IntervalBetweenOverrideAfterAvoid = 30;
         public void AvoidCompleteReport(BCFApplication bcfApp, AVEHICLE eqpt, ID_152_AVOID_COMPLETE_REPORT recive_str, int seq_num)
         {
             if (scApp.getEQObjCacheManager().getLine().ServerPreStop)
@@ -4672,10 +4694,26 @@ namespace com.mirle.ibg3k0.sc.Service
 
             scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(eqpt.VEHICLE_ID);
 
-            bool is_success = trydoOverrideCommandToVh(eqpt, cmd_ohtc, "", true);
-            if (is_success)
+            //bool is_success = trydoOverrideCommandToVh(eqpt, cmd_ohtc, "", true);
+            //if (is_success)
+            //{
+            //    eqpt.VhAvoidInfo = null;
+            //}
+            eqpt.VhAvoidInfo = null;
+            bool is_success = false;
+            int tryCount = 0;
+            while (!is_success && tryCount < MaxOverrideCountAfterAvoid)
             {
-                eqpt.VhAvoidInfo = null;
+                is_success = trydoOverrideCommandToVh(eqpt, cmd_ohtc, "", true);        
+                if (!is_success)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                        Data: $"avoid complete but find override path fail, vh current address:{eqpt.CUR_ADR_ID}, current section:{eqpt.CUR_SEC_ID}, retry times:{tryCount}",
+                        VehicleID: eqpt.VEHICLE_ID,
+                        CarrierID: eqpt.CST_ID);
+                    SpinWait.SpinUntil(() => false, IntervalBetweenOverrideAfterAvoid);
+                }
+                tryCount++;
             }
 
             LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
