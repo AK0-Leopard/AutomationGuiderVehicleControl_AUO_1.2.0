@@ -2936,7 +2936,7 @@ namespace com.mirle.ibg3k0.sc.Service
                        reservedVh.ACT_STATUS == VHActionStatus.NoCommand &&
                        !scApp.CMDBLL.isCMD_OHTCQueueByVh(reservedVh.VEHICLE_ID) &&
                        /* !scApp.CMDBLL.HasCMD_MCSInQueue() && */
-                       !canAvoidCheckByMCSCommand(reservedVh);
+                       canAvoidCheckByMCSCommand(reservedVh);
                 return (is_can, CAN_NOT_AVOID_RESULT.Normal);
             }
         }
@@ -3023,7 +3023,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                  $" isTcpIpConnect:{reserved_vh?.isTcpIpConnect}" +
                                  $" MODE_STATUS:{reserved_vh?.MODE_STATUS}" +
                                  $" ACT_STATUS:{reserved_vh?.ACT_STATUS}" +
-                                 $" result:{check_can_creat_avoid_command.result}" + 
+                                 $" result:{check_can_creat_avoid_command.result}," + 
                                  $" canAvoidCheckByMCSCommand: {canAvoidCheckByMCSCommand(reserved_vh)}",
                            VehicleID: requestVhID);
 
