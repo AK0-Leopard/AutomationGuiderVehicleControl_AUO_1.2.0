@@ -179,11 +179,19 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                 if (!is_can_creat_move_cmd) continue;
 
                 string vh_cur_adr = SCUtility.Trim(vh.CUR_ADR_ID);
-                List<string> all_can_excute_port_temp = AllCanExcutePort.ToList();
-                all_can_excute_port_temp.Remove(vh_cur_adr);
+                //List<string> all_can_excute_port_temp = AllCanExcutePort.ToList();
+                //all_can_excute_port_temp.Remove(vh_cur_adr);
+                //int task_RandomIndex = rnd_Index.Next(all_can_excute_port_temp.Count - 1);
+                //string move_target_adr = all_can_excute_port_temp[task_RandomIndex];
+
+                var all_can_excute_port_temp = scApp.getEQObjCacheManager().getALLPortStation();
+                var currentLocationPort = all_can_excute_port_temp.Find(p => p.ADR_ID.Equals(vh_cur_adr));
+                if (currentLocationPort != null)
+                    all_can_excute_port_temp.Remove(currentLocationPort);
                 int task_RandomIndex = rnd_Index.Next(all_can_excute_port_temp.Count - 1);
-                string move_target_adr = all_can_excute_port_temp[task_RandomIndex];
-                creatMoveCommand(vh.VEHICLE_ID, move_target_adr);
+                string move_target_adr = all_can_excute_port_temp[task_RandomIndex].ADR_ID;
+                if (scApp.GuideBLL.IsRoadWalkable(vh_cur_adr, move_target_adr))
+                    creatMoveCommand(vh.VEHICLE_ID, move_target_adr);
             }
         }
         private void tryCreatMCSCommand(E_VH_TYPE vh_type, List<string> load_port_lst)
