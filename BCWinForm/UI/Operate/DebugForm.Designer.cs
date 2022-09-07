@@ -213,9 +213,6 @@
             this.cb_coupler_enable = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
             this.num_BatteryHighBoundaryValue = new System.Windows.Forms.NumericUpDown();
-            this.label38 = new System.Windows.Forms.Label();
-            this.num_BatteryLowBoundaryValue = new System.Windows.Forms.NumericUpDown();
-            this.lbl_batteryLowBoundaryValue = new System.Windows.Forms.Label();
             this.groupBox13 = new System.Windows.Forms.GroupBox();
             this.label24 = new System.Windows.Forms.Label();
             this.tb_ChargerAlive = new System.Windows.Forms.TextBox();
@@ -307,6 +304,9 @@
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.textBox_chargePower = new System.Windows.Forms.TextBox();
+            this.lbl_batteryLowBoundaryValue = new System.Windows.Forms.Label();
+            this.label38 = new System.Windows.Forms.Label();
+            this.num_BatteryLowBoundaryValue = new System.Windows.Forms.NumericUpDown();
             this.DIO_DEVICE_TEST = new System.Windows.Forms.TabPage();
             this.btnPortEnableSet = new System.Windows.Forms.Button();
             this.comboBox_port14 = new System.Windows.Forms.ComboBox();
@@ -384,13 +384,13 @@
             this.groupBox11.SuspendLayout();
             this.groupBox10.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_BatteryHighBoundaryValue)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.num_BatteryLowBoundaryValue)).BeginInit();
             this.groupBox13.SuspendLayout();
             this.groupBox22.SuspendLayout();
             this.groupBox21.SuspendLayout();
             this.groupBox16.SuspendLayout();
             this.groupBox15.SuspendLayout();
             this.groupBox14.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.num_BatteryLowBoundaryValue)).BeginInit();
             this.DIO_DEVICE_TEST.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage6.SuspendLayout();
@@ -604,9 +604,9 @@
             this.cb_StartGenAntoCmd.AutoSize = true;
             this.cb_StartGenAntoCmd.Location = new System.Drawing.Point(1131, 18);
             this.cb_StartGenAntoCmd.Name = "cb_StartGenAntoCmd";
-            this.cb_StartGenAntoCmd.Size = new System.Drawing.Size(349, 26);
+            this.cb_StartGenAntoCmd.Size = new System.Drawing.Size(229, 26);
             this.cb_StartGenAntoCmd.TabIndex = 18;
-            this.cb_StartGenAntoCmd.Text = "Start Generates Transfer Command";
+            this.cb_StartGenAntoCmd.Text = "Start Move Cycle Run";
             this.cb_StartGenAntoCmd.UseVisualStyleBackColor = true;
             this.cb_StartGenAntoCmd.CheckedChanged += new System.EventHandler(this.cb_StartGenAntoCmd_CheckedChanged);
             // 
@@ -1576,7 +1576,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 3);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 8);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(164, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -2395,32 +2395,6 @@
             this.num_BatteryHighBoundaryValue.Size = new System.Drawing.Size(158, 30);
             this.num_BatteryHighBoundaryValue.TabIndex = 29;
             this.num_BatteryHighBoundaryValue.ValueChanged += new System.EventHandler(this.num_BatteryHighBoundaryValue_ValueChanged);
-            // 
-            // label38
-            // 
-            this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(935, 9);
-            this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(360, 22);
-            this.label38.TabIndex = 28;
-            this.label38.Text = "Vehicle-Battery High Boundary Value";
-            // 
-            // num_BatteryLowBoundaryValue
-            // 
-            this.num_BatteryLowBoundaryValue.Location = new System.Drawing.Point(517, 34);
-            this.num_BatteryLowBoundaryValue.Name = "num_BatteryLowBoundaryValue";
-            this.num_BatteryLowBoundaryValue.Size = new System.Drawing.Size(158, 30);
-            this.num_BatteryLowBoundaryValue.TabIndex = 27;
-            this.num_BatteryLowBoundaryValue.ValueChanged += new System.EventHandler(this.num_BatteryLowBoundaryValue_ValueChanged);
-            // 
-            // lbl_batteryLowBoundaryValue
-            // 
-            this.lbl_batteryLowBoundaryValue.AutoSize = true;
-            this.lbl_batteryLowBoundaryValue.Location = new System.Drawing.Point(513, 9);
-            this.lbl_batteryLowBoundaryValue.Name = "lbl_batteryLowBoundaryValue";
-            this.lbl_batteryLowBoundaryValue.Size = new System.Drawing.Size(350, 22);
-            this.lbl_batteryLowBoundaryValue.TabIndex = 26;
-            this.lbl_batteryLowBoundaryValue.Text = "Vehicle-Battery Low Boundary Value";
             // 
             // groupBox13
             // 
@@ -3332,6 +3306,32 @@
             this.textBox_chargePower.Size = new System.Drawing.Size(167, 23);
             this.textBox_chargePower.TabIndex = 29;
             // 
+            // lbl_batteryLowBoundaryValue
+            // 
+            this.lbl_batteryLowBoundaryValue.AutoSize = true;
+            this.lbl_batteryLowBoundaryValue.Location = new System.Drawing.Point(513, 9);
+            this.lbl_batteryLowBoundaryValue.Name = "lbl_batteryLowBoundaryValue";
+            this.lbl_batteryLowBoundaryValue.Size = new System.Drawing.Size(350, 22);
+            this.lbl_batteryLowBoundaryValue.TabIndex = 26;
+            this.lbl_batteryLowBoundaryValue.Text = "Vehicle-Battery Low Boundary Value";
+            // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.Location = new System.Drawing.Point(935, 9);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(360, 22);
+            this.label38.TabIndex = 28;
+            this.label38.Text = "Vehicle-Battery High Boundary Value";
+            // 
+            // num_BatteryLowBoundaryValue
+            // 
+            this.num_BatteryLowBoundaryValue.Location = new System.Drawing.Point(517, 34);
+            this.num_BatteryLowBoundaryValue.Name = "num_BatteryLowBoundaryValue";
+            this.num_BatteryLowBoundaryValue.Size = new System.Drawing.Size(158, 30);
+            this.num_BatteryLowBoundaryValue.TabIndex = 27;
+            this.num_BatteryLowBoundaryValue.ValueChanged += new System.EventHandler(this.num_BatteryLowBoundaryValue_ValueChanged);
+            // 
             // DIO_DEVICE_TEST
             // 
             this.DIO_DEVICE_TEST.Controls.Add(this.btnPortEnableSet);
@@ -3858,7 +3858,6 @@
             this.groupBox10.ResumeLayout(false);
             this.groupBox10.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_BatteryHighBoundaryValue)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.num_BatteryLowBoundaryValue)).EndInit();
             this.groupBox13.ResumeLayout(false);
             this.groupBox13.PerformLayout();
             this.groupBox22.ResumeLayout(false);
@@ -3871,6 +3870,7 @@
             this.groupBox15.PerformLayout();
             this.groupBox14.ResumeLayout(false);
             this.groupBox14.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.num_BatteryLowBoundaryValue)).EndInit();
             this.DIO_DEVICE_TEST.ResumeLayout(false);
             this.DIO_DEVICE_TEST.PerformLayout();
             this.tabPage2.ResumeLayout(false);
