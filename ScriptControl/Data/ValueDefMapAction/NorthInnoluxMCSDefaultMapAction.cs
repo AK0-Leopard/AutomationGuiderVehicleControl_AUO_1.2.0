@@ -1788,11 +1788,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 scApp.VehicleService.ProcessAlarmReport(null, AlarmBLL.AGVC_SECS_DECODER_EXCEPTION, ErrorStatus.ErrSet, $"SECS decoder exception");
                 scApp.VehicleService.ProcessAlarmReport(null, AlarmBLL.AGVC_SECS_DECODER_EXCEPTION, ErrorStatus.ErrReset, $"SECS decoder exception");
-                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}", line.LINE_ID, "S2F49_Receive_Remote_Command", ex);
+                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}", line.LINE_ID, "S2F41_ReceiveHostCommand", ex);
             }
             catch (Exception ex)
             {
-                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}", line.LINE_ID, "S2F17_Receive_Date_Time_Req", ex.ToString());
+                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}", line.LINE_ID, "S2F41_ReceiveHostCommand", ex.ToString());
             }
         }
         private (bool isOK, string checkResult, string cmdID) checkHostCommandRename(S2F41_RENAME s2F41)
