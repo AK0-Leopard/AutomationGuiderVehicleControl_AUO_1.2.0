@@ -24,6 +24,7 @@ using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data.SECS.NorthInnolux;
 using com.mirle.ibg3k0.sc.Data.SECSDriver;
 using com.mirle.ibg3k0.sc.Data.VO;
+using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using com.mirle.ibg3k0.stc.Common;
 using com.mirle.ibg3k0.stc.Data.SecsData;
 //using ExcelDataReader.Log;
@@ -1236,6 +1237,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 line.CommunicationIntervalWithMCS.Restart();
 
             }
+            catch (stc.Common.SECS.SECSFormatException ex)
+            {
+                scApp.VehicleService.ProcessAlarmReport(null, AlarmBLL.AGVC_SECS_DECODER_EXCEPTION, ErrorStatus.ErrSet, $"SECS decoder exception");
+                scApp.VehicleService.ProcessAlarmReport(null, AlarmBLL.AGVC_SECS_DECODER_EXCEPTION, ErrorStatus.ErrReset, $"SECS decoder exception");
+                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}", line.LINE_ID, "S2F49_Receive_Remote_Command", ex);
+            }
             catch (Exception ex)
             {
                 logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}", line.LINE_ID, "S2F49_Receive_Remote_Command", ex);
@@ -1776,8 +1783,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                     scApp.VehicleService.doCancelOrAbortCommandByMCSCmdID(cancel_abort_cmd_id, ProtocolFormat.OHTMessage.CMDCancelType.CmdAbort);
 
                 }
-
-                
+            }
+            catch (stc.Common.SECS.SECSFormatException ex)
+            {
+                scApp.VehicleService.ProcessAlarmReport(null, AlarmBLL.AGVC_SECS_DECODER_EXCEPTION, ErrorStatus.ErrSet, $"SECS decoder exception");
+                scApp.VehicleService.ProcessAlarmReport(null, AlarmBLL.AGVC_SECS_DECODER_EXCEPTION, ErrorStatus.ErrReset, $"SECS decoder exception");
+                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}", line.LINE_ID, "S2F49_Receive_Remote_Command", ex);
             }
             catch (Exception ex)
             {
