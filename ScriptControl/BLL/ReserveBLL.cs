@@ -118,6 +118,14 @@ namespace com.mirle.ibg3k0.sc.BLL
             return result;
         }
 
+        public virtual HltResult TryAddVehicleOrUpdate(HltVehicle hltVehicle)
+        {
+            HltResult result = mapAPI.TryAddOrUpdateVehicle(hltVehicle);
+            onReserveStatusChange();
+
+            return result;
+        }
+
         public virtual void RemoveManyReservedSectionsByVIDSID(string vhID, string sectionID)
         {
             //int sec_id = 0;

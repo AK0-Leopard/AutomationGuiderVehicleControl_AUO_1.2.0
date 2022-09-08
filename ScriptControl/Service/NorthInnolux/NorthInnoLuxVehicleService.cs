@@ -13,6 +13,7 @@ using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using com.mirle.ibg3k0.sc.RouteKit;
 using Google.Protobuf.Collections;
 using KingAOP;
+using Mirle.Hlts.Utils;
 using Newtonsoft.Json.Linq;
 using NLog;
 using System;
@@ -3258,12 +3259,10 @@ namespace com.mirle.ibg3k0.sc.Service
                 //在一開始的時候就先Set一台虛擬車在相同位置，防止找到鄰近的Address
                 var hlt_vh_obj = scApp.ReserveBLL.GetHltVehicle(reservedVh.VEHICLE_ID);
                 string virtual_vh_id = $"{VehicleVirtualSymbol}_{reservedVh.VEHICLE_ID}";
-                //scApp.ReserveBLL.TryAddVehicleOrUpdate(virtual_vh_id, "", hlt_vh_obj.X, hlt_vh_obj.Y, hlt_vh_obj.Angle, 0,
-                //    sensorDir: Mirle.Hlts.Utils.HltDirection.NESW,
-                //      forkDir: Mirle.Hlts.Utils.HltDirection.None);
-                scApp.ReserveBLL.TryAddVehicleOrUpdate(virtual_vh_id, "", hlt_vh_obj.X, hlt_vh_obj.Y, hlt_vh_obj.Angle, 0,
-    sensorDir: Mirle.Hlts.Utils.HltDirection.NorthSouth,
-      forkDir: Mirle.Hlts.Utils.HltDirection.None);
+                HltVehicle virtualVh = new HltVehicle(hlt_vh_obj);
+                virtualVh.ID = virtual_vh_id;
+                virtualVh.SensorDirection = HltDirection.ForwardReverse;
+                scApp.ReserveBLL.TryAddVehicleOrUpdate(virtualVh);
                 virtual_vh_ids.Add(virtual_vh_id);
                 do
                 {
@@ -3324,7 +3323,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         //當找出兩段以上的Section時且他的Source為會與另一台vh前進路徑交錯的車，
                         //代表找到了叉路，因此要在入口加入一台虛擬車來幫助找避車路徑時確保不會卡住的點。
                         if (next_sections.Count >= 2 &&
-                            hasCrossWithPredictSection(search_info.source_section.SEC_ID, requestVh.PredictSections))
+                            hasCrossWithPredictSection(search_info.source_section.SEC_ID, requestVh.WillPassSectionID.ToArray()))
                         {
                             string virtual_vh_section_id = $"{virtual_vh_id}_{search_info.next_address}";
                             scApp.ReserveBLL.TryAddVehicleOrUpdate(virtual_vh_section_id, search_info.next_address);
@@ -4234,8 +4233,18 @@ namespace com.mirle.ibg3k0.sc.Service
         {
             try
             {
-                string node_id = eqpt.NODE_ID;
-                string vh_id = eqpt.VEHICLE_ID;
+                string node_id;
+                string vh_id;
+                if (eqpt == null)
+                {
+                    node_id = "";
+                    vh_id = "AGVC";
+                }
+                else
+                {
+                    node_id = eqpt.NODE_ID;
+                    vh_id = eqpt.VEHICLE_ID;
+                }
                 bool is_all_alarm_clear = SCUtility.isMatche(err_code, "0") && status == ErrorStatus.ErrReset;
                 if (!is_all_alarm_clear)
                 {
@@ -4244,8 +4253,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
                            Data: $"Process vehicle alarm report,but can not found alarm map. alarm code:{err_code},alarm status{status},error desc:{errorDesc}",
-                           VehicleID: eqpt.VEHICLE_ID,
-                           CarrierID: eqpt.CST_ID);
+                           VehicleID: eqpt?.VEHICLE_ID ?? "",
+                           CarrierID: eqpt?.CST_ID ?? "");
                         return;
                     }
 
@@ -4273,8 +4282,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                            Data: $"Process vehicle alarm report.alarm code:{err_code},alarm status{status},error desc:{errorDesc}",
-                           VehicleID: eqpt.VEHICLE_ID,
-                           CarrierID: eqpt.CST_ID);
+                           VehicleID: eqpt?.VEHICLE_ID ?? "",
+                           CarrierID: eqpt?.CST_ID ?? "");
                         ALARM alarm = null;
                         if (is_all_alarm_clear)
                         {
@@ -4325,12 +4334,12 @@ namespace com.mirle.ibg3k0.sc.Service
                             {
 
                                 scApp.ReportBLL.ReportAlarmHappend(report_alarm.ALAM_STAT, alarmConvertInfo.ALID, alarmConvertInfo.ALTX);
-                                scApp.ReportBLL.newReportAlarmEvent(eqpt.Real_ID, alarmConvertInfo.CEIDSet, alarmConvertInfo.ALID, eqpt.MCS_CMD, alarmConvertInfo.ALTX, alarmConvertInfo.AlarmLevel, reportqueues);
+                                scApp.ReportBLL.newReportAlarmEvent(eqpt?.Real_ID ?? "AGVC", alarmConvertInfo.CEIDSet, alarmConvertInfo.ALID, eqpt?.MCS_CMD ?? "", alarmConvertInfo.ALTX, alarmConvertInfo.AlarmLevel, reportqueues);
                             }
                             else
                             {
                                 scApp.ReportBLL.ReportAlarmHappend(report_alarm.ALAM_STAT, alarm_code, report_alarm.ALAM_DESC);
-                                scApp.ReportBLL.newReportAlarmEvent(eqpt.Real_ID, alarmConvertInfo.CEIDClear, alarmConvertInfo.ALID, eqpt.MCS_CMD, alarmConvertInfo.ALTX, alarmConvertInfo.AlarmLevel, reportqueues);
+                                scApp.ReportBLL.newReportAlarmEvent(eqpt?.Real_ID ?? "AGVC", alarmConvertInfo.CEIDClear, alarmConvertInfo.ALID, eqpt?.MCS_CMD ?? "", alarmConvertInfo.ALTX, alarmConvertInfo.AlarmLevel, reportqueues);
                             }
                         }
                         else
@@ -4338,16 +4347,16 @@ namespace com.mirle.ibg3k0.sc.Service
                             BCFApplication.onErrorMsg($"Can not found AlarmConvertInfo,alarm code:{err_code}, AlarmConvertInfo not found");
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
                            Data: $"can not found AlarmConvertInfo,alarm code:{err_code},alarm status{status}",
-                           VehicleID: eqpt.VEHICLE_ID,
-                           CarrierID: eqpt.CST_ID);
+                           VehicleID: eqpt?.VEHICLE_ID ?? "",
+                           CarrierID: eqpt?.CST_ID ?? "");
                         }
 
                         scApp.ReportBLL.newSendMCSMessage(reportqueues);
 
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
                            Data: $"do report alarm to mcs,alarm code:{err_code},alarm status{status}",
-                           VehicleID: eqpt.VEHICLE_ID,
-                           CarrierID: eqpt.CST_ID);
+                           VehicleID: eqpt?.VEHICLE_ID ?? "",
+                           CarrierID: eqpt?.CST_ID ?? "");
                     }
                 }
                 //在設備上報取消Alarm，如果已經沒有Alarm(Alarm都已經消除，則要上報S6F11 CEID=52 Alarm Clear)
@@ -4362,8 +4371,8 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                    Data: ex,
-                   VehicleID: eqpt.VEHICLE_ID,
-                   CarrierID: eqpt.CST_ID);
+                   VehicleID: eqpt?.VEHICLE_ID ?? "",
+                   CarrierID: eqpt?.CST_ID ?? "");
             }
         }
         #endregion Alarm

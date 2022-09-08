@@ -143,9 +143,13 @@ namespace com.mirle.ibg3k0.sc.BLL
             return result;
         }
 
+        public override HltResult TryAddVehicleOrUpdate(HltVehicle hltVehicle)
+        {
+            HltResult result = mapAPI.TryAddOrUpdateVehicle(hltVehicle);
+            onReserveStatusChange();
 
-
-
+            return result;
+        }
 
         public override void RemoveManyReservedSectionsByVIDSID(string vhID, string sectionID)
         {
