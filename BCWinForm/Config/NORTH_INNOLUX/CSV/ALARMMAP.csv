@@ -2560,3 +2560,4 @@ AGV_NODE,202398,1,
 AGV_NODE,202399,1,
 AGV_NODE,10000,1,Long time inaction
 AGV_NODE,10001,2,Can not service
+AGVC,10003,2,SECS decoder exception

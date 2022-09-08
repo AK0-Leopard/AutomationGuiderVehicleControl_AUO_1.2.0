@@ -4237,7 +4237,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 string vh_id;
                 if (eqpt == null)
                 {
-                    node_id = "";
+                    node_id = "AGVC";
                     vh_id = "AGVC";
                 }
                 else
