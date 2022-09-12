@@ -184,7 +184,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                 //int task_RandomIndex = rnd_Index.Next(all_can_excute_port_temp.Count - 1);
                 //string move_target_adr = all_can_excute_port_temp[task_RandomIndex];
 
-                var all_can_excute_port_temp = scApp.getEQObjCacheManager().getALLPortStation();
+                var all_can_excute_port_temp = new List<APORTSTATION>(scApp.getEQObjCacheManager().getALLPortStation());
                 var currentLocationPort = all_can_excute_port_temp.Find(p => p.ADR_ID.Equals(vh_cur_adr));
                 if (currentLocationPort != null)
                     all_can_excute_port_temp.Remove(currentLocationPort);
