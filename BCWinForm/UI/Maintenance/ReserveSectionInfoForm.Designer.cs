@@ -55,6 +55,8 @@
             this.cmb_vh_ids = new System.Windows.Forms.ComboBox();
             this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
             this.uctlReserveSectionView1 = new com.mirle.ibg3k0.bc.winform.UI.Components.WPFComponents.uctlReserveSectionView();
+            this.txt_Angle = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -71,11 +73,13 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1249, 558);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1249, 590);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.txt_Angle);
+            this.panel1.Controls.Add(this.label10);
             this.panel1.Controls.Add(this.btn_resetReservedSectionByVh);
             this.panel1.Controls.Add(this.txt_y);
             this.panel1.Controls.Add(this.txt_x);
@@ -100,9 +104,9 @@
             this.panel1.Controls.Add(this.cmb_adr_id);
             this.panel1.Controls.Add(this.cmb_vh_ids);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(1103, 3);
+            this.panel1.Location = new System.Drawing.Point(1104, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(143, 552);
+            this.panel1.Size = new System.Drawing.Size(142, 584);
             this.panel1.TabIndex = 0;
             // 
             // btn_resetReservedSectionByVh
@@ -132,7 +136,7 @@
             // 
             // btn_set_vh_by_axis
             // 
-            this.btn_set_vh_by_axis.Location = new System.Drawing.Point(11, 336);
+            this.btn_set_vh_by_axis.Location = new System.Drawing.Point(11, 372);
             this.btn_set_vh_by_axis.Name = "btn_set_vh_by_axis";
             this.btn_set_vh_by_axis.Size = new System.Drawing.Size(121, 23);
             this.btn_set_vh_by_axis.TabIndex = 21;
@@ -195,7 +199,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(11, 430);
+            this.label5.Location = new System.Drawing.Point(11, 455);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(54, 12);
             this.label5.TabIndex = 12;
@@ -204,7 +208,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(11, 468);
+            this.label4.Location = new System.Drawing.Point(11, 493);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(45, 12);
             this.label4.TabIndex = 11;
@@ -213,7 +217,7 @@
             // cmb_fork_dir
             // 
             this.cmb_fork_dir.FormattingEnabled = true;
-            this.cmb_fork_dir.Location = new System.Drawing.Point(11, 483);
+            this.cmb_fork_dir.Location = new System.Drawing.Point(11, 508);
             this.cmb_fork_dir.Name = "cmb_fork_dir";
             this.cmb_fork_dir.Size = new System.Drawing.Size(121, 20);
             this.cmb_fork_dir.TabIndex = 10;
@@ -221,7 +225,7 @@
             // cmb_sensor_dir
             // 
             this.cmb_sensor_dir.FormattingEnabled = true;
-            this.cmb_sensor_dir.Location = new System.Drawing.Point(11, 445);
+            this.cmb_sensor_dir.Location = new System.Drawing.Point(11, 470);
             this.cmb_sensor_dir.Name = "cmb_sensor_dir";
             this.cmb_sensor_dir.Size = new System.Drawing.Size(121, 20);
             this.cmb_sensor_dir.TabIndex = 9;
@@ -240,7 +244,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(13, 384);
+            this.label3.Location = new System.Drawing.Point(13, 409);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(54, 12);
             this.label3.TabIndex = 7;
@@ -249,14 +253,14 @@
             // cmb_reserve_section
             // 
             this.cmb_reserve_section.FormattingEnabled = true;
-            this.cmb_reserve_section.Location = new System.Drawing.Point(15, 399);
+            this.cmb_reserve_section.Location = new System.Drawing.Point(15, 424);
             this.cmb_reserve_section.Name = "cmb_reserve_section";
             this.cmb_reserve_section.Size = new System.Drawing.Size(121, 20);
             this.cmb_reserve_section.TabIndex = 6;
             // 
             // btn_reserve_section
             // 
-            this.btn_reserve_section.Location = new System.Drawing.Point(13, 514);
+            this.btn_reserve_section.Location = new System.Drawing.Point(13, 539);
             this.btn_reserve_section.Name = "btn_reserve_section";
             this.btn_reserve_section.Size = new System.Drawing.Size(121, 23);
             this.btn_reserve_section.TabIndex = 5;
@@ -313,16 +317,32 @@
             this.elementHost1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.elementHost1.Location = new System.Drawing.Point(3, 3);
             this.elementHost1.Name = "elementHost1";
-            this.elementHost1.Size = new System.Drawing.Size(1094, 552);
+            this.elementHost1.Size = new System.Drawing.Size(1095, 584);
             this.elementHost1.TabIndex = 1;
             this.elementHost1.Text = "elementHost1";
             this.elementHost1.Child = this.uctlReserveSectionView1;
+            // 
+            // txt_Angle
+            // 
+            this.txt_Angle.Location = new System.Drawing.Point(11, 345);
+            this.txt_Angle.Name = "txt_Angle";
+            this.txt_Angle.Size = new System.Drawing.Size(121, 22);
+            this.txt_Angle.TabIndex = 26;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(11, 332);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(33, 12);
+            this.label10.TabIndex = 25;
+            this.label10.Text = "Angle";
             // 
             // ReserveSectionInfoForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1249, 558);
+            this.ClientSize = new System.Drawing.Size(1249, 590);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "ReserveSectionInfoForm";
             this.Text = "ReserveSectionInfo";
@@ -363,5 +383,7 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Button btn_resetReservedSectionByVh;
+        private System.Windows.Forms.TextBox txt_Angle;
+        private System.Windows.Forms.Label label10;
     }
 }
