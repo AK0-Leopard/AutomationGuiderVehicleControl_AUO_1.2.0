@@ -276,7 +276,7 @@ namespace com.mirle.ibg3k0.sc.Common
         }
         public List<AADDRESS> getAddresses()
         {
-            return Addresses;
+            return Addresses.ToList();
         }
         public List<CouplerAddress> getCouplerAddresses()
         {

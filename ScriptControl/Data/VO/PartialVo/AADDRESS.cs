@@ -65,6 +65,9 @@ namespace com.mirle.ibg3k0.sc
         public bool IsAvoid
         { get { return this.ADRTYPE == 4 || this.ADRTYPE == 6; } }//暫時先用,1:充電站 ,2:作為停車的Type,4:可避車點
         [JsonIgnore]
+        public bool IsCanNotStay
+        { get { return this.ADRTYPE == 8; } }//暫時先用,1:充電站 ,2:作為停車的Type,4:可避車點,8:為設定為不可久待的點
+        [JsonIgnore]
         public bool IsCoupler
         { get { return AddressTypeFlags[BIT_INDEX_COUPLER]; } }
         [JsonIgnore]

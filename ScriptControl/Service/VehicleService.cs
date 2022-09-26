@@ -208,12 +208,13 @@ namespace com.mirle.ibg3k0.sc.Service
                 bool has_cmd_excute = scApp.CMDBLL.isCMD_OHTCExcuteByVh(vh.VEHICLE_ID);
                 if (!has_cmd_excute)
                 {
-                    scApp.VehicleChargerModule.askVhToChargerForWait(vh);
+                    //scApp.VehicleChargerModule.askVhToChargerForWait(vh);
+                    checkIsOnCanNotStayAddressAndDriveAway(vh);
                 }
                 else
                 {
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                       Data: $"has command excute, can't ask idling vh to paking",
+                       Data: $"has command excute, can't try ask idling vh to orther address",
                        VehicleID: vh.VEHICLE_ID,
                        CarrierID: vh.CST_ID);
                 }
@@ -224,6 +225,54 @@ namespace com.mirle.ibg3k0.sc.Service
                 logger.Error(ex, "Exception:");
             }
         }
+        private void checkIsOnCanNotStayAddressAndDriveAway(AVEHICLE vh)
+        {
+            AADDRESS current_address = scApp.AddressesBLL.cache.GetAddress(vh.CUR_ADR_ID);
+            if (current_address == null) return;
+            if (!current_address.IsCanNotStay) return;
+            //找出一個可以避車的最近的點
+            var find_closest_address_result = findClosestAddressCanStay(vh);
+            if (find_closest_address_result.isFind)
+            {
+                scApp.CMDBLL.doCreatTransferCommand(vh.VEHICLE_ID, string.Empty, string.Empty,
+                                     E_CMD_TYPE.Move,
+                                     string.Empty,
+                                     find_closest_address_result.ClosestAddress.ADR_ID, 0, 0);
+            }
+            else
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                   Data: $"無法找到其他可待的點",
+                   VehicleID: vh.VEHICLE_ID,
+                   CarrierID: vh.CST_ID);
+            }
+
+
+        }
+        private (bool isFind, AADDRESS ClosestAddress) findClosestAddressCanStay(AVEHICLE vh)
+        {
+            List<AADDRESS> addresses = scApp.AddressesBLL.cache.GetAddresses();
+            AADDRESS closest_address = null;
+            int cost = int.MaxValue;
+            foreach (var adr in addresses)
+            {
+                if (SCUtility.isMatche(adr.ADR_ID, vh.CUR_ADR_ID))
+                {
+                    continue;
+                }
+                if (adr.IsCanNotStay) continue;
+                if (!adr.IsAvoid) continue;
+
+                var guide_info = scApp.GuideBLL.getGuideInfo(vh.CUR_ADR_ID, adr.ADR_ID);
+                if (guide_info.isSuccess && cost > guide_info.totalCost)
+                {
+                    cost = guide_info.totalCost;
+                    closest_address = adr;
+                }
+            }
+            return (closest_address != null, closest_address);
+        }
+
 
         private void Vh_ModeStatusChange(object sender, VHModeStatus e)
         {

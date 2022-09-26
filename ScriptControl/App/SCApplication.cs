@@ -1745,7 +1745,7 @@ namespace com.mirle.ibg3k0.sc.App
         public static int TheLongestFullyChargedIntervalTime_Mim = 15;
 
         public static bool AutoOverride = true;
-        public static int AllowVhIdleTime_ms = 0;
+        public static int AllowVhIdleTime_ms = 10_000;
         public static int MAX_ALLOW_DISTANCE_OFFSET_mm { get; private set; } = 50;
         public static int MAX_ALLOW_VH_ACTION_TIME_SECOND { get; private set; } = 1200;
         public static int MAX_ALLOW_VH_NO_CONNECTION_TIME_SECOND { get; private set; } = 30;
