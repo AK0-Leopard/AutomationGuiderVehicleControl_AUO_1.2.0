@@ -257,6 +257,15 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
 
                                     var key_blocked_vh = findTheKeyBlockVhID(avoid_vh, pass_vh);
                                     if (key_blocked_vh == null) continue;
+                                    if (key_blocked_vh.VhAvoidInfo != null)
+                                    {
+                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
+                                            Data: $"dead lock happend ,but key_blocked_vh:{key_blocked_vh.VEHICLE_ID} is executing avoid command, continue next vh." +
+                                            $"blocked section:{avoid_vh.VhAvoidInfo.BlockedSectionID} blocked vh id:{avoid_vh.VhAvoidInfo.BlockedVehicleID}",
+                                            VehicleID: avoid_vh.VEHICLE_ID,
+                                            CarrierID: avoid_vh.CST_ID);
+                                        continue;
+                                    }
                                     if (avoid_vh.isTcpIpConnect)
                                     {
                                         ACMD_OHTC cmd_ohtc = scApp.CMDBLL.GetCMD_OHTCByID(avoid_vh.OHTC_CMD);
