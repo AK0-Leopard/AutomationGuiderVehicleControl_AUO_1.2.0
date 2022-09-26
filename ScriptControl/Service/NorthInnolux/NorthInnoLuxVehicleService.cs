@@ -1618,6 +1618,35 @@ namespace com.mirle.ibg3k0.sc.Service
             }
         }
 
+        //2022.9.26 new
+        public bool trydo51AvoidCommandToVhNew(AVEHICLE avoidVh, AVEHICLE passVh)
+        {
+            var (isFind, _, _, avoidAdr) = findNotConflictSectionAndAvoidAddressNew(passVh, avoidVh, true);
+            string blocked_section = avoidVh.CanNotReserveInfo.ReservedSectionID;
+            string blocked_vh_id = avoidVh.CanNotReserveInfo.ReservedVhID;
+            if (isFind)
+            {
+                avoidVh.VhAvoidInfo = null;
+                //找到避車點之後，就可以下ID:51，開始讓vh進行避車了
+                var avoid_request_result = AvoidRequest(avoidVh.VEHICLE_ID, avoidAdr,
+                                                        needbyPassSectionID: blocked_section);
+                if (avoid_request_result.is_success)
+                {
+                    avoidVh.VhAvoidInfo = new AVEHICLE.AvoidInfo(blocked_section, blocked_vh_id, avoid_request_result.guide_address_ids);
+                }
+                return avoid_request_result.is_success;
+            }
+            else
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                   Data: $"No find the can avoid address. avoid vh:{avoidVh.VEHICLE_ID} current adr:{avoidVh.CUR_ADR_ID}," +
+                         $"will pass vh:{passVh.VEHICLE_ID} current adr:{passVh.CUR_ADR_ID}",
+                   VehicleID: avoidVh.VEHICLE_ID,
+                   CarrierID: avoidVh.CST_ID);
+                return false;
+            }
+        }
+
         private bool isMatche(List<string> list1, List<string> list2)
         {
             if (list1 == null || list2 == null) return false;
@@ -2910,7 +2939,8 @@ namespace com.mirle.ibg3k0.sc.Service
             Normal,
             VehicleInLongCharge,
             VehicleInError,
-            BlockingForCouplerSafety
+            BlockingForCouplerSafety,
+            VehicleInLoadingUnloading,
         }
 
         private (bool is_can, CAN_NOT_AVOID_RESULT result) canCreatAvoidCommand(AVEHICLE reservedVh)
@@ -2929,6 +2959,11 @@ namespace com.mirle.ibg3k0.sc.Service
             else if (!reservedVh.isTcpIpConnect || reservedVh.IsError || reservedVh.MODE_STATUS == VHModeStatus.Manual)
             {
                 return (false, CAN_NOT_AVOID_RESULT.VehicleInError);
+            }
+            else if (reservedVh.State == AVEHICLE.VehicleState.ACQUIRING || reservedVh.State == AVEHICLE.VehicleState.DEPOSITING)
+            {
+                //Loading/unloading
+                return (false, CAN_NOT_AVOID_RESULT.VehicleInLoadingUnloading);
             }
             else
             {
@@ -3055,6 +3090,14 @@ namespace com.mirle.ibg3k0.sc.Service
                                         }
                                     }
                                 }
+                                break;
+                            case CAN_NOT_AVOID_RESULT.VehicleInLoadingUnloading:
+                                //shirley: 等待對方完成LoadUnload再決定要不要避車。
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                    Data: $"vh:{requestVhID} cannot ask for reserve section id:{request_vh.CanNotReserveInfo.ReservedSectionID}" +
+                                          $"because blockingVh:{reservedVhID} status is {check_can_creat_avoid_command.result}." +
+                                          $"waiting {reservedVhID} finished",
+                                    VehicleID: requestVhID);
                                 break;
                             default:
                                 break;
