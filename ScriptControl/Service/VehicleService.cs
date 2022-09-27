@@ -1585,6 +1585,11 @@ namespace com.mirle.ibg3k0.sc.Service
             }
         }
 
+        public virtual bool tryDo51AvoidCommandToVhNew(AVEHICLE avoidVh, AVEHICLE passVh)
+        {
+            return false;
+        }
+
         public virtual bool doCancelOrAbortCommandByMCSCmdID(string cancel_abort_mcs_cmd_id, CMDCancelType actType)
         {
             ACMD_MCS mcs_cmd = scApp.CMDBLL.getCMD_MCSByID(cancel_abort_mcs_cmd_id);

@@ -2295,8 +2295,8 @@ namespace com.mirle.ibg3k0.sc.Service
                         //    scApp.GuideBLL.getGuideInfo_New2(vh_current_section, vh_current_address, avoidAddress);
                         (is_success, guide_segment_ids, guide_section_ids, guide_address_ids, total_cost) =
                                                     scApp.GuideBLL.getGuideInfo(vh_current_address, avoidAddress, need_by_pass_sec_ids);
-                        next_walk_section = guide_section_ids[0];
-                        next_walk_address = guide_address_ids[0];
+                        next_walk_section = guide_section_ids?[0];
+                        next_walk_address = guide_address_ids?[0];
 
                         if (is_success)
                         {
@@ -3593,7 +3593,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
         #region New 51 Avoid address chooser
         //2022.9.26 new
-        public bool tryDo51AvoidCommandToVhNew(AVEHICLE avoidVh, AVEHICLE passVh)
+        public override bool tryDo51AvoidCommandToVhNew(AVEHICLE avoidVh, AVEHICLE passVh)
         {
             var findAvoidResult = findNotConflictSectionAnd51AvoidAddress(passVh, avoidVh);
             string blocked_section = avoidVh.CanNotReserveInfo.ReservedSectionID;
@@ -3642,6 +3642,8 @@ namespace com.mirle.ibg3k0.sc.Service
             string avoid_address = null;
             List<string> virtual_vh_ids = new List<string>();
             List<string> needToBlockedSectionIds = new List<string>();
+            //if (requestVh.PredictSections != null)
+            //    needToBlockedSectionIds.AddRange(requestVh.PredictSections);
 
             try
             {
@@ -3665,35 +3667,41 @@ namespace com.mirle.ibg3k0.sc.Service
                 HashSet<string> visitedAddress = new HashSet<string>();
                 visitedAddress.Add(startAddress);
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                    Data: $"requestVh will pass sections:{string.Join(",", requestVh.WillPassSectionID)}",
+                    VehicleID: requestVh.VEHICLE_ID);
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                     Data: $"start search address:{startAddress}",
                     VehicleID: requestVh.VEHICLE_ID);
-                do
+
+                while (nextAddresses.Count > 0)
                 {
                     var testAddrSec = nextAddresses.Dequeue();
+                    if (visitedAddress.Contains(testAddrSec.addressId))
+                        continue;
                     visitedAddress.Add(testAddrSec.addressId);
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                         Data: $"next testing address:{testAddrSec}",
                         VehicleID: requestVh.VEHICLE_ID);
 
                     //如果找到和另一台車預定路線交錯的address，要在交錯的address加入一台虛擬車來幫助找避車路徑時確保不會卡住的點。(?)
-                    if (hasCrossWithPredictAddress(testAddrSec.addressId, requestVh.WillPassAddressID))
-                    {
-                        string virtual_vh_section_id = $"{virtual_vh_id}_{testAddrSec.addressId}";
-                        scApp.ReserveBLL.TryAddVehicleOrUpdate(virtual_vh_section_id, testAddrSec.addressId);
-                        virtual_vh_ids.Add(virtual_vh_section_id);
-                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                           Data: $"Add virtual in reserve system vh:{virtual_vh_section_id} in address id:{testAddrSec}",
-                           VehicleID: reservedVh.VEHICLE_ID);
-                    }
+                    //if (hasCrossWithPredictAddress(testAddrSec.addressId, requestVh.WillPassAddressID))
+                    //{
+                    //    string virtual_vh_section_id = $"{virtual_vh_id}_{testAddrSec.addressId}";
+                    //    scApp.ReserveBLL.TryAddVehicleOrUpdate(virtual_vh_section_id, testAddrSec.addressId);
+                    //    virtual_vh_ids.Add(virtual_vh_section_id);
+                    //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                    //       Data: $"Add virtual in reserve system vh:{virtual_vh_section_id} in address id:{testAddrSec}",
+                    //       VehicleID: reservedVh.VEHICLE_ID);
+                    //}
 
-                    //fail case 1: 路徑重疊 => 此路不通
-                    if (requestVh.PredictSections != null && requestVh.PredictSections.Count() > 0
-                        && requestVh.PredictSections.Contains(SCUtility.Trim(testAddrSec.sectionId)))
+                    //fail case 1: 路徑重疊 => 往支線(下一個點)找
+                    if (requestVh.WillPassSectionID != null && requestVh.WillPassSectionID.Count() > 0
+                        && requestVh.WillPassSectionID.Contains(SCUtility.Trim(testAddrSec.sectionId)))
                     {
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                             Data: $"sec id:{SCUtility.Trim(testAddrSec.sectionId)} is request_vh of predict sections.by pass it,continue find next address.",
                             VehicleID: requestVh.VEHICLE_ID);
-                        needToBlockedSectionIds.Add(testAddrSec.sectionId);
+                        //needToBlockedSectionIds.Add(testAddrSec.sectionId);
                     }
                     else
                     {
@@ -3710,14 +3718,17 @@ namespace com.mirle.ibg3k0.sc.Service
                         else if (!canDo51Avoid(testAddrSec.addressId))
                         {
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                                Data: $"address id: {testAddrSec.addressId} is not can avoid address, continue find next address.",
+                                Data: $"address id: {testAddrSec.addressId} is not can avoid address, continue to find next address.",
                                 VehicleID: requestVh.VEHICLE_ID);
                         }
-                        //successful case:
+                        //前置檢查成功，檢查是否可以讓另一台車通過:
                         else
                         {
-                            avoid_address = testAddrSec.addressId;
-                            break;
+                            if (checkCanOtherVehiclePass(requestVh, reservedVh, testAddrSec.addressId, testAddrSec.sectionId))
+                            {
+                                avoid_address = testAddrSec.addressId;
+                                break;
+                            }
                         }
                     }
                     var nextSections = scApp.SectionBLL.cache.GetSectionsByAddress(testAddrSec.addressId)
@@ -3729,7 +3740,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         if (!visitedAddress.Contains(nextAddress))
                             nextAddresses.Enqueue((nextAddress, sec.SEC_ID));
                     }
-                } while (nextAddresses.Count > 0);
+                }
 
                 if (virtual_vh_ids != null && virtual_vh_ids.Count > 0)
                 {
@@ -3766,6 +3777,38 @@ namespace com.mirle.ibg3k0.sc.Service
             if (predictAddresses == null || predictAddresses.Count() == 0) return false;
             if (SCUtility.isEmpty(checkAddress)) return false;
             return predictAddresses.Contains(SCUtility.Trim(checkAddress));
+        }
+
+        //2022.9.26 需要再完善條件?
+        private bool checkCanOtherVehiclePass(AVEHICLE requestVh, AVEHICLE needToAvoidVh, string addressId, string sectionId)
+        {
+            string needToAvoidVirtualVehicle = $"{VehicleVirtualSymbol}_Avoid";
+            var resultStep1 = scApp.ReserveBLL.TryAddVehicleOrUpdate(needToAvoidVirtualVehicle, addressId);
+            if (!resultStep1.OK)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                    Data: $"can not reserve address id: {addressId}, continue to find next address.",
+                    VehicleID: requestVh.VEHICLE_ID);
+                return false;
+            }
+            else
+            {
+                bool resultStep2 = true;
+                foreach (var checkSec in requestVh.WillPassSectionID)
+                {
+                    HltResult reserve_check_result = scApp.ReserveBLL.TryAddReservedSection(needToAvoidVh.VEHICLE_ID, checkSec, isAsk: true);
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                        Data: $"check reserve result after another vehicle move to {addressId}, section {checkSec} reserve result:{reserve_check_result.OK},blocked vh:{reserve_check_result.VehicleID}.",
+                        VehicleID: requestVh.VEHICLE_ID);
+                    if (!reserve_check_result.OK && reserve_check_result.VehicleID.Equals(needToAvoidVirtualVehicle))
+                    {
+                        resultStep2 = false;
+                        break;
+                    }
+                }
+                scApp.ReserveBLL.RemoveVehicle(needToAvoidVirtualVehicle);
+                return resultStep2;
+            }
         }
         #endregion New 51 Avoid address chooser
 

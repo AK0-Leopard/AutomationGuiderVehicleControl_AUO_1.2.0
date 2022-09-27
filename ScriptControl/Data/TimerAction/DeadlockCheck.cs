@@ -274,7 +274,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                                            VehicleID: avoid_vh.VEHICLE_ID,
                                            CarrierID: avoid_vh.CST_ID);
 
-                                        bool is_override_success = scApp.VehicleService.trydoAvoidCommandToVh(avoid_vh, key_blocked_vh);
+                                        bool is_override_success = scApp.VehicleService.tryDo51AvoidCommandToVhNew(avoid_vh, key_blocked_vh);
                                         if (is_override_success)
                                         {
                                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
