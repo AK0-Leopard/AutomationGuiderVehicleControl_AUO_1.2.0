@@ -3469,23 +3469,25 @@ namespace com.mirle.ibg3k0.sc.Service
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                                Data: $"search result is empty,search adr:{search_info.next_address}",
                                VehicleID: requestVh.VEHICLE_ID);
+                            #region 2022.9.28 marked
                             //如果找到最後已經沒路的，就用這個端點去嘗試Add 一台車看看能不能成功，
                             //如果可以成功則代表這個點其實是可以閃避的
-                            string virtual_vh_section_id = $"{virtual_vh_id}_{search_info.next_address}";
-                            virtual_vh_ids.Add(virtual_vh_section_id);
-                            var check_result = scApp.ReserveBLL.TryAddVehicleOrUpdate(virtual_vh_section_id, search_info.next_address, 0);
-                            if (check_result.OK)
-                                check_result = scApp.ReserveBLL.TryAddVehicleOrUpdate(virtual_vh_section_id, search_info.next_address, 90);
-                            if (check_result.OK)
-                            {
-                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                                   Data: $"search result is empty,but finial adr:{search_info.next_address} it ok for avoid",
-                                   VehicleID: requestVh.VEHICLE_ID);
+                            //string virtual_vh_section_id = $"{virtual_vh_id}_{search_info.next_address}";
+                            //virtual_vh_ids.Add(virtual_vh_section_id);
+                            //var check_result = scApp.ReserveBLL.TryAddVehicleOrUpdate(virtual_vh_section_id, search_info.next_address, 0);
+                            //if (check_result.OK)
+                            //    check_result = scApp.ReserveBLL.TryAddVehicleOrUpdate(virtual_vh_section_id, search_info.next_address, 90);
+                            //if (check_result.OK)
+                            //{
+                            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                            //       Data: $"search result is empty,but finial adr:{search_info.next_address} it ok for avoid",
+                            //       VehicleID: requestVh.VEHICLE_ID);
 
-                                not_conflict_section = search_info.source_section;
-                                avoid_address = search_info.next_address;
-                                return (true, not_conflict_section, search_info.next_address, avoid_address);
-                            }
+                            //    not_conflict_section = search_info.source_section;
+                            //    avoid_address = search_info.next_address;
+                            //    return (true, not_conflict_section, search_info.next_address, avoid_address);
+                            //}
+                            #endregion 2022.9.28 marked
                         }
 
                         //當找出兩段以上的Section時且他的Source為會與另一台vh前進路徑交錯的車，
@@ -3783,7 +3785,8 @@ namespace com.mirle.ibg3k0.sc.Service
         private bool checkCanOtherVehiclePass(AVEHICLE requestVh, AVEHICLE needToAvoidVh, string addressId, string sectionId)
         {
             string needToAvoidVirtualVehicle = $"{VehicleVirtualSymbol}_Avoid";
-            var resultStep1 = scApp.ReserveBLL.TryAddVehicleOrUpdate(needToAvoidVirtualVehicle, addressId);
+            var hltVhOriginal = scApp.ReserveBLL.GetHltVehicle(needToAvoidVh.VEHICLE_ID);
+            var resultStep1 = scApp.ReserveBLL.TryAddVehicleOrUpdate(needToAvoidVirtualVehicle, addressId, hltVhOriginal.Angle);
             if (!resultStep1.OK)
             {
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
@@ -3796,7 +3799,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 bool resultStep2 = true;
                 foreach (var checkSec in requestVh.WillPassSectionID)
                 {
-                    HltResult reserve_check_result = scApp.ReserveBLL.TryAddReservedSection(needToAvoidVh.VEHICLE_ID, checkSec, isAsk: true);
+                    HltResult reserve_check_result = scApp.ReserveBLL.TryAddReservedSection(requestVh.VEHICLE_ID, checkSec, isAsk: true);
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                         Data: $"check reserve result after another vehicle move to {addressId}, section {checkSec} reserve result:{reserve_check_result.OK},blocked vh:{reserve_check_result.VehicleID}.",
                         VehicleID: requestVh.VEHICLE_ID);
