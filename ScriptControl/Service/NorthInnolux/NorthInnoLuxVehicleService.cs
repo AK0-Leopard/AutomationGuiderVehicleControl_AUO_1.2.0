@@ -2293,14 +2293,18 @@ namespace com.mirle.ibg3k0.sc.Service
 
                         //(is_success, guide_segment_ids, guide_section_ids, guide_address_ids, total_cost) =
                         //    scApp.GuideBLL.getGuideInfo_New2(vh_current_section, vh_current_address, avoidAddress);
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                            Data: $"find avoid path to {avoidAddress}, current by pass section:{string.Join(",", need_by_pass_sec_ids)}",
+                            VehicleID: vh.VEHICLE_ID,
+                            CarrierID: vh.CST_ID);
+
                         (is_success, guide_segment_ids, guide_section_ids, guide_address_ids, total_cost) =
                                                     scApp.GuideBLL.getGuideInfo(vh_current_address, avoidAddress, need_by_pass_sec_ids);
-                        next_walk_section = guide_section_ids?[0];
-                        next_walk_address = guide_address_ids?[0];
 
                         if (is_success)
                         {
-
+                            next_walk_section = guide_section_ids[0];
+                            next_walk_address = guide_address_ids[0];
                             var reserve_result = askReserveSuccess(vh_id, next_walk_section, next_walk_address);
                             if (reserve_result.isSuccess)
                             {
@@ -2316,6 +2320,13 @@ namespace com.mirle.ibg3k0.sc.Service
                                    VehicleID: vh.VEHICLE_ID,
                                    CarrierID: vh.CST_ID);
                             }
+                        }
+                        else
+                        {
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                Data: $"find avoid path to {avoidAddress}, but no avaliable path found.",
+                                VehicleID: vh.VEHICLE_ID,
+                                CarrierID: vh.CST_ID);
                         }
                         if (current_find_count++ > max_find_count)
                         {
@@ -2350,10 +2361,6 @@ namespace com.mirle.ibg3k0.sc.Service
                                     {
                                         guide_address_ids.Insert(0, new_start_section.FROM_ADR_ID);
                                     }
-                                    //if (!SCUtility.isMatche(guide_segment_ids[0], new_start_section.SEG_NUM))
-                                    //{
-                                    //    guide_segment_ids.Insert(0, new_start_section.SEG_NUM);
-                                    //}
                                 }
                             }
                         }
@@ -3595,31 +3602,43 @@ namespace com.mirle.ibg3k0.sc.Service
 
         #region New 51 Avoid address chooser
         //2022.9.26 new
+        private SpinLock avoidSpinLock = new SpinLock();
         public override bool tryDo51AvoidCommandToVhNew(AVEHICLE avoidVh, AVEHICLE passVh)
         {
-            var findAvoidResult = findNotConflictSectionAnd51AvoidAddress(passVh, avoidVh);
-            string blocked_section = avoidVh.CanNotReserveInfo.ReservedSectionID;
-            string blocked_vh_id = avoidVh.CanNotReserveInfo.ReservedVhID;
-            if (findAvoidResult.isFind)
+            bool avoidLockTaken = false;
+            try
             {
-                avoidVh.VhAvoidInfo = null;
-                //找到避車點之後，就可以下ID:51，開始讓vh進行避車了
-                var avoid_request_result = AvoidRequest(avoidVh.VEHICLE_ID, findAvoidResult.avoidAdr,
-                                                        needbyPassSectionID: findAvoidResult.needToBlockedSections);
-                if (avoid_request_result.is_success)
+                avoidSpinLock.Enter(ref avoidLockTaken);
+
+                var findAvoidResult = findNotConflictSectionAnd51AvoidAddress(passVh, avoidVh);
+                string blocked_section = avoidVh.CanNotReserveInfo.ReservedSectionID;
+                string blocked_vh_id = avoidVh.CanNotReserveInfo.ReservedVhID;
+                if (findAvoidResult.isFind)
                 {
-                    avoidVh.VhAvoidInfo = new AVEHICLE.AvoidInfo(blocked_section, blocked_vh_id, avoid_request_result.guide_address_ids);
+                    avoidVh.VhAvoidInfo = null;
+                    //找到避車點之後，就可以下ID:51，開始讓vh進行避車了
+                    var avoid_request_result = AvoidRequest(avoidVh.VEHICLE_ID, findAvoidResult.avoidAdr,
+                                                            needbyPassSectionID: findAvoidResult.needToBlockedSections);
+                    if (avoid_request_result.is_success)
+                    {
+                        avoidVh.VhAvoidInfo = new AVEHICLE.AvoidInfo(blocked_section, blocked_vh_id, avoid_request_result.guide_address_ids);
+                    }
+                    return avoid_request_result.is_success;
                 }
-                return avoid_request_result.is_success;
+                else
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: $"No find the can avoid address. avoid vh:{avoidVh.VEHICLE_ID} current adr:{avoidVh.CUR_ADR_ID}," +
+                             $"will pass vh:{passVh.VEHICLE_ID} current adr:{passVh.CUR_ADR_ID}",
+                       VehicleID: avoidVh.VEHICLE_ID,
+                       CarrierID: avoidVh.CST_ID);
+                    return false;
+                }
             }
-            else
+            finally
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                   Data: $"No find the can avoid address. avoid vh:{avoidVh.VEHICLE_ID} current adr:{avoidVh.CUR_ADR_ID}," +
-                         $"will pass vh:{passVh.VEHICLE_ID} current adr:{passVh.CUR_ADR_ID}",
-                   VehicleID: avoidVh.VEHICLE_ID,
-                   CarrierID: avoidVh.CST_ID);
-                return false;
+                if (avoidLockTaken)
+                    avoidSpinLock.Exit();
             }
         }
 
