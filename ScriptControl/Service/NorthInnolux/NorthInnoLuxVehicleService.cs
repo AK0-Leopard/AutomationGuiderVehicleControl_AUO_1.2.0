@@ -3094,8 +3094,8 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 bool is_can = reservedVh.isTcpIpConnect &&
                        (reservedVh.MODE_STATUS == VHModeStatus.AutoRemote || reservedVh.MODE_STATUS == VHModeStatus.AutoCharging) &&
-                       reservedVh.ACT_STATUS == VHActionStatus.NoCommand /* &&
-                       !scApp.CMDBLL.isCMD_OHTCQueueByVh(reservedVh.VEHICLE_ID) &&
+                       reservedVh.ACT_STATUS == VHActionStatus.NoCommand &&
+                       !scApp.CMDBLL.isCMD_OHTCMoveQueueByVh(reservedVh.VEHICLE_ID) /* &&
                        !scApp.CMDBLL.HasCMD_MCSInQueue() &&
                        canAvoidCheckByMCSCommand(reservedVh) */;
                 return (is_can, CAN_NOT_AVOID_RESULT.Normal);
@@ -3649,14 +3649,16 @@ namespace com.mirle.ibg3k0.sc.Service
 
             try
             {
+                #region 2022.9.28 marked
                 //在一開始的時候就先Set一台虛擬車在相同位置，防止找到鄰近的Address
-                var hlt_vh_obj = scApp.ReserveBLL.GetHltVehicle(reservedVh.VEHICLE_ID);
-                string virtual_vh_id = $"{VehicleVirtualSymbol}_{reservedVh.VEHICLE_ID}";
-                HltVehicle virtualVh = new HltVehicle(hlt_vh_obj);
-                virtualVh.ID = virtual_vh_id;
-                virtualVh.SensorDirection = HltDirection.ForwardReverse;
-                scApp.ReserveBLL.TryAddVehicleOrUpdate(virtualVh);
-                virtual_vh_ids.Add(virtual_vh_id);
+                //var hlt_vh_obj = scApp.ReserveBLL.GetHltVehicle(reservedVh.VEHICLE_ID);
+                //string virtual_vh_id = $"{VehicleVirtualSymbol}_{reservedVh.VEHICLE_ID}";
+                //HltVehicle virtualVh = new HltVehicle(hlt_vh_obj);
+                //virtualVh.ID = virtual_vh_id;
+                //virtualVh.SensorDirection = HltDirection.ForwardReverse;
+                //scApp.ReserveBLL.TryAddVehicleOrUpdate(virtualVh);
+                //virtual_vh_ids.Add(virtual_vh_id);
+                #endregion 2022.9.28 marked
 
                 Queue<(string addressId, string sectionId)> nextAddresses = new Queue<(string, string)>();
                 var firstTestingSections = scApp.SectionBLL.cache.GetSectionsByAddress(startAddress)
