@@ -2501,9 +2501,94 @@ namespace com.mirle.ibg3k0.sc.Service
                 case EventType.RePosition:
                     TransferReportRePosition(bcfApp, eqpt, seq_num, eventType);
                     break;
+                case EventType.Initial:
+                    TransferReportInitial(bcfApp, eqpt, seq_num, eventType, bCRReadResult, carrier_id);
+                    break;
                 default:
                     replyTranEventReport(bcfApp, eventType, eqpt, seq_num);
                     break;
+            }
+        }
+        private void TransferReportInitial(BCFApplication bcfApp, AVEHICLE vh, int seq_num, EventType eventType,
+            BCRReadResult bCRReadResult, string cstID)
+        {
+            try
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                   Data: $"Process report {eventType}",
+                   VehicleID: vh.VEHICLE_ID);
+
+                cstID = cstID.Trim();
+                scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(vh.VEHICLE_ID);
+
+                //帳料sync
+                bool cstOnVehicle = !SCUtility.isEmpty(cstID);
+                bool isBcrReadFail = (bCRReadResult == BCRReadResult.BcrReadFail);
+                AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(vh.VEHICLE_ID);
+                if (cstOnVehicle)
+                {
+                    if (isBcrReadFail)
+                    {
+                        if (!string.IsNullOrEmpty(vid_info.CARRIER_ID))
+                        {
+                            string new_carrier_id = $"NR-{vh.Real_ID.Trim()}-{DateTime.Now.ToString(SCAppConstants.TimestampFormat_16)}";
+                            scApp.CarrierBLL.db.updateRenameID(carrier_data.ID, new_carrier_id);
+                            scApp.TransferService.processIDReadFailAndMismatch(carrier_data.ID, CompleteStatus.IdreadFailed);
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                Data: $"vh id:{vh.VEHICLE_ID} 非在執行命令中，身上有CST但CST ID為unknwon:{cstID}");
+                        }
+                        else
+                        {
+                            string new_carrier_id = $"NR-{vh.Real_ID.Trim()}-{DateTime.Now.ToString(SCAppConstants.TimestampFormat_16)}";
+                            scApp.TransferService.tryInstallCarrierInVehicle(vh.VEHICLE_ID, locationRealID, new_carrier_id);
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                Data: $"vh id:{vh.VEHICLE_ID} 非在執行命令中，身上有CST但CST ID為unknwon:{cstID}，故將其rename為unknown id:{new_carrier_id}");
+                        }
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(vid_info.CARRIER_ID))
+                        {
+                            if (SCUtility.isMatche(vid_info.CARRIER_ID, cstID))
+                            {
+                                //do nothing...
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                    Data: $"vh id:{vh.VEHICLE_ID} 非在執行命令中，身上有CST但CST ID為:{cstID}，與原本在身上的ID一致，故不進行調整");
+                            }
+                            else
+                            {
+                                scApp.CarrierBLL.db.updateRenameID(carrier_data.ID, cstID);
+                                scApp.TransferService.processIDReadFailAndMismatch(carrier_data.ID, CompleteStatus.IdmisMatch);
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                    Data: $"vh id:{vh.VEHICLE_ID} 非在執行命令中，身上有CST但CST ID為:{cstID}，與資料庫的不一樣db cst id:{carrier_data.ID},故將其進行對資料庫的rename");
+                            }
+                        }
+                        else
+                        {
+                            scApp.TransferService.tryInstallCarrierInVehicle(vh.VEHICLE_ID, locationRealID, cstID);
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                Data: $"vh id:{vh.VEHICLE_ID} 非在執行命令中，身上有CST但CST ID為:{cstID}，但db中無該vh的帳料，進行建帳");
+                        }
+                    }
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(vid_info.CARRIER_ID))
+                    {
+                        if (carrier_data.LOCATION.Trim() == locationRealID.Trim() && carrier_data.STATE == E_CARRIER_STATE.Installed)
+                        {
+                            var remove_result = scApp.TransferService.ForceRemoveCarrierInVehicleByAGV(vh.VEHICLE_ID, cstLocation, carrier_data.ID);
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                Data: $"vh id:{vh.VEHICLE_ID} 非在執行命令中，身上無CST，但db中有該vh的帳料:{carrier_data.ID}，進行刪除帳料");
+                        }
+                    }
+                }
+
+                replyTranEventReport(bcfApp, eventType, vh, seq_num);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
             }
         }
         protected void TransferReportRePosition(BCFApplication bcfApp, AVEHICLE eqpt, int seqNum,
