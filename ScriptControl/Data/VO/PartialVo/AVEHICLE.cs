@@ -1163,6 +1163,29 @@ namespace com.mirle.ibg3k0.sc
             }
         }
 
+        public List<string> GetCurrentGuideSection()
+        {
+            if (VhAvoidInfo != null)
+                return VhAvoidInfo.GuideAddresses;
+            else
+            {
+                if (HAS_CST == 0)
+                {
+                    if (PredictSectionsStartToLoad != null && PredictSectionsStartToLoad.Count > 0)
+                        return PredictSectionsStartToLoad;
+                    else
+                        return null;
+                }
+                else
+                {
+                    if (PredictSectionsToDesination != null && PredictSectionsToDesination.Count > 0)
+                        return PredictSectionsToDesination;
+                    else
+                        return null;
+                }
+            }
+        }
+
 
         public void initialParameter()
         {

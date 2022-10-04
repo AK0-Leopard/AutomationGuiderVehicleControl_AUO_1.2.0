@@ -19,6 +19,7 @@ namespace com.mirle.ibg3k0.sc.BLL
     {
         NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private Mirle.Hlts.ReserveSection.Map.ViewModels.HltMapViewModel mapAPI { get; set; }
+        private SCApplication scApp;
 
         private EventHandler reserveStatusChange;
         private object _reserveStatusChangeEventLock = new object();
@@ -51,6 +52,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
         public override void start(SCApplication _app)
         {
+            scApp = _app;
             mapAPI = _app.getReserveSectionAPI();
 
             mapAPI.HltReservedSections.CollectionChanged += onCollecionChangedEvent;
@@ -392,6 +394,8 @@ namespace com.mirle.ibg3k0.sc.BLL
                                         }
                                     }
                                 }
+                                else if (checkIsForcePassFirstSectionReserve(vh, reserve_section_id))
+                                    already_pass = true;
                             }
                         }
                     }
@@ -428,6 +432,55 @@ namespace com.mirle.ibg3k0.sc.BLL
                    Details: $"process function:{nameof(IsMultiReserveSuccess)} Exception");
                 return (false, string.Empty, string.Empty, null);
             }
+        }
+
+        private bool checkIsForcePassFirstSectionReserve(AVEHICLE vh, string reserveSectionID)
+        {
+            //var vh_guide_info = vh.GetCurrentGuideSection();
+            var vh_guide_info = vh.WillPassSectionID;
+            if (vh_guide_info is null)
+                return false;
+            if (vh_guide_info.Count < 2)
+            {
+                return false;
+            }
+            string first_section = vh_guide_info.FirstOrDefault();
+            if (!SCUtility.isMatche(first_section, reserveSectionID))
+            {
+                return false;
+            }
+            string secend_section = vh_guide_info[1];
+            var get_cross_address_result = tryFindCrossAddressID(first_section, secend_section);
+            if (!get_cross_address_result.hasFind)
+            {
+                return false;
+            }
+            string current_adr_id = vh.CUR_ADR_ID;
+            if (SCUtility.isMatche(get_cross_address_result.adrID, current_adr_id))
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(ReserveBLL), Device: "AGV",
+                   Data: $"由於 vh:{vh.VEHICLE_ID} 位於address:{vh.CUR_ADR_ID}為 Guide Section的第一段:{first_section}和第二段:{secend_section}的交接口，因此強制放行.",
+                   VehicleID: vh.VEHICLE_ID);
+                return true;
+            }
+            return false;
+        }
+        private (bool hasFind, string adrID) tryFindCrossAddressID(string secID1, string secID2)
+        {
+            ASECTION sec1 = scApp.SectionBLL.cache.GetSection(secID1);
+            ASECTION sec2 = scApp.SectionBLL.cache.GetSection(secID2);
+            if (sec1 == null || sec2 == null)
+            {
+                return (false, "");
+            }
+            List<string> address_temp = new List<string>();
+            address_temp.Add(sec1.FROM_ADR_ID);
+            address_temp.Add(sec1.TO_ADR_ID);
+            if (address_temp.Contains(sec2.FROM_ADR_ID))
+                return (true, sec2.FROM_ADR_ID);
+            if (address_temp.Contains(sec2.TO_ADR_ID))
+                return (true, sec2.TO_ADR_ID);
+            return (false, "");
         }
 
         public override HltDirection DecideReserveDirection(SectionBLL sectionBLL, AVEHICLE reserveVh, string reserveSectionID)
