@@ -1039,7 +1039,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             foreach (AVEHICLE vh in vhs.ToList())
             {
-                if (scApp.CMDBLL.isCMD_OHTCQueueByVh(vh.VEHICLE_ID))
+                if (scApp.CMDBLL.isCMD_OHTCUnfinishedByVh(vh.VEHICLE_ID))
                 {
                     vhs.Remove(vh);
                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
