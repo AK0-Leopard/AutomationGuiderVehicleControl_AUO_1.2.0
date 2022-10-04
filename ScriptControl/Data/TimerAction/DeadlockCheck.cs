@@ -227,6 +227,13 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                             {
                                 List<AVEHICLE> sort_vhs = new List<AVEHICLE>() { vh_active, vh_passive };
 
+                                //2022.9.29 如果都算不出避車路徑，就強制直線拉到最近的角落
+                                if (vh_passive.CurrentFailOverrideTimes >= AVEHICLE.MAX_FAIL_OVERRIDE_TIMES_IN_ONE_CASE &&
+                                    vh_active.CurrentFailOverrideTimes >= AVEHICLE.MAX_FAIL_OVERRIDE_TIMES_IN_ONE_CASE)
+                                {
+                                    //TODO
+                                }
+
                                 //將找出來的vh進行排序，用來幫忙決定要讓哪一台車進行退避
                                 //比條件有
                                 //1.是否有執行MCS命令(沒執行的會先避車)

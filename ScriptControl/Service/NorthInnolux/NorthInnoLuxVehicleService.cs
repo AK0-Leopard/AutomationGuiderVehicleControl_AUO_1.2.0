@@ -3836,6 +3836,93 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         #endregion New 51 Avoid address chooser
 
+        #region 緊急避車(強制拉到最近的角落)
+        public class ForceToAvoidCheckResult
+        {
+            public string VehicleId { get; set; }
+            public string AvoidAddress { get; set; }
+            public List<string> AvoidPath { get; set; }
+        }
+        public List<ForceToAvoidCheckResult> ForceToAvoidToCorner(List<AVEHICLE> avoidVehicles, List<string> avoidAddressIDs)
+        {
+            var result = new List<ForceToAvoidCheckResult>();
+            foreach (var checkVh in avoidVehicles)
+            {
+                var res = new ForceToAvoidCheckResult() { VehicleId = checkVh.VEHICLE_ID };
+                var candidateAdrIds = new List<string>();
+                foreach (var adrId in avoidAddressIDs)
+                {
+                    var loc = scApp.ReserveBLL.GetHltMapAddress(adrId);
+                    if (checkSameX(loc.x, loc.y, checkVh.X_Axis, checkVh.Y_Axis))
+                        candidateAdrIds.Add(adrId);
+                }
+                foreach (var adrId in candidateAdrIds)
+                {
+                    var path = getSameXPath(checkVh.CUR_ADR_ID, adrId, checkVh.VEHICLE_ID);
+                    if (path.Count > 0)
+                    {
+                        res.AvoidPath = path;
+                        res.AvoidAddress = adrId;
+                        break;
+                    }
+                }
+            }
+            return result;
+        }
+        private bool checkSameX(double checkX, double checkY, double baseX, double baseY)
+        {
+            double tolerance = 0.175;   //0.175弧度約等於10 degrees
+            try
+            {
+                double[] vectorBaseCheck = new double[2] { checkX - baseX, checkY - baseY };
+                double[] vectorBase = new double[2] { 0, checkY - baseY };
+                var lengthBaseCheck = Math.Sqrt(Math.Pow(checkX - baseX, 2) + Math.Pow(checkY - baseY, 2));
+                var lengthBase = checkY - baseY;
+                //var angle = Math.Acos(((vectorBaseCheck[0] * vectorBase[0]) + (vectorBaseCheck[1] * vectorBase[1])) / (lengthBaseCheck * lengthBase));
+                var angle = Math.Acos(Math.Pow(checkY - baseY, 2) / (lengthBaseCheck * lengthBase));
+                return angle < tolerance;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+                return false;
+            }
+        }
+        private List<string> getSameXPath(string startAddrID, string destAddrID, string vehicleID)
+        {
+            var result = new List<string>();
+            var thisAddr = startAddrID;
+            var startLoc = scApp.ReserveBLL.GetHltMapAddress(startAddrID);
+            var destLoc = scApp.ReserveBLL.GetHltMapAddress(destAddrID);
+            while (!thisAddr.Equals(destAddrID))
+            {
+                var nextPossibleSections = scApp.SectionBLL.cache.GetSectionsByAddress(thisAddr);
+                var thisLoc = scApp.ReserveBLL.GetHltMapAddress(thisAddr);
+                foreach (var sec in nextPossibleSections)
+                {
+                    var nextPossibleAddr = sec.GetOrtherEndPoint(thisAddr);
+                    var nextPossibleLoc = scApp.ReserveBLL.GetHltMapAddress(nextPossibleAddr);
+                    if (!checkSameX(startLoc.x, startLoc.y, nextPossibleLoc.x, nextPossibleLoc.y))
+                        continue;
+                    if (Math.Abs(nextPossibleLoc.y - destLoc.y) >= Math.Abs(thisLoc.y - destLoc.y))
+                        continue;
+                    if (Math.Abs(nextPossibleLoc.y - destLoc.y) < Math.Abs(thisLoc.y - destLoc.y))
+                    {
+                        var reserveResult = scApp.ReserveBLL.TryAddReservedSection(vehicleID, sec.SEC_ID, isAsk: true);
+                        if (reserveResult.OK)
+                        {
+                            thisAddr = nextPossibleAddr;
+                            result.Add(sec.SEC_ID);
+                            break;
+                        }
+                    }
+                    return new List<string>();
+                }
+            }
+            return result;
+        }
+        #endregion
+
         private void TranEventReportArriveAndComplete(BCFApplication bcfApp, AVEHICLE vh, int seqNum
                                                     , EventType eventType, string current_adr_id, string current_sec_id, string carrier_id)
         {
