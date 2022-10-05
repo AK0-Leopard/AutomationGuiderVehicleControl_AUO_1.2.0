@@ -199,7 +199,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
         //        }
         //    }
         //}
-        List<string> forceAvoidAddress = new List<string>();
+        List<string> forceAvoidAddress = new List<string>() { "20074", "48028", "20049", "16046" };
         public override void doProcess(object obj)
         {
             if (!SystemParameter.AutoOverride)
