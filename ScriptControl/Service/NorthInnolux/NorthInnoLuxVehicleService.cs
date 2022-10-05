@@ -3942,6 +3942,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     var candidateAdrIds = new List<string>();
                     foreach (var adrId in avoidAddressIDs)
                     {
+                        AADDRESS adrObj = scApp.AddressesBLL.cache.GetAddress(adrId);
+                        if (adrObj is null) continue;
                         var loc = scApp.ReserveBLL.GetHltMapAddress(adrId);
                         if (checkSameX(loc.x, loc.y, checkVh.X_Axis, checkVh.Y_Axis))
                             candidateAdrIds.Add(adrId);
