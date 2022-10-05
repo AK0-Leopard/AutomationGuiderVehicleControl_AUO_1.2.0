@@ -2485,6 +2485,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vhID);
             vh.WillPassSectionID = willPassSection;
+            vh.FirstPredictSection = willPassSection.FirstOrDefault();
         }
         public void removeAlreadyPassedSection(string vhID, string sectionID)
         {

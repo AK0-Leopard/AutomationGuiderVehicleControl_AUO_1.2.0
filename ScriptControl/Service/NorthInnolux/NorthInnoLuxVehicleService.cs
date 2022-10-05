@@ -1618,6 +1618,35 @@ namespace com.mirle.ibg3k0.sc.Service
             }
         }
 
+        public override bool trydoAvoidCommandToVh(AVEHICLE avoidVh, List<string> pathAddr, List<string> pathSec)
+        {
+            avoidVh.VhAvoidInfo = null;
+            //找到避車點之後，就可以下ID:51，開始讓vh進行避車了
+            var avoid_request_result = AvoidRequest(avoidVh.VEHICLE_ID, pathAddr.LastOrDefault(), pathSec.ToArray(), pathAddr.ToArray());
+            if (avoid_request_result)
+            {
+                avoidVh.VhAvoidInfo = new AVEHICLE.AvoidInfo("", "", pathAddr);
+
+                scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(avoidVh.VEHICLE_ID);
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                   Data: $"Avoid success remove vh:{avoidVh.VEHICLE_ID} all reserved section.",
+                   VehicleID: avoidVh.VEHICLE_ID,
+                   CarrierID: avoidVh.CST_ID);
+                //在移除掉該VH所預約的路徑後，要再加入自己本身所在的Section，避免之後其他車子預約走
+                scApp.ReserveBLL.TryAddReservedSection(avoidVh.VEHICLE_ID, avoidVh.CUR_SEC_ID);
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                   Data: $"Avoid success append vh:{avoidVh.VEHICLE_ID} current section:{avoidVh.CUR_SEC_ID}.",
+                   VehicleID: avoidVh.VEHICLE_ID,
+                   CarrierID: avoidVh.CST_ID);
+
+                //2022.7.28 避車時同步更新路徑cache(WillPassSectionInfo & RedundantSections)
+                avoidVh.RedundantSections.Clear();
+                scApp.CMDBLL.setWillPassSectionInfo(avoidVh.VEHICLE_ID, pathSec);
+            }
+            return avoid_request_result;
+
+        }
+
         private bool isMatche(List<string> list1, List<string> list2)
         {
             if (list1 == null || list2 == null) return false;
@@ -3897,35 +3926,45 @@ namespace com.mirle.ibg3k0.sc.Service
         #region 緊急避車(強制拉到最近的角落)
         public class ForceToAvoidCheckResult
         {
-            public string VehicleId { get; set; }
+            public AVEHICLE Vehicle { get; set; }
             public string AvoidAddress { get; set; }
-            public List<string> AvoidPath { get; set; }
+            public List<string> AvoidSecPath { get; set; }
+            public List<string> AvoidAddrPath { get; set; }
         }
-        public List<ForceToAvoidCheckResult> ForceToAvoidToCorner(List<AVEHICLE> avoidVehicles, List<string> avoidAddressIDs)
+        public override List<ForceToAvoidCheckResult> ForceToAvoidToCorner(List<AVEHICLE> avoidVehicles, List<string> avoidAddressIDs)
         {
-            var result = new List<ForceToAvoidCheckResult>();
-            foreach (var checkVh in avoidVehicles)
+            try
             {
-                var res = new ForceToAvoidCheckResult() { VehicleId = checkVh.VEHICLE_ID };
-                var candidateAdrIds = new List<string>();
-                foreach (var adrId in avoidAddressIDs)
+                var result = new List<ForceToAvoidCheckResult>();
+                foreach (var checkVh in avoidVehicles)
                 {
-                    var loc = scApp.ReserveBLL.GetHltMapAddress(adrId);
-                    if (checkSameX(loc.x, loc.y, checkVh.X_Axis, checkVh.Y_Axis))
-                        candidateAdrIds.Add(adrId);
-                }
-                foreach (var adrId in candidateAdrIds)
-                {
-                    var path = getSameXPath(checkVh.CUR_ADR_ID, adrId, checkVh.VEHICLE_ID);
-                    if (path.Count > 0)
+                    var res = new ForceToAvoidCheckResult() { Vehicle = checkVh };
+                    var candidateAdrIds = new List<string>();
+                    foreach (var adrId in avoidAddressIDs)
                     {
-                        res.AvoidPath = path;
-                        res.AvoidAddress = adrId;
-                        break;
+                        var loc = scApp.ReserveBLL.GetHltMapAddress(adrId);
+                        if (checkSameX(loc.x, loc.y, checkVh.X_Axis, checkVh.Y_Axis))
+                            candidateAdrIds.Add(adrId);
+                    }
+                    foreach (var adrId in candidateAdrIds)
+                    {
+                        var path = getSameXPath(checkVh.CUR_ADR_ID, adrId, checkVh.VEHICLE_ID);
+                        if (path.pathSec.Count > 0)
+                        {
+                            res.AvoidSecPath = path.pathSec;
+                            res.AvoidAddrPath = path.pathAddr;
+                            res.AvoidAddress = adrId;
+                            break;
+                        }
                     }
                 }
+                return result;
             }
-            return result;
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+                return new List<ForceToAvoidCheckResult>();
+            }
         }
         private bool checkSameX(double checkX, double checkY, double baseX, double baseY)
         {
@@ -3946,9 +3985,10 @@ namespace com.mirle.ibg3k0.sc.Service
                 return false;
             }
         }
-        private List<string> getSameXPath(string startAddrID, string destAddrID, string vehicleID)
+        private (List<string> pathSec, List<string> pathAddr) getSameXPath(string startAddrID, string destAddrID, string vehicleID)
         {
-            var result = new List<string>();
+            var resultSec = new List<string>();
+            var resultAddr = new List<string>();
             var thisAddr = startAddrID;
             var startLoc = scApp.ReserveBLL.GetHltMapAddress(startAddrID);
             var destLoc = scApp.ReserveBLL.GetHltMapAddress(destAddrID);
@@ -3969,15 +4009,16 @@ namespace com.mirle.ibg3k0.sc.Service
                         var reserveResult = scApp.ReserveBLL.TryAddReservedSection(vehicleID, sec.SEC_ID, isAsk: true);
                         if (reserveResult.OK)
                         {
+                            resultAddr.Add(thisAddr);
+                            resultSec.Add(sec.SEC_ID);
                             thisAddr = nextPossibleAddr;
-                            result.Add(sec.SEC_ID);
                             break;
                         }
                     }
-                    return new List<string>();
+                    return (new List<string>(), new List<string>());
                 }
             }
-            return result;
+            return (resultSec, resultAddr);
         }
         #endregion
 

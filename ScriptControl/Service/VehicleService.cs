@@ -38,6 +38,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using static com.mirle.ibg3k0.sc.App.SCAppConstants;
+using static com.mirle.ibg3k0.sc.Service.NorthInnoLuxVehicleService;
 
 namespace com.mirle.ibg3k0.sc.Service
 {
@@ -1584,10 +1585,18 @@ namespace com.mirle.ibg3k0.sc.Service
                 return false;
             }
         }
+        public virtual bool trydoAvoidCommandToVh(AVEHICLE avoidVh, List<string> pathAddr, List<string> pathSec)
+        {
+            return false;
+        }
 
         public virtual bool tryDo51AvoidCommandToVhNew(AVEHICLE avoidVh, AVEHICLE passVh)
         {
             return false;
+        }
+        public virtual List<ForceToAvoidCheckResult> ForceToAvoidToCorner(List<AVEHICLE> avoidVehicles, List<string> avoidAddressIDs)
+        {
+            return null;
         }
 
         public virtual bool doCancelOrAbortCommandByMCSCmdID(string cancel_abort_mcs_cmd_id, CMDCancelType actType)
