@@ -3,7 +3,6 @@ using com.mirle.ibg3k0.bcf.Controller;
 using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data.SECS;
-using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using com.mirle.ibg3k0.stc.Common;
 using com.mirle.ibg3k0.stc.Data.SecsData;
 using System;
@@ -51,7 +50,7 @@ namespace com.mirle.ibg3k0.sc.Data.SECSDriver
         public abstract bool S6F11SendVehicleDepositCompleted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendVehicleDepositFailed(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierInstalled(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
-        public abstract bool S6F11SendCarrierInstalledWithIDRead(string vhID, List<AMCSREPORTQUEUE> reportQueues = null, BCRReadResult? bcrResult = null);
+        public abstract bool S6F11SendCarrierInstalledWithIDRead(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendCarrierRemoved(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendVehicleUnassinged(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);
         public abstract bool S6F11SendTransferCompleted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null);

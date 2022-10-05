@@ -697,6 +697,7 @@
     <Compile Include="Data\TimerAction\ZabbixDataCollectionTimerAction.cs" />
     <Compile Include="Data\ValueDefMapAction\SouthInnolux\ColorLightValueDefMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\SouthInnolux\TrafficLightValueDefMapAction.cs" />
+    <Compile Include="Data\ValueDefMapAction\UMTCMCSDefaultMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\NorthInnolux\SubChargerValueDefMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\SouthInnoluxMCSDefaultMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\NorthInnoluxMCSDefaultMapAction.cs" />

@@ -484,21 +484,6 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && iBSEMDriver.S6F11SendTransferAbortCompleted(CMD_MCS, vh, resultCode, reportqueues, vh.Real_ID+"-01");
             return isSuccsess;
         }
-        
-        #region 2022.10.5 136Initial對帳用
-        public override bool ReportCarrierInstalledOnly(string vhID, List<AMCSREPORTQUEUE> reportqueues, BCRReadResult? bcrResult = null)
-        {
-            bool isSuccsess = true;
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierInstalledWithIDRead(vhID, reportqueues, bcrResult);
-            return isSuccsess;
-        }
-        public override bool ReportCarrierRemovedOnly(string vhID, List<AMCSREPORTQUEUE> reportqueues)
-        {
-            bool isSuccsess = true;
-            isSuccsess = isSuccsess && iBSEMDriver.S6F11SendCarrierRemoved(vhID, reportqueues);
-            return isSuccsess;
-        }
-        #endregion
 
         public override bool ReportAlarmSet()
         {

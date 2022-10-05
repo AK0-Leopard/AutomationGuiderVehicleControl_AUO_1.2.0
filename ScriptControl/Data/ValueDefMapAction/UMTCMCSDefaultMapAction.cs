@@ -14,15 +14,13 @@
 //**********************************************************************************
 using com.mirle.ibg3k0.bcf.App;
 using com.mirle.ibg3k0.bcf.Controller;
-using com.mirle.ibg3k0.bcf.Data.TimerAction;
 using com.mirle.ibg3k0.bcf.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.bcf.Data.VO;
 using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.BLL;
 using com.mirle.ibg3k0.sc.Common;
-using com.mirle.ibg3k0.sc.Data.SECS.SouthInnolux;
+using com.mirle.ibg3k0.sc.Data.SECS.UMTC;
 using com.mirle.ibg3k0.sc.Data.SECSDriver;
-
 using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.stc.Common;
 using com.mirle.ibg3k0.stc.Data.SecsData;
@@ -35,7 +33,7 @@ using System.Transactions;
 
 namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 {
-    public class SouthInnoluxMCSDefaultMapAction : IBSEMDriver, IValueDefMapAction
+    public class UMTCMCSDefaultMapAction : IBSEMDriver, IValueDefMapAction
     {
         const string DEVICE_NAME_MCS = "MCS";
         const string CALL_CONTEXT_KEY_WORD_SERVICE_ID_MCS = "MCS Service";
@@ -66,16 +64,6 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 switch (runLevel)
                 {
                     case BCFAppConstants.RUN_LEVEL.ZERO:
-                        List<ALARMRPTCOND> aLARMRPTCONDs = scApp.AlarmBLL.loadAllAlarmReport();
-                        if (aLARMRPTCONDs == null || aLARMRPTCONDs.Count == 0)
-                        {
-                            scApp.AlarmBLL.enableAllAlarmReport(true);
-                        }
-                        List<AEVENTRPTCOND> aEVENTRPTCONDs = scApp.EventBLL.LoadAllCEID();
-                        if (aEVENTRPTCONDs == null || aEVENTRPTCONDs.Count == 0)
-                        {
-                            scApp.EventBLL.enableAllEventReport(true);
-                        }
                         SECSConst.setDicCEIDAndRPTID(scApp.CEIDBLL.loadDicCEIDAndRPTID());
                         SECSConst.setDicRPTIDAndVID(scApp.CEIDBLL.loadDicRPTIDAndVID());
                         break;
@@ -92,230 +80,247 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 logger.Error(ex, "Exection:");
             }
         }
-        #region Receive 
-        protected void S1F11ReceiveStatusVariableNamelistRequest(object sender, SECSEventArgs e)
+        #region Receive
+        protected override void S1F13ReceiveEstablishCommunicationRequest(object sender, SECSEventArgs e)
         {
             try
             {
-                S1F11 s1f11 = ((S1F11)e.secsHandler.Parse<S1F11>(e));
-                SCUtility.secsActionRecordMsg(scApp, true, s1f11);
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
-                              Data: s1f11);
-                string strUnits = SCAppConstants.System_ID;
-                int count = s1f11.SVID.Count();
-                S1F12 s1f12 = new S1F12();
-                s1f12.SECSAgentName = scApp.EAPSecsAgentName;
-                s1f12.SystemByte = s1f11.SystemByte;
-                s1f12.SVIDS = new S1F12.SVITEM[count];
+                S1F13_Empty s1f13 = ((S1F13_Empty)e.secsHandler.Parse<S1F13_Empty>(e));
+                SCUtility.secsActionRecordMsg(scApp, true, s1f13);
+                SCUtility.actionRecordMsg(scApp, s1f13.StreamFunction, line.Real_ID,
+                        "Receive Establish Communication From MES.", "");
+                //if (!isProcessEAP(s1f13)) { return; }
+                S1F14 s1f14 = new S1F14();
+                s1f14.SECSAgentName = scApp.EAPSecsAgentName;
+                s1f14.SystemByte = s1f13.SystemByte;
+                s1f14.COMMACK = "0";
+                s1f14.VERSION_INFO = new string[2]
+                { "AGVC",
+                  "11.02" };
 
-                for (int i = 0; i < count; i++)
+                SCUtility.secsActionRecordMsg(scApp, false, s1f14);
+                TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s1f14);
+                SCUtility.actionRecordMsg(scApp, s1f13.StreamFunction, line.Real_ID,
+                        "Reply Establish Communication To MES.", rtnCode.ToString());
+                if (rtnCode != TrxSECS.ReturnCode.Normal)
                 {
-                    s1f12.SVIDS[i] = new S1F12.SVITEM();
-                    if (s1f11.SVID[i] == SECSConst.VID_Alarm_Enabled)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Alarm_Enabled;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Alarm_Enabled];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Alarm_Set)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Alarm_Set;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Alarm_Set];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Clock)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Clock;
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Clock];
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Control_State)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Control_State;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Control_State];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Events_Enabled)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Events_Enabled;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Events_Enabled];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Active_Carriers)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Active_Carriers;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Active_Carriers];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Active_Transfers)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Active_Transfers;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Active_Transfers];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Active_Vehicles)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Active_Vehicles;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Active_Vehicles];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Carrier_ID)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Carrier_ID;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Carrier_ID];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_CarrierInfo)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_CarrierInfo;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_CarrierInfo];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Carrier_Loc)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Carrier_Loc;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Carrier_Loc];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Command_ID)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Command_ID;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Command_ID];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Command_Info)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Command_Info;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Command_Info];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Destination_Port)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Destination_Port;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Destination_Port];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Enhanced_Carriers)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Enhanced_Carriers;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Enhanced_Carriers];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Enhanced_Transfers)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Enhanced_Transfers;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Enhanced_Transfers];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_InstallTime)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_InstallTime;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_InstallTime];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Priority)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Priority;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Priority];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Replace)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Replace;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Replace];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Source_Port)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Source_Port;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Source_Port];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Transfer_Command)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Transfer_Command;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Transfer_Command];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Transfer_Info)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Transfer_Info;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Transfer_Info];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Transfer_State)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Transfer_State;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Transfer_State];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_TCS_State)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_TCS_State;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_TCS_State];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Vehicle_ID)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Vehicle_ID;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Vehicle_ID];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Vehicle_Info)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Vehicle_Info;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Vehicle_Info];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Vehicle_State)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Vehicle_State;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Vehicle_State];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Port_ID)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Port_ID;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Port_ID];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Port_Evt_State)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Port_Evt_State;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Port_Evt_State];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Port_Event_State)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Port_Event_State;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Port_Event_State];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else if (s1f11.SVID[i] == SECSConst.VID_Registered_Ports)
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Registered_Ports;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Registered_Ports];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
-                    else
-                    {
-                        s1f12.SVIDS[i].SVID = SECSConst.VID_Command_ID;
-                        s1f12.SVIDS[i].SVNAME = SECSConst.VID_Dictionary[SECSConst.VID_Alarm_Enabled];
-                        s1f12.SVIDS[i].UNITS = strUnits;
-                    }
+                    logger.Warn("Reply EAP S1F14 Error:{0}", rtnCode);
                 }
-                TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s1f12);
-                SCUtility.secsActionRecordMsg(scApp, false, s1f12);
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
-                              Data: s1f12);
+                logger.Debug("s1f13Receive ok!");
+                line.EstablishComm = true;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.Print(ex.Message + "\n" + ex.StackTrace);
-                logger.Error("AUOMCSDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}",
-                    line.LINE_ID, "S1F12_Receive_Eqpt_Stat_Req", ex.ToString());
+                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}",
+                    line.LINE_ID, "s1f13_Receive_EstablishCommunication", ex.ToString());
             }
         }
+        protected virtual void S1F15ReceiveRequestOffLine(object sender, SECSEventArgs e)
+        {
+            try
+            {
+                string msg = string.Empty;
+                S1F15 s1f15 = ((S1F15)e.secsHandler.Parse<S1F15>(e));
+                SCUtility.secsActionRecordMsg(scApp, true, s1f15);
+
+                if (!isProcess(s1f15)) { return; }
+
+                S1F16 s1f16 = new S1F16();
+                s1f16.SystemByte = s1f15.SystemByte;
+                s1f16.SECSAgentName = scApp.EAPSecsAgentName;
+
+                if (line.Host_Control_State == SCAppConstants.LineHostControlState.HostControlState.Host_Offline)
+                {
+                    S1F0 sxf0 = new S1F0()
+                    {
+                        SECSAgentName = scApp.EAPSecsAgentName,
+                        StreamFunction = s1f15.getAbortFunctionName(),
+                        SystemByte = s1f15.SystemByte
+                    };
+                    SCUtility.secsActionRecordMsg(scApp, false, sxf0);
+                    TrxSECS.ReturnCode _rtnCode = ISECSControl.replySECS(bcfApp, sxf0);
+                    SCUtility.actionRecordMsg(scApp, sxf0.StreamFunction, line.Real_ID,
+                                "Reply Abort To MES.", _rtnCode.ToString());
+                    return;
+                }
+                //檢查狀態是否允許連線
+                else
+                {
+                    s1f16.OFLACK = SECSConst.OFLACK_Accepted;
+                }
+
+                TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s1f16);
+                SCUtility.secsActionRecordMsg(scApp, false, s1f16);
+                if (rtnCode != TrxSECS.ReturnCode.Normal)
+                {
+                    logger.Warn("Reply EQPT S1F18 Error:{0}", rtnCode);
+                }
+
+                if (SCUtility.isMatche(s1f16.OFLACK, SECSConst.OFLACK_Accepted))
+                {
+                    if (DebugParameter.UseHostOffline)
+                    {
+                        line.Host_Control_State = SCAppConstants.LineHostControlState.HostControlState.Host_Offline;
+                        S6F11SendEquiptmentOffLine();
+                    }
+                    else
+                    {
+                        line.Host_Control_State = SCAppConstants.LineHostControlState.HostControlState.EQ_Off_line;
+                        S6F11SendEquiptmentOffLine();
+                    }
+                }
+                else
+                {
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}", line.LINE_ID, "S1F15ReceiveRequestOffLine", ex.ToString());
+            }
+        }
+        protected override Boolean isProcess(SXFY sxfy)
+        {
+            Boolean isProcess = false;
+            string streamFunction = sxfy.StreamFunction;
+            if (line.Host_Control_State == SCAppConstants.LineHostControlState.HostControlState.EQ_Off_line)
+            {
+                if (sxfy is S1F17)
+                {
+                    isProcess = true;
+                }
+                else if (sxfy is S2F41)
+                {
+                    string rcmd = (sxfy as S2F41).RCMD;
+                }
+                else
+                {
+                    isProcess = false;
+                }
+            }
+            else
+            {
+                isProcess = true;
+            }
+            if (!isProcess)
+            {
+                S1F0 sxf0 = new S1F0()
+                {
+                    SECSAgentName = scApp.EAPSecsAgentName,
+                    StreamFunction = sxfy.getAbortFunctionName(),
+                    SystemByte = sxfy.SystemByte
+                };
+                SCUtility.secsActionRecordMsg(scApp, false, sxf0);
+                TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, sxf0);
+                SCUtility.actionRecordMsg(scApp, sxf0.StreamFunction, line.Real_ID,
+                            "Reply Abort To MES.", rtnCode.ToString());
+            }
+            return isProcess;
+        }
+        protected override void S1F17ReceiveRequestOnLine(object sender, SECSEventArgs e)
+        {
+            try
+            {
+                string msg = string.Empty;
+                S1F17 s1f17 = ((S1F17)e.secsHandler.Parse<S1F17>(e));
+                SCUtility.secsActionRecordMsg(scApp, true, s1f17);
+
+                if (!isProcess(s1f17)) { return; }
+
+                S1F18 s1f18 = new S1F18();
+                s1f18.SystemByte = s1f17.SystemByte;
+                s1f18.SECSAgentName = scApp.EAPSecsAgentName;
+
+
+                //檢查狀態是否允許連線
+                if (line.Host_Control_State == SCAppConstants.LineHostControlState.HostControlState.On_Line_Remote)
+                {
+                    s1f18.ONLACK = SECSConst.ONLACK_Equipment_Already_On_Line;
+                    msg = "OHS is online remote ready!!"; //A0.05
+                }
+                else if (DebugParameter.UseHostOffline)
+                {
+                    if (line.Host_Control_State == SCAppConstants.LineHostControlState.HostControlState.Host_Offline)
+                    {
+                        s1f18.ONLACK = SECSConst.ONLACK_Not_Accepted;
+                    }
+                    else
+                    {
+                        s1f18.ONLACK = SECSConst.ONLACK_Accepted;
+                    }
+                }
+                else
+                {
+                    s1f18.ONLACK = SECSConst.ONLACK_Accepted;
+                }
+
+                TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s1f18);
+                SCUtility.secsActionRecordMsg(scApp, false, s1f18);
+                if (rtnCode != TrxSECS.ReturnCode.Normal)
+                {
+                    logger.Warn("Reply EQPT S1F18 Error:{0}", rtnCode);
+                }
+
+                if (SCUtility.isMatche(s1f18.ONLACK, SECSConst.ONLACK_Accepted))
+                {
+                    line.Host_Control_State = SCAppConstants.LineHostControlState.HostControlState.On_Line_Remote;
+                    S6F11SendControlStateRemote();
+                }
+                else
+                {
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}", line.LINE_ID, "S1F17_Receive_OnlineRequest", ex.ToString());
+            }
+        }
+
+        protected override void S2F31ReceiveDateTimeSetReq(object sender, SECSEventArgs e)
+        {
+            try
+            {
+                S2F31 s2f31 = ((S2F31)e.secsHandler.Parse<S2F31>(e));
+
+                SCUtility.secsActionRecordMsg(scApp, true, s2f31);
+                SCUtility.actionRecordMsg(scApp, s2f31.StreamFunction, line.Real_ID,
+                        "Receive Date Time Set Request From MES.", "");
+                if (!isProcess(s2f31)) { return; }
+
+                S2F32 s2f32 = new S2F32();
+                s2f32.SECSAgentName = scApp.EAPSecsAgentName;
+                s2f32.SystemByte = s2f31.SystemByte;
+                s2f32.TIACK = SECSConst.TIACK_Accepted;
+
+                string timeStr = s2f31.TIME;
+                DateTime mesDateTime = DateTime.Now;
+                try
+                {
+                    mesDateTime = DateTime.ParseExact(timeStr.Trim(), SCAppConstants.TimestampFormat_16, CultureInfo.CurrentCulture);
+                }
+                catch (Exception dtEx)
+                {
+                    s2f32.TIACK = SECSConst.TIACK_Error_not_done;
+                }
+
+                SCUtility.secsActionRecordMsg(scApp, false, s2f32);
+                ISECSControl.replySECS(bcfApp, s2f32);
+
+                if (!DebugParameter.DisableSyncTime)
+                {
+                    SCUtility.updateSystemTime(mesDateTime);
+                }
+
+                //TODO 與設備同步
+            }
+            catch (Exception ex)
+            {
+                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}",
+                    line.LINE_ID, "S2F31_Receive_Date_Time_Set_Req", ex.ToString());
+            }
+        }
+
         protected override void S2F33ReceiveDefineReport(object sender, SECSEventArgs e)
         {
             try
@@ -324,12 +329,22 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 SCUtility.secsActionRecordMsg(scApp, true, s2f33);
                 if (!isProcess(s2f33)) { return; }
 
+                bool isSuccess = false;
+                if (s2f33.RPTITEMS != null && s2f33.RPTITEMS.Length > 0)
+                    isSuccess = scApp.CEIDBLL.buildReportIDAndVid(s2f33.ToDictionary());
+
                 S2F34 s2f34 = null;
                 s2f34 = new S2F34();
                 s2f34.SystemByte = s2f33.SystemByte;
                 s2f34.SECSAgentName = scApp.EAPSecsAgentName;
-                s2f34.DRACK = "0";
-
+                if (!isSuccess)
+                {
+                    s2f34.DRACK = "4";
+                } 
+                else
+                {
+                    s2f34.DRACK = "0";
+                }
 
                 TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s2f34);
                 SCUtility.secsActionRecordMsg(scApp, false, s2f34);
@@ -337,15 +352,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
                 if (rtnCode != TrxSECS.ReturnCode.Normal)
                 {
-                    logger.Warn("Reply EQPT S2F18 Error:{0}", rtnCode);
+                    logger.Warn("Reply EQPT S2F34 Error:{0}", rtnCode);
                 }
-
-                scApp.CEIDBLL.DeleteRptInfoByBatch();
-
-                if (s2f33.RPTITEMS != null && s2f33.RPTITEMS.Length > 0)
-                    scApp.CEIDBLL.buildReportIDAndVid(s2f33.ToDictionary());
-
-
 
                 SECSConst.setDicRPTIDAndVID(scApp.CEIDBLL.loadDicRPTIDAndVID());
 
@@ -364,85 +372,31 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 if (!isProcess(s2f35)) { return; }
 
 
+                bool isSuccess = false;
+                if (s2f35.RPTITEMS != null && s2f35.RPTITEMS.Length > 0)
+                    isSuccess = scApp.CEIDBLL.buildCEIDAndReportID(s2f35.ToDictionary());
+
                 S2F36 s2f36 = null;
                 s2f36 = new S2F36();
                 s2f36.SystemByte = s2f35.SystemByte;
                 s2f36.SECSAgentName = scApp.EAPSecsAgentName;
-                s2f36.LRACK = "0";
+                if (!isSuccess)
+                {
+                    s2f36.LRACK = "6";
+                }
+                else
+                {
+                    s2f36.LRACK = "0";
+                }
 
                 TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s2f36);
                 SCUtility.secsActionRecordMsg(scApp, false, s2f36);
                 if (rtnCode != TrxSECS.ReturnCode.Normal)
                 {
-                    logger.Warn("Reply EQPT S2F18 Error:{0}", rtnCode);
+                    logger.Warn("Reply EQPT S2F36 Error:{0}", rtnCode);
                 }
-
-                scApp.CEIDBLL.DeleteCEIDInfoByBatch();
-
-                if (s2f35.RPTITEMS != null && s2f35.RPTITEMS.Length > 0)
-                    scApp.CEIDBLL.buildCEIDAndReportID(s2f35.ToDictionary());
 
                 SECSConst.setDicCEIDAndRPTID(scApp.CEIDBLL.loadDicCEIDAndRPTID());
-
-            }
-            catch (Exception ex)
-            {
-                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}", line.LINE_ID, "S2F17_Receive_Date_Time_Req", ex.ToString());
-            }
-        }
-        protected override void S2F37ReceiveEnableDisableEventReport(object sender, SECSEventArgs e)
-        {
-            try
-            {
-                S2F37 s2f37 = ((S2F37)e.secsHandler.Parse<S2F37>(e));
-                SCUtility.secsActionRecordMsg(scApp, true, s2f37);
-                if (!isProcess(s2f37)) { return; }
-                Boolean isValid = true;
-                //Boolean isEnable = SCUtility.isMatche(s2f37.CEED, SECSConst.CEED_Enable);
-                Boolean isEnable = s2f37.CEED[0] == 255;
-
-                int cnt = s2f37.CEIDS.Length;
-                if (cnt == 0)
-                {
-                    isValid &= scApp.EventBLL.enableAllEventReport(isEnable);
-                }
-                else
-                {
-                    //Check Data
-                    for (int ix = 0; ix < cnt; ++ix)
-                    {
-                        string ceid = s2f37.CEIDS[ix];
-                        Boolean isContain = SECSConst.CEID_ARRAY.Contains(ceid.Trim().PadLeft(3, '0'));
-                        if (!isContain)
-                        {
-                            isValid = false;
-                            break;
-                        }
-                    }
-                    if (isValid)
-                    {
-                        for (int ix = 0; ix < cnt; ++ix)
-                        {
-                            string ceid = s2f37.CEIDS[ix];
-                            isValid &= scApp.EventBLL.enableEventReport(ceid, isEnable);
-                        }
-                    }
-                }
-
-                S2F38 s2f18 = null;
-                s2f18 = new S2F38()
-                {
-                    SystemByte = s2f37.SystemByte,
-                    SECSAgentName = scApp.EAPSecsAgentName,
-                    ERACK = isValid ? SECSConst.ERACK_Accepted : SECSConst.ERACK_Denied_At_least_one_CEID_dose_not_exist
-                };
-
-                TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s2f18);
-                SCUtility.secsActionRecordMsg(scApp, false, s2f18);
-                if (rtnCode != TrxSECS.ReturnCode.Normal)
-                {
-                    logger.Warn("Reply EQPT S2F18 Error:{0}", rtnCode);
-                }
             }
             catch (Exception ex)
             {
@@ -462,7 +416,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 {
                     case "TRANSFER":
                         S2F49_TRANSFER s2f49_transfer = ((S2F49_TRANSFER)e.secsHandler.Parse<S2F49_TRANSFER>(e));
-                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                            Data: s2f49_transfer);
                         SCUtility.secsActionRecordMsg(scApp, true, s2f49_transfer);
                         //SCUtility.RecodeReportInfo(s2f49_transfer);
@@ -507,7 +461,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                                 {
                                     TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s2f50);
                                     SCUtility.secsActionRecordMsg(scApp, false, s2f50);
-                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                                        Data: s2f50);
                                     if (rtnCode != TrxSECS.ReturnCode.Normal)
                                     {
@@ -537,13 +491,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                         {
                             //BCFApplication.onWarningMsg(rtnStr);
                             string xid = DateTime.Now.ToString(SCAppConstants.TimestampFormat_19);
-                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: string.Empty,
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: string.Empty,
                                           Data: rtnStr,
                                           XID: xid);
                             BCFApplication.onWarningMsg(this, new bcf.Common.LogEventArgs(rtnStr, xid));
                         }
                         break;
-                    //這個Case好像沒有STAGE
                     case "STAGE":
                         S2F49_STAGE s2f49_stage = ((S2F49_STAGE)e.secsHandler.Parse<S2F49_STAGE>(e));
 
@@ -732,6 +685,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             else
             {
                 AVEHICLE carry_vh = scApp.VehicleBLL.cache.getVehicleByRealID(source_port_or_vh_id);
+                if (carry_vh.HAS_CST == 0)
+                {
+                    check_result = $"MCS command id:{command_id} ,vh:{source_port_or_vh_id} current no cst in vh, can't not excute unload command.[HAS_CST:{carry_vh.HAS_CST}]";
+                    return SECSConst.HCACK_Command_Not_Exist;
+                }
                 APORTSTATION dest_port_station = scApp.PortStationBLL.OperateCatch.getPortStation(dest_port);
                 isSuccess = scApp.GuideBLL.IsRoadWalkable(carry_vh.CUR_ADR_ID, dest_port_station.ADR_ID);
                 if (!isSuccess)
@@ -971,179 +929,16 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             return (is_ok, check_result, command_id);
         }
-        protected virtual void S1F15ReceiveRequestOffLine(object sender, SECSEventArgs e)
-        {
-            try
-            {
-                string msg = string.Empty;
-                S1F15 s1f15 = ((S1F15)e.secsHandler.Parse<S1F15>(e));
-                SCUtility.secsActionRecordMsg(scApp, true, s1f15);
 
-                if (!isProcess(s1f15)) { return; }
-
-                S1F16 s1f16 = new S1F16();
-                s1f16.SystemByte = s1f15.SystemByte;
-                s1f16.SECSAgentName = scApp.EAPSecsAgentName;
-
-
-                //檢查狀態是否允許斷線
-
-                if (!(line.Host_Control_State == SCAppConstants.LineHostControlState.HostControlState.Host_Offline))
-                {
-                    s1f16.OFLACK = SECSConst.OFLACK_Accepted;
-                }
-                else
-                {
-                    s1f16.OFLACK = SECSConst.OFLACK_Not_Accepted;
-                }
-
-                TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s1f16);
-                SCUtility.secsActionRecordMsg(scApp, false, s1f16);
-                if (rtnCode != TrxSECS.ReturnCode.Normal)
-                {
-                    logger.Warn("Reply EQPT S1F18 Error:{0}", rtnCode);
-                }
-
-                if (SCUtility.isMatche(s1f16.OFLACK, SECSConst.OFLACK_Accepted))
-                {
-                    line.Host_Control_State = SCAppConstants.LineHostControlState.HostControlState.Host_Offline;
-                }
-                else
-                {
-                    return;
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.Print(ex.Message + "\n" + ex.StackTrace);
-                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}", line.LINE_ID, "S1F17_Receive_OnlineRequest", ex.ToString());
-            }
-        }
-        protected override void S2F15ReceiveNewEquiptment(object sender, SECSEventArgs e)
-        {
-            try
-            {
-                S2F15 s2f15 = ((S2F15)e.secsHandler.Parse<S2F15>(e));
-                SCUtility.secsActionRecordMsg(scApp, true, s2f15);
-                SCUtility.actionRecordMsg(scApp, s2f15.StreamFunction, line.Real_ID,
-                        "Receive New EQPT Constant Data From MES.", "");
-                if (!isProcess(s2f15)) { return; }
-
-                S2F16 s2f16 = new S2F16();
-                s2f16.SECSAgentName = scApp.EAPSecsAgentName;
-                s2f16.SystemByte = s2f15.SystemByte;
-                s2f16.EAC = "0";
-
-                SCUtility.secsActionRecordMsg(scApp, false, s2f16);
-                TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s2f16);
-                SCUtility.actionRecordMsg(scApp, s2f16.StreamFunction, line.Real_ID,
-                        "Reply OK To MES.", rtnCode.ToString());
-            }
-            catch (Exception ex)
-            {
-                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}",
-                    line.LINE_ID, "S2F15_Receive_New_EQConstants", ex.ToString());
-            }
-        }
-        protected virtual void S2F13ReceiveEquipmentConstantRequest(object sender, SECSEventArgs e)
-        {
-            try
-            {
-                S2F13 s2f13 = ((S2F13)e.secsHandler.Parse<S2F13>(e));
-                SCUtility.secsActionRecordMsg(scApp, true, s2f13);
-                if (!isProcess(s2f13)) { return; }
-
-                S2F14 s2f14 = null;
-                s2f14 = new S2F14();
-                s2f14.SystemByte = s2f13.SystemByte;
-                s2f14.SECSAgentName = scApp.EAPSecsAgentName;
-
-
-                TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s2f14);
-                SCUtility.secsActionRecordMsg(scApp, false, s2f14);
-                if (rtnCode != TrxSECS.ReturnCode.Normal)
-                {
-                    logger.Warn("Reply EQPT S2F18 Error:{0}", rtnCode);
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}", line.LINE_ID, "S2F17_Receive_Date_Time_Req", ex.ToString());
-            }
-        }
-        protected virtual void S10F3ReceiveTerminalDisplaySingle(object sender, SECSEventArgs e)
-        {
-            try
-            {
-                S10F3 s10f3 = ((S10F3)e.secsHandler.Parse<S10F3>(e));
-                SCUtility.secsActionRecordMsg(scApp, true, s10f3);
-                if (!isProcess(s10f3)) { return; }
-
-                S10F4 s10f4 = null;
-                s10f4 = new S10F4();
-                s10f4.SystemByte = s10f3.SystemByte;
-                s10f4.SECSAgentName = scApp.EAPSecsAgentName;
-                //這邊待修改，尚沒有實作
-                s10f4.ACKC10 = "0";
-                TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s10f4);
-                SCUtility.secsActionRecordMsg(scApp, false, s10f4);
-                if (rtnCode != TrxSECS.ReturnCode.Normal)
-                {
-                    logger.Warn("Reply EQPT S2F18 Error:{0}", rtnCode);
-                }
-                //System.Windows.Forms.MessageBox.Show(s10f3.TEXT);
-            }
-            catch (Exception ex)
-            {
-                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}", line.LINE_ID, "S2F17_Receive_Date_Time_Req", ex.ToString());
-            }
-        }
-        protected virtual void S6F19ReceiveEquipmentConstantRequest(object sender, SECSEventArgs e)
-        {
-            try
-            {
-                S6F19 s6f19 = ((S6F19)e.secsHandler.Parse<S6F19>(e));
-                SCUtility.secsActionRecordMsg(scApp, true, s6f19);
-                if (!isProcess(s6f19)) { return; }
-
-                S6F20 s6f20 = null;
-                s6f20 = new S6F20();
-                s6f20.SystemByte = s6f19.SystemByte;
-                s6f20.SECSAgentName = scApp.EAPSecsAgentName;
-                int index = -1;
-                string strRPTID = s6f19.RPTID;
-                List<ARPTID> AVIDs = SECSConst.DicRPTIDAndVID[strRPTID];
-                List<string> VIDs = AVIDs.OrderBy(avid => avid.ORDER_NUM).Select(avid => avid.VID.Trim()).ToList();
-                foreach (string strVidItem in VIDs)
-                {
-                    //下面要實作所有RPTID對應到VID的情況
-                    index++;
-                    if (strVidItem == SECSConst.VID_Active_Carriers)
-                    {
-                        s6f20.VIDITEM[index] = buildActiveCarriersVIDItem();
-                    }
-                }
-
-                TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s6f20);
-                SCUtility.secsActionRecordMsg(scApp, false, s6f20);
-                if (rtnCode != TrxSECS.ReturnCode.Normal)
-                {
-                    logger.Warn("Reply EQPT S6F20 Error:{0}", rtnCode);
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}", line.LINE_ID, "S2F17_Receive_Date_Time_Req", ex.ToString());
-            }
-        }
         protected override void S1F3ReceiveSelectedEquipmentStatusRequest(object sender, SECSEventArgs e)
         {
             try
             {
                 S1F3 s1f3 = ((S1F3)e.secsHandler.Parse<S1F3>(e));
                 SCUtility.secsActionRecordMsg(scApp, true, s1f3);
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                               Data: s1f3);
+
                 int count = s1f3.SVID.Count();
                 S1F4 s1f4 = new S1F4();
                 s1f4.SECSAgentName = scApp.EAPSecsAgentName;
@@ -1151,43 +946,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 s1f4.SV = new SXFY[count];
                 for (int i = 0; i < count; i++)
                 {
-                    //====================================================
-                    if (s1f3.SVID[i] == SECSConst.VID_Alarm_Enabled)
-                    {
-                        s1f4.SV[i] = buildAlarmEnabledVIDItem();
-                    }
-                    else if (s1f3.SVID[i] == SECSConst.VID_Alarm_Set)
-                    {
-                        s1f4.SV[i] = buildAlarmSetVIDItem();
-                    }
-                    //=====================================================
-                    else if (s1f3.SVID[i] == SECSConst.VID_Clock)
-                    {
-                        s1f4.SV[i] = buildClockVIDItem();
-                    }
-                    else if (s1f3.SVID[i] == SECSConst.VID_Control_State)
+                    if (s1f3.SVID[i] == SECSConst.VID_Control_State)
                     {
                         line.CurrentStateChecked = true;
                         s1f4.SV[i] = buildControlStateVIDItem();
                     }
-                    else if (s1f3.SVID[i] == SECSConst.VID_Events_Enabled)
-                    {
-                        s1f4.SV[i] = buildEventsEnabledVIDItem();
-                    }
-                    else if (s1f3.SVID[i] == SECSConst.VID_Active_Carriers)
-                    {
-                        s1f4.SV[i] = buildActiveCarriersVIDItem();
-                    }
-                    //===
-                    else if (s1f3.SVID[i] == SECSConst.VID_Active_Transfers)
-                    {
-                        s1f4.SV[i] = buildActiveTransferVIDItem();
-                    }
-                    else if (s1f3.SVID[i] == SECSConst.VID_Carrier_ID)
-                    {
-                        s1f4.SV[i] = buildActiveTransferVIDItem();
-                    }
-                    //===
                     else if (s1f3.SVID[i] == SECSConst.VID_Active_Vehicles)
                     {
                         line.EnhancedVehiclesChecked = true;
@@ -1220,95 +983,16 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 }
                 TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s1f4);
                 SCUtility.secsActionRecordMsg(scApp, false, s1f4);
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                               Data: s1f4);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.Print(ex.Message + "\n" + ex.StackTrace);
-                logger.Error("AUOMCSDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}",
+                logger.Error("UMTCMCSDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}",
                     line.LINE_ID, "S1F3_Receive_Eqpt_Stat_Req", ex.ToString());
             }
         }
         #region Build VIDItem
-        protected override void S1F13ReceiveEstablishCommunicationRequest(object sender, SECSEventArgs e)
-        {
-            try
-            {
-                S1F13_Empty s1f13 = ((S1F13_Empty)e.secsHandler.Parse<S1F13_Empty>(e));
-                SCUtility.secsActionRecordMsg(scApp, true, s1f13);
-                SCUtility.actionRecordMsg(scApp, s1f13.StreamFunction, line.Real_ID,
-                        "Receive Establish Communication From MES.", "");
-                //if (!isProcessEAP(s1f13)) { return; }
-                S1F14 s1f14 = new S1F14();
-                s1f14.SECSAgentName = scApp.EAPSecsAgentName;
-                s1f14.SystemByte = s1f13.SystemByte;
-                s1f14.COMMACK = "0";
-                s1f14.VERSION_INFO = new string[2]
-                { line.LINE_ID,
-                  "V1.2.0" };
-
-                SCUtility.secsActionRecordMsg(scApp, false, s1f14);
-                TrxSECS.ReturnCode rtnCode = ISECSControl.replySECS(bcfApp, s1f14);
-                SCUtility.actionRecordMsg(scApp, s1f13.StreamFunction, line.Real_ID,
-                        "Reply Establish Communication To MES.", rtnCode.ToString());
-                if (rtnCode != TrxSECS.ReturnCode.Normal)
-                {
-                    logger.Warn("Reply EAP S1F14 Error:{0}", rtnCode);
-                }
-                logger.Debug("s1f13Receive ok!");
-                line.EstablishComm = true;
-            }
-            catch (Exception ex)
-            {
-                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}",
-                    line.LINE_ID, "s1f13_Receive_EstablishCommunication", ex.ToString());
-            }
-        }
-        private S6F11.RPTINFO.RPTITEM.VIDITEM_03 buildAlarmEnabledVIDItem()
-        {
-            List<ALARMRPTCOND> aLARMRPTCONDs = scApp.AlarmBLL.loadAllAlarmReport(true);
-            S6F11.RPTINFO.RPTITEM.VIDITEM_03 viditem_03 = new S6F11.RPTINFO.RPTITEM.VIDITEM_03();
-            viditem_03.ALIDs = new string[aLARMRPTCONDs.Count];
-            int index = -1;
-            foreach (ALARMRPTCOND aLARMRPTCOND in aLARMRPTCONDs)
-            {
-                index++;
-                viditem_03.ALIDs[index] = aLARMRPTCOND.ALAM_CODE;
-            }
-            return viditem_03;
-            //int index = -1;
-            //List<ALARM> alarmList = scApp.AlarmBLL.getCurrentAlarms();
-            //S6F11.RPTINFO.RPTITEM.VIDITEM_03 viditem_03 = new S6F11.RPTINFO.RPTITEM.VIDITEM_03();
-
-            //foreach (ALARM alarm in alarmList)
-            //{
-            //    index++;
-            //    viditem_03.ALIDs[index] = alarm.ALAM_CODE;
-            //}
-
-            //return viditem_03;
-        }
-        private S6F11.RPTINFO.RPTITEM.VIDITEM_04 buildAlarmSetVIDItem()
-        {
-            int index = -1;
-            List<ALARM> alarmList = scApp.AlarmBLL.getCurrentAlarms();
-            S6F11.RPTINFO.RPTITEM.VIDITEM_04 viditem_04 = new S6F11.RPTINFO.RPTITEM.VIDITEM_04();
-            viditem_04.ALIDs = new string[alarmList.Count];
-            foreach (ALARM alarm in alarmList)
-            {
-                index++;
-                viditem_04.ALIDs[index] = alarm.ALAM_CODE;
-            }
-
-            return viditem_04;
-        }
-        private S6F11.RPTINFO.RPTITEM.VIDITEM_05 buildClockVIDItem()
-        {
-            S6F11.RPTINFO.RPTITEM.VIDITEM_05 viditem_05 = new S6F11.RPTINFO.RPTITEM.VIDITEM_05();
-            viditem_05.CLOCK = DateTime.Now.ToString("yyyyMMddhhmmssffcc");
-            return viditem_05;
-        }
         private S6F11.RPTINFO.RPTITEM.VIDITEM_06 buildControlStateVIDItem()
         {
             string control_state = SCAppConstants.LineHostControlState.convert2MES(line.Host_Control_State);
@@ -1318,77 +1002,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             };
             return viditem_06;
         }
-        private S6F11.RPTINFO.RPTITEM.VIDITEM_07 buildEventsEnabledVIDItem()
-        {
-            int index = -1;
-            S6F11.RPTINFO.RPTITEM.VIDITEM_07 viditem_07 = new S6F11.RPTINFO.RPTITEM.VIDITEM_07();
-            List<AEVENTRPTCOND> aEVENTRPTCONDs = scApp.EventBLL.LoadEnabledCEID();
-            viditem_07.CEIDs = new string[aEVENTRPTCONDs.Count];
-            foreach (AEVENTRPTCOND aEVENTRPTCOND in aEVENTRPTCONDs)
-            {
-                index++;
-                viditem_07.CEIDs[index] = aEVENTRPTCOND.CEID;
-            }
-            //foreach (string strCeid in SECSConst.CEID_ARRAY)
-            //    if ((scApp.EventBLL.isEnableReport(strCeid) == true))
-            //    {
-            //        index++;
-            //        viditem_07.CEIDs[index] = strCeid;
-            //    }
 
-            return viditem_07;
-        }
-        private S6F11.RPTINFO.RPTITEM.VIDITEM_51 buildActiveCarriersVIDItem()
-        {
-            List<AVEHICLE> has_carry_vhs = scApp.getEQObjCacheManager().getAllVehicle().Where(vh => vh.HAS_CST == 1).ToList();
-            int carry_vhs_count = has_carry_vhs.Count;
-            S6F11.RPTINFO.RPTITEM.VIDITEM_51 viditem_51 = new S6F11.RPTINFO.RPTITEM.VIDITEM_51();
-            viditem_51.CARRIER_INFO = new S6F11.RPTINFO.RPTITEM.VIDITEM_55[carry_vhs_count];
-            for (int j = 0; j < carry_vhs_count; j++)
-            {
-                viditem_51.CARRIER_INFO[j] = new S6F11.RPTINFO.RPTITEM.VIDITEM_55()
-                {
-                    CARRIER_ID = has_carry_vhs[j].CST_ID.Trim(),
-                    VEHICLE_ID = has_carry_vhs[j].VEHICLE_ID.Trim(),
-                    CARRIER_LOC = has_carry_vhs[j].VEHICLE_ID.Trim()
-                };
-            }
-            return viditem_51;
-            //S6F11.RPTINFO.RPTITEM.VIDITEM_51 viditem_51 = new S6F11.RPTINFO.RPTITEM.VIDITEM_51();
-            //List<AVEHICLE> vhs = scApp.getEQObjCacheManager().getAllVehicle();
-            //int vhs_count = vhs.Count;
-            //int index = -1;
-            //foreach (AVEHICLE item in vhs)
-            //{
-            //    if (!string.IsNullOrEmpty(item.CST_ID))
-            //    {
-            //        index++;
-            //        viditem_51.CARRIER_INFO[index].CARRIER_ID = item.CST_ID;
-            //        //下面這一列待修改
-            //        viditem_51.CARRIER_INFO[index].CARRIER_LOC = item.CST_ID;
-            //        viditem_51.CARRIER_INFO[index].VEHICLE_ID = item.VEHICLE_ID;
-            //    }
-            //}
-            //return viditem_51;
-        }
-        private S6F11.RPTINFO.RPTITEM.VIDITEM_52 buildActiveTransferVIDItem()
-        {
-            List<ACMD_MCS> mcs_cmds = scApp.CMDBLL.loadACMD_MCSIsUnfinished();
-            int cmd_count = mcs_cmds.Count;
-            S6F11.RPTINFO.RPTITEM.VIDITEM_52 viditem_52 = new S6F11.RPTINFO.RPTITEM.VIDITEM_52();
-            viditem_52.TRANSFER_COMMANDs = new S6F11.RPTINFO.RPTITEM.VIDITEM_69[cmd_count];
-            for (int j = 0; j < cmd_count; j++)
-            {
-                viditem_52.TRANSFER_COMMANDs[j] = new S6F11.RPTINFO.RPTITEM.VIDITEM_69()
-                {
-                    COMMAND_INFO = new S6F11.RPTINFO.RPTITEM.VIDITEM_59()
-                    {
-
-                    },
-                };
-            }
-            return viditem_52;
-        }
         private S6F11.RPTINFO.RPTITEM.VIDITEM_53 buildActiveVehiclesVIDItem()
         {
             List<AVEHICLE> vhs = scApp.getEQObjCacheManager().getAllVehicle();
@@ -1408,61 +1022,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             return viditem_53;
         }
-        private S6F11.RPTINFO.RPTITEM.VIDITEM_54 buildCarrierIdVIDItem()
-        {
-            S6F11.RPTINFO.RPTITEM.VIDITEM_54 viditem_54 = new S6F11.RPTINFO.RPTITEM.VIDITEM_54();
 
-
-            return viditem_54;
-        }
-        private S6F11.RPTINFO.RPTITEM.VIDITEM_55 buildCarrierInfoVIDItem()
-        {
-            S6F11.RPTINFO.RPTITEM.VIDITEM_55 viditem_55 = new S6F11.RPTINFO.RPTITEM.VIDITEM_55();
-            List<AVEHICLE> vhs = scApp.getEQObjCacheManager().getAllVehicle();
-            int vhs_count = vhs.Count;
-            int index = -1;
-            foreach (AVEHICLE item in vhs)
-            {
-                if (!string.IsNullOrEmpty(item.CST_ID))
-                {
-                    index++;
-                    viditem_55.CARRIER_ID = item.CST_ID;
-                    viditem_55.VEHICLE_ID = item.VEHICLE_ID;
-                    //以下待修改
-                    viditem_55.CARRIER_LOC = item.CST_ID;
-                }
-            }
-
-            return viditem_55;
-        }
-        private S6F11.RPTINFO.RPTITEM.VIDITEM_56 buildCarrierLocVIDItem()
-        {
-            S6F11.RPTINFO.RPTITEM.VIDITEM_56 viditem_56 = new S6F11.RPTINFO.RPTITEM.VIDITEM_56();
-
-
-            return viditem_56;
-        }
-        private S6F11.RPTINFO.RPTITEM.VIDITEM_58 buildCommandIdVIDItem()
-        {
-            S6F11.RPTINFO.RPTITEM.VIDITEM_58 viditem_58 = new S6F11.RPTINFO.RPTITEM.VIDITEM_58();
-
-
-            return viditem_58;
-        }
-        private S6F11.RPTINFO.RPTITEM.VIDITEM_59 buildCommandInfoVIDItem()
-        {
-            S6F11.RPTINFO.RPTITEM.VIDITEM_59 viditem_59 = new S6F11.RPTINFO.RPTITEM.VIDITEM_59();
-
-
-            return viditem_59;
-        }
-        private S6F11.RPTINFO.RPTITEM.VIDITEM_61 buildDestPortVIDItem()
-        {
-            S6F11.RPTINFO.RPTITEM.VIDITEM_61 viditem_61 = new S6F11.RPTINFO.RPTITEM.VIDITEM_61();
-
-
-            return viditem_61;
-        }
         private S6F11.RPTINFO.RPTITEM.VIDITEM_62 buildEnhancedCarriersVIDItem()
         {
             List<AVEHICLE> has_carry_vhs = scApp.getEQObjCacheManager().getAllVehicle().Where(vh => vh.HAS_CST == 1).ToList();
@@ -1534,41 +1094,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             return viditem_63;
         }
-        private S6F11.RPTINFO.RPTITEM.VIDITEM_64_2 buildEqpNameVIDItem()
-        {
-            S6F11.RPTINFO.RPTITEM.VIDITEM_64_2 viditem_64_2 = new S6F11.RPTINFO.RPTITEM.VIDITEM_64_2();
 
-
-            return viditem_64_2;
-        }
-        private S6F11.RPTINFO.RPTITEM.VIDITEM_65 buildPriorityVIDItem()
-        {
-            S6F11.RPTINFO.RPTITEM.VIDITEM_65 viditem_65 = new S6F11.RPTINFO.RPTITEM.VIDITEM_65();
-
-
-            return viditem_65;
-        }
-        private S6F11.RPTINFO.RPTITEM.VIDITEM_66 buildReplaceVIDItem()
-        {
-            S6F11.RPTINFO.RPTITEM.VIDITEM_66 viditem_66 = new S6F11.RPTINFO.RPTITEM.VIDITEM_66();
-
-
-            return viditem_66;
-        }
-        private S6F11.RPTINFO.RPTITEM.VIDITEM_68 buildSourcePortVIDItem()
-        {
-            S6F11.RPTINFO.RPTITEM.VIDITEM_68 viditem_68 = new S6F11.RPTINFO.RPTITEM.VIDITEM_68();
-
-
-            return viditem_68;
-        }
-        private S6F11.RPTINFO.RPTITEM.VIDITEM_69 buildTransferCommandVIDItem()
-        {
-            S6F11.RPTINFO.RPTITEM.VIDITEM_69 viditem_69 = new S6F11.RPTINFO.RPTITEM.VIDITEM_69();
-
-
-            return viditem_69;
-        }
         private S6F11.RPTINFO.RPTITEM.VIDITEM_73 buildTCSStateVIDItem()
         {
             //string sc_state = SCAppConstants.LineSCState.convert2MES(line.SCStats);
@@ -1657,7 +1183,6 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 s5f6.SECSAgentName = scApp.EAPSecsAgentName;
                 s5f6.ALIDS = new S5F6.ALID_1[1];
                 s5f6.ALIDS[0] = new S5F6.ALID_1();
-
                 //if (alarm_codes.Length == 0)//填所有Alarm資料到S5F6
                 //{
                 //    s5f6.ALIDS = new S5F6.ALID_1[alarm_maps.Count];
@@ -1717,49 +1242,6 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         #endregion Receive 
 
         #region Send
-        protected override void S2F31ReceiveDateTimeSetReq(object sender, SECSEventArgs e)
-        {
-            try
-            {
-                S2F31 s2f31 = ((S2F31)e.secsHandler.Parse<S2F31>(e));
-
-                SCUtility.secsActionRecordMsg(scApp, true, s2f31);
-                SCUtility.actionRecordMsg(scApp, s2f31.StreamFunction, line.Real_ID,
-                        "Receive Date Time Set Request From MES.", "");
-                if (!isProcess(s2f31)) { return; }
-
-                S2F32 s2f32 = new S2F32();
-                s2f32.SECSAgentName = scApp.EAPSecsAgentName;
-                s2f32.SystemByte = s2f31.SystemByte;
-                s2f32.TIACK = SECSConst.TIACK_Accepted;
-
-                string timeStr = s2f31.TIME;
-                DateTime mesDateTime = DateTime.Now;
-                try
-                {
-                    mesDateTime = DateTime.ParseExact(timeStr.Trim(), SCAppConstants.TimestampFormat_16, CultureInfo.CurrentCulture);
-                }
-                catch (Exception dtEx)
-                {
-                    s2f32.TIACK = SECSConst.TIACK_Error_not_done;
-                }
-
-                SCUtility.secsActionRecordMsg(scApp, false, s2f32);
-                ISECSControl.replySECS(bcfApp, s2f32);
-
-                if (!DebugParameter.DisableSyncTime)
-                {
-                    SCUtility.updateSystemTime(mesDateTime);
-                }
-
-                //TODO 與設備同步
-            }
-            catch (Exception ex)
-            {
-                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}",
-                    line.LINE_ID, "S2F31_Receive_Date_Time_Set_Req", ex.ToString());
-            }
-        }
         public override bool S2F17SendDateAndTimeRequest()
         {
             try
@@ -1846,151 +1328,177 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 return false;
             }
         }
-
-
-        public override bool S6F11SendEquiptmentOffLine()
+        public override bool S6F11SendUnitAlarmSet(string eq_id, string alid, string altx, string error_code, string desc, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_64_EqpName.EQP_NAME = line.LINE_ID;
+                Vids.VID_01_AlarmID.ALID = alid;
+                Vids.VID_901_AlarmText.ALARM_TEXT = altx;
+                //Vids.VID_904_UnitID.UNIT_ID = unitID;
+                Vids.VID_903_ErrorCode.ERROR_CODE = error_code;
+                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Unit_Error_Set, Vids);
+                scApp.ReportBLL.insertMCSReport(mcs_queue);
+                if (reportQueues == null)
+                {
+                    S6F11SendMessage(mcs_queue);
+                }
+                else
+                {
+                    reportQueues.Add(mcs_queue);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                   Data: ex);
+            }
+            return true;
+        }
+
+        public override bool S6F11SendEquiptmentOffLine()   //TODO: no RPTID
+        {
+            try
+            {
+                VIDCollection Vids = new VIDCollection();
+                Vids.VID_06_ControlState.CONTROLSTATE = SCAppConstants.LineHostControlState.convert2MES(line.Host_Control_State);
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Equipment_OFF_LINE, Vids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 S6F11SendMessage(mcs_queue);
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
             }
             return true;
         }
-        public override bool S6F11SendControlStateLocal()
+        public override bool S6F11SendControlStateLocal()   //TODO: no RPTID
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_64_EqpName.EQP_NAME = line.LINE_ID;
+                Vids.VID_06_ControlState.CONTROLSTATE = SCAppConstants.LineHostControlState.convert2MES(line.Host_Control_State);
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Control_Status_Local, Vids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 S6F11SendMessage(mcs_queue);
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
             }
             return true;
         }
-        public override bool S6F11SendControlStateRemote()
+        public override bool S6F11SendControlStateRemote()  //TODO: no RPTID
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_64_EqpName.EQP_NAME = line.LINE_ID;
+                Vids.VID_06_ControlState.CONTROLSTATE = SCAppConstants.LineHostControlState.convert2MES(line.Host_Control_State);
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Control_Status_Remote, Vids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 S6F11SendMessage(mcs_queue);
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
             }
             return true;
         }
 
-        public override bool S6F11SendTSCAutoInitiated()
+        public override bool S6F11SendTSCAutoInitiated()    //TODO: no RPTID
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_64_EqpName.EQP_NAME = line.LINE_ID;
+                Vids.VID_73_TSCState.TSC_STATE = ((int)line.SCStats).ToString();
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TSC_Auto_Initiated, Vids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 S6F11SendMessage(mcs_queue);
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
             }
             return true;
         }
 
-        public override bool S6F11SendTSCPaused()
+        public override bool S6F11SendTSCPaused()   //TODO: no RPTID
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_64_EqpName.EQP_NAME = line.LINE_ID;
+                Vids.VID_73_TSCState.TSC_STATE = ((int)line.SCStats).ToString();
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TSC_Paused, Vids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 S6F11SendMessage(mcs_queue);
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
             }
             return true;
         }
 
-        public override bool S6F11SendTSCAutoCompleted()
+        public override bool S6F11SendTSCAutoCompleted()    //TODO: no RPTID
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_64_EqpName.EQP_NAME = line.LINE_ID;
+                Vids.VID_73_TSCState.TSC_STATE = ((int)line.SCStats).ToString();
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TSC_Auto_Completed, Vids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 S6F11SendMessage(mcs_queue);
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
             }
             return true;
         }
 
-        public override bool S6F11SendTSCPauseInitiated()
+        public override bool S6F11SendTSCPauseInitiated()   //TODO: no RPTID
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_64_EqpName.EQP_NAME = line.LINE_ID;
+                Vids.VID_73_TSCState.TSC_STATE = ((int)line.SCStats).ToString();
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TSC_Pause_Initiated, Vids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 S6F11SendMessage(mcs_queue);
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
             }
             return true;
         }
 
-        public override bool S6F11SendTSCPauseCompleted()
+        public override bool S6F11SendTSCPauseCompleted()   //TODO: no RPTID
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_64_EqpName.EQP_NAME = line.LINE_ID;
+                Vids.VID_73_TSCState.TSC_STATE = ((int)line.SCStats).ToString();
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TSC_Pause_Completed, Vids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 S6F11SendMessage(mcs_queue);
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
             }
             return true;
         }
 
-        public override bool S6F11SendAlarmCleared()
+        public override bool S6F11SendAlarmCleared()    //TODO: no RPTID
         {
             try
             {
@@ -2002,31 +1510,29 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
             }
             return true;
         }
-
-
-        public override bool S6F11SendAlarmCleared(string vhid)
+        public override bool S6F11SendAlarmCleared(string vhid) //TODO: no RPTID
         {
             try
             {
                 AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(vhid);
                 VIDCollection vid_collection = AVIDINFO2VIDCollection(vid_info);
-                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Alarm_Cleared, vid_collection);
+                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Alarm_Cleared, vid_info);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 S6F11SendMessage(mcs_queue);
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
             }
             return true;
         }
-        public override bool S6F11SendAlarmSet()
+        public override bool S6F11SendAlarmSet()    //TODO: no RPTID
         {
             try
             {
@@ -2038,13 +1544,13 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
             }
             return true;
         }
 
-        public override bool S6F11SendAlarmSet(string vhid)
+        public override bool S6F11SendAlarmSet(string vhid) //TODO: no RPTID
         {
             try
             {
@@ -2056,13 +1562,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
             }
             return true;
         }
-
-
         public bool sendS6F11_PortEventState(string port_id, string port_event_state)
         {
             try
@@ -2085,12 +1589,29 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
             }
             return true;
         }
-
+        public override bool S6F11SendTSAvailChanged()
+        {
+            try
+            {
+                //VIDCollection Vids = new VIDCollection();
+                //Vids.VID_61_EqpName.EQP_NAME = line.LINE_ID;
+                //Vids.VID_201_TSAvail.TS_AVAIL = ((int)line.SCStats).ToString() == "2" ? "0" : "1";
+                //AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TS_Avail_Changed, Vids);
+                //scApp.ReportBLL.insertMCSReport(mcs_queue);
+                //S6F11SendMessage(mcs_queue);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                   Data: ex);
+            }
+            return true;
+        }
         public override bool S6F11SendTransferInitial(string cmdID, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             try
@@ -2098,10 +1619,17 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 ACMD_MCS mcs_cmd = scApp.CMDBLL.getCMD_MCSByID(cmdID);
 
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_58_CommandID = new S6F11.RPTINFO.RPTITEM.VIDITEM_58()
+                Vids.VID_69_TransferCommand.COMMAND_INFO = new S6F11.RPTINFO.RPTITEM.VIDITEM_59()
                 {
-                    COMMAND_ID = mcs_cmd.CMD_ID
+                    COMMAND_ID = mcs_cmd.CMD_ID,
+                    PRIORITY = mcs_cmd.PRIORITY.ToString(),
+                    REPLACE = mcs_cmd.REPLACE.ToString() // todo kevin 要填入正確的資料
                 };
+                S6F11.RPTINFO.RPTITEM.VIDITEM_70 vIDITEM_70 = new S6F11.RPTINFO.RPTITEM.VIDITEM_70();
+                vIDITEM_70.CARRIER_ID.CARRIER_ID = mcs_cmd.CARRIER_ID;
+                vIDITEM_70.SOURCE_PORT.SOURCE_PORT = mcs_cmd.HOSTSOURCE;
+                vIDITEM_70.DEST_PORT.DEST_PORT = mcs_cmd.HOSTDESTINATION;
+                Vids.VID_69_TransferCommand.TRANSFER_INFO = vIDITEM_70;
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Transfer_Initiated, Vids);
                 if (reportQueues == null)
                 {
@@ -2114,7 +1642,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
             }
             return true;
@@ -2140,7 +1668,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -2165,7 +1693,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -2191,7 +1719,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -2217,7 +1745,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -2242,7 +1770,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //}
             //catch (Exception ex)
             //{
-            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
             //       Data: ex);
             //    return false;
             //}
@@ -2268,7 +1796,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -2294,7 +1822,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -2320,23 +1848,61 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
         }
-        public override bool S6F11SendTransferAbortCompleted(ACMD_MCS CMD_MCS, AVEHICLE vh, string resultCode, List<AMCSREPORTQUEUE> reportQueues = null, string _carrier_loc = null)
+        public override bool S6F11SendTSCPauseCompleted(List<AMCSREPORTQUEUE> reportQueues = null)  //TODO: no RPTID
         {
             try
             {
-                return false;
+                VIDCollection Vids = new VIDCollection();
+                Vids.VID_73_TSCState.TSC_STATE = ((int)line.SCStats).ToString();
+                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TSC_Pause_Completed, Vids);
+                if (reportQueues == null)
+                {
+                    S6F11SendMessage(mcs_queue);
+                }
+                else
+                {
+                    reportQueues.Add(mcs_queue);
+                }
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(SouthInnoluxMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
-                return false;
             }
+            return true;
+        }
+        public override bool S6F11SendVehicleDepositFailed(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            return false;
+        }
+        public override bool S6F11SendTSCAutoCompleted(List<AMCSREPORTQUEUE> reportQueues = null)   //TODO: no RPTID
+        {
+            try
+            {
+                VIDCollection Vids = new VIDCollection();
+                Vids.VID_73_TSCState.TSC_STATE = ((int)line.SCStats).ToString();
+
+                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TSC_Auto_Completed, Vids);
+                if (reportQueues == null)
+                {
+                    S6F11SendMessage(mcs_queue);
+                }
+                else
+                {
+                    reportQueues.Add(mcs_queue);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                   Data: ex);
+            }
+            return true;
         }
         public override bool S6F11SendVehicleDepositCompleted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
         {
@@ -2358,15 +1924,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
         }
-        public override bool S6F11SendVehicleDepositFailed(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
-        {
-            return false;
-        }
+
         public override bool S6F11SendCarrierInstalled(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             try
@@ -2387,12 +1950,36 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
         }
 
+        public override bool S6F11SendTSAvailChanged(List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            try
+            {
+                //VIDCollection Vids = new VIDCollection();
+                //Vids.VID_61_EqpName.EQP_NAME = line.LINE_ID;
+                //Vids.VID_201_TSAvail.TS_AVAIL = ((int)line.SCStats).ToString() == "2" ? "0" : "1";
+                //AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TS_Avail_Changed, Vids);
+                //if (reportQueues == null)
+                //{
+                //    S6F11SendMessage(mcs_queue);
+                //}
+                //else
+                //{
+                //    reportQueues.Add(mcs_queue);
+                //}
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                   Data: ex);
+            }
+            return true;
+        }
         public override bool S6F11SendCarrierRemoved(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             try
@@ -2413,7 +2000,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -2439,7 +2026,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -2465,7 +2052,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -2497,7 +2084,15 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 }
                 else
                 {
-                    carrier_loc = CMD_MCS.HOSTSOURCE;
+                    bool is_source_vh = scApp.VehicleBLL.cache.getVehicleByRealID(CMD_MCS.HOSTSOURCE) != null;
+                    if (is_source_vh)
+                    {
+                        carrier_loc = tryFindCarrierLastLocation(CMD_MCS, vh);
+                    }
+                    else
+                    {
+                        carrier_loc = CMD_MCS.HOSTSOURCE;
+                    }
                 }
                 //string carrier_loc = CMD_MCS.TRANSFERSTATE >= E_TRAN_STATUS.Transferring ?
                 //                          vh == null ? "" : vh.Real_ID :
@@ -2524,10 +2119,37 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
+        }
+
+        private string tryFindCarrierLastLocation(ACMD_MCS CMD_MCS, AVEHICLE vh)
+        {
+            string carrier_loc;
+            //如果該筆命令的Source 就是VH的話(即為要讓車子執行Unload)，
+            //要去查找該CST他的上一筆命令的終點是在哪邊，
+            //把他當作本次的命令結束時的carrier loc的最後位置。
+            //如果最後還是找不到，就直接填入在車上。
+            ACMD_MCS last_finish_cmd_mcs = scApp.CMDBLL.getLastFinishCmd_MCSByCSTID(CMD_MCS.CARRIER_ID, CMD_MCS.CMD_ID);
+            if (last_finish_cmd_mcs != null)
+            {
+                carrier_loc = SCUtility.Trim(last_finish_cmd_mcs.HOSTDESTINATION, true);
+            }
+            else
+            {
+                HCMD_MCS last_finish_hcmd_mcd = scApp.CMDBLL.getLastFinishHCmd_MCSByCSTID(CMD_MCS.CARRIER_ID, CMD_MCS.CMD_ID);
+                if (last_finish_hcmd_mcd != null)
+                {
+                    carrier_loc = SCUtility.Trim(last_finish_hcmd_mcd.HOSTDESTINATION, true);
+                }
+                else
+                {
+                    carrier_loc = vh.Real_ID;
+                }
+            }
+            return carrier_loc;
         }
 
         public override bool S6F11SendTransferAbortCompleted(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
@@ -2550,7 +2172,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -2576,106 +2198,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
         }
-        public override bool S6F11SendTSAvailChanged(List<AMCSREPORTQUEUE> reportQueues = null)
-        {
-            try
-            {
-                //VIDCollection Vids = new VIDCollection();
-                //Vids.VID_61_EqpName.EQP_NAME = line.LINE_ID;
-                //Vids.VID_201_TSAvail.TS_AVAIL = ((int)line.SCStats).ToString() == "2" ? "0" : "1";
-                //AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TS_Avail_Changed, Vids);
-                //if (reportQueues == null)
-                //{
-                //    S6F11SendMessage(mcs_queue);
-                //}
-                //else
-                //{
-                //    reportQueues.Add(mcs_queue);
-                //}
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
-                   Data: ex);
-            }
-            return true;
-        }
-        public override bool S6F11SendTSCPauseCompleted(List<AMCSREPORTQUEUE> reportQueues = null)
-        {
-            try
-            {
-                VIDCollection Vids = new VIDCollection();
-                //Vids.VID_05_Clock.CLOCK = DateTime.Now.ToString(SCAppConstants.TimestampFormat_14).PadRight(16, '0');
-                //Vids.VID_1240_PriviousTSCState.PREVIOUS_TSC_STATE = ((int)line.PriviousSCStats).ToString();
-                //Vids.VID_73_TSCState.TSC_STATE = ((int)line.SCStats).ToString();
-                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TSC_Pause_Completed, Vids);
-                if (reportQueues == null)
-                {
-                    S6F11SendMessage(mcs_queue);
-                }
-                else
-                {
-                    reportQueues.Add(mcs_queue);
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
-                   Data: ex);
-            }
-            return true;
-        }
 
-        public override bool S6F11SendTSCAutoCompleted(List<AMCSREPORTQUEUE> reportQueues = null)
-        {
-            try
-            {
-                VIDCollection Vids = new VIDCollection();
-                //Vids.VID_05_Clock.CLOCK = DateTime.Now.ToString(SCAppConstants.TimestampFormat_14).PadRight(16, '0');
-                //Vids.VID_1240_PriviousTSCState.PREVIOUS_TSC_STATE = ((int)line.PriviousSCStats).ToString();
-                //Vids.VID_73_TSCState.TSC_STATE = ((int)line.SCStats).ToString();
-
-
-                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TSC_Auto_Completed, Vids);
-                if (reportQueues == null)
-                {
-                    S6F11SendMessage(mcs_queue);
-                }
-                else
-                {
-                    reportQueues.Add(mcs_queue);
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
-                   Data: ex);
-            }
-            return true;
-        }
-        public override bool S6F11SendTSAvailChanged()
-        {
-            try
-            {
-                //VIDCollection Vids = new VIDCollection();
-                //Vids.VID_61_EqpName.EQP_NAME = line.LINE_ID;
-                //Vids.VID_201_TSAvail.TS_AVAIL = ((int)line.SCStats).ToString() == "2" ? "0" : "1";
-                //AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_TS_Avail_Changed, Vids);
-                //scApp.ReportBLL.insertMCSReport(mcs_queue);
-                //S6F11SendMessage(mcs_queue);
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
-                   Data: ex);
-            }
-            return true;
-        }
         public override bool S6F11PortEventStateChanged(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             try
@@ -2696,7 +2224,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -2724,24 +2252,21 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
             }
             return true;
         }
-        
-        public override bool S6F11SendUnitAlarmSet(string eq_id, string alid, string altx, string error_code,string desc, List<AMCSREPORTQUEUE> reportQueues = null)
+
+        public bool S6F11SendUnitAlarmSet(string unitID, string alarmID, string alarmTest, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             try
             {
                 VIDCollection Vids = new VIDCollection();
-                Vids.VID_01_AlarmID.ALID = alid;
-                Vids.VID_901_AlarmText.ALARM_TEXT = altx;
-                Vids.VID_904_UnitID.UNIT_ID = eq_id;
-
-                //Vids.VID_903_ErrorCode.ERROR_CODE = alid + error_code;//errorcode要加前綴
-                Vids.VID_903_ErrorCode.ERROR_CODE = error_code;
-                Vids.VID_905_ErrorText.ERROR_TEXT = desc;
+                Vids.VID_01_AlarmID.ALID = alarmID;
+                Vids.VID_901_AlarmText.ALARM_TEXT = alarmTest;
+                Vids.VID_904_UnitID.UNIT_ID = unitID;
+                Vids.VID_903_ErrorCode.ERROR_CODE = alarmID;
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Unit_Error_Set, Vids);
                 scApp.ReportBLL.insertMCSReport(mcs_queue);
                 if (reportQueues == null)
@@ -2755,150 +2280,22 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
             }
             return true;
         }
+
         public override bool S6F11SendUnitAlarmCleared(string eq_id, string alid, string altx, string error_code, string desc, List<AMCSREPORTQUEUE> reportQueues = null)
-        {
-            try
-            {
-                VIDCollection Vids = new VIDCollection();
-                Vids.VID_01_AlarmID.ALID = alid;
-                Vids.VID_901_AlarmText.ALARM_TEXT = altx;
-                Vids.VID_904_UnitID.UNIT_ID = eq_id;
-                Vids.VID_903_ErrorCode.ERROR_CODE = error_code;
-                Vids.VID_905_ErrorText.ERROR_TEXT = desc;
-                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Unit_Error_Cleared, Vids);
-                scApp.ReportBLL.insertMCSReport(mcs_queue);
-                if (reportQueues == null)
-                {
-                    S6F11SendMessage(mcs_queue);
-                }
-                else
-                {
-                    reportQueues.Add(mcs_queue);
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
-                   Data: ex);
-            }
-            return true;
-        }
-        public override bool S6F11SendOperatorInitiatedAction(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
-        {
-            try
-            {
-                AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(vhID);
-                VIDCollection vid_collection = AVIDINFO2VIDCollection(vid_info);
-                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Operator_Initiated_Action, vid_collection);
-                scApp.ReportBLL.insertMCSReport(mcs_queue);
-                if (reportQueues == null)
-                {
-                    S6F11SendMessage(mcs_queue);
-                }
-                else
-                {
-                    reportQueues.Add(mcs_queue);
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
-                   Data: ex);
-            }
-            return true;
-        }
-        public override bool S6F11SendVehicleChargeRequest(List<AMCSREPORTQUEUE> reportQueues = null)
-        {
-            try
-            {
-                VIDCollection Vids = new VIDCollection();
-                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Vehicle_Charge_Request, Vids);
-                scApp.ReportBLL.insertMCSReport(mcs_queue);
-                if (reportQueues == null)
-                {
-                    S6F11SendMessage(mcs_queue);
-                }
-                else
-                {
-                    reportQueues.Add(mcs_queue);
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
-                   Data: ex);
-            }
-            return true;
-        }
-        public override bool S6F11SendVehicleChargeStarted(List<AMCSREPORTQUEUE> reportQueues = null)
-        {
-            try
-            {
-                VIDCollection Vids = new VIDCollection();
-                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Vehicle_Charge_Started, Vids);
-                scApp.ReportBLL.insertMCSReport(mcs_queue);
-                if (reportQueues == null)
-                {
-                    S6F11SendMessage(mcs_queue);
-                }
-                else
-                {
-                    reportQueues.Add(mcs_queue);
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
-                   Data: ex);
-            }
-            return true;
-        }
-        public override bool S6F11SendVehicleChargeCompleted(List<AMCSREPORTQUEUE> reportQueues = null)
-        {
-            try
-            {
-                VIDCollection Vids = new VIDCollection();
-                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Vehicle_Charge_Completed, Vids);
-                scApp.ReportBLL.insertMCSReport(mcs_queue);
-                if (reportQueues == null)
-                {
-                    S6F11SendMessage(mcs_queue);
-                }
-                else
-                {
-                    reportQueues.Add(mcs_queue);
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
-                   Data: ex);
-            }
-            return true;
-        }
-
-
-        
-        public bool S6F11SendAlarmEvent(string eq_id, string ceid, string alid, string cmd_id, string altx, string alarmLvl, List<AMCSREPORTQUEUE> reportQueues = null)
         {
             //try
             //{
             //    VIDCollection Vids = new VIDCollection();
-            //    Vids.VID_05_Clock.CLOCK = DateTime.Now.ToString(SCAppConstants.TimestampFormat_14).PadRight(16, '0');
             //    Vids.VID_01_AlarmID.ALID = alid;
-            //    Vids.VID_70_VehicleID.VEHICLE_ID = eq_id;
-            //    Vids.VID_58_CommandID.COMMAND_ID = cmd_id;
-            //    Vids.VID_1060_AlarmText.ALARM_TEXT = altx;
-            //    Vids.VID_1070_AlarmLoc.ALARM_LOC = eq_id;
-            //    Vids.VID_1001_AlarmLevel.ALARM_LEVEL = alarmLvl;
-            //    Vids.VID_1002_FlagForAlarmReport.FLAG_FOR_ALARM_REPORT = "0";
-            //    Vids.VID_1003_Classification.CLASSIFICATION = "0";
-            //    AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(ceid, Vids);
+            //    Vids.VID_901_AlarmText.ALARM_TEXT = altx;
+            //    //Vids.VID_904_UnitID.UNIT_ID = unitID;
+            //    Vids.VID_903_ErrorCode.ERROR_CODE = error_code;
+            //    AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Unit_Error_Cleared, Vids);
             //    scApp.ReportBLL.insertMCSReport(mcs_queue);
             //    if (reportQueues == null)
             //    {
@@ -2911,19 +2308,21 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //}
             //catch (Exception ex)
             //{
-            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
             //       Data: ex);
             //}
             return false;
         }
-        public override bool S6F11SendCarrierInstalledWithIDRead(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
+        public bool S6F11SendAlarmEvent(string eq_id,string ceid, string alid,string cmd_id, string altx,string alarmLvl,List<AMCSREPORTQUEUE> reportQueues = null)
         {
             //try
             //{
-            //    if (!isSend()) return true;
-            //    AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(vhID);
-            //    VIDCollection vid_collection = AVIDINFO2VIDCollection(vid_info);
-            //    AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Carrier_Installed_With_IDReadError, vid_collection);
+            //    VIDCollection Vids = new VIDCollection();
+            //    Vids.VID_01_AlarmID.ALID = alid;
+            //    Vids.VID_901_AlarmText.ALARM_TEXT = altx;
+            //    //Vids.VID_904_UnitID.UNIT_ID = unitID;
+            //    AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Unit_Error_Cleared, Vids);
+            //    scApp.ReportBLL.insertMCSReport(mcs_queue);
             //    if (reportQueues == null)
             //    {
             //        S6F11SendMessage(mcs_queue);
@@ -2932,16 +2331,108 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //    {
             //        reportQueues.Add(mcs_queue);
             //    }
-            //    return true;
             //}
             //catch (Exception ex)
             //{
-            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
             //       Data: ex);
-            return false;
             //}
+            return false;
         }
+        public override bool S6F11SendOperatorInitiatedAction(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            //try
+            //{
+            //    AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(vhID);
+            //    VIDCollection vid_collection = AVIDINFO2VIDCollection(vid_info);
+            //    AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Operator_Initiated_Action, vid_collection);
+            //    scApp.ReportBLL.insertMCSReport(mcs_queue);
+            //    if (reportQueues == null)
+            //    {
+            //        S6F11SendMessage(mcs_queue);
+            //    }
+            //    else
+            //    {
+            //        reportQueues.Add(mcs_queue);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+            //       Data: ex);
+            //}
+            return false;
+        }
+        public override bool S6F11SendVehicleChargeRequest(List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            //try
+            //{
+            //    VIDCollection Vids = new VIDCollection();
+            //    AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Vehicle_Charge_Request, Vids);
+            //    scApp.ReportBLL.insertMCSReport(mcs_queue);
+            //    if (reportQueues == null)
+            //    {
+            //        S6F11SendMessage(mcs_queue);
+            //    }
+            //    else
+            //    {
+            //        reportQueues.Add(mcs_queue);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+            //       Data: ex);
+            //}
+            return false;
+        }
+        public override bool S6F11SendVehicleChargeStarted(List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            //try
+            //{
+            //    VIDCollection Vids = new VIDCollection();
+            //    AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Vehicle_Charge_Started, Vids);
+            //    scApp.ReportBLL.insertMCSReport(mcs_queue);
+            //    if (reportQueues == null)
+            //    {
+            //        S6F11SendMessage(mcs_queue);
+            //    }
+            //    else
+            //    {
+            //        reportQueues.Add(mcs_queue);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+            //       Data: ex);
+            //}
+            return false;
 
+        }
+        public override bool S6F11SendVehicleChargeCompleted(List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            //try
+            //{
+            //    VIDCollection Vids = new VIDCollection();
+            //    AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Vehicle_Charge_Completed, Vids);
+            //    scApp.ReportBLL.insertMCSReport(mcs_queue);
+            //    if (reportQueues == null)
+            //    {
+            //        S6F11SendMessage(mcs_queue);
+            //    }
+            //    else
+            //    {
+            //        reportQueues.Add(mcs_queue);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+            //       Data: ex);
+            //}
+            return false;
+        }
         public override AMCSREPORTQUEUE S6F11BulibMessage(string ceid, object vidCollection, List<string> rptids = null)
         {
             try
@@ -2953,190 +2444,173 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 S6F11 s6f11 = new S6F11()
                 {
                     SECSAgentName = scApp.EAPSecsAgentName,
-                    DATAID ="0",
                     CEID = ceid,
                     StreamFunctionName = ceid_name
                 };
-                //if(ceid=="53"|| ceid == "53"ceid == "53")
-                if (SCUtility.isMatche(ceid, SECSConst.CEID_TSC_Auto_Completed) ||
-                SCUtility.isMatche(ceid, SECSConst.CEID_TSC_Auto_Initiated) ||
-                SCUtility.isMatche(ceid, SECSConst.CEID_TSC_Pause_Completed) ||
-                SCUtility.isMatche(ceid, SECSConst.CEID_TSC_Paused) ||
-                SCUtility.isMatche(ceid, SECSConst.CEID_TSC_Pause_Initiated)||
-                SCUtility.isMatche(ceid, SECSConst.CEID_Equipment_OFF_LINE) ||
-                SCUtility.isMatche(ceid, SECSConst.CEID_Control_Status_Local)||
-                SCUtility.isMatche(ceid, SECSConst.CEID_Control_Status_Remote))
+                List<string> RPTIDs = SECSConst.DicCEIDAndRPTID[ceid];
+                s6f11.INFO.ITEM = new S6F11.RPTINFO.RPTITEM[RPTIDs.Count];
+
+                for (int i = 0; i < RPTIDs.Count; i++)
                 {
-                    s6f11.INFO.ITEM = new S6F11.RPTINFO.RPTITEM[0];
-                }
-                else
-                {
-                    string tempceid = ceid;
-
-                    if (ceid.StartsWith("0"))
+                    string rpt_id = RPTIDs[i];
+                    s6f11.INFO.ITEM[i] = new S6F11.RPTINFO.RPTITEM();
+                    List<string> VIDs;
+                    if (rpt_id.Trim() != "0")
                     {
-                        tempceid = ceid.TrimStart('0');
-                    }    
-                    List<string> RPTIDs = SECSConst.DicCEIDAndRPTID[tempceid];
-
-                    s6f11.INFO.ITEM = new S6F11.RPTINFO.RPTITEM[RPTIDs.Count];
-
-                    for (int i = 0; i < RPTIDs.Count; i++)
-                    {
-                        string rpt_id = RPTIDs[i];
-                        s6f11.INFO.ITEM[i] = new S6F11.RPTINFO.RPTITEM();
                         List<ARPTID> AVIDs = SECSConst.DicRPTIDAndVID[rpt_id];
-                        List<string> VIDs = AVIDs.OrderBy(avid => avid.ORDER_NUM).Select(avid => avid.VID.Trim()).ToList();
-                        s6f11.INFO.ITEM[i].RPTID = rpt_id;
-                        s6f11.INFO.ITEM[i].VIDITEM = new SXFY[AVIDs.Count];
-                        for (int j = 0; j < AVIDs.Count; j++)
-                        {
-                            string vid = VIDs[j];
-                            SXFY vid_item = null;
-                            switch (vid)
-                            {
-                                case SECSConst.VID_AlarmID:
-                                    vid_item = Vids.VID_01_AlarmID;
-                                    break;
-                                case SECSConst.VID_Establish_Communications_Timeout:
-                                    vid_item = Vids.VID_02_EstablishCommunicationsTimeout;
-                                    break;
-                                case SECSConst.VID_Alarm_Enabled:
-                                    vid_item = Vids.VID_03_AlarmEnabled;
-                                    break;
-                                case SECSConst.VID_Alarm_Set:
-                                    vid_item = Vids.VID_04_AlarmSet;
-                                    break;
-                                case SECSConst.VID_Clock:
-                                    vid_item = Vids.VID_05_Clock;
-                                    break;
-                                case SECSConst.VID_Control_State:
-                                    vid_item = Vids.VID_06_ControlState;
-                                    break;
-                                case SECSConst.VID_Events_Enabled:
-                                    vid_item = Vids.VID_07_EventEnabled;
-                                    break;
-                                case SECSConst.VID_Active_Carriers:
-                                    vid_item = Vids.VID_51_ActiveCarriers;
-                                    break;
-                                case SECSConst.VID_Active_Transfers:
-                                    vid_item = Vids.VID_52_ActiveTransfers;
-                                    break;
-                                case SECSConst.VID_Active_Vehicles:
-                                    vid_item = Vids.VID_53_ActiveVehicles;
-                                    break;
-                                case SECSConst.VID_Carrier_ID:
-                                    vid_item = Vids.VID_54_CarrierID;
-                                    break;
-                                case SECSConst.VID_CarrierInfo:
-                                    vid_item = Vids.VID_55_CarrierInfo;
-                                    break;
-                                case SECSConst.VID_Carrier_Loc:
-                                    vid_item = Vids.VID_56_CarrierLoc;
-                                    break;
-                                case SECSConst.VID_Command_Name:
-                                    vid_item = Vids.VID_57_CommandName;
-                                    break;
-                                case SECSConst.VID_Command_ID:
-                                    vid_item = Vids.VID_58_CommandID;
-                                    break;
-                                case SECSConst.VID_Command_Info:
-                                    vid_item = Vids.VID_59_CommandInfo;
-                                    break;
-                                case SECSConst.VID_Command_Type:
-                                    vid_item = Vids.VID_60_CommandType;
-                                    break;
-                                case SECSConst.VID_Destination_Port:
-                                    vid_item = Vids.VID_61_DestPort;
-                                    break;
-                                case SECSConst.VID_Enhanced_Carriers:
-                                    vid_item = Vids.VID_62_EnhancedCarriers;
-                                    break;
-                                case SECSConst.VID_Enhanced_Transfers:
-                                    vid_item = Vids.VID_63_EnhancedTransfers;
-                                    break;
-                                case SECSConst.VID_EqpName:
-                                    vid_item = Vids.VID_64_EqpName;
-                                    break;
-                                case SECSConst.VID_Priority:
-                                    vid_item = Vids.VID_65_Priority;
-                                    break;
-                                case SECSConst.VID_Replace:
-                                    vid_item = Vids.VID_66_Replace;
-                                    break;
-                                case SECSConst.VID_Result_Code:
-                                    vid_item = Vids.VID_67_ResultCode;
-                                    break;
-                                case SECSConst.VID_Source_Port:
-                                    vid_item = Vids.VID_68_SourcePort;
-                                    break;
-                                case SECSConst.VID_Transfer_Command:
-                                    vid_item = Vids.VID_69_TransferCommand;
-                                    break;
-                                case SECSConst.VID_Transfer_Info:
-                                    vid_item = Vids.VID_70_TransferInfo;
-                                    break;
-                                case SECSConst.VID_Transfer_Port:
-                                    vid_item = Vids.VID_71_TransferPort;
-                                    break;
-                                case SECSConst.VID_Transfer_Port_List:
-                                    vid_item = Vids.VID_72_TransferPortList;
-                                    break;
-                                case SECSConst.VID_TCS_State:
-                                    vid_item = Vids.VID_73_TSCState;
-                                    break;
-                                case SECSConst.VID_Vehicle_ID:
-                                    vid_item = Vids.VID_74_VehicleID;
-                                    break;
-                                case SECSConst.VID_Vehicle_Info:
-                                    vid_item = Vids.VID_75_VehicleInfo;
-                                    break;
-                                case SECSConst.VID_Vehicle_State:
-                                    vid_item = Vids.VID_76_VehicleState;
-                                    break;
-                                case SECSConst.VID_Transfer_Complete_Info:
-                                    vid_item = Vids.VID_301_TransferCompleteInfo;
-                                    break;
-                                case SECSConst.VID_Port_ID:
-                                    vid_item = Vids.VID_302_PortID;
-                                    break;
-                                case SECSConst.VID_Port_Evt_State:
-                                    vid_item = Vids.VID_303_PortEvtState;
-                                    break;
-                                case SECSConst.VID_Port_Event_State:
-                                    vid_item = Vids.VID_304_PortEventState;
-                                    break;
-                                case SECSConst.VID_Registered_Ports:
-                                    vid_item = Vids.VID_305_RegisteredPorts;
-                                    break;
-                                case SECSConst.VID_Near_Stocker_Port:
-                                    vid_item = Vids.VID_310_NearStockerPort;
-                                    break;
-                                case SECSConst.VID_Current_Node:
-                                    vid_item = Vids.VID_311_CurrentNode;
-                                    break;
-                                case SECSConst.VID_Alarm_Text:
-                                    vid_item = Vids.VID_901_AlarmText;
-                                    break;
-                                case SECSConst.VID_Charger_ID:
-                                    vid_item = Vids.VID_902_ChargerID;
-                                    break;
-                                case SECSConst.VID_Error_Code:
-                                    vid_item = Vids.VID_903_ErrorCode;
-                                    break;
-                                case SECSConst.VID_Unit_ID:
-                                    vid_item = Vids.VID_904_UnitID;
-                                    break;
-                                case SECSConst.VID_Error_Text:
-                                    vid_item = Vids.VID_905_ErrorText;
-                                    break;
+                        VIDs = AVIDs.OrderBy(avid => avid.ORDER_NUM).Select(avid => avid.VID.Trim()).ToList();
+                    }
+                    else
+                    {
+                        //TODO: need to hard code
+                        VIDs = GetVIDWithoutRPTID(ceid);
+                    }
 
-                            }
-                            s6f11.INFO.ITEM[i].VIDITEM[j] = vid_item;
+                    s6f11.INFO.ITEM[i].RPTID = rpt_id.Trim() != "0" ? rpt_id : String.Empty;
+                    s6f11.INFO.ITEM[i].VIDITEM = new SXFY[VIDs.Count];
+                    for (int j = 0; j < VIDs.Count; j++)
+                    {
+                        string vid = VIDs[j];
+                        SXFY vid_item = null;
+                        switch (vid)
+                        {
+                            case SECSConst.VID_AlarmID:
+                                vid_item = Vids.VID_01_AlarmID;
+                                break;
+                            case SECSConst.VID_Establish_Communications_Timeout:
+                                vid_item = Vids.VID_02_EstablishCommunicationsTimeout;
+                                break;
+                            case SECSConst.VID_Alarm_Enabled:
+                                vid_item = Vids.VID_03_AlarmEnabled;
+                                break;
+                            case SECSConst.VID_Alarm_Set:
+                                vid_item = Vids.VID_04_AlarmSet;
+                                break;
+                            case SECSConst.VID_Clock:
+                                vid_item = Vids.VID_05_Clock;
+                                break;
+                            case SECSConst.VID_Control_State:
+                                vid_item = Vids.VID_06_ControlState;
+                                break;
+                            case SECSConst.VID_Events_Enabled:
+                                vid_item = Vids.VID_07_EventEnabled;
+                                break;
+                            case SECSConst.VID_Active_Carriers:
+                                vid_item = Vids.VID_51_ActiveCarriers;
+                                break;
+                            case SECSConst.VID_Active_Transfers:
+                                vid_item = Vids.VID_52_ActiveTransfers;
+                                break;
+                            case SECSConst.VID_Active_Vehicles:
+                                vid_item = Vids.VID_53_ActiveVehicles;
+                                break;
+                            case SECSConst.VID_Carrier_ID:
+                                vid_item = Vids.VID_54_CarrierID;
+                                break;
+                            case SECSConst.VID_CarrierInfo:
+                                vid_item = Vids.VID_55_CarrierInfo;
+                                break;
+                            case SECSConst.VID_Carrier_Loc:
+                                vid_item = Vids.VID_56_CarrierLoc;
+                                break;
+                            case SECSConst.VID_Command_Name:
+                                vid_item = Vids.VID_57_CommandName;
+                                break;
+                            case SECSConst.VID_Command_ID:
+                                vid_item = Vids.VID_58_CommandID;
+                                break;
+                            case SECSConst.VID_Command_Info:
+                                vid_item = Vids.VID_59_CommandInfo;
+                                break;
+                            case SECSConst.VID_Command_Type:
+                                vid_item = Vids.VID_60_CommandType;
+                                break;
+                            case SECSConst.VID_Destination_Port:
+                                vid_item = Vids.VID_61_DestPort;
+                                break;
+                            case SECSConst.VID_Enhanced_Carriers:
+                                vid_item = Vids.VID_62_EnhancedCarriers;
+                                break;
+                            case SECSConst.VID_Enhanced_Transfers:
+                                vid_item = Vids.VID_63_EnhancedTransfers;
+                                break;
+                            case SECSConst.VID_EqpName:
+                                vid_item = Vids.VID_64_EqpName;
+                                break;
+                            case SECSConst.VID_Priority:
+                                vid_item = Vids.VID_65_Priority;
+                                break;
+                            case SECSConst.VID_Replace:
+                                vid_item = Vids.VID_66_Replace;
+                                break;
+                            case SECSConst.VID_Result_Code:
+                                vid_item = Vids.VID_67_ResultCode;
+                                break;
+                            case SECSConst.VID_Source_Port:
+                                vid_item = Vids.VID_68_SourcePort;
+                                break;
+                            case SECSConst.VID_Transfer_Command:
+                                vid_item = Vids.VID_69_TransferCommand;
+                                break;
+                            case SECSConst.VID_Transfer_Info:
+                                vid_item = Vids.VID_70_TransferInfo;
+                                break;
+                            case SECSConst.VID_Transfer_Port:
+                                vid_item = Vids.VID_71_TransferPort;
+                                break;
+                            case SECSConst.VID_Transfer_Port_List:
+                                vid_item = Vids.VID_72_TransferPortList;
+                                break;
+                            case SECSConst.VID_TCS_State:
+                                vid_item = Vids.VID_73_TSCState;
+                                break;
+                            case SECSConst.VID_Vehicle_ID:
+                                vid_item = Vids.VID_74_VehicleID;
+                                break;
+                            case SECSConst.VID_Vehicle_Info:
+                                vid_item = Vids.VID_75_VehicleInfo;
+                                break;
+                            case SECSConst.VID_Vehicle_State:
+                                vid_item = Vids.VID_76_VehicleState;
+                                break;
+                            case SECSConst.VID_Transfer_Complete_Info:
+                                vid_item = Vids.VID_301_TransferCompleteInfo;
+                                break;
+                            case SECSConst.VID_Port_ID:
+                                vid_item = Vids.VID_302_PortID;
+                                break;
+                            case SECSConst.VID_Port_Evt_State:
+                                vid_item = Vids.VID_303_PortEvtState;
+                                break;
+                            case SECSConst.VID_Port_Event_State:
+                                vid_item = Vids.VID_304_PortEventState;
+                                break;
+                            case SECSConst.VID_Registered_Ports:
+                                vid_item = Vids.VID_305_RegisteredPorts;
+                                break;
+                            case SECSConst.VID_Near_Stocker_Port:
+                                vid_item = Vids.VID_310_NearStockerPort;
+                                break;
+                            case SECSConst.VID_Current_Node:
+                                vid_item = Vids.VID_311_CurrentNode;
+                                break;
+                            case SECSConst.VID_Alarm_Text:
+                                vid_item = Vids.VID_901_AlarmText;
+                                break;
+                            case SECSConst.VID_Charger_ID:
+                                vid_item = Vids.VID_902_ChargerID;
+                                break;
+                            case SECSConst.VID_Error_Code:
+                                vid_item = Vids.VID_903_ErrorCode;
+                                break;
+                            case SECSConst.VID_Unit_ID:
+                                vid_item = Vids.VID_904_UnitID;
+                                break;
+
                         }
+                        s6f11.INFO.ITEM[i].VIDITEM[j] = vid_item;
                     }
                 }
-
 
                 return BuildMCSReport
                 (s6f11,
@@ -3150,6 +2624,35 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 return null;
             }
         }
+
+        private List<string> GetVIDWithoutRPTID(string ceid)
+        {
+            List<string> VIDs = new List<string>();
+            switch (ceid)
+            {
+                case SECSConst.CEID_Equipment_OFF_LINE:
+                case SECSConst.CEID_Control_Status_Local:
+                case SECSConst.CEID_Control_Status_Remote:
+                    VIDs.Add(SECSConst.VID_Control_State);
+                    break;
+                case SECSConst.CEID_Alarm_Cleared:
+                case SECSConst.CEID_Alarm_Set:
+                    VIDs.Add(SECSConst.VID_Alarm_Set);
+                    break;
+                case SECSConst.CEID_TSC_Auto_Completed:
+                case SECSConst.CEID_TSC_Auto_Initiated:
+                case SECSConst.CEID_TSC_Pause_Completed:
+                case SECSConst.CEID_TSC_Paused:
+                case SECSConst.CEID_TSC_Pause_Initiated:
+                    VIDs.Add(SECSConst.VID_TCS_State);
+                    break;
+                default:
+                    break;
+            }
+
+            return VIDs;
+        }
+
         private AMCSREPORTQUEUE BuildMCSReport(S6F11 sxfy, string cmd_id, string vh_id, string port_id)
         {
             byte[] byteArray = SCUtility.ToByteArray(sxfy);
@@ -3188,7 +2691,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 SCUtility.secsActionRecordMsg(scApp, false, s6f11);
                 TrxSECS.ReturnCode rtnCode = ISECSControl.sendRecv<S6F12>(bcfApp, s6f11, out s6f12,
                     out abortSecs, out rtnMsg, null);
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: s6f11,
                    VehicleID: queue.VEHICLE_ID,
                    XID: queue.MCS_CMD_ID);
@@ -3196,7 +2699,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 SCUtility.actionRecordMsg(scApp, s6f11.StreamFunction, line.Real_ID,
                             "sendS6F11_common.", rtnCode.ToString());
                 //SCUtility.RecodeReportInfo(vh_id, mcs_cmd_id, s6f12, s6f11.CEID, rtnCode.ToString());
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: s6f12,
                    VehicleID: queue.VEHICLE_ID,
                    XID: queue.MCS_CMD_ID);
@@ -3218,108 +2721,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         }
 
         #endregion Send
-        #region Connected / Disconnection
-        protected void secsConnected(object sender, SECSEventArgs e)
-        {
-            if (line.Secs_Link_Stat == SCAppConstants.LinkStatus.LinkOK) return;
-            Dictionary<string, CommuncationInfo> dicCommunactionInfo =
-                scApp.getEQObjCacheManager().CommonInfo.dicCommunactionInfo;
-            if (dicCommunactionInfo.ContainsKey("MCS"))
-            {
-                dicCommunactionInfo["MCS"].IsConnectinoSuccess = true;
-            }
-            line.Secs_Link_Stat = SCAppConstants.LinkStatus.LinkOK;
-            isOnlineWithMcs = true;
-            line.connInfoUpdate_Connection();
-            SCUtility.RecodeConnectionInfo
-                ("MCS",
-                SCAppConstants.RecodeConnectionInfo_Type.Connection.ToString(),
-                line.StopWatch_mcsDisconnectionTime.Elapsed.TotalSeconds);
 
-            ITimerAction timer = scApp.getBCFApplication().getTimerAction("SECSHeartBeat");
-            if (timer != null && !timer.IsStarted)
-            {
-                timer.start();
-            }
-
-            initialWithMCS();
-        }
-
-        private void initialWithMCS()
-        {
-            S1F13SendEstablishCommunicationRequest();
-            if (line.Host_Control_State != SCAppConstants.LineHostControlState.HostControlState.EQ_Off_line)
-            {
-                //S6F11SendEquiptmentOffLine();
-                scApp.LineService.OfflineWithHost();
-                scApp.LineService.OnlineRemoteWithHost();
-            }
-            //S1F1
-            //S1F1SendAreYouThere();
-            //S2F17
-            //S2F17SendDateAndTimeRequest();
-            //...
-        }
-        public override bool S1F13SendEstablishCommunicationRequest()
-        {
-            try
-            {
-                S1F13 s1f13 = new S1F13();
-                s1f13.SECSAgentName = scApp.EAPSecsAgentName;
-                s1f13.MDLN = scApp.getEQObjCacheManager().getLine().LINE_ID.Trim();
-                //s1f13.MDLN = "AGVC";
-                //s1f13.SOFTREV = SCApplication.getMessageString("SYSTEM_VERSION");
-                s1f13.SOFTREV = "V1.2.0";
-
-                S1F14 s1f14 = null;
-                string rtnMsg = string.Empty;
-                SXFY abortSecs = null;
-                SCUtility.secsActionRecordMsg(scApp, false, s1f13);
-
-                TrxSECS.ReturnCode rtnCode = ISECSControl.sendRecv<S1F14>(bcfApp, s1f13, out s1f14, out abortSecs, out rtnMsg, null);
-                SCUtility.actionRecordMsg(scApp, s1f13.StreamFunction, line.Real_ID, "Establish Communication.", rtnCode.ToString());
-
-                if (rtnCode == TrxSECS.ReturnCode.Normal)
-                {
-                    SCUtility.secsActionRecordMsg(scApp, true, s1f14);
-                    line.EstablishComm = true;
-                    return true;
-                }
-                else
-                {
-                    line.EstablishComm = false;
-                    logger.Warn("Send Establish Communication[S1F13] Error!");
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.Error("MESDefaultMapAction has Error[Line Name:{0}],[Error method:{1}],[Error Message:{2}", line.LINE_ID, " sendS1F13_Establish_Comm", ex.ToString());
-            }
-            return false;
-        }
-        protected void secsDisconnected(object sender, SECSEventArgs e)
-        {
-            if (line.Secs_Link_Stat == SCAppConstants.LinkStatus.LinkFail) return;
-            //not implement
-            Dictionary<string, CommuncationInfo> dicCommunactionInfo =
-                scApp.getEQObjCacheManager().CommonInfo.dicCommunactionInfo;
-            if (dicCommunactionInfo.ContainsKey("MCS"))
-            {
-                dicCommunactionInfo["MCS"].IsConnectinoSuccess = false;
-            }
-            isOnlineWithMcs = false;
-            line.Secs_Link_Stat = SCAppConstants.LinkStatus.LinkFail;
-            scApp.LineBLL.updateHostControlState(SCAppConstants.LineHostControlState.HostControlState.EQ_Off_line);
-            scApp.LineService.TSCStateToNone();
-
-            line.connInfoUpdate_Disconnection();
-
-            SCUtility.RecodeConnectionInfo
-                ("MCS",
-                SCAppConstants.RecodeConnectionInfo_Type.Disconnection.ToString(),
-                line.StopWatch_mcsConnectionTime.Elapsed.TotalSeconds);
-        }
-        #endregion Connected / Disconnection
 
         #region VID Info
         private VIDCollection AVIDINFO2VIDCollection(AVIDINFO vid_info)
@@ -3347,7 +2749,6 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             vid_collection.VID_55_CarrierInfo.CARRIER_ID = vid_info.CARRIER_ID;
             vid_collection.VID_55_CarrierInfo.VEHICLE_ID = vh.Real_ID;
             vid_collection.VID_55_CarrierInfo.CARRIER_LOC = vid_info.CARRIER_LOC;
-            vid_collection.VID_56_CarrierLoc.CARRIER_LOC = vid_info.CARRIER_LOC;
 
             //VID_58_CommandID
             vid_collection.VID_58_CommandID.COMMAND_ID = vid_info.COMMAND_ID;
@@ -3390,10 +2791,6 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             //VID_74_VehicleID
             vid_collection.VID_74_VehicleID.VEHICLE_ID = vh.Real_ID;
 
-            //VID_75_VehicleInfo
-            vid_collection.VID_75_VehicleInfo.VHINFO.VEHICLE_ID = vh.Real_ID;
-            vid_collection.VID_75_VehicleInfo.VHINFO.VEHICLE_STATE = ((int)vh.State).ToString();
-
             //VID_301_TransferCompleteInfo
             //vid_collection.VID_301_TransferCompleteInfo.TRANSFER_COMPLETE_INFOs[0].TRANSFER_INFO_OBJ.CARRIER_ID.CARRIER_ID = vid_info.CARRIER_ID;
             vid_collection.VID_301_TransferCompleteInfo.TRANSFER_COMPLETE_INFOs[0].TRANSFER_INFO_OBJ.CARRIER_ID.CARRIER_ID = vid_info.MCS_CARRIER_ID;
@@ -3434,21 +2831,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             reportBLL = scApp.ReportBLL;
 
             ISECSControl.addSECSReceivedHandler(bcfApp, eapSecsAgentName, "S1F1", S1F1ReceiveAreYouThere);
-
-            //===============================以下待修改================================================================
             ISECSControl.addSECSReceivedHandler(bcfApp, eapSecsAgentName, "S1F3", S1F3ReceiveSelectedEquipmentStatusRequest);
-            ISECSControl.addSECSReceivedHandler(bcfApp, eapSecsAgentName, "S10F3", S10F3ReceiveTerminalDisplaySingle);
-
-            ISECSControl.addSECSReceivedHandler(bcfApp, eapSecsAgentName, "S6F19", S6F19ReceiveEquipmentConstantRequest);
-            ISECSControl.addSECSReceivedHandler(bcfApp, eapSecsAgentName, "S6F15", S1F15ReceiveRequestOffLine);
-            ISECSControl.addSECSReceivedHandler(bcfApp, eapSecsAgentName, "S2F13", S2F13ReceiveEquipmentConstantRequest);
-            //=========================================================================================================
-            ISECSControl.addSECSReceivedHandler(bcfApp, eapSecsAgentName, "S1F11", S1F11ReceiveStatusVariableNamelistRequest);
-            ISECSControl.addSECSReceivedHandler(bcfApp, eapSecsAgentName, "S2F17", S2F17ReceiveDateAndTimeRequest);
-            ISECSControl.addSECSReceivedHandler(bcfApp, eapSecsAgentName, "S2F15", S2F15ReceiveNewEquiptment);
-            ISECSControl.addSECSReceivedHandler(bcfApp, eapSecsAgentName, "S1F15", S1F15ReceiveRequestOffLine);
-            //=========================================================================================================
             ISECSControl.addSECSReceivedHandler(bcfApp, eapSecsAgentName, "S1F13", S1F13ReceiveEstablishCommunicationRequest);
+            ISECSControl.addSECSReceivedHandler(bcfApp, eapSecsAgentName, "S1F15", S1F15ReceiveRequestOffLine);
             ISECSControl.addSECSReceivedHandler(bcfApp, eapSecsAgentName, "S1F17", S1F17ReceiveRequestOnLine);
 
             ISECSControl.addSECSReceivedHandler(bcfApp, eapSecsAgentName, "S2F31", S2F31ReceiveDateTimeSetReq);
@@ -3486,7 +2871,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -3512,7 +2897,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -3540,7 +2925,20 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                   Data: ex);
+                return false;
+            }
+        }
+        public override bool S6F11SendTransferAbortCompleted(ACMD_MCS CMD_MCS, AVEHICLE vh, string resultCode, List<AMCSREPORTQUEUE> reportQueues = null, string _carrier_loc = null)
+        {
+            try
+            {
+                return false;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -3551,11 +2949,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             try
             {
                 if (!isSend()) return true;
-
-                VIDCollection vid_collection = new VIDCollection();
-
-                vid_collection.VID_58_CommandID.COMMAND_ID = cmdID;
-
+                AVIDINFO vid_info = scApp.VIDBLL.getVIDInfoByMCSCmdID(cmdID);
+                VIDCollection vid_collection = AVIDINFO2VIDCollection(vid_info);
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Transfer_Cancel_Initiated, vid_collection);
                 if (reportQueues == null)
                 {
@@ -3569,7 +2964,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -3580,13 +2975,13 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 if (!isSend()) return true;
                 VIDCollection vid_collection = new VIDCollection();
-                vid_collection.VID_58_CommandID.COMMAND_ID = cmd.CMD_ID;
-                //vid_collection.VID_69_TransferCommand.COMMAND_INFO.COMMAND_ID = cmd.CMD_ID;
-                //vid_collection.VID_69_TransferCommand.COMMAND_INFO.PRIORITY = cmd.PRIORITY.ToString();
-                //vid_collection.VID_69_TransferCommand.COMMAND_INFO.REPLACE = cmd.REPLACE.ToString();
-                //vid_collection.VID_69_TransferCommand.TRANSFER_INFO.CARRIER_ID.CARRIER_ID = cmd.CARRIER_ID;
-                //vid_collection.VID_69_TransferCommand.TRANSFER_INFO.SOURCE_PORT.SOURCE_PORT = cmd.HOSTSOURCE;
-                //vid_collection.VID_69_TransferCommand.TRANSFER_INFO.DEST_PORT.DEST_PORT = cmd.HOSTDESTINATION;
+
+                vid_collection.VID_69_TransferCommand.COMMAND_INFO.COMMAND_ID = cmd.CMD_ID;
+                vid_collection.VID_69_TransferCommand.COMMAND_INFO.PRIORITY = cmd.PRIORITY.ToString();
+                vid_collection.VID_69_TransferCommand.COMMAND_INFO.REPLACE = cmd.REPLACE.ToString();
+                vid_collection.VID_69_TransferCommand.TRANSFER_INFO.CARRIER_ID.CARRIER_ID = cmd.CARRIER_ID;
+                vid_collection.VID_69_TransferCommand.TRANSFER_INFO.SOURCE_PORT.SOURCE_PORT = cmd.HOSTSOURCE;
+                vid_collection.VID_69_TransferCommand.TRANSFER_INFO.DEST_PORT.DEST_PORT = cmd.HOSTDESTINATION;
 
 
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Transfer_Cancel_Initiated, vid_collection);
@@ -3602,7 +2997,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -3628,7 +3023,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -3654,7 +3049,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -3666,19 +3061,13 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 if (!isSend()) return true;
                 VIDCollection vid_collection = new VIDCollection();
-                vid_collection.VID_59_CommandInfo.COMMAND_ID = cmd.CMD_ID;
-                vid_collection.VID_59_CommandInfo.PRIORITY = cmd.PRIORITY.ToString();
-                vid_collection.VID_59_CommandInfo.REPLACE = cmd.REPLACE.ToString();
-                vid_collection.VID_70_TransferInfo.CARRIER_ID.CARRIER_ID = cmd.CARRIER_ID;
-                vid_collection.VID_70_TransferInfo.SOURCE_PORT.SOURCE_PORT = cmd.HOSTSOURCE;
-                vid_collection.VID_70_TransferInfo.DEST_PORT.DEST_PORT = cmd.HOSTDESTINATION;
 
-                //vid_collection.VID_69_TransferCommand.COMMAND_INFO.COMMAND_ID = cmd.CMD_ID;
-                //vid_collection.VID_69_TransferCommand.COMMAND_INFO.PRIORITY = cmd.PRIORITY.ToString();
-                //vid_collection.VID_69_TransferCommand.COMMAND_INFO.REPLACE = cmd.REPLACE.ToString();
-                //vid_collection.VID_69_TransferCommand.TRANSFER_INFO.CARRIER_ID.CARRIER_ID = cmd.CARRIER_ID;
-                //vid_collection.VID_69_TransferCommand.TRANSFER_INFO.SOURCE_PORT.SOURCE_PORT = cmd.HOSTSOURCE;
-                //vid_collection.VID_69_TransferCommand.TRANSFER_INFO.DEST_PORT.DEST_PORT = cmd.HOSTDESTINATION;
+                vid_collection.VID_69_TransferCommand.COMMAND_INFO.COMMAND_ID = cmd.CMD_ID;
+                vid_collection.VID_69_TransferCommand.COMMAND_INFO.PRIORITY = cmd.PRIORITY.ToString();
+                vid_collection.VID_69_TransferCommand.COMMAND_INFO.REPLACE = cmd.REPLACE.ToString();
+                vid_collection.VID_69_TransferCommand.TRANSFER_INFO.CARRIER_ID.CARRIER_ID = cmd.CARRIER_ID;
+                vid_collection.VID_69_TransferCommand.TRANSFER_INFO.SOURCE_PORT.SOURCE_PORT = cmd.HOSTSOURCE;
+                vid_collection.VID_69_TransferCommand.TRANSFER_INFO.DEST_PORT.DEST_PORT = cmd.HOSTDESTINATION;
 
 
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Transfer_Cancel_Completed, vid_collection);
@@ -3694,7 +3083,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(AUOMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
                    Data: ex);
                 return false;
             }
@@ -3737,5 +3126,31 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             return true;
         }
+        public override bool S6F11SendCarrierInstalledWithIDRead(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            //try
+            //{
+            //    if (!isSend()) return true;
+            //    AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(vhID);
+            //    VIDCollection vid_collection = AVIDINFO2VIDCollection(vid_info);
+            //    AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Carrier_Installed_With_IDReadError, vid_collection);
+            //    if (reportQueues == null)
+            //    {
+            //        S6F11SendMessage(mcs_queue);
+            //    }
+            //    else
+            //    {
+            //        reportQueues.Add(mcs_queue);
+            //    }
+            //    return true;
+            //}
+            //catch (Exception ex)
+            //{
+            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(UMTCMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+            //       Data: ex);
+            return false;
+            //}
+        }
+
     }
 }
