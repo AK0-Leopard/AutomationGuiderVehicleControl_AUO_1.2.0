@@ -3073,6 +3073,8 @@ namespace com.mirle.ibg3k0.sc.Service
             VehicleInError,
             BlockingForCouplerSafety,
             VehicleInLoadingUnloading,
+            VehicleInObstacleStop,
+            VehicleIsMoving //Chris 移植交管邏輯 from AUO
         }
 
         private (bool is_can, CAN_NOT_AVOID_RESULT result) canCreatAvoidCommand(AVEHICLE reservedVh)
@@ -3096,6 +3098,17 @@ namespace com.mirle.ibg3k0.sc.Service
             {
                 //Loading/unloading
                 return (false, CAN_NOT_AVOID_RESULT.VehicleInLoadingUnloading);
+            }
+            else if (reservedVh.ACT_STATUS == VHActionStatus.Commanding &&
+                reservedVh.ObstacleStatus == VhStopSingle.StopSingleOff &&
+                reservedVh.RESERVE_PAUSE == VhStopSingle.StopSingleOff &&
+                reservedVh.BlockingStatus == VhStopSingle.StopSingleOff &&
+                reservedVh.PauseStatus == VhStopSingle.StopSingleOff &&
+                reservedVh.ERROR == VhStopSingle.StopSingleOff &&
+                reservedVh.EARTHQUAKE_PAUSE == VhStopSingle.StopSingleOff &&
+                reservedVh.SAFETY_DOOR_PAUSE == VhStopSingle.StopSingleOff)
+            {
+                return (false, CAN_NOT_AVOID_RESULT.VehicleIsMoving); //Chris 移植交管邏輯 from AUO : 判斷對方正在移動中先不進行override
             }
             else
             {
@@ -3231,7 +3244,33 @@ namespace com.mirle.ibg3k0.sc.Service
                                           $"waiting {reservedVhID} finished",
                                     VehicleID: requestVhID);
                                 break;
+                            case CAN_NOT_AVOID_RESULT.VehicleIsMoving:
+                                //Chris 移植交管邏輯 from AUO : 對方正在移動，等待對方移動結束。
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                    Data: $"vh:{requestVhID} of can't reserve section id:{request_vh.CanNotReserveInfo.ReservedSectionID}" +
+                                          $"because reservedVh:{reservedVhID} status is {check_can_creat_avoid_command.result}." +
+                                          $"waiting {reservedVhID} moving away",
+                                    VehicleID: requestVhID);
+                                break;
                             default:
+                                if (request_vh.IsReservePause && reserved_vh.IsReservePause)
+                                {
+                                    //如果兩台車都已經Reserve Pause了，就不再透過這邊進行避車
+                                    //而是透過Deadlock的Timer來解除。
+                                }
+                                else if (request_vh.IsReservePause)
+                                {
+                                    if (IsBlockEachOrther(reserved_vh, request_vh))
+                                    {
+                                        OvrerideByDriveOutFail(requestVhID, reservedVhID, check_can_creat_avoid_command.result);
+                                    }
+                                    else
+                                    {
+                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                           Data: $"request vh:{requestVhID} with reserved vh:{reservedVhID} of can't reserve info not same,don't excute override",
+                                           VehicleID: requestVhID);
+                                    }
+                                }
                                 break;
                         }
                     }
@@ -3248,10 +3287,29 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
             }
         }
+        private void OvrerideByDriveOutFail(string requestVhID, string reservedVhID, CAN_NOT_AVOID_RESULT canNotDriveOutResult)
+        {
+            AVEHICLE request_vh = scApp.VehicleBLL.cache.getVehicle(requestVhID);
+            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+               Data: $"Try to notify vh avoid fail,start over request of vh..., because reserved of status:{canNotDriveOutResult}," +
+                     $" requestVh:{requestVhID} reservedVh:{reservedVhID}.",
+               VehicleID: requestVhID);
 
-
-
-
+            ACMD_OHTC cmd_ohtc = scApp.CMDBLL.GetCMD_OHTCByID(request_vh.OHTC_CMD);
+            if (cmd_ohtc != null && request_vh.CanNotReserveInfo != null)
+            {
+                bool is_override_success = scApp.VehicleService.trydoOverrideCommandToVh
+                    (request_vh, cmd_ohtc, request_vh.CanNotReserveInfo.ReservedSectionID);
+                if (is_override_success)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: $"Try to notify vh avoid fail,but over request of vh is success," +
+                             $" requestVh:{requestVhID} reservedVh:{reservedVhID}.",
+                       VehicleID: requestVhID);
+                    SpinWait.SpinUntil(() => false, 15000);
+                }
+            }
+        }
 
         private (bool isFind, ASECTION notConflictSection, string entryAdr, string avoidAdr) findNotConflictSectionAndAvoidAddress(AVEHICLE requestVh, AVEHICLE reservedVh)
         {

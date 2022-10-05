@@ -2742,7 +2742,7 @@ namespace com.mirle.ibg3k0.sc.Service
             }
         }
         //如果拿不到Reserve的路段，皆是被對方拿走的話，則回傳True
-        private bool IsBlockEachOrther(AVEHICLE reserved_vh, AVEHICLE request_vh)
+        protected bool IsBlockEachOrther(AVEHICLE reserved_vh, AVEHICLE request_vh)
         {
             return (reserved_vh.CanNotReserveInfo != null && request_vh.CanNotReserveInfo != null) &&
                     SCUtility.isMatche(reserved_vh.CanNotReserveInfo.ReservedVhID, request_vh.VEHICLE_ID) &&
