@@ -2525,6 +2525,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 bool cstOnVehicle = !SCUtility.isEmpty(cstID);
                 bool isBcrReadFail = (bCRReadResult == BCRReadResult.BcrReadFail);
                 AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(vh.VEHICLE_ID);
+                List<AMCSREPORTQUEUE> reportqueues = new List<AMCSREPORTQUEUE>();
                 if (cstOnVehicle)
                 {
                     if (isBcrReadFail)
@@ -2532,15 +2533,18 @@ namespace com.mirle.ibg3k0.sc.Service
                         if (!string.IsNullOrEmpty(vid_info.CARRIER_ID))
                         {
                             string new_carrier_id = $"NR-{vh.Real_ID.Trim()}-{DateTime.Now.ToString(SCAppConstants.TimestampFormat_16)}";
-                            scApp.CarrierBLL.db.updateRenameID(carrier_data.ID, new_carrier_id);
-                            scApp.TransferService.processIDReadFailAndMismatch(carrier_data.ID, CompleteStatus.IdreadFailed);
+                            scApp.VIDBLL.upDateVIDCarrierID(vh.VEHICLE_ID, new_carrier_id);
+                            scApp.ReportBLL.ReportCarrierInstalledOnly(vh.VEHICLE_ID, reportqueues);
+                            scApp.ReportBLL.insertMCSReport(reportqueues);
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                                 Data: $"vh id:{vh.VEHICLE_ID} 非在執行命令中，身上有CST但CST ID為unknwon:{cstID}");
                         }
                         else
                         {
                             string new_carrier_id = $"NR-{vh.Real_ID.Trim()}-{DateTime.Now.ToString(SCAppConstants.TimestampFormat_16)}";
-                            scApp.TransferService.tryInstallCarrierInVehicle(vh.VEHICLE_ID, locationRealID, new_carrier_id);
+                            scApp.VIDBLL.upDateVIDCarrierID(vh.VEHICLE_ID, new_carrier_id);
+                            scApp.ReportBLL.ReportCarrierInstalledOnly(vh.VEHICLE_ID, reportqueues);
+                            scApp.ReportBLL.insertMCSReport(reportqueues);
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                                 Data: $"vh id:{vh.VEHICLE_ID} 非在執行命令中，身上有CST但CST ID為unknwon:{cstID}，故將其rename為unknown id:{new_carrier_id}");
                         }
@@ -2557,15 +2561,20 @@ namespace com.mirle.ibg3k0.sc.Service
                             }
                             else
                             {
-                                scApp.CarrierBLL.db.updateRenameID(carrier_data.ID, cstID);
-                                scApp.TransferService.processIDReadFailAndMismatch(carrier_data.ID, CompleteStatus.IdmisMatch);
+                                scApp.VIDBLL.upDateVIDCarrierID(vh.VEHICLE_ID, cstID);
+                                //TODO
+                                scApp.ReportBLL.ReportCarrierInstalledOnly(vh.VEHICLE_ID, reportqueues, BCRReadResult.BcrMisMatch);
+                                scApp.ReportBLL.insertMCSReport(reportqueues);
                                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                                    Data: $"vh id:{vh.VEHICLE_ID} 非在執行命令中，身上有CST但CST ID為:{cstID}，與資料庫的不一樣db cst id:{carrier_data.ID},故將其進行對資料庫的rename");
+                                    Data: $"vh id:{vh.VEHICLE_ID} 非在執行命令中，身上有CST但CST ID為:{cstID}，與資料庫的不一樣db cst id:{vid_info.CARRIER_ID},故將其進行對資料庫的rename");
                             }
                         }
                         else
                         {
-                            scApp.TransferService.tryInstallCarrierInVehicle(vh.VEHICLE_ID, locationRealID, cstID);
+                            scApp.VIDBLL.upDateVIDCarrierID(vh.VEHICLE_ID, cstID);
+                            scApp.ReportBLL.ReportCarrierInstalledOnly(vh.VEHICLE_ID, reportqueues);
+                            scApp.ReportBLL.insertMCSReport(reportqueues);
+                            
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                                 Data: $"vh id:{vh.VEHICLE_ID} 非在執行命令中，身上有CST但CST ID為:{cstID}，但db中無該vh的帳料，進行建帳");
                         }
@@ -2575,14 +2584,15 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     if (!string.IsNullOrEmpty(vid_info.CARRIER_ID))
                     {
-                        if (carrier_data.LOCATION.Trim() == locationRealID.Trim() && carrier_data.STATE == E_CARRIER_STATE.Installed)
-                        {
-                            var remove_result = scApp.TransferService.ForceRemoveCarrierInVehicleByAGV(vh.VEHICLE_ID, cstLocation, carrier_data.ID);
-                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                                Data: $"vh id:{vh.VEHICLE_ID} 非在執行命令中，身上無CST，但db中有該vh的帳料:{carrier_data.ID}，進行刪除帳料");
-                        }
+                        scApp.VIDBLL.upDateVIDCarrierID(vh.VEHICLE_ID, string.Empty);
+                        scApp.ReportBLL.ReportCarrierRemovedOnly(vh.VEHICLE_ID, reportqueues);
+                        scApp.ReportBLL.insertMCSReport(reportqueues);
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                            Data: $"vh id:{vh.VEHICLE_ID} 非在執行命令中，身上無CST，但db中有該vh的帳料:{vid_info.CARRIER_ID}，進行刪除帳料");
                     }
                 }
+                if (reportqueues != null && reportqueues.Count > 0)
+                    scApp.ReportBLL.newSendMCSMessage(reportqueues);
 
                 replyTranEventReport(bcfApp, eventType, vh, seq_num);
             }
