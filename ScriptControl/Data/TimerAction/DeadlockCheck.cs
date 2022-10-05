@@ -199,6 +199,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
         //        }
         //    }
         //}
+        List<string> forceAvoidAddress = new List<string>();
         public override void doProcess(object obj)
         {
             if (!SystemParameter.AutoOverride)
@@ -231,7 +232,18 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                                 if (vh_passive.CurrentFailOverrideTimes >= AVEHICLE.MAX_FAIL_OVERRIDE_TIMES_IN_ONE_CASE &&
                                     vh_active.CurrentFailOverrideTimes >= AVEHICLE.MAX_FAIL_OVERRIDE_TIMES_IN_ONE_CASE)
                                 {
-                                    //TODO
+                                    var forceAvoidResult = scApp.VehicleService.ForceToAvoidToCorner(sort_vhs, forceAvoidAddress);
+                                    foreach (var res in forceAvoidResult)
+                                    {
+                                        if (res.AvoidAddress.Count() > 0)
+                                        {
+                                            var avoidReqRes = scApp.VehicleService.trydoAvoidCommandToVh(res.Vehicle, res.AvoidAddrPath, res.AvoidSecPath);
+                                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
+                                                Data: $"dead lock happend, ask vh:{res.Vehicle.VEHICLE_ID} to corner {res.AvoidAddress}, result: {avoidReqRes}.",
+                                                VehicleID: res.Vehicle.VEHICLE_ID,
+                                                CarrierID: res.Vehicle.CST_ID);
+                                        }
+                                    }
                                 }
 
                                 //將找出來的vh進行排序，用來幫忙決定要讓哪一台車進行退避

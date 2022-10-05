@@ -276,6 +276,8 @@ namespace com.mirle.ibg3k0.sc
         public virtual List<string> Alarms { get; set; }
         [JsonIgnore]
         public virtual bool IsPrepareAvoid { get; set; }
+        [JsonIgnore]
+        public virtual string FirstPredictSection { get; set; }
 
 
 
