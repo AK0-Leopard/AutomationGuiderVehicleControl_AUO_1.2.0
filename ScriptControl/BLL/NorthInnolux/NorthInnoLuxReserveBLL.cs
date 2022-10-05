@@ -305,15 +305,13 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             try
             {
-
-                    if (DebugParameter.isForcedPassReserve)
-                    {
-                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(ReserveBLL), Device: "AGV",
-                           Data: "test flag: Force pass reserve is open, will driect reply to vh pass",
-                           VehicleID: vhID);
-                        return (true, string.Empty, string.Empty, reserveInfos);
-                    }
-                
+                if (DebugParameter.isForcedPassReserve)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(ReserveBLL), Device: "AGV",
+                       Data: "test flag: Force pass reserve is open, will driect reply to vh pass",
+                       VehicleID: vhID);
+                    return (true, string.Empty, string.Empty, reserveInfos);
+                }
 
                 //強制拒絕Reserve的要求
                 if (DebugParameter.isForcedRejectReserve)
@@ -326,7 +324,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                 if (reserveInfos == null || reserveInfos.Count == 0) return (false, string.Empty, string.Empty, null);
 
-                //2022.7.12 TODO: 北群創不允許部分放行，不是全程都可以預約就要算成全部不過
+                //2022.7.12 北群創不允許部分放行，不是全程都可以預約就要算成全部不過
                 var reserve_success_section = new RepeatedField<ReserveInfo>();
                 bool has_success = true;
                 string final_blocked_vh_id = string.Empty;
@@ -354,7 +352,6 @@ namespace com.mirle.ibg3k0.sc.BLL
                         break;
                     }
 
-
                     //2021.08.26 Hsinyu Chang: 預約每個section之前，都要先更新AGV車的行進方向(forward/reverse)
                     double newSpeed = hltvh.SpeedMmPerSecond;
                     newSpeed = (reserve_info.DriveDirction == DriveDirction.DriveDirReverse) ? -Math.Abs(newSpeed) : Math.Abs(newSpeed);
@@ -364,38 +361,39 @@ namespace com.mirle.ibg3k0.sc.BLL
                     //Mirle.Hlts.Utils.HltDirection hltDirection = decideReserveDirection(vh, reserve_section_id);
                     //AVEHICLE vh = scApp.VehicleBLL.cache.getVehicle(vhID);
                     //Mirle.Hlts.Utils.HltDirection hltDirection = scApp.ReserveBLL.DecideReserveDirection(scApp.SectionBLL, vh, reserve_section_id);
-                    //LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
-                    //   Data: $"vh:{vhID} Try add(Only ask) reserve section:{reserve_section_id} ,hlt dir:{hltDirection}...",
-                    //   VehicleID: vhID);isFirst
                     result = TryAddReservedSectionNew(vhID, reserve_section_id,
                                                    sensorDir: hltDirection,
                                                    isAsk: isAsk);
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
+                        Data: $"vh:{vhID} Try add(Only ask:{isAsk}) reserve section:{reserve_section_id},hlt dir:{hltDirection},result:{result.Description}...",
+                        VehicleID: vhID);
+
                     bool already_pass = false;
                     if (!result.OK)
                     {
-                        if (isFirst)
+                        AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vhID);
+
+                        if (vh != null && checkIsForcePassFirstSectionReserve(vh, reserve_section_id))
                         {
-                            AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vhID);
-                            if(vh!= null)
+                            already_pass = true;
+                        }
+                        else if (vh != null && isFirst)
+                        {
+                            if (!vh.IsOnAdr && SCUtility.isMatche(vh.CUR_SEC_ID, reserve_section_id))
                             {
-                                if (!vh.IsOnAdr && SCUtility.isMatche(vh.CUR_SEC_ID, reserve_section_id))
+                                if (reserveInfos.Count >= 2)
                                 {
-                                    if (reserveInfos.Count >= 2)
+                                    ASECTION sec1 = scApp.MapBLL.getSectiontByID(reserveInfos[0].ReserveSectionID);
+                                    ASECTION sec2 = scApp.MapBLL.getSectiontByID(reserveInfos[1].ReserveSectionID);
+                                    if (sec1 != null && sec2 != null)
                                     {
-                                        ASECTION sec1 = scApp.MapBLL.getSectiontByID(reserveInfos[0].ReserveSectionID);
-                                        ASECTION sec2 = scApp.MapBLL.getSectiontByID(reserveInfos[1].ReserveSectionID);
-                                        if (sec1 != null && sec2 != null)
+                                        if ((SCUtility.isMatche(sec1.FROM_ADR_ID, vh.CUR_ADR_ID) || SCUtility.isMatche(sec1.TO_ADR_ID, vh.CUR_ADR_ID)) &&
+                                            (SCUtility.isMatche(sec2.FROM_ADR_ID, vh.CUR_ADR_ID) || SCUtility.isMatche(sec2.TO_ADR_ID, vh.CUR_ADR_ID)))
                                         {
-                                            if ((SCUtility.isMatche(sec1.FROM_ADR_ID, vh.CUR_ADR_ID) || SCUtility.isMatche(sec1.TO_ADR_ID, vh.CUR_ADR_ID)) &&
-                                                (SCUtility.isMatche(sec2.FROM_ADR_ID, vh.CUR_ADR_ID) || SCUtility.isMatche(sec2.TO_ADR_ID, vh.CUR_ADR_ID)))
-                                            {
-                                                already_pass = true;
-                                            }
+                                            already_pass = true;
                                         }
                                     }
                                 }
-                                else if (checkIsForcePassFirstSectionReserve(vh, reserve_section_id))
-                                    already_pass = true;
                             }
                         }
                     }
@@ -436,10 +434,13 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         private bool checkIsForcePassFirstSectionReserve(AVEHICLE vh, string reserveSectionID)
         {
+            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
+                Data: $"vh:{vh.VEHICLE_ID}的起步section:{vh.FirstPredictSection}",
+                VehicleID: vh.VEHICLE_ID);
             if (SCUtility.isMatche(vh.FirstPredictSection, reserveSectionID))
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(ReserveBLL), Device: "AGV",
-                   Data: $"由於 vh:{vh.VEHICLE_ID} 位於GuideSection的起步section:{reserveSectionID}，因此強制放行.",
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
+                   Data: $"由於 vh:{vh.VEHICLE_ID} 位於GuideSection的起步section:{vh.FirstPredictSection}，因此強制放行.",
                    VehicleID: vh.VEHICLE_ID);
                 return true;
             }
