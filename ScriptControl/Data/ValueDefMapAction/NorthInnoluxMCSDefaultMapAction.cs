@@ -2987,13 +2987,15 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         }
 
 
-        public override bool S6F11SendCarrierInstalledWithIDRead(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
+        public override bool S6F11SendCarrierInstalledWithIDRead(string vhID, List<AMCSREPORTQUEUE> reportQueues = null, BCRReadResult? bcrResult = null)
         {
             try
             {
                 if (!isSend()) return true;
                 AVIDINFO vid_info = scApp.VIDBLL.getVIDInfo(vhID);
                 VIDCollection vid_collection = AVIDINFO2VIDCollection(vid_info);
+                if (bcrResult != null)
+                    vid_collection.VID_317_ReadIDInfo.ID_RESULT_CODE = SECSConst.NorthInnoluxBarcodeReadReultMap(bcrResult.Value);
                 AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(SECSConst.CEID_Carrier_Installed_With_IDReadError, vid_collection);
                 if (reportQueues == null)
                 {
@@ -4024,7 +4026,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
             //VID_70_VehicleID
             vid_collection.VID_70_VehicleID.VEHICLE_ID = vh.Real_ID;
-            vid_collection.VID_317_ReadIDInfo.ID_RESULT_CODE = SECSConst.NorthInnoluxBarcodeReadReultMap( vh.BCRReadResult);
+            vid_collection.VID_317_ReadIDInfo.ID_RESULT_CODE = SECSConst.NorthInnoluxBarcodeReadReultMap(vh.BCRReadResult);
             //vid_collection.VID_317_ReadIDInfo.READ_CARRRIER_ID = vh.CST_ID;
             //2020/12/21 Hsinyu Chang: read fail時，此處帶空值，其餘狀況帶實際讀到的值
             vid_collection.VID_317_ReadIDInfo.READ_CARRRIER_ID = 

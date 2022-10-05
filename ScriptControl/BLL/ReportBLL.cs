@@ -540,6 +540,15 @@ namespace com.mirle.ibg3k0.sc.BLL
             return isSuccsess;
         }
 
+        public virtual bool ReportCarrierInstalledOnly(string vhID, List<AMCSREPORTQUEUE> reportqueues, BCRReadResult? bcrResult = null)
+        {
+            return false;
+        }
+        public virtual bool ReportCarrierRemovedOnly(string vhID, List<AMCSREPORTQUEUE> reportqueues)
+        {
+            return false;
+        }
+
 
         public bool newReportUnitAlarmSet(string unitID, string alarmID, string alarmTest, List<AMCSREPORTQUEUE> reportqueues)
         {

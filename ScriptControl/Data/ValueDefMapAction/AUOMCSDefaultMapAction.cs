@@ -22,6 +22,7 @@ using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data.SECS.AGVC;
 using com.mirle.ibg3k0.sc.Data.SECSDriver;
 using com.mirle.ibg3k0.sc.Data.VO;
+using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using com.mirle.ibg3k0.stc.Common;
 using com.mirle.ibg3k0.stc.Data.SecsData;
 using NLog;
@@ -2837,7 +2838,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             return true;
         }
-        public override bool S6F11SendCarrierInstalledWithIDRead(string vhID, List<AMCSREPORTQUEUE> reportQueues = null)
+        public override bool S6F11SendCarrierInstalledWithIDRead(string vhID, List<AMCSREPORTQUEUE> reportQueues = null, BCRReadResult? bCRReadResult = null)
         {
             //try
             //{
