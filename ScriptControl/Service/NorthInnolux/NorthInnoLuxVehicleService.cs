@@ -3953,6 +3953,10 @@ namespace com.mirle.ibg3k0.sc.Service
                         var path = getSameXPath(checkVh.CUR_ADR_ID, adrId, checkVh.VEHICLE_ID);
                         if (path.pathSec.Count > 0)
                         {
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                Data: $"Prepare to drive vh:{checkVh.VEHICLE_ID} to {adrId}...",
+                                VehicleID: checkVh.VEHICLE_ID,
+                                CarrierID: checkVh.CST_ID);
                             res.AvoidSecPath = path.pathSec;
                             res.AvoidAddrPath = path.pathAddr;
                             res.AvoidAddress = adrId;
@@ -3989,6 +3993,11 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         private (List<string> pathSec, List<string> pathAddr) getSameXPath(string startAddrID, string destAddrID, string vehicleID)
         {
+            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                Data: $"Calculate path from {startAddrID} to {destAddrID}...",
+                VehicleID: vehicleID,
+                CarrierID: "");
+
             var resultSec = new List<string>();
             var resultAddr = new List<string>();
             var thisAddr = startAddrID;
@@ -4008,6 +4017,10 @@ namespace com.mirle.ibg3k0.sc.Service
                         continue;
                     if (Math.Abs(nextPossibleLoc.y - destLoc.y) < Math.Abs(thisLoc.y - destLoc.y))
                     {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                            Data: $"Target:{destAddrID}, test next section {sec.SEC_ID}...",
+                            VehicleID: vehicleID,
+                            CarrierID: "");
                         var reserveResult = scApp.ReserveBLL.TryAddReservedSection(vehicleID, sec.SEC_ID, isAsk: true);
                         if (reserveResult.OK)
                         {
