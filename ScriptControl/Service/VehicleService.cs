@@ -114,6 +114,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 vh.LongTimeDisconnection += Vh_LongTimeDisconnection;
                 vh.ModeStatusChange += Vh_ModeStatusChange;
                 vh.LongTimeCarrierInstalled += Vh_LongTimeCarrierInstalled;
+                vh.NoCommandLongTimeCarrierInstalled += Vh_NoCommandLongTimeCarrierInstalled;
             }
             oneDirectPath();
         }
@@ -152,7 +153,39 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
             }
         }
+        private long syncPoint_NoCmdLongTimeCarrierInstalled = 0;
+        private void Vh_NoCommandLongTimeCarrierInstalled(object sender, string carrierID)
+        {
+            AVEHICLE vh = sender as AVEHICLE;
+            if (vh == null) return;
+            if (System.Threading.Interlocked.Exchange(ref syncPoint_NoCmdLongTimeCarrierInstalled, 1) == 0)
+            {
 
+                try
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: $"Process carrier long time inaction, carrier id:{carrierID}",
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID);
+
+                    ProcessAlarmReport(vh, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrSet, $"vehicle long time installed carrier without command, carrier id:{carrierID}");
+
+                    BCFApplication.onWarningMsg($"Vehicle:{vh.VEHICLE_ID} long time installed carrier without command, carrier id:{carrierID}");
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: ex,
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID);
+                }
+                finally
+                {
+                    System.Threading.Interlocked.Exchange(ref syncPoint_NoCmdLongTimeCarrierInstalled, 0);
+                }
+            }
+        }
+        
         private void Vh_ModeStatusChange(object sender, VHModeStatus e)
         {
             AVEHICLE vh = sender as AVEHICLE;
