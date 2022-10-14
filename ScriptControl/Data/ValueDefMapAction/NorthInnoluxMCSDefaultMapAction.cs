@@ -1330,7 +1330,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 var cmd_obj = scApp.CMDBLL.getCMD_MCSByID(command_id);
                 if (cmd_obj != null)
                 {
-                    if(cmd_obj.TRANSFERSTATE>= E_TRAN_STATUS.Complete)
+                    if (checkCompletedCommand(cmd_obj))
                     {
                         scApp.CMDBLL.MoveACMD_MCSToHCMD_MCS(command_id);
                     }
@@ -1519,7 +1519,19 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
             return SECSConst.HCACK_Confirm;
         }
-
+        private bool checkCompletedCommand(ACMD_MCS cmd)
+        {
+            switch (cmd.TRANSFERSTATE)
+            {
+                case E_TRAN_STATUS.Complete:
+                case E_TRAN_STATUS.Canceled:
+                case E_TRAN_STATUS.Aborted:
+                case E_TRAN_STATUS.Reject:
+                    return true;
+                default:
+                    return false;
+            }
+        }
         private bool checkCommandID(string name, string value)
         {
             bool is_success = !SCUtility.isEmpty(value);
