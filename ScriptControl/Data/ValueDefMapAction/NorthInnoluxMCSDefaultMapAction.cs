@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Transactions;
 
 namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
@@ -1336,8 +1337,16 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                     }
                     else
                     {
-                        check_result = $"MCS command id:{command_id} already exist.";
-                        return SECSConst.HCACK_Command_ID_Duplication;
+                        SpinWait.SpinUntil(() => false, 1000);
+                        if (checkCompletedCommand(cmd_obj))
+                        {
+                            scApp.CMDBLL.MoveACMD_MCSToHCMD_MCS(command_id);
+                        }
+                        else
+                        {
+                            check_result = $"MCS command id:{command_id} already exist.";
+                            return SECSConst.HCACK_Command_ID_Duplication;
+                        }
                     }
                 }
             }
