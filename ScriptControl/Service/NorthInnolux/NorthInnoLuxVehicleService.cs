@@ -170,7 +170,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     //當發生
                     //doCommandFigish(vh.VEHICLE_ID, cmdID, CompleteStatus.CmpStatusLongTimeInaction, 0);
                     //要再上報Alamr Rerport給MCS
-                    ProcessAlarmReport(vh, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrSet, $"vehicle long time installed carrier, carrier id:{carrierID}");
+                    ProcessAlarmReport(null, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrSet, $"vehicle long time installed carrier, carrier id:{carrierID}");
 
                     BCFApplication.onWarningMsg($"Vehicle:{vh.VEHICLE_ID} long time installed carrier, carrier id:{carrierID}");
                 }
@@ -202,7 +202,7 @@ namespace com.mirle.ibg3k0.sc.Service
                        VehicleID: vh.VEHICLE_ID,
                        CarrierID: vh.CST_ID);
 
-                    ProcessAlarmReport(vh, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrSet, $"vehicle long time installed carrier without command, carrier id:{carrierID}");
+                    ProcessAlarmReport(null, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrSet, $"vehicle long time installed carrier without command, carrier id:{carrierID}");
 
                     BCFApplication.onWarningMsg($"Vehicle:{vh.VEHICLE_ID} long time installed carrier without command, carrier id:{carrierID}");
                 }
@@ -765,7 +765,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 else
                 {
                     vh.CarrierRemove();
-                    ProcessAlarmReport(vh, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrReset, $"vehicle long time installed carrier.");
+                    ProcessAlarmReport(null, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrReset, $"vehicle long time installed carrier.");
                 }
                 if (!scApp.VehicleBLL.doUpdateVehicleStatus(vh,
                                       cst_id, modeStat, actionStat,
@@ -4467,7 +4467,7 @@ namespace com.mirle.ibg3k0.sc.Service
             else
             {
                 eqpt.CarrierRemove();
-                ProcessAlarmReport(eqpt, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrReset, $"vehicle long time installed carrier.");
+                ProcessAlarmReport(null, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrReset, $"vehicle long time installed carrier.");
             }
 
             if (modeStat != eqpt.MODE_STATUS)
