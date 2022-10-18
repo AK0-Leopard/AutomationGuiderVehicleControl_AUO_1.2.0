@@ -1773,12 +1773,13 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         if (mcs_cmd.COMMANDSTATE == TaskCmdStatus.BCRReadFail)
                         {
+                            List<AMCSREPORTQUEUE> reportQueue = new List<AMCSREPORTQUEUE>();
                             LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
                                Details: $" doCancelOrAbortCommandByMCSCmdID Enter BCRReadFail senario,mcs cmdid:[{cancel_abort_mcs_cmd_id}]].",
                                XID: cancel_abort_mcs_cmd_id);
                             AVEHICLE assign_vh = scApp.VehicleBLL.getVehicleByExcuteMCS_CMD_ID(cancel_abort_mcs_cmd_id);
                             scApp.CMDBLL.updateCMD_MCS_TranStatus2Aborting(cancel_abort_mcs_cmd_id);
-                            is_success = scApp.ReportBLL.newReportTransferCommandAbortFinish(mcs_cmd, assign_vh,"8", null);
+                            is_success = scApp.ReportBLL.newReportTransferCommandAbortFinish(mcs_cmd, assign_vh,"8", reportQueue);
                             if (is_success)
                             {
                                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
@@ -1821,6 +1822,9 @@ namespace com.mirle.ibg3k0.sc.Service
                                 }
                             }
                             assign_vh.onCommandComplete(CompleteStatus.CmpStatusIdreadFailed);
+                            //is_success &= scApp.ReportBLL.newReportTransferCommandAbortFinish(mcs_cmd, assign_vh, "8", null);
+                            if (reportQueue != null && reportQueue.Count > 0)
+                                scApp.ReportBLL.newSendMCSMessage(reportQueue);
 
                         }
                         else
@@ -4678,7 +4682,7 @@ namespace com.mirle.ibg3k0.sc.Service
             string start_adr = vh.startAdr;
             scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(vh.VEHICLE_ID);
             vh.RedundantSections.Clear();
-            if (completeStatus != CompleteStatus.CmpStatusIdmisMatch&& completeStatus != CompleteStatus.CmpStatusIdreadFailed)
+            if (completeStatus != CompleteStatus.CmpStatusIdmisMatch && completeStatus != CompleteStatus.CmpStatusIdreadFailed)
             {
                 using (TransactionScope tx = SCUtility.getTransactionScope())
                 {
