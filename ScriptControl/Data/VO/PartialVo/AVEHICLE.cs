@@ -169,37 +169,6 @@ namespace com.mirle.ibg3k0.sc
         }
         public (bool hasInfo, List<string> currentGuideSection) tryGetCurrentGuideSection()
         {
-            //if (isAvoiding)
-            //{
-            //    if (AvoidGuideSection != null && AvoidGuideSection.Count > 0)
-            //        return (true, AvoidGuideSection.ToList());
-            //    else
-            //        return (false, null);
-            //}
-            //else if (isMove)
-            //{
-            //    if (ToDesinationGuideSection != null && ToDesinationGuideSection.Count > 0)
-            //        return (true, ToDesinationGuideSection.ToList());
-            //    else
-            //        return (false, null);
-            //}
-            //else
-            //{
-            //    if (vh.HAS_CST == 0)
-            //    {
-            //        if (startToLoadGuideSection != null && startToLoadGuideSection.Count > 0)
-            //            return (true, startToLoadGuideSection.ToList());
-            //        else
-            //            return (false, null);
-            //    }
-            //    else
-            //    {
-            //        if (ToDesinationGuideSection != null && ToDesinationGuideSection.Count > 0)
-            //            return (true, ToDesinationGuideSection.ToList());
-            //        else
-            //            return (false, null);
-            //    }
-            //}
             var try_get_section_obj_result = tryGetCurrentGuideSectionObj();
             if (try_get_section_obj_result.hasInfo)
             {
@@ -523,10 +492,6 @@ namespace com.mirle.ibg3k0.sc
         public virtual List<string> Alarms { get; set; }
         [JsonIgnore]
         public virtual bool IsPrepareAvoid { get; set; }
-        [JsonIgnore]
-        public virtual string FirstPredictSection { get; set; }
-
-
 
         private BatteryLevel batterylevel = BatteryLevel.None;
         [JsonIgnore]
