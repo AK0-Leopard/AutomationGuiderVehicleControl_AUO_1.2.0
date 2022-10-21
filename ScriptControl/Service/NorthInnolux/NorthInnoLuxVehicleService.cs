@@ -4226,12 +4226,13 @@ namespace com.mirle.ibg3k0.sc.Service
                 case EventType.LoadArrivals:
                 case EventType.UnloadArrivals:
                     //scApp.VIDBLL.upDateVIDPortID(eqpt.VEHICLE_ID, eqpt.CUR_ADR_ID);
+                    scApp.CMDBLL.setWillPassSectionInfo(vh.VEHICLE_ID, vh.PredictSectionsToDesination);
                     scApp.VIDBLL.upDateVIDPortID(vh.VEHICLE_ID, eventType);
                     break;
                 case EventType.LoadComplete:
-
                     if (!SCUtility.isEmpty(vh.MCS_CMD))
                         scApp.CMDBLL.updateCMD_MCS_TranStatus2Transferring(vh.MCS_CMD);
+                    scApp.CMDBLL.setWillPassSectionInfo(vh.VEHICLE_ID, vh.PredictSectionsToDesination);
                     scApp.MapBLL.getPortID(vh.CUR_ADR_ID, out port_id);
                     scApp.PortBLL.OperateCatch.updatePortStationCSTExistStatus(port_id, string.Empty);
                     BCRReadResult bCRReadResult = BCRReadResult.BcrNormal;
