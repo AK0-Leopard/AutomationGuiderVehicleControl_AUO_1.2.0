@@ -15,7 +15,7 @@ using System.Globalization;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
-    public class NorthInnoLuxReserveBLL:ReserveBLL
+    public class NorthInnoLuxReserveBLL : ReserveBLL
     {
         NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private Mirle.Hlts.ReserveSection.Map.ViewModels.HltMapViewModel mapAPI { get; set; }
@@ -434,17 +434,53 @@ namespace com.mirle.ibg3k0.sc.BLL
 
         private bool checkIsForcePassFirstSectionReserve(AVEHICLE vh, string reserveSectionID)
         {
-            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
-                Data: $"vh:{vh.VEHICLE_ID}的起步section:{vh.FirstPredictSection}",
-                VehicleID: vh.VEHICLE_ID);
-            if (SCUtility.isMatche(vh.FirstPredictSection, reserveSectionID))
+            //LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
+            //    Data: $"vh:{vh.VEHICLE_ID}的起步section:{vh.FirstPredictSection}",
+            //    VehicleID: vh.VEHICLE_ID);
+            //if (SCUtility.isMatche(vh.FirstPredictSection, reserveSectionID))
+            //{
+            //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
+            //       Data: $"由於 vh:{vh.VEHICLE_ID} 位於GuideSection的起步section:{vh.FirstPredictSection}，因此強制放行.",
+            //       VehicleID: vh.VEHICLE_ID);
+            //    return true;
+            //}
+            //return false;
+            try
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(ReserveBLL), Device: "AGV",
-                   Data: $"由於 vh:{vh.VEHICLE_ID} 位於GuideSection的起步section:{vh.FirstPredictSection}，因此強制放行.",
-                   VehicleID: vh.VEHICLE_ID);
-                return true;
+                var vh_guide_info = vh.tryGetCurrentGuideSection();
+                if (!vh_guide_info.hasInfo)
+                    return false;
+                List<string> current_guide_section = vh_guide_info.currentGuideSection.ToList();
+                if (current_guide_section.Count < 2)
+                {
+                    return false;
+                }
+                string first_section = current_guide_section.FirstOrDefault();
+                if (!SCUtility.isMatche(first_section, reserveSectionID))
+                {
+                    return false;
+                }
+                string secend_section = current_guide_section[1];
+                var get_cross_address_result = tryFindCrossAddressID(first_section, secend_section);
+                if (!get_cross_address_result.hasFind)
+                {
+                    return false;
+                }
+                string current_adr_id = vh.CUR_ADR_ID;
+                if (SCUtility.isMatche(get_cross_address_result.adrID, current_adr_id))
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(NorthInnoLuxReserveBLL), Device: "AGV",
+                       Data: $"由於 vh:{vh.VEHICLE_ID} 位於address:{vh.CUR_ADR_ID}為 Guide Section的第一段:{first_section}於第二段:{secend_section}的交接口，因此強制放行.",
+                       VehicleID: vh.VEHICLE_ID);
+                    return true;
+                }
+                return false;
             }
-            return false;
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception");
+                return false;
+            }
         }
         private (bool hasFind, string adrID) tryFindCrossAddressID(string secID1, string secID2)
         {

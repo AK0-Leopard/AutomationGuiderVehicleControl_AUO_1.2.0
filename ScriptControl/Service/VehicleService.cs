@@ -185,7 +185,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
             }
         }
-        
+
         private void Vh_ModeStatusChange(object sender, VHModeStatus e)
         {
             AVEHICLE vh = sender as AVEHICLE;
@@ -1273,6 +1273,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 string source_adr = cmd.SOURCE;
                 string dest_adr = cmd.DESTINATION;
                 bool has_carry = assignVH.HAS_CST == 1;
+                ActiveType original_active_type = scApp.CMDBLL.convertECmdType2ActiveType(cmd.CMD_TPYE);
                 ActiveType active_type = scApp.CMDBLL.convertECmdType2ActiveType(cmd.CMD_TPYE);
                 //List<string> need_by_pass_adr_ids = new List<string>() { byPassAdr };
                 //List<string> need_by_pass_sec_ids = new List<string>() { byPassSection };
@@ -1534,7 +1535,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(assignVH.VEHICLE_ID, cmd.CMD_ID, E_CMD_STATUS.Sending);
                     isSuccess = ProcSendTransferCommandToVh(cmd, assignVH, ActiveType.Override,
                      guide_start_to_from_segment_ids?.ToArray(), guide_start_to_from_section_ids?.ToArray(), guide_start_to_from_address_ids?.ToArray(),
-                     guide_to_dest_segment_ids?.ToArray(), guide_to_dest_section_ids?.ToArray(), guide_to_dest_address_ids?.ToArray());
+                     guide_to_dest_segment_ids?.ToArray(), guide_to_dest_section_ids?.ToArray(), guide_to_dest_address_ids?.ToArray(),
+                     original_active_type);
                     //4.更新命令狀態(HOST CMD)
                     if (isSuccess)
                     {
@@ -1842,8 +1844,8 @@ namespace com.mirle.ibg3k0.sc.Service
 
         private bool ProcSendTransferCommandToVh(ACMD_OHTC cmd, AVEHICLE assignVH, ActiveType activeType,
             string[] guideSegmentStartToLoad, string[] guideSectionsStartToLoad, string[] guideAddressesStartToLoad,
-            string[] guideSegmentToDest, string[] guideSectionsToDest, string[] guideAddressesToDest
-            )
+            string[] guideSegmentToDest, string[] guideSectionsToDest, string[] guideAddressesToDest,
+            ActiveType originalActiveType = ActiveType.Home)
         {
             bool isSuccess = true;
             string vh_id = assignVH.VEHICLE_ID;
@@ -1896,7 +1898,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                 (cmd.VH_ID, cmd.CMD_ID, activeType, cmd.CARRIER_ID,
                                guideSegmentStartToLoad, guideSectionsStartToLoad, guideAddressesStartToLoad,
                                guideSegmentToDest, guideSectionsToDest, guideAddressesToDest,
-                                cmd.SOURCE, cmd.DESTINATION);
+                                cmd.SOURCE, cmd.DESTINATION, originalActiveType);
                             //isSuccess &= assignVH.sned_Str31(cmd.CMD_ID, activeType, cmd.CARRIER_ID, routeSections, cycleRunSections
                             //    , cmd.SOURCE, cmd.DESTINATION, out Reason);
                         }
@@ -1932,39 +1934,39 @@ namespace com.mirle.ibg3k0.sc.Service
         public bool TransferRequset(string vh_id, string cmd_id, ActiveType activeType, string cst_id,
             string[] guideSegmentStartToLoad, string[] guideSectionsStartToLoad, string[] guideAddressesStartToLoad,
             string[] guideSegmentToDest, string[] guideSectionsToDest, string[] guideAddressesToDest,
-            string fromAdr, string destAdr)
+            string fromAdr, string destAdr, ActiveType originalAactiveType = ActiveType.Home)
         {
             //TODO 要在加入Transfer Command的確認 scApp.CMDBLL.TransferCommandCheck(activeType,) 
             bool isSuccess = true;
             string reason = string.Empty;
             ID_131_TRANS_RESPONSE receive_gpp = null;
             AVEHICLE vh = scApp.getEQObjCacheManager().getVehicletByVHID(vh_id);
-            if (isSuccess)
+            //if (isSuccess)
+            //{
+            ID_31_TRANS_REQUEST send_gpp = new ID_31_TRANS_REQUEST()
             {
-                ID_31_TRANS_REQUEST send_gpp = new ID_31_TRANS_REQUEST()
-                {
-                    CmdID = cmd_id,
-                    ActType = activeType,
-                    CSTID = cst_id ?? string.Empty,
-                    LoadAdr = fromAdr,
-                    DestinationAdr = destAdr
-                };
-                if (guideSegmentStartToLoad != null)
-                    send_gpp.GuideSegmentsStartToLoad.AddRange(guideSegmentStartToLoad);
-                if (guideSectionsStartToLoad != null)
-                    send_gpp.GuideSectionsStartToLoad.AddRange(guideSectionsStartToLoad);
-                if (guideAddressesStartToLoad != null)
-                    send_gpp.GuideAddressesStartToLoad.AddRange(guideAddressesStartToLoad);
-                if (guideSegmentToDest != null)
-                    send_gpp.GuideSegmentsToDestination.AddRange(guideSegmentToDest);
-                if (guideSectionsToDest != null)
-                    send_gpp.GuideSectionsToDestination.AddRange(guideSectionsToDest);
-                if (guideAddressesToDest != null)
-                    send_gpp.GuideAddressesToDestination.AddRange(guideAddressesToDest);
-                SCUtility.RecodeReportInfo(vh.VEHICLE_ID, 0, send_gpp);
-                isSuccess = vh.sned_Str31(send_gpp, out receive_gpp, out reason);
-                SCUtility.RecodeReportInfo(vh.VEHICLE_ID, 0, receive_gpp, isSuccess.ToString());
-            }
+                CmdID = cmd_id,
+                ActType = activeType,
+                CSTID = cst_id ?? string.Empty,
+                LoadAdr = fromAdr,
+                DestinationAdr = destAdr
+            };
+            if (guideSegmentStartToLoad != null)
+                send_gpp.GuideSegmentsStartToLoad.AddRange(guideSegmentStartToLoad);
+            if (guideSectionsStartToLoad != null)
+                send_gpp.GuideSectionsStartToLoad.AddRange(guideSectionsStartToLoad);
+            if (guideAddressesStartToLoad != null)
+                send_gpp.GuideAddressesStartToLoad.AddRange(guideAddressesStartToLoad);
+            if (guideSegmentToDest != null)
+                send_gpp.GuideSegmentsToDestination.AddRange(guideSegmentToDest);
+            if (guideSectionsToDest != null)
+                send_gpp.GuideSectionsToDestination.AddRange(guideSectionsToDest);
+            if (guideAddressesToDest != null)
+                send_gpp.GuideAddressesToDestination.AddRange(guideAddressesToDest);
+            SCUtility.RecodeReportInfo(vh.VEHICLE_ID, 0, send_gpp);
+            isSuccess = vh.sned_Str31(send_gpp, out receive_gpp, out reason);
+            SCUtility.RecodeReportInfo(vh.VEHICLE_ID, 0, receive_gpp, isSuccess.ToString());
+            //}
             if (isSuccess)
             {
                 int reply_code = receive_gpp.ReplyCode;
@@ -1978,6 +1980,10 @@ namespace com.mirle.ibg3k0.sc.Service
                                                               vh_id,
                                                               cmd_id,
                                                               reason));
+                }
+                else
+                {
+                    vh.setVhGuideInfo(scApp.ReserveBLL, send_gpp, originalAactiveType);
                 }
                 vh.NotifyVhExcuteCMDStatusChange();
             }
@@ -2240,6 +2246,13 @@ namespace com.mirle.ibg3k0.sc.Service
             SCUtility.RecodeReportInfo(vh.VEHICLE_ID, 0, send_gpp);
             isSuccess = vh.send_Str51(send_gpp, out receive_gpp);
             SCUtility.RecodeReportInfo(vh.VEHICLE_ID, 0, receive_gpp, isSuccess.ToString());
+            if (isSuccess)
+            {
+                if (receive_gpp.ReplyCode == 0)
+                {
+                    vh.setVhGuideInfo(scApp.ReserveBLL, send_gpp);
+                }
+            }
             return isSuccess;
         }
         #endregion Send Message To Vehicle
@@ -3590,6 +3603,7 @@ namespace com.mirle.ibg3k0.sc.Service
             if (completeStatus != CompleteStatus.CmpStatusVehicleAbort)
                 scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(vh.VEHICLE_ID);
             scApp.CMDBLL.removeAllWillPassSection(vh.VEHICLE_ID);
+            vh.resetVhGuideInfo();
 
             if (reportqueues != null && reportqueues.Count > 0)
                 scApp.ReportBLL.newSendMCSMessage(reportqueues);
@@ -4292,7 +4306,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
             //Boolean resp_cmp = ITcpIpControl.sendGoogleMsg(bcfApp, tcpipAgentName, wrapper, true);
             Boolean resp_cmp = vh.sendMessage(wrapper, true);
-
+            vh.resetVhGuideInfo();
             SCUtility.RecodeReportInfo(vh.VEHICLE_ID, seq_num, send_str, resp_cmp.ToString());
             if (is_avoid_complete)
             {
