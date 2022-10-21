@@ -162,7 +162,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             return mapAPI.GetVehicleObjectByID(vhID);
         }
-        public (bool isExist, HltMapSection section) GetHltMapSections(string secID)
+        public virtual (bool isExist, HltMapSection section) GetHltMapSections(string secID)
         {
             var sec_obj = mapAPI.HltMapSections.Where(sec => SCUtility.isMatche(sec.ID, secID)).FirstOrDefault();
             return (sec_obj != null, sec_obj);

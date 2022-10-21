@@ -189,6 +189,11 @@ namespace com.mirle.ibg3k0.sc.BLL
         {
             return mapAPI.GetVehicleObjectByID(vhID);
         }
+        public override (bool isExist, HltMapSection section) GetHltMapSections(string secID)
+        {
+            var sec_obj = mapAPI.HltMapSections.Where(sec => SCUtility.isMatche(sec.ID, secID)).FirstOrDefault();
+            return (sec_obj != null, sec_obj);
+        }
 
         //public HltResult TryAddReservedSection(string vhID, string sectionID, HltDirection sensorDir = HltDirection.NESW, HltDirection forkDir = HltDirection.NESW, bool isAsk = false)
         //{
