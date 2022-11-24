@@ -52,6 +52,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace com.mirle.ibg3k0.sc.App
 {
@@ -1970,12 +1972,22 @@ namespace com.mirle.ibg3k0.sc.App
             CSTMaxWaitTime = cSTMaxWaitTime;
         }
 
+        private static readonly int autoOverrideTimeout = 90000;
         public static void setAutoOverride(bool autoOverride)
         {
             if (AutoOverride != autoOverride)
             {
                 AutoOverride = autoOverride;
                 AutoOverrideChange?.Invoke(null, AutoOverride);
+
+                if (!autoOverride)
+                {
+                    Task.Run(() =>
+                    {
+                        SpinWait.SpinUntil(() => false, autoOverrideTimeout);
+                        setAutoOverride(true);
+                    });
+                }
             }
         }
         public static void setLongestFullyChargedIntervalTime(int longestFullyChargedIntervalTime)

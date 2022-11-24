@@ -464,6 +464,8 @@ namespace com.mirle.ibg3k0.bc.winform.UI
 
                 }
             }
+
+            sc.App.SystemParameter.AutoOverrideChange += SystemParameter_AutoOverrideChange;
         }
         private void unregisterEvent()
         {
@@ -1601,6 +1603,19 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         private void btn_ForceResetAlarm_Click(object sender, EventArgs e)
         {
             SCApplication.getInstance().VehicleService.ProcessAlarmReport(noticeCar, "0", sc.ProtocolFormat.OHTMessage.ErrorStatus.ErrReset, "");
+        }
+
+        private void SystemParameter_AutoOverrideChange(object sender, bool e)
+        {
+            Adapter.Invoke((obj) =>
+            {
+                cb_AutoOverride.Checked = e;
+            }, null);
+        }
+
+        private void cb_AutoOverride_Click(object sender, EventArgs e)
+        {
+            sc.App.SystemParameter.setAutoOverride(cb_AutoOverride.Checked);
         }
     }
 }

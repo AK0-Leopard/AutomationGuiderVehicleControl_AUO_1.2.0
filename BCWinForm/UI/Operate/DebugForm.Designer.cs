@@ -351,6 +351,7 @@
             this.label85 = new System.Windows.Forms.Label();
             this.label86 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.cb_AutoOverride = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1357,6 +1358,7 @@
             // tabPage1
             // 
             this.tabPage1.AutoScroll = true;
+            this.tabPage1.Controls.Add(this.cb_AutoOverride);
             this.tabPage1.Controls.Add(this.cb_advanceDriveAway);
             this.tabPage1.Controls.Add(this.grb_Reserve);
             this.tabPage1.Controls.Add(this.groupBox7);
@@ -1576,7 +1578,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 8);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(210, 3);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(164, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -3791,6 +3793,19 @@
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // cb_AutoOverride
+            // 
+            this.cb_AutoOverride.AutoSize = true;
+            this.cb_AutoOverride.Checked = true;
+            this.cb_AutoOverride.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cb_AutoOverride.Location = new System.Drawing.Point(1153, 378);
+            this.cb_AutoOverride.Name = "cb_AutoOverride";
+            this.cb_AutoOverride.Size = new System.Drawing.Size(159, 26);
+            this.cb_AutoOverride.TabIndex = 28;
+            this.cb_AutoOverride.Text = "Auto Override";
+            this.cb_AutoOverride.UseVisualStyleBackColor = true;
+            this.cb_AutoOverride.Click += new System.EventHandler(this.cb_AutoOverride_Click);
+            // 
             // DebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 22F);
@@ -4207,5 +4222,6 @@
         private System.Windows.Forms.Label label85;
         private System.Windows.Forms.Label label86;
         private System.Windows.Forms.Button btn_ForceResetAlarm;
+        private System.Windows.Forms.CheckBox cb_AutoOverride;
     }
 }
