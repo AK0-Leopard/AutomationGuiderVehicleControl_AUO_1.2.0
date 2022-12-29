@@ -3292,7 +3292,8 @@ namespace com.mirle.ibg3k0.sc.Service
             BlockingForCouplerSafety,
             VehicleInLoadingUnloading,
             VehicleInObstacleStop,
-            VehicleIsMoving //Chris 移植交管邏輯 from AUO
+            VehicleIsMoving, //Chris 移植交管邏輯 from AUO
+            VehicleIsAutoLocal,
         }
 
         private (bool is_can, CAN_NOT_AVOID_RESULT result) canCreatAvoidCommand(AVEHICLE reservedVh)
@@ -3311,6 +3312,10 @@ namespace com.mirle.ibg3k0.sc.Service
             else if (!reservedVh.isTcpIpConnect || reservedVh.IsError || reservedVh.MODE_STATUS == VHModeStatus.Manual)
             {
                 return (false, CAN_NOT_AVOID_RESULT.VehicleInError);
+            }
+            else if (reservedVh.MODE_STATUS == VHModeStatus.AutoLocal)
+            {
+                return (false, CAN_NOT_AVOID_RESULT.VehicleIsAutoLocal);
             }
             else if (reservedVh.State == AVEHICLE.VehicleState.ACQUIRING || reservedVh.State == AVEHICLE.VehicleState.DEPOSITING)
             {
@@ -3431,6 +3436,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             case CAN_NOT_AVOID_RESULT.VehicleInError:
                             case CAN_NOT_AVOID_RESULT.VehicleInLongCharge:
                             case CAN_NOT_AVOID_RESULT.BlockingForCouplerSafety:
+                            case CAN_NOT_AVOID_RESULT.VehicleIsAutoLocal:
                                 if (request_vh.IsReservePause)
                                 {
                                     LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
