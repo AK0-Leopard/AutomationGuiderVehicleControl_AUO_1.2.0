@@ -359,7 +359,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 
                     //2021.08.26 Hsinyu Chang: 預約每個section之前，都要先更新AGV車的行進方向(forward/reverse)
                     double newSpeed = hltvh.SpeedMmPerSecond;
-                    newSpeed = (reserve_info.DriveDirction == DriveDirction.DriveDirReverse) ? -Math.Abs(newSpeed) : Math.Abs(newSpeed);
+                    newSpeed = (reserve_info.DriveDirction == DriveDirction.DriveDirReverse) ? -1 : 1;
                     hltvh.SpeedMmPerSecond = newSpeed;
                     mapAPI.TryAddOrUpdateVehicle(hltvh);
                     Mirle.Hlts.Utils.HltDirection hltDirection = Mirle.Hlts.Utils.HltDirection.Forward;
