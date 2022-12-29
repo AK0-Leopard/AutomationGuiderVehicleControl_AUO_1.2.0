@@ -218,15 +218,30 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                     var vhs_ReserveStop = vhs.Where(v => v.IsReservePause)
                                           .OrderBy(v => v.VEHICLE_ID)
                                           .ToList();
+                    if (vhs_ReserveStop is null)
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(DeadlockCheck), Device: "AGVC",
+                            Data: $"Enter Deadlock check process. vhs_ReserveStop is null.");
+                        return;
+                    }
+
+                    if (vhs_ReserveStop != null && vhs_ReserveStop.Count > 0)
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(DeadlockCheck), Device: "AGVC",
+                            Data: $"Enter Deadlock check process. Vh in ReserveStop status (count:{vhs_ReserveStop.Count}): {string.Join(",", vhs_ReserveStop.Select(vh => vh.VEHICLE_ID))}");
+                    }
+
                     foreach (var vh_active in vhs_ReserveStop)
                     {
                         foreach (var vh_passive in vhs_ReserveStop)
                         {
                             if (vh_active == vh_passive) continue;
-                            if (!vh_active.IsReservePause || !vh_active.IsReservePause) continue;
+                            if (!vh_active.IsReservePause || !vh_passive.IsReservePause) continue;
                             if ((vh_active.CanNotReserveInfo != null && vh_passive.CanNotReserveInfo != null))
                             {
                                 List<AVEHICLE> sort_vhs = new List<AVEHICLE>() { vh_active, vh_passive };
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(DeadlockCheck), Device: "AGVC",
+                                    Data: $"Execute deadlock resolve process for vh {vh_active.VEHICLE_ID} and {vh_passive.VEHICLE_ID}...");
 
                                 //2022.9.29 如果都算不出避車路徑，就強制直線拉到最近的角落
                                 if (vh_passive.CurrentFailOverrideTimes >= AVEHICLE.MAX_FAIL_OVERRIDE_TIMES_IN_ONE_CASE &&
@@ -273,7 +288,6 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                                     }
                                     AVEHICLE pass_vh = avoid_vh == vh_active ? vh_passive : vh_active;
 
-
                                     var key_blocked_vh = findTheKeyBlockVhID(avoid_vh, pass_vh);
                                     if (key_blocked_vh == null) continue;
                                     if (key_blocked_vh.VhAvoidInfo != null)
@@ -312,6 +326,13 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                                                CarrierID: avoid_vh.CST_ID);
                                         }
                                     }
+                                    else
+                                    {
+                                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(DeadlockCheck), Device: "AGVC",
+                                            Data: $"dead lock happend, ask vh:{avoid_vh.VEHICLE_ID} top change path, but vh is disconnected.",
+                                            VehicleID: avoid_vh.VEHICLE_ID,
+                                            CarrierID: avoid_vh.CST_ID);
+                                    }
                                 }
                             }
                         }
@@ -323,9 +344,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                 }
                 finally
                 {
-
                     System.Threading.Interlocked.Exchange(ref checkSyncPoint, 0);
-
                 }
             }
         }
