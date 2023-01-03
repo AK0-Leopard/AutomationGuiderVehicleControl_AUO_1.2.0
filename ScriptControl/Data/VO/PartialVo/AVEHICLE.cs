@@ -287,6 +287,10 @@ namespace com.mirle.ibg3k0.sc
         /// 無命令狀態下，Carrier 最大可以Installed在車子的時間
         /// </summary>
         public static UInt16 MAX_ALLOW_NO_COMMAND_CARRIER_INSTALLED_TIME_SECOND { get; private set; } = 30;
+        /// <summary>
+        /// 最大可接受路權預約等候時間
+        /// </summary>
+        public static UInt16 MAX_ALLOW_RESERVE_FAIL_TIME_SECOND { get; private set; } = 180;
 
         public bool NeedToRetryAfterVehicleAbort = false;
         public bool is_in_retry_process = false;
@@ -304,6 +308,7 @@ namespace com.mirle.ibg3k0.sc
         public event EventHandler<VHModeStatus> ModeStatusChange;
         public event EventHandler<string> LongTimeCarrierInstalled;
         public event EventHandler<string> NoCommandLongTimeCarrierInstalled;
+        public event EventHandler<string> ReserveFailTimeOut;
 
         VehicleTimerAction vehicleTimer = null;
 
@@ -312,7 +317,7 @@ namespace com.mirle.ibg3k0.sc
         private Stopwatch CurrentCommandExcuteTime;
         private Stopwatch CarrierInstalledTime;
         private Stopwatch CarrierInstalledWithoutCmdTime;
-
+        private Stopwatch reserveFailStopWatch;  //2023.1.3 Hsinyu Chang
 
         public void addAttentionReserveSection(ASECTION attentionSection)
         {
@@ -410,6 +415,10 @@ namespace com.mirle.ibg3k0.sc
         {
             NoCommandLongTimeCarrierInstalled?.Invoke(this, carrierID);
         }
+        public void onReserveFailTimeOut(string cmdID)
+        {
+            ReserveFailTimeOut?.Invoke(this, cmdID);
+        }
 
         public AVEHICLE()
         {
@@ -422,6 +431,7 @@ namespace com.mirle.ibg3k0.sc
             CurrentCommandExcuteTime = new Stopwatch();
             CarrierInstalledTime = new Stopwatch();
             CarrierInstalledWithoutCmdTime = new Stopwatch();
+            reserveFailStopWatch = new Stopwatch();
             guideInfo = new GuideInfo(this);
 
         }
@@ -550,8 +560,30 @@ namespace com.mirle.ibg3k0.sc
         public virtual VhChargeStatus ChargeStatus { get; set; }
         [JsonIgnore]
         public virtual int BatteryTemperature { get; set; }
+        //2023.01.03
+        private ReserveUnsuccessInfo _canNotReserveInfo;
         [JsonIgnore]
-        public virtual ReserveUnsuccessInfo CanNotReserveInfo { get; set; }
+        public virtual ReserveUnsuccessInfo CanNotReserveInfo
+        {
+            get => _canNotReserveInfo;
+            set
+            {
+                if (_canNotReserveInfo != value)
+                {
+                    _canNotReserveInfo = value;
+                    if (value is null)
+                    {
+                        //stop reserve stopwatch
+                        reserveFailStopWatch.Reset();
+                    }
+                    else
+                    {
+                        //start reserve stopwatch
+                        reserveFailStopWatch.Restart();
+                    }
+                }
+            }
+        }
         public class ReserveUnsuccessInfo
         {
             public ReserveUnsuccessInfo(string vhID, string adrID, string secID)
@@ -1972,6 +2004,11 @@ namespace com.mirle.ibg3k0.sc
                             vh.onCarrierLongTimeInstalledInVh(SCUtility.Trim(vh.CST_ID, true));
                         }
                         //
+                        double reserveFailedSeconds = vh.reserveFailStopWatch.Elapsed.TotalSeconds;
+                        if (carrierInstallTimeWithoutAction > AVEHICLE.MAX_ALLOW_RESERVE_FAIL_TIME_SECOND)
+                        {
+                            vh.onReserveFailTimeOut(vh.OHTC_CMD);
+                        }
                     }
                     catch (Exception ex)
                     {

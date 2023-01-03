@@ -150,6 +150,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 vh.ModeStatusChange += Vh_ModeStatusChange;
                 vh.LongTimeCarrierInstalled += Vh_LongTimeCarrierInstalled;
                 vh.NoCommandLongTimeCarrierInstalled += Vh_NoCommandLongTimeCarrierInstalled;
+                vh.ReserveFailTimeOut += Vh_ReserveFailTimeOut;
             }
         }
         private long syncPoint_LongTimeCarrierInstalled = 0;
@@ -370,6 +371,28 @@ namespace com.mirle.ibg3k0.sc.Service
             //    AADDRESS release_adr = FindReleaseAddress(leave_section, entry_section);
             //    release_adr?.Release(vh.VEHICLE_ID);
             //}
+        }
+        private void Vh_ReserveFailTimeOut(object sender, string cmdID)
+        {
+            AVEHICLE vh = sender as AVEHICLE;
+            if (vh == null) return;
+            try
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                   Data: $"Process vehicle reserve failed time out, cmd id:{cmdID}",
+                   VehicleID: vh.VEHICLE_ID,
+                   CarrierID: vh.CST_ID);
+
+                BCFApplication.onWarningMsg($"vehicle:{vh.VEHICLE_ID} reserve fail time out, cmd id:{cmdID}");
+                ProcessAlarmReport(null, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrReset, $"vehicle reserve fail time out.");
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                   Data: ex,
+                   VehicleID: vh.VEHICLE_ID,
+                   CarrierID: vh.CST_ID);
+            }
         }
 
         private AADDRESS FindReleaseAddress(ASECTION leave_section, ASECTION entry_section)

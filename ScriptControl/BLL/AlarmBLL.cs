@@ -38,6 +38,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         public const string VEHICLE_CAN_NOT_SERVICE = "10001";
         public const string VEHICLE_LONG_TIME_INSTALLED_CARRIER = "10002";
         public const string AGVC_SECS_DECODER_EXCEPTION = "10003";
+        public const string VEHICLE_RESERVE_FAIL_TIMEOUT = "10004";
         /// <summary>
         /// The sc application
         /// </summary>
