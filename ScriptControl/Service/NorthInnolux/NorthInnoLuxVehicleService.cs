@@ -2742,10 +2742,10 @@ namespace com.mirle.ibg3k0.sc.Service
                 DestinationAdr = dest
             };
 
-
             iD_36_TRANS_EVENT_RESPONSE_EXTENSION.GuideAddresses.AddRange(guide_addresses);
             iD_36_TRANS_EVENT_RESPONSE_EXTENSION.GuideSections.AddRange(guide_sections);
             replyTranEventReport(bcfApp, eventType, eqpt, seqNum, extensionMessage: iD_36_TRANS_EVENT_RESPONSE_EXTENSION);
+            eqpt.VehicleReposition();   //2022.12.29
         }
 
 
@@ -2761,10 +2761,8 @@ namespace com.mirle.ibg3k0.sc.Service
                 firstRepositionPath.guide_addresses.Add(current_adr_id);
                 RepositionPathList.Add(firstRepositionPath);
 
-
                 RepositionPath currentBestRepositionPath = null;
                 RepositionPath finalRepositionPath = null;
-
 
                 bool is_find = false;
 
@@ -2820,7 +2818,6 @@ namespace com.mirle.ibg3k0.sc.Service
                         break;
                     }
 
-
                     foreach (RepositionPath path in RepositionPathList)
                     {
                         if (isRepositionPathQualified(path, repositionDistance))
@@ -2857,12 +2854,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         RepositionPathList = HaveChanceRepositionPathList.ToList();
                         continue;
                     }
-
-
-
                 }
-
-
 
                 //根據車子所在位置，補足路段
                 if (finalRepositionPath != null)
@@ -2895,12 +2887,6 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
 
                 return finalRepositionPath;
-
-
-
-
-
-
             }
             else
             {

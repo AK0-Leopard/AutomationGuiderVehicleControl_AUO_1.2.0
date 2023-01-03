@@ -1557,22 +1557,30 @@ namespace com.mirle.ibg3k0.sc
                 this.Configure(VehicleState.NOT_ASSIGNED)
                     .PermitIf(VehicleTrigger.VehicleAssign, VehicleState.ASSIGNED, () => VehicleAssignGC())//guardClause為真才會執行狀態變化
                     .PermitIf(VehicleTrigger.VechileRemove, VehicleState.REMOVED, () => VechileRemoveGC());//guardClause為真才會執行狀態變化
+                
                 this.Configure(VehicleState.ASSIGNED).OnEntry(() => this.Fire(VehicleTrigger.VehicleAssign))
                     .PermitIf(VehicleTrigger.VehicleAssign, VehicleState.ENROUTE)
                     .PermitIf(VehicleTrigger.VehicleUnassign, VehicleState.NOT_ASSIGNED);
+                
                 this.Configure(VehicleState.ENROUTE).SubstateOf(VehicleState.ASSIGNED)
                     .PermitIf(VehicleTrigger.VehicleArrive, VehicleState.PARKED, () => VehicleArriveGC());//guardClause為真才會執行狀態變化
                                                                                                           //.PermitIf(VehicleTrigger.VehicleUnassign, VehicleState.NOT_ASSIGNED, () => VehicleUnassignGC());//guardClause為真才會執行狀態變化
+                
                 this.Configure(VehicleState.PARKED).SubstateOf(VehicleState.ASSIGNED)
                     .PermitIf(VehicleTrigger.VehicleDepart, VehicleState.ENROUTE, () => VehicleDepartGC())//guardClause為真才會執行狀態變化
                     .PermitIf(VehicleTrigger.VehicleAcquireStart, VehicleState.ACQUIRING, () => VehicleAcquireStartGC())//guardClause為真才會執行狀態變化
                     .PermitIf(VehicleTrigger.VehicleDepositStart, VehicleState.DEPOSITING, () => VehicleDepositStartGC());//guardClause為真才會執行狀態變化
+                
                 this.Configure(VehicleState.ACQUIRING).SubstateOf(VehicleState.ASSIGNED)
                     .PermitIf(VehicleTrigger.VehilceAcquireComplete, VehicleState.PARKED, () => VehilceAcquireCompleteGC())//guardClause為真才會執行狀態變化
-                    .PermitIf(VehicleTrigger.VehicleDepositStart, VehicleState.DEPOSITING, () => VehicleDepositStartGC());//guardClause為真才會執行狀態變化
+                    .PermitIf(VehicleTrigger.VehicleDepositStart, VehicleState.DEPOSITING, () => VehicleDepositStartGC())//guardClause為真才會執行狀態變化
+                    .PermitIf(VehicleTrigger.VehicleReposition, VehicleState.ENROUTE, () => VehicleRepositionGC());//guardClause為真才會執行狀態變化
+                
                 this.Configure(VehicleState.DEPOSITING).SubstateOf(VehicleState.ASSIGNED)
                     .PermitIf(VehicleTrigger.VehicleDepositComplete, VehicleState.PARKED, () => VehicleDepositCompleteGC())//guardClause為真才會執行狀態變化
-                    .PermitIf(VehicleTrigger.VehicleAcquireStart, VehicleState.ACQUIRING, () => VehicleAcquireStartGC());//guardClause為真才會執行狀態變化
+                    .PermitIf(VehicleTrigger.VehicleAcquireStart, VehicleState.ACQUIRING, () => VehicleAcquireStartGC())//guardClause為真才會執行狀態變化
+                    .PermitIf(VehicleTrigger.VehicleReposition, VehicleState.ENROUTE, () => VehicleRepositionGC());//guardClause為真才會執行狀態變化
+                
                 this.Configure(VehicleState.REMOVED)
                     .PermitIf(VehicleTrigger.VehicleInstall, VehicleState.NOT_ASSIGNED, () => VehicleInstallGC());//guardClause為真才會執行狀態變化
 
@@ -1618,6 +1626,10 @@ namespace com.mirle.ibg3k0.sc
             {
                 return true;
             }
+            private bool VehicleRepositionGC()
+            {
+                return true;
+            }
         }
 
         public enum VehicleState //有哪些State
@@ -1642,7 +1654,8 @@ namespace com.mirle.ibg3k0.sc
             VehicleUnassign,
             VehicleAssign,
             VechileRemove,
-            VehicleInstall
+            VehicleInstall,
+            VehicleReposition,  //2022.12.29 for North Innolux
         }
         public bool VehicleArrive()
         {
@@ -1884,6 +1897,26 @@ namespace com.mirle.ibg3k0.sc
             }
         }
 
+        public bool VehicleReposition()
+        {
+            try
+            {
+                if (vhStateMachine.CanFire(VehicleTrigger.VehicleReposition))//檢查當前狀態能否進行這個Trigger
+                {
+                    vhStateMachine.Fire(VehicleTrigger.VehicleReposition);//進行Trigger
+                    //可以在這邊做事情
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
         #endregion Vehicle state machine
 
 

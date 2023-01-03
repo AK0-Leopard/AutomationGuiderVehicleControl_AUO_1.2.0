@@ -1784,8 +1784,6 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                     }
                 }
 
-
-
                 if (needToResume)
                 {
                     line.ResumeToAuto(reportBLL);
@@ -1802,7 +1800,6 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 if (canAbortCmd)
                 {
                     scApp.VehicleService.doCancelOrAbortCommandByMCSCmdID(cancel_abort_cmd_id, ProtocolFormat.OHTMessage.CMDCancelType.CmdAbort);
-
                 }
             }
             catch (stc.Common.SECS.SECSFormatException ex)
