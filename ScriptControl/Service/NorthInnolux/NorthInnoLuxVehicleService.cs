@@ -384,6 +384,7 @@ namespace com.mirle.ibg3k0.sc.Service
                    CarrierID: vh.CST_ID);
 
                 BCFApplication.onWarningMsg($"vehicle:{vh.VEHICLE_ID} reserve fail time out, cmd id:{cmdID}");
+                ProcessAlarmReport(null, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrSet, $"vehicle reserve fail time out.");
                 ProcessAlarmReport(null, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrReset, $"vehicle reserve fail time out.");
             }
             catch (Exception ex)
