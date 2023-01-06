@@ -347,6 +347,11 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                     System.Threading.Interlocked.Exchange(ref checkSyncPoint, 0);
                 }
             }
+            else
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(DeadlockCheck), Device: "AGVC",
+                    Data: $"Deadlock check, checkSyncPoint = {checkSyncPoint}.");
+            }
         }
         private AVEHICLE findTheKeyBlockVhID(AVEHICLE avoidVh, AVEHICLE blockedVh)
         {
