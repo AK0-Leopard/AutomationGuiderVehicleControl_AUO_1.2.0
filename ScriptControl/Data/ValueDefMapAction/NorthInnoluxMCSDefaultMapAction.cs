@@ -1379,17 +1379,17 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                             CommandID = new S2F50.COMMANDINFO.INFO.COMMANDID()
                             {
                                 CPNAME = s2F49_TRANSFER.COMMS[i].COMMAINFOVALUE.CPVAL1.CPNAME,
-                                CPVAL = s2F49_TRANSFER.COMMS[i].COMMAINFOVALUE.CPVAL1.CPVAL
+                                CPVAL = "0"
                             },
                             Priority = new S2F50.COMMANDINFO.INFO.PRIORITY()
                             {
                                 CPNAME = s2F49_TRANSFER.COMMS[i].COMMAINFOVALUE.CPVAL2.CPNAME,
-                                CPVAL = s2F49_TRANSFER.COMMS[i].COMMAINFOVALUE.CPVAL2.CPVAL
+                                CPVAL = "0"
                             },
                             Replace = new S2F50.COMMANDINFO.INFO.REPLACE()
                             {
                                 CPNAME = s2F49_TRANSFER.COMMS[i].COMMAINFOVALUE.CPVAL3.CPNAME,
-                                CPVAL = s2F49_TRANSFER.COMMS[i].COMMAINFOVALUE.CPVAL3.CPVAL
+                                CPVAL = "0"
                             }
                         }
                     };
@@ -1405,17 +1405,17 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                             CarrierID = new S2F50.TRANSFERINFO.INFO.CARRIERID()
                             {
                                 CPNAME = s2F49_TRANSFER.COMMS[i].COMMAINFOVALUE.CPVAL1.CPNAME,
-                                CPVAL = s2F49_TRANSFER.COMMS[i].COMMAINFOVALUE.CPVAL1.CPVAL
+                                CPVAL = "0"
                             },
                             SourcePort = new S2F50.TRANSFERINFO.INFO.SOURCEPORT()
                             {
                                 CPNAME = s2F49_TRANSFER.COMMS[i].COMMAINFOVALUE.CPVAL2.CPNAME,
-                                CPVAL = s2F49_TRANSFER.COMMS[i].COMMAINFOVALUE.CPVAL2.CPVAL
+                                CPVAL = "0"
                             },
                             DestPort = new S2F50.TRANSFERINFO.INFO.DESTPORT()
                             {
                                 CPNAME = s2F49_TRANSFER.COMMS[i].COMMAINFOVALUE.CPVAL3.CPNAME,
-                                CPVAL = s2F49_TRANSFER.COMMS[i].COMMAINFOVALUE.CPVAL3.CPVAL
+                                CPVAL = "0"
                             }
                         }
                     };

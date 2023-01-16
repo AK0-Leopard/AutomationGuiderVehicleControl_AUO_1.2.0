@@ -52,21 +52,21 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.NorthInnolux
                 {
                     [SecsElement(Index = 1, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 9)]
                     public string CPNAME;
-                    [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 64)]
+                    [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_BINARY, Length = 1)]
                     public string CPVAL;
                 }
                 public class PRIORITY : SXFY
                 {
                     [SecsElement(Index = 1, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 8)]
                     public string CPNAME;
-                    [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_2_BYTE_UNSIGNED_INTEGER, Length = 1)]
+                    [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_BINARY, Length = 1)]
                     public string CPVAL;
                 }
                 public class REPLACE : SXFY
                 {
                     [SecsElement(Index = 1, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 8)]
                     public string CPNAME;
-                    [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_2_BYTE_UNSIGNED_INTEGER, Length = 1)]
+                    [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_BINARY, Length = 1)]
                     public string CPVAL;
                 }
             }
@@ -91,21 +91,21 @@ namespace com.mirle.ibg3k0.sc.Data.SECS.NorthInnolux
                 {
                     [SecsElement(Index = 1, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 9)]
                     public string CPNAME;
-                    [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 64)]
+                    [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_BINARY, Length = 1)]
                     public string CPVAL;
                 }
                 public class SOURCEPORT : SXFY
                 {
                     [SecsElement(Index = 1, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 10)]
                     public string CPNAME;
-                    [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 64)]
+                    [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_BINARY, Length = 1)]
                     public string CPVAL;
                 }
                 public class DESTPORT : SXFY
                 {
                     [SecsElement(Index = 1, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 8)]
                     public string CPNAME;
-                    [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_ASCII, Length = 64)]
+                    [SecsElement(Index = 2, Type = SecsElement.SecsElementType.TYPE_BINARY, Length = 1)]
                     public string CPVAL;
                 }
             }
