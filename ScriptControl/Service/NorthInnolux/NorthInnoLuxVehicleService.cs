@@ -384,8 +384,8 @@ namespace com.mirle.ibg3k0.sc.Service
                    CarrierID: vh.CST_ID);
 
                 BCFApplication.onWarningMsg($"vehicle:{vh.VEHICLE_ID} reserve fail time out, cmd id:{cmdID}");
-                ProcessAlarmReport(null, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrSet, $"vehicle reserve fail time out.");
-                ProcessAlarmReport(null, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrReset, $"vehicle reserve fail time out.");
+                ProcessAlarmReport(null, AlarmBLL.VEHICLE_RESERVE_FAIL_TIMEOUT, ErrorStatus.ErrSet, $"vehicle reserve fail time out.");
+                ProcessAlarmReport(null, AlarmBLL.VEHICLE_RESERVE_FAIL_TIMEOUT, ErrorStatus.ErrReset, $"vehicle reserve fail time out.");
             }
             catch (Exception ex)
             {
@@ -788,8 +788,9 @@ namespace com.mirle.ibg3k0.sc.Service
                 }
                 else
                 {
+                    if (vh.HAS_CST != 0)
+                        ProcessAlarmReport(null, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrReset, $"vehicle long time installed carrier.");
                     vh.CarrierRemove();
-                    ProcessAlarmReport(null, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrReset, $"vehicle long time installed carrier.");
                 }
                 if (!scApp.VehicleBLL.doUpdateVehicleStatus(vh,
                                       cst_id, modeStat, actionStat,
@@ -4500,8 +4501,9 @@ namespace com.mirle.ibg3k0.sc.Service
             }
             else
             {
+                if (eqpt.HAS_CST != 0)
+                    ProcessAlarmReport(null, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrReset, $"vehicle long time installed carrier.");
                 eqpt.CarrierRemove();
-                ProcessAlarmReport(null, AlarmBLL.VEHICLE_LONG_TIME_INSTALLED_CARRIER, ErrorStatus.ErrReset, $"vehicle long time installed carrier.");
             }
 
             if (modeStat != eqpt.MODE_STATUS)

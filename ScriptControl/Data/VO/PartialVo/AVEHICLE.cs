@@ -319,6 +319,8 @@ namespace com.mirle.ibg3k0.sc
         private Stopwatch CarrierInstalledWithoutCmdTime;
         private Stopwatch reserveFailStopWatch;  //2023.1.3 Hsinyu Chang
 
+        private bool isLognTimeCarrierInstalled = false;
+
         public void addAttentionReserveSection(ASECTION attentionSection)
         {
             if (attentionSection != null)
@@ -2001,7 +2003,7 @@ namespace com.mirle.ibg3k0.sc
                         double carrierInstallTimeWithoutAction = vh.CarrierInstalledWithoutCmdTime.Elapsed.TotalSeconds;
                         if (carrierInstallTimeWithoutAction > AVEHICLE.MAX_ALLOW_NO_COMMAND_CARRIER_INSTALLED_TIME_SECOND)
                         {
-                            vh.onCarrierLongTimeInstalledInVh(SCUtility.Trim(vh.CST_ID, true));
+                            vh.onNoCommandCarrierLongTimeInstalledInVh(SCUtility.Trim(vh.CST_ID, true));
                         }
                         //
                         double reserveFailedSeconds = vh.reserveFailStopWatch.Elapsed.TotalSeconds;
