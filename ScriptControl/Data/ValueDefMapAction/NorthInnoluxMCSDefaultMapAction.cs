@@ -1479,6 +1479,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             }
             if (!isSuccess)
             {
+                var tran_info_cepack2 = s2F50.CEPCOLLECT[1] as S2F50.TRANSFERINFO;
+                tran_info_cepack2.Info.SourcePort.CPVAL = "1";
+                if (!scApp.PortStationBLL.OperateCatch.IsExist(dest_port))
+                    tran_info_cepack2.Info.DestPort.CPVAL = "1";
+                cep_items.RemoveAt(1);
+                cep_items.Add(tran_info_cepack2);
+                s2F50.CEPCOLLECT = cep_items.ToArray();
+
                 check_result = $"MCS command id:{command_id} - source Port:{source_port_or_vh_id} not exist.{Environment.NewLine}please confirm the port name";
                 return SECSConst.HCACK_Obj_Not_Exist;
             }
@@ -1486,6 +1494,12 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             isSuccess = scApp.PortStationBLL.OperateCatch.IsExist(dest_port);
             if (!isSuccess)
             {
+                var tran_info_cepack3 = s2F50.CEPCOLLECT[1] as S2F50.TRANSFERINFO;
+                tran_info_cepack3.Info.DestPort.CPVAL = "1";
+                cep_items.RemoveAt(1);
+                cep_items.Add(tran_info_cepack3);
+                s2F50.CEPCOLLECT = cep_items.ToArray();
+                
                 check_result = $"MCS command id:{command_id} - destination Port:{dest_port} not exist.{Environment.NewLine}please confirm the port name";
                 return SECSConst.HCACK_Obj_Not_Exist;
             }
