@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 using com.mirle.ibg3k0.sc.App;
 namespace com.mirle.ibg3k0.sc.Data.PLC_Functions
 {
-    class TrafficSingalCanPassCheck : PLC_FunBase
+    class TrafficSingalPassRequest : PLC_FunBase
     {
         public DateTime Timestamp;
 
-        [PLCElement(ValueName = "TRAFFIC_SINGNAL_AUO_AGVC_ACK_PASS")]
-        public bool CanPass;
+        [PLCElement(ValueName = "TRAFFIC_SINGNAL_MIRLE_AGVC_ASK_PASS")]
+        public bool RequestPass;
 
         public override string ToString()
         {

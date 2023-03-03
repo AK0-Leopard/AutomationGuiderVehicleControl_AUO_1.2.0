@@ -328,6 +328,25 @@ namespace com.mirle.ibg3k0.sc.BLL
             return hlt_section_obj != null && !SCUtility.isEmpty(hlt_section_obj.Type) && hlt_section_obj.Type.Contains(HtlSectionType.Vertical.ToString());
         }
 
+        public (bool hasReserve, List<KeyValuePair<string, string>> reservedSectionsInfo) HasVhReserveSections(List<string> sections)
+        {
+            var current_reserve_sections = mapAPI.HltReservedSections;
+            var reserved_sections = current_reserve_sections.Where(reserve_sec => sections.Contains(reserve_sec.RSMapSectionID)).ToList();
+            if (reserved_sections.Any())
+            {
+                List<KeyValuePair<string, string>> keyValuePairs = new List<KeyValuePair<string, string>>();
+                foreach (var reserved_section in reserved_sections)
+                {
+                    keyValuePairs.Add(new KeyValuePair<string, string>(reserved_section.RSMapSectionID, reserved_section.RSVehicleID));
+                }
+                return (true, keyValuePairs);
+            }
+            else
+            {
+                return (false, null);
+            }
+        }
+
         enum HtlSectionType
         {
             Horizontal,
@@ -351,7 +370,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         public override HltResult TryAddVehicleOrUpdateResetSensorForkDir(string vhID)
         {
             //return new HltResult(true);
-            return new HltResult(true,"");
+            return new HltResult(true, "");
         }
         public override HltResult TryAddVehicleOrUpdate(string vhID, string currentSectionID, double vehicleX, double vehicleY, float vehicleAngle, double speedMmPerSecond,
                                            HltDirection sensorDir, HltDirection forkDir)

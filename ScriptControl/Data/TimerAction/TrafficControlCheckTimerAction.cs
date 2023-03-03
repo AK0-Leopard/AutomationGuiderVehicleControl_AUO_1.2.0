@@ -15,53 +15,70 @@ using com.mirle.ibg3k0.bcf.Data.TimerAction;
 using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.BLL;
 using NLog;
+using System;
 
 namespace com.mirle.ibg3k0.sc.Data.TimerAction
 {
-    /// <summary>
-    /// Class TraceDataReportTimer.
-    /// </summary>
-    /// <seealso cref="com.mirle.ibg3k0.bcf.Data.TimerAction.ITimerAction" />
-    public class TraceDataReportTimer : ITimerAction
+    public class TrafficControlCheckTimerAction : ITimerAction
     {
-        /// <summary>
-        /// The logger
-        /// </summary>
         private static Logger logger = LogManager.GetCurrentClassLogger();
-        /// <summary>
-        /// The sc application
-        /// </summary>
         private SCApplication scApp = null;
-        /// <summary>
-        /// The report BLL
-        /// </summary>
-        private ReportBLL reportBLL = null;
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TraceDataReportTimer"/> class.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="intervalMilliSec">The interval milli sec.</param>
-        public TraceDataReportTimer(string name, long intervalMilliSec)
+        public TrafficControlCheckTimerAction(string name, long intervalMilliSec)
             : base(name, intervalMilliSec)
         {
-        }
 
-        /// <summary>
-        /// Initializes the start.
-        /// </summary>
+        }
         public override void initStart()
         {
             scApp = SCApplication.getInstance();
-            reportBLL = scApp.ReportBLL;
         }
-
-        /// <summary>
-        /// Timer Action的執行動作
-        /// </summary>
-        /// <param name="obj">The object.</param>
         public override void doProcess(object obj)
         {
-            //not implement
+            try
+            {
+                var traffic_controllers = scApp.TrafficControlBLL.cache.LoadAllTrafficController();
+                foreach (var traffic_controller in traffic_controllers)
+                {
+                    switch (traffic_controller.TrafficControlState)
+                    {
+                        case StateMachine.TrafficControlStateMachine.State.NotEntry:
+                            //not thing...
+                            break;
+                        case StateMachine.TrafficControlStateMachine.State.AGVRequest:
+                            traffic_controller.AGVCRequestForRightOfWay();
+                            break;
+                        case StateMachine.TrafficControlStateMachine.State.WaitReply:
+                            //這邊要持續確認AGV是否還有通過的需求，如果沒有的話就可以直接cancel request
+                            if (traffic_controller.IsReadyReplyPass)
+                            {
+                                traffic_controller.AGVCAcquireRightOfWay();
+                            }
+                            else
+                            {
+                                if (traffic_controller.IsOverAGVRequestTime())
+                                {
+                                    traffic_controller.CancelRequestForRightOfWay();
+                                }
+                            }
+                            break;
+                        case StateMachine.TrafficControlStateMachine.State.AllowedEntry:
+                            //持續確認AGV是否已經通過(確認Reserve圖資、Section的資料)，如果已通過或無需求，就呼叫Complete
+                            if (traffic_controller.IsNoAGVWiilPass(scApp.VehicleBLL, scApp.ReserveBLL))
+                            {
+                                traffic_controller.ReturnRightOfWay();
+                            }
+                            break;
+                    }
+
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+            }
         }
 
     }

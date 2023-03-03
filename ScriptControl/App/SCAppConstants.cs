@@ -704,7 +704,8 @@ namespace com.mirle.ibg3k0.sc.App
             Orther = 0,
             Stock = 1,
             Buffer = 2,
-            Equipment = 3
+            Equipment = 3,
+            TrafficControl = 11
         }
         #endregion Eqpt Type
 

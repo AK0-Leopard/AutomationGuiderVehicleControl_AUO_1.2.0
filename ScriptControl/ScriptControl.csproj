@@ -488,6 +488,8 @@
     <Compile Include="Data\PLC_Functions\FireReport.cs" />
     <Compile Include="Data\PLC_Functions\PortStationReport.cs" />
     <Compile Include="Data\PLC_Functions\EQStatusReport.cs" />
+    <Compile Include="Data\PLC_Functions\TrafficSingal\TrafficSingalPassRequest.cs" />
+    <Compile Include="Data\PLC_Functions\TrafficSingal\TrafficSingalCanPassCheck.cs" />
     <Compile Include="Data\SECS\NorthInnolux\S64F1.cs" />
     <Compile Include="Data\SECS\NorthInnolux\S64F2.cs" />
     <Compile Include="Data\SECS\S10F4.cs" />
@@ -595,8 +597,11 @@
     <Compile Include="Data\SECS\AGVC\S2F36.cs" />
     <Compile Include="Data\SECS\AGVC\S6F12.cs" />
     <Compile Include="Data\SECS\AGVC\SECSConst.cs" />
+    <Compile Include="Data\StateMachine\TrafficControlStateMachine.cs" />
     <Compile Include="Data\TimerAction\CouplerCheckTimerAction.cs" />
     <Compile Include="Data\TimerAction\RandomGeneratesCommandTimerActionTiming.cs" />
+    <Compile Include="Data\TimerAction\TrafficControlCheckTimerAction.cs" />
+    <Compile Include="Data\ValueDefMapAction\TrafficSingalDefaultValueDefMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\SouthInnoluxMCSDefaultMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\NorthInnoluxMCSDefaultMapAction.cs" />
     <Compile Include="Data\ValueDefMapAction\FireDoorDefaultValueDefMapAction.cs" />
@@ -605,6 +610,7 @@
     <Compile Include="Data\VO\PartialVo\ACMD_MCS.cs" />
     <Compile Include="Data\VO\PartialVo\ACMD_OHTC.cs" />
     <Compile Include="Data\VO\PartialVo\VehicleStatusInfo.cs" />
+    <Compile Include="Data\VO\TrafficController.cs" />
     <Compile Include="Data\VO\TrafficControlInfo.cs" />
     <Compile Include="Data\VO\VehicleMap.cs" />
     <Compile Include="Data\VO\ReserveEnhanceInfo.cs" />

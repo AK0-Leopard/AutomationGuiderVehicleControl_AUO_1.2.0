@@ -27,7 +27,7 @@ namespace com.mirle.ibg3k0.sc.BLL
         public void start(SCApplication _app)
         {
             scApp = _app;
-            cache = new Cache(scApp.getCommObjCacheManager());
+            cache = new Cache(scApp.getEQObjCacheManager());
             redis = new Redis(scApp.getRedisCacheManager(), scApp.SectionBLL);
         }
 
@@ -38,49 +38,33 @@ namespace com.mirle.ibg3k0.sc.BLL
         }
         public class Cache
         {
-            CommObjCacheManager CommObjCacheManager = null;
-            public Cache(CommObjCacheManager commObjCacheManager)
+            EQObjCacheManager EqObjCacheManager = null;
+            public Cache(EQObjCacheManager eqObjCacheManager)
             {
-                CommObjCacheManager = commObjCacheManager;
+                EqObjCacheManager = eqObjCacheManager;
+            }
+            //取得所有traddic controller的物件
+            public IEnumerable<TrafficController> LoadAllTrafficController()
+            {
+                var eqs = EqObjCacheManager.getAllEquipment();
+                var trafficControllers = eqs.Where(e => e is TrafficController).Select(e => e as TrafficController);
+                return trafficControllers;
             }
 
-            public (bool isTrafficControlInfo, TrafficControlInfo trafficControlInfo) IsTrafficControlSection(string sectionID)
+            public (bool hasPass, TrafficController controller) tryGetPassTrafficControl(string sectionID)
             {
-                var enhance_info = CommObjCacheManager.getTrafficControlInfos().
-                    Where(i => i.ControlSections.Contains(Common.SCUtility.Trim(sectionID, true))
-                            || i.EntrySectionInfos.
-                                 Where(entry_section => SCUtility.isMatche(entry_section.ReserveSectionID, sectionID)).Count() > 0)
-                    .FirstOrDefault();
-                return (enhance_info != null, enhance_info);
+                var eqs = EqObjCacheManager.getAllEquipment();
+                var trafficControllers = eqs.Where(e => e is TrafficController).Select(e => e as TrafficController);
+                var pass_traffic_controller = trafficControllers.Where(t => t.IsInControlSection(sectionID)).FirstOrDefault();
+                if (pass_traffic_controller != null)
+                {
+                    return (true, pass_traffic_controller);
+                }
+                else
+                {
+                    return (false, null);
+                }
             }
-
-            public List<TrafficControlInfo> getTrafficControlInfos()
-            {
-                return CommObjCacheManager.getTrafficControlInfos();
-            }
-
-            public (bool isTasfficControl, TrafficControlInfo trafficControlInfo) IsTrafficControlEntrySection(ProtocolFormat.OHTMessage.ReserveInfo info)
-            {
-                var traffic_control = getTrafficControlInfo(info);
-                return (traffic_control != null, traffic_control);
-            }
-            public TrafficControlInfo getTrafficControlInfo(ProtocolFormat.OHTMessage.ReserveInfo info)
-            {
-                var traffic_control_info = CommObjCacheManager.getTrafficControlInfos().
-                    Where(i => i.EntrySectionInfos.
-                               Where(entry_section => SCUtility.isMatche(entry_section.ReserveSectionID, info.ReserveSectionID) &&
-                                                      entry_section.DriveDirction == info.DriveDirction).Count() > 0)
-                    .SingleOrDefault();
-                return traffic_control_info;
-            }
-            public TrafficControlInfo getTrafficControlInfo(string infoID)
-            {
-                var traffic_control_info = CommObjCacheManager.getTrafficControlInfos().
-                    Where(i => SCUtility.isMatche(i.ID, infoID))
-                    .SingleOrDefault();
-                return traffic_control_info;
-            }
-
         }
         public class Redis
         {

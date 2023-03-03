@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace com.mirle.ibg3k0.sc.Data.StateMachine
 {
-    internal class TrafficControlStateMachine
+    public class TrafficControlStateMachine
     {
         public enum State
         {
@@ -29,15 +30,15 @@ namespace com.mirle.ibg3k0.sc.Data.StateMachine
 
         bool isNeedAutoTesting = true;
         StateMachine<State, Trigger> _machine;
-        State _state = State.NotEntry;
-
+        public State TrafficControlState { get; private set; } = State.NotEntry;
+        Stopwatch Stopwatch { get; set; }
 
 
         public TrafficControlStateMachine()
         {
-            _machine = new StateMachine<State, Trigger>(() => _state, s => _state = s);
+            _machine = new StateMachine<State, Trigger>(() => TrafficControlState, s => TrafficControlState = s);
+            Stopwatch = new Stopwatch();
             TrafficControlStateMachineConfigInitial();
-
         }
 
         private void TrafficControlStateMachineConfigInitial()
@@ -65,26 +66,31 @@ namespace com.mirle.ibg3k0.sc.Data.StateMachine
             Console.WriteLine($"[vehicle state:{_machine.State}]");
         }
 
-        private void AGVRepuestEntry()
+        public void AGVRepuestEntry()
         {
             _machine.Fire(Trigger.AGVRepuestEntry);
         }
-        private void AGVCRequestForRightOfWay()
+
+        public void AGVCRequestForRightOfWay()
         {
             _machine.Fire(Trigger.AGVCRequestForRightOfWay);
         }
 
-        private void AcquireRightOfWay()
+        public void AcquireRightOfWay()
         {
             _machine.Fire(Trigger.AcquireRightOfWay);
         }
-        private void ReturnRightOfWay()
+        public void ReturnRightOfWay()
         {
             _machine.Fire(Trigger.ReturnRightOfWay);
         }
-        private void CancelRequestForRightOfWay()
+        public void CancelRequestForRightOfWay()
         {
-            _machine.Fire(Trigger.ReturnRightOfWay);
+            _machine.Fire(Trigger.CancelRequestForRightOfWay);
+        }
+        public bool canFire(Trigger trigger)
+        {
+            return _machine.CanFire(trigger);
         }
 
         public bool IsNotEntry => _machine.IsInState(State.NotEntry);
@@ -96,6 +102,7 @@ namespace com.mirle.ibg3k0.sc.Data.StateMachine
         public bool IsAllowedEntry => _machine.IsInState(State.AllowedEntry);
 
         public string CurrentContrlState => _machine.State.ToString();
+
 
 
     }

@@ -47,7 +47,8 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
                             {
                                 ID = c.Field<string>("ID"),
                                 EntrySectionInfos = GetEntrySectionInfos(c.Field<string>("ENTRY_SECTION")),
-                                ControlSections = stringToStringArray(c.Field<string>("CONTROL_SECTION"))
+                                ControlSections = stringToStringArray(c.Field<string>("CONTROL_SECTION")),
+                                TrafficControlType = GetTrafficControlType(c)
                             };
                 return query.ToList();
             }
@@ -58,7 +59,16 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
             }
         }
 
-
+        TrafficControlType GetTrafficControlType(DataRow row)
+        {
+            if (!row.Table.Columns.Contains("TYPE"))
+            {
+                return TrafficControlType.BlockControl;
+            }
+            string type = row.Field<string>("TYPE");
+            int.TryParse(type, out var i_type);
+            return (TrafficControlType)i_type;
+        }
         List<ProtocolFormat.OHTMessage.ReserveInfo> GetEntrySectionInfos(string entrySectionInfos)
         {
             List<ProtocolFormat.OHTMessage.ReserveInfo> reserve_infos = new List<ReserveInfo>();

@@ -37,7 +37,7 @@ namespace com.mirle.ibg3k0.sc.Common
         private static Object _lock = new Object();
         private SCApplication scApp = null;
         private List<ReserveEnhanceInfoSection> ReserveEnhanceInfosSections = null;
-        private List<TrafficControlInfo> TrafficControlInfos = null;
+        private List<TrafficController> TrafficControlInfos = null;
         //Cache Object
         //Section
         private List<ASECTION> Sections;
@@ -86,7 +86,9 @@ namespace com.mirle.ibg3k0.sc.Common
             Addresses = scApp.MapBLL.loadAllAddress();
             GroupPortStations = scApp.GroupPortStationBLL.OperateDB.loadAllGroupPortStation();
             ReserveEnhanceInfosSections = scApp.ReserveEnhanceInfoDao.getReserveEnhanceInfoSections(scApp);
-            TrafficControlInfos = scApp.TrafficControlInfoDao.getTrafficControlInfos(scApp);
+
+            var traffic_controlInfos = scApp.TrafficControlInfoDao.getTrafficControlInfos(scApp);
+            TrafficControlInfos = GetTrafficControls(traffic_controlInfos);
 
             for (int i = 0; i < Addresses.Count; i++)
             {
@@ -148,6 +150,10 @@ namespace com.mirle.ibg3k0.sc.Common
 
         }
 
+        private List<TrafficController> GetTrafficControls(List<TrafficControlInfo> trafficControlInfos)
+        {
+            return trafficControlInfos.Select(info => new TrafficController(info)).ToList();
+        }
         private void setCouplerTypeAddressInfo(AADDRESS couplerAddress)
         {
             //  CouplerInfo coupler_info = GetCouplerInfo(couplerAddress.ADR_ID);
@@ -295,10 +301,6 @@ namespace com.mirle.ibg3k0.sc.Common
             return EnhanceSubAddresses;
         }
 
-        public List<TrafficControlInfo> getTrafficControlInfos()
-        {
-            return TrafficControlInfos;
-        }
         public List<AGROUPPORTSTATION> loadGroupPortStations()
         {
             return GroupPortStations;

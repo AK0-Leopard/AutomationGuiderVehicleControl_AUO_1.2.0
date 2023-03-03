@@ -2722,6 +2722,16 @@ namespace com.mirle.ibg3k0.sc.Service
                 foreach (var reserve_sec in reserveInfos)
                 {
                     string reserve_section_id = reserve_sec.ReserveSectionID;
+                    bool is_traffic_control_check_ok = IsTrafficControllerAndCheckCanPass(reserve_section_id);
+                    if (!is_traffic_control_check_ok)
+                    {
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                           Data: $"vh:{vhID} Try add reserve section:{reserve_section_id} but traffic controller reply not ready.",
+                           VehicleID: vhID);
+                        return (false, "", reserve_section_id);
+                    }
+
+
                     //DriveDirction drive_dirction = reserveInfos[0].DriveDirction;
                     //DriveDirction drive_dirction = scApp.VehicleBLL.getDrivingDirection(reserve_section_id, vh.sWillPassAddressID);
                     //HltDirection sensor_direction = HltDirection.ForwardReverse;
@@ -2805,6 +2815,30 @@ namespace com.mirle.ibg3k0.sc.Service
                 return (false, string.Empty, string.Empty);
             }
         }
+
+        private bool IsTrafficControllerAndCheckCanPass(string reserve_section_id)
+        {
+            //確認是否為交通管制的路段
+            var get_result = scApp.TrafficControlBLL.cache.tryGetPassTrafficControl(reserve_section_id);
+            if (get_result.hasPass)
+            {
+                //確認這個管制路段是否已經為可通過
+                if (get_result.controller.IsAllowedEntry)
+                {
+                    return true;
+                }
+                else
+                {
+                    get_result.controller.AGVRepuestEntry();
+                    return false;
+                }
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         private (bool isSuccess, string reservedVhID, string reservedSecID) IsReserveSuccessOld(string vhID, RepeatedField<ReserveInfo> reserveInfos, bool isAsk = false)
         {
             try
@@ -4969,42 +5003,6 @@ namespace com.mirle.ibg3k0.sc.Service
             return resp_cmp;
         }
 
-        private void tryReleaseReservedControl(string vhID, string curSecID)
-        {
-            try
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                   Data: "Begin try release not normally released reserved control... ",
-                   VehicleID: vhID);
-                //清空除了自己目前Section所屬的Address外的Reserved
-                ASECTION current_section = scApp.SectionBLL.cache.GetSection(curSecID);
-                if (current_section != null)
-                    scApp.AddressesBLL.redis.AllAddressRelease(vhID, current_section.NodeAddress);
-
-                //如果自己不是在交通管制路段上，則嘗試清空
-                var block_control_section_check_result = scApp.getCommObjCacheManager().IsBlockControlSection(curSecID);
-                if (!block_control_section_check_result.isBlockControlSec)
-                {
-                    scApp.BlockControlBLL.updateBlockZoneQueue_ForceRelease(vhID);
-                }
-                //如果自己不是在Block的路段上，則嘗試進行清空
-                var traffic_control_section_check_result = scApp.TrafficControlBLL.cache.IsTrafficControlSection(curSecID);
-                if (!traffic_control_section_check_result.isTrafficControlInfo)
-                {
-                    scApp.TrafficControlBLL.redis.TrafficControlRelease(vhID);
-                }
-
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                   Data: "End try release not normally released reserved control. ",
-                   VehicleID: vhID);
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                   Data: ex,
-                   VehicleID: vhID);
-            }
-        }
 
         private void ProcessVehicleAbort(string vhID, string mcsCmdID, List<AMCSREPORTQUEUE> reportqueues)
         {

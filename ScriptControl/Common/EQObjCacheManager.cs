@@ -384,29 +384,46 @@ namespace com.mirle.ibg3k0.sc.Common
                             });
                         }
                         unitList.AddRange(unit_lsit_temp);
-                        AEQPT eqTemp = new AEQPT()
-                        {
-                            EQPT_ID = eqpt_id,
-                            CIM_MODE = "",
-                            OPER_MODE = "",
-                            INLINE_MODE = "",
-                            EQPT_STAT = "",
-                            EQPT_PROC_STAT = "",
-                            Real_ID = "",
-                            NODE_ID = node_id,
-                            MAX_SHT_CNT = max_sht_cnt,
-                            MIN_SHT_CNT = min_sht_cnt,
-                            //Alarm_List_File = alarmListFile,
-                            //Process_Data_Format = procDataFormat,
-                            //SV_Data_Format = svDataFormat,                    //A0.02
-                            //Recipe_Parameter_Format = recipeParameterFormat,                    //A0.03
-                            //ECID_Format = ecidFormat,                    //A0.04
-                            SECSAgentName = eqptConfig.SECSAgentName,         //A0.01
-                            TcpIpAgentName = eqptConfig.TcpIpAgentName,
-                            //CommunicationType = eqptConfig.CommunicationType,
-                            UnitList = unit_lsit_temp,
-                            Type = (SCAppConstants.EqptType)eqptType
-                        };
+
+                        var eq_type = (SCAppConstants.EqptType)eqptType;
+                        AEQPT eqTemp = GetAEQPTObject(eq_type, eqpt_id);
+                        eqTemp.EQPT_ID = eqpt_id;
+                        eqTemp.CIM_MODE = "";
+                        eqTemp.OPER_MODE = "";
+                        eqTemp.INLINE_MODE = "";
+                        eqTemp.EQPT_STAT = "";
+                        eqTemp.EQPT_PROC_STAT = "";
+                        eqTemp.Real_ID = "";
+                        eqTemp.NODE_ID = node_id;
+                        eqTemp.MAX_SHT_CNT = max_sht_cnt;
+                        eqTemp.MIN_SHT_CNT = min_sht_cnt;
+                        eqTemp.SECSAgentName = eqptConfig.SECSAgentName;
+                        eqTemp.TcpIpAgentName = eqptConfig.TcpIpAgentName;
+                        eqTemp.UnitList = unit_lsit_temp;
+                        eqTemp.Type = eq_type;
+                        //AEQPT eqTemp = new AEQPT()
+                        //{
+                        //    EQPT_ID = eqpt_id,
+                        //    CIM_MODE = "",
+                        //    OPER_MODE = "",
+                        //    INLINE_MODE = "",
+                        //    EQPT_STAT = "",
+                        //    EQPT_PROC_STAT = "",
+                        //    Real_ID = "",
+                        //    NODE_ID = node_id,
+                        //    MAX_SHT_CNT = max_sht_cnt,
+                        //    MIN_SHT_CNT = min_sht_cnt,
+                        //    //Alarm_List_File = alarmListFile,
+                        //    //Process_Data_Format = procDataFormat,
+                        //    //SV_Data_Format = svDataFormat,                    //A0.02
+                        //    //Recipe_Parameter_Format = recipeParameterFormat,                    //A0.03
+                        //    //ECID_Format = ecidFormat,                    //A0.04
+                        //    SECSAgentName = eqptConfig.SECSAgentName,         //A0.01
+                        //    TcpIpAgentName = eqptConfig.TcpIpAgentName,
+                        //    //CommunicationType = eqptConfig.CommunicationType,
+                        //    UnitList = unit_lsit_temp,
+                        //    Type = (SCAppConstants.EqptType)eqptType
+                        //};
                         //eqTemp.startStateMachine();
                         eqptList.Add(eqTemp);
 
@@ -481,6 +498,19 @@ namespace com.mirle.ibg3k0.sc.Common
             }
         }
 
+
+        private AEQPT GetAEQPTObject(SCAppConstants.EqptType eqptType, string eqID)
+        {
+            switch (eqptType)
+            {
+                case SCAppConstants.EqptType.TrafficControl:
+                    var traffic_controlInfos = scApp.TrafficControlInfoDao.getTrafficControlInfos(scApp);
+                    var traffic_control_info = traffic_controlInfos.Where(info => SCUtility.isMatche(info.ID, eqID)).SingleOrDefault();
+                    return new TrafficController(traffic_control_info);
+                default:
+                    return new AEQPT();
+            }
+        }
         private string getVhRealID(string vhID)
         {
             var map = scApp.VehicleMapDao.getVehicleMap(vhID);
