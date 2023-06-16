@@ -4017,7 +4017,15 @@ namespace com.mirle.ibg3k0.sc.Service
                         LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                             Data: $"sec id:{SCUtility.Trim(testAddrSec.sectionId)} is request_vh of predict sections.by pass it,continue find next address.",
                             VehicleID: requestVh.VEHICLE_ID);
-                        //needToBlockedSectionIds.Add(testAddrSec.sectionId);
+                        //如果無路權就列入禁行清單
+                        var reserve_check_result = scApp.ReserveBLL.TryAddReservedSection(reservedVh.VEHICLE_ID, testAddrSec.sectionId, isAsk: true);
+                        if (!reserve_check_result.OK)
+                        {
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                Data: $"sec id:{SCUtility.Trim(testAddrSec.sectionId)} try to reserve fail, result:{reserve_check_result.Description}. add this section to ban list.",
+                                VehicleID: requestVh.VEHICLE_ID);
+                            needToBlockedSectionIds.Add(testAddrSec.sectionId);
+                        }
                     }
                     else
                     {
