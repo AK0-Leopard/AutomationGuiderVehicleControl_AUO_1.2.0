@@ -1786,37 +1786,65 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         public bool trydoAvoidCommandToVhGuideBySearch(AVEHICLE avoidVh, AVEHICLE passVh)
         {
-            //var find_avoid_result = findNotConflictSectionAndAvoidAddressNew(passVh, avoidVh, true);
-            string blocked_section = avoidVh.CanNotReserveInfo.ReservedSectionID;
-            var find_avoid_result = findNotConflictSectionAndAvoidAddressForAvoidReq(passVh, avoidVh, true, blocked_section);
-            string blocked_vh_id = avoidVh.CanNotReserveInfo.ReservedVhID;
-            if (find_avoid_result.isFind)
+            try
             {
-                avoidVh.VhAvoidInfo = null;
-                //找到避車點之後，就可以下ID:51，開始讓vh進行避車了
-                //var avoid_request_result = AvoidRequest(avoidVh.VEHICLE_ID, find_avoid_result.avoidAdr,
-                //                                        needbyPassSectionID: blocked_section);
+                avoidVh.IsPrepareAvoid = true;
 
-                var reorganization_guide_data_result = reorganizationVhGuideData(avoidVh.CUR_SEC_ID, find_avoid_result.guideSection, find_avoid_result.guideAddresses);
-
-                bool is_avoid_success = AvoidRequest(avoidVh.VEHICLE_ID, find_avoid_result.avoidAdr,
-                                                                         reorganization_guide_data_result.guideSection,
-                                                                         reorganization_guide_data_result.guideAddress);
-                //if (avoid_request_result.is_success)
-                if (is_avoid_success)
+                //var find_avoid_result = findNotConflictSectionAndAvoidAddressNew(passVh, avoidVh, true);
+                string blocked_section = avoidVh.CanNotReserveInfo.ReservedSectionID;
+                var find_avoid_result = findNotConflictSectionAndAvoidAddressForAvoidReq(passVh, avoidVh, true, blocked_section);
+                string blocked_vh_id = avoidVh.CanNotReserveInfo.ReservedVhID;
+                if (find_avoid_result.isFind)
                 {
-                    avoidVh.VhAvoidInfo = new AVEHICLE.AvoidInfo(blocked_section, blocked_vh_id, find_avoid_result.guideAddresses);
+                    avoidVh.VhAvoidInfo = null;
+                    //找到避車點之後，就可以下ID:51，開始讓vh進行避車了
+                    //var avoid_request_result = AvoidRequest(avoidVh.VEHICLE_ID, find_avoid_result.avoidAdr,
+                    //                                        needbyPassSectionID: blocked_section);
+
+                    var reorganization_guide_data_result = reorganizationVhGuideData(avoidVh.CUR_SEC_ID, find_avoid_result.guideSection, find_avoid_result.guideAddresses);
+
+                    bool is_avoid_success = AvoidRequest(avoidVh.VEHICLE_ID, find_avoid_result.avoidAdr,
+                                                                             reorganization_guide_data_result.guideSection,
+                                                                             reorganization_guide_data_result.guideAddress);
+                    //if (avoid_request_result.is_success)
+                    if (is_avoid_success)
+                    {
+                        avoidVh.VhAvoidInfo = new AVEHICLE.AvoidInfo(blocked_section, blocked_vh_id, find_avoid_result.guideAddresses);
+                        scApp.ReserveBLL.RemoveAllReservedSectionsByVehicleID(avoidVh.VEHICLE_ID);
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                           Data: $"Avoid success remove vh:{avoidVh.VEHICLE_ID} all reserved section.",
+                           VehicleID: avoidVh.VEHICLE_ID,
+                           CarrierID: avoidVh.CST_ID);
+                        //在移除掉該VH所預約的路徑後，要再加入自己本身所在的Section，避免之後其他車子預約走
+                        string vh_current_section = SCUtility.Trim(avoidVh.CUR_SEC_ID, true);
+                        var reserve_result = scApp.ReserveBLL.TryAddReservedSection(avoidVh.VEHICLE_ID, vh_current_section,
+                                                                HltDirection.None);
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                           Data: $"Avoid success append vh:{avoidVh.VEHICLE_ID} current section:{vh_current_section}.result:{reserve_result.ToString()}",
+                           VehicleID: avoidVh.VEHICLE_ID,
+                           CarrierID: avoidVh.CST_ID);
+                        recordCurrentGuideSection(avoidVh);
+                    }
+                    return is_avoid_success;
                 }
-                return is_avoid_success;
+                else
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: $"No find the can avoid address. avoid vh:{avoidVh.VEHICLE_ID} current adr:{avoidVh.CUR_ADR_ID}," +
+                             $"will pass vh:{passVh.VEHICLE_ID} current adr:{passVh.CUR_ADR_ID}",
+                       VehicleID: avoidVh.VEHICLE_ID,
+                       CarrierID: avoidVh.CST_ID);
+                    return false;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                   Data: $"No find the can avoid address. avoid vh:{avoidVh.VEHICLE_ID} current adr:{avoidVh.CUR_ADR_ID}," +
-                         $"will pass vh:{passVh.VEHICLE_ID} current adr:{passVh.CUR_ADR_ID}",
-                   VehicleID: avoidVh.VEHICLE_ID,
-                   CarrierID: avoidVh.CST_ID);
+                logger.Error(ex, "Exception:");
                 return false;
+            }
+            finally
+            {
+                avoidVh.IsPrepareAvoid = false;
             }
         }
         private (string[] guideSection, string[] guideAddress) reorganizationVhGuideData(string currentSec, List<string> guideSectionIDs, List<string> guideAddressIDs)
