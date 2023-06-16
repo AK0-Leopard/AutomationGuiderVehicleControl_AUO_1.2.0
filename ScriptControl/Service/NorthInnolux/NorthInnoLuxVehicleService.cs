@@ -3468,6 +3468,14 @@ namespace com.mirle.ibg3k0.sc.Service
                                                VehicleID: requestVhID);
                                             SpinWait.SpinUntil(() => false, 15000);
                                         }
+                                        else
+                                        {
+                                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                                Data: $"Try to notify vh avoid fail, override request is failed too. cancel command..." +
+                                                $" requestVh:{requestVhID} reservedVh:{reservedVhID}.",
+                                                VehicleID: requestVhID);
+                                            FinishExecutionMCSCommand(request_vh.VEHICLE_ID);
+                                        }
                                     }
                                 }
                                 break;
@@ -3910,8 +3918,11 @@ namespace com.mirle.ibg3k0.sc.Service
                 {
                     avoidVh.VhAvoidInfo = null;
                     //找到避車點之後，就可以下ID:51，開始讓vh進行避車了
+                    var needBypassSec = new List<string>();
+                    if (findAvoidResult.needToBlockedSections != null) needBypassSec.AddRange(findAvoidResult.needToBlockedSections);
+                    needBypassSec.Add(avoidVh.CanNotReserveInfo.ReservedSectionID);
                     var avoid_request_result = AvoidRequest(avoidVh.VEHICLE_ID, findAvoidResult.avoidAdr,
-                                                            needbyPassSectionID: findAvoidResult.needToBlockedSections);
+                                                            needbyPassSectionID: needBypassSec);
                     if (avoid_request_result.is_success)
                     {
                         avoidVh.VhAvoidInfo = new AVEHICLE.AvoidInfo(blocked_section, blocked_vh_id, avoid_request_result.guide_address_ids);
