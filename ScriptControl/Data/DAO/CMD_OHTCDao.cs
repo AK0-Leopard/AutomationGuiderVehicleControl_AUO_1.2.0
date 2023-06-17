@@ -197,14 +197,15 @@ namespace com.mirle.ibg3k0.sc.Data.DAO
                         select cmd;
             return query.Count();
         }
-        public List<ACMD_OHTC> loadByInsertTimeEndTime(DBConnection_EF con, DateTime insertTime, DateTime finishTime)
+        public int getUnfinishCmdCount(DBConnection_EF con, string vh_id)
         {
             var query = from cmd in con.ACMD_OHTC
-                        where cmd.CMD_START_TIME > insertTime && (cmd.CMD_END_TIME != null && cmd.CMD_END_TIME < finishTime)
-                        orderby cmd.CMD_START_TIME descending
+                        where cmd.CMD_STAUS < E_CMD_STATUS.NormalEnd &&
+                              cmd.VH_ID.Trim() == vh_id
                         select cmd;
-            return query.ToList();
+            return query.Count();
         }
+
 
     }
 }

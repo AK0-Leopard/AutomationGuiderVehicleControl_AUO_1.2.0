@@ -1984,7 +1984,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             int count = 0;
             using (DBConnection_EF con = DBConnection_EF.GetUContext())
             {
-                count = cmd_ohtcDAO.loadUnfinishCmd(con, vh_id).Count;
+                count = cmd_ohtcDAO.getUnfinishCmdCount(con, vh_id);
             }
             return count != 0;
         }

@@ -60,7 +60,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         VehicleID: vh_id);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     logger.Error(ex, "Exception:");
                 }
@@ -101,7 +101,7 @@ namespace com.mirle.ibg3k0.sc.Service
                         }
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     logger.Error(ex, "Exception:");
                 }
@@ -1123,7 +1123,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 scApp.CMDBLL.updateCommand_OHTC_StatusByCmdID(vh_id, cmd.CMD_ID, E_CMD_STATUS.Sending);
                 if (!string.IsNullOrEmpty(cmd.CMD_ID_MCS))
                 {
-                    if(!cmd.CMD_ID.StartsWith(((int)GenOHxCCommandType.Retry).ToString()))
+                    if (!cmd.CMD_ID.StartsWith(((int)GenOHxCCommandType.Retry).ToString()))
                     {
                         isSuccess &= scApp.ReportBLL.newReportTransferInitial(cmd.CMD_ID_MCS, null);
                     }
@@ -1806,7 +1806,7 @@ namespace com.mirle.ibg3k0.sc.Service
                                XID: cancel_abort_mcs_cmd_id);
                             AVEHICLE assign_vh = scApp.VehicleBLL.getVehicleByExcuteMCS_CMD_ID(cancel_abort_mcs_cmd_id);
                             scApp.CMDBLL.updateCMD_MCS_TranStatus2Aborting(cancel_abort_mcs_cmd_id);
-                            is_success = scApp.ReportBLL.newReportTransferCommandAbortFinish(mcs_cmd, assign_vh,"8", reportQueue);
+                            is_success = scApp.ReportBLL.newReportTransferCommandAbortFinish(mcs_cmd, assign_vh, "8", reportQueue);
                             if (is_success)
                             {
                                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(NorthInnoLuxVehicleService), Device: DEVICE_NAME_AGV,
@@ -2791,7 +2791,7 @@ namespace com.mirle.ibg3k0.sc.Service
 
                 bool is_find = false;
 
-                while(!is_find)
+                while (!is_find)
                 {
                     List<string> destAdrList = RepositionPathList.Select(p => p.destinationAdr).Distinct().ToList();
                     List<RepositionPath> newRepositionPathList = new List<RepositionPath>();
@@ -2806,7 +2806,7 @@ namespace com.mirle.ibg3k0.sc.Service
                             bool needsTurn = scApp.ReserveBLL.IsR2000Section(sec.SEC_ID);
                             double cost = sec.SEC_DIS;
                             foreach (RepositionPath repositionPath in
-                                RepositionPathList.Where(p =>SCUtility.isMatche(p.destinationAdr,destAdr)).ToList())
+                                RepositionPathList.Where(p => SCUtility.isMatche(p.destinationAdr, destAdr)).ToList())
                             {
                                 if (repositionPath.guide_sections.Contains(sec.SEC_ID)) continue;
                                 RepositionPath newRepositionPath = new RepositionPath();
@@ -2847,7 +2847,7 @@ namespace com.mirle.ibg3k0.sc.Service
                     {
                         if (isRepositionPathQualified(path, repositionDistance))
                         {
-                            if(isBetterRepositionPath(currentBestRepositionPath, path))
+                            if (isBetterRepositionPath(currentBestRepositionPath, path))
                             {
                                 currentBestRepositionPath = path;
                             }
@@ -2920,9 +2920,9 @@ namespace com.mirle.ibg3k0.sc.Service
 
         }
 
-        bool isRepositionPathQualified(RepositionPath path ,int cost)
+        bool isRepositionPathQualified(RepositionPath path, int cost)
         {
-            if(path.cost> cost)
+            if (path.cost > cost)
             {
                 return true;
             }
@@ -3333,7 +3333,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 //Loading/unloading
                 return (false, CAN_NOT_AVOID_RESULT.VehicleInLoadingUnloading);
             }
-            else if (reservedVh.ACT_STATUS == VHActionStatus.Commanding &&
+            else if ((reservedVh.ACT_STATUS == VHActionStatus.Commanding || scApp.CMDBLL.isCMD_OHTCUnfinishedByVh(reservedVh.VEHICLE_ID)) &&
                 reservedVh.ObstacleStatus == VhStopSingle.StopSingleOff &&
                 reservedVh.RESERVE_PAUSE == VhStopSingle.StopSingleOff &&
                 reservedVh.BlockingStatus == VhStopSingle.StopSingleOff &&
@@ -3468,14 +3468,14 @@ namespace com.mirle.ibg3k0.sc.Service
                                                VehicleID: requestVhID);
                                             SpinWait.SpinUntil(() => false, 15000);
                                         }
-                                        else
-                                        {
-                                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
-                                                Data: $"Try to notify vh avoid fail, override request is failed too. cancel command..." +
-                                                $" requestVh:{requestVhID} reservedVh:{reservedVhID}.",
-                                                VehicleID: requestVhID);
-                                            FinishExecutionMCSCommand(request_vh.VEHICLE_ID);
-                                        }
+                                        //else //暫時取消，如果Override失敗，則將原本的命令取消的流程
+                                        //{
+                                        //    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                                        //        Data: $"Try to notify vh avoid fail, override request is failed too. cancel command..." +
+                                        //        $" requestVh:{requestVhID} reservedVh:{reservedVhID}.",
+                                        //        VehicleID: requestVhID);
+                                        //    FinishExecutionMCSCommand(request_vh.VEHICLE_ID);
+                                        //}
                                     }
                                 }
                                 break;
