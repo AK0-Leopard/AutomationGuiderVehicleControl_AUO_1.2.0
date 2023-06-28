@@ -304,7 +304,8 @@ namespace com.mirle.ibg3k0.sc.Service
                     //當發生命令執行過久之後要將該筆命令改成Abormal end，如果該筆命令是MCS的Command則需要將命令上報給MCS作為結束
                     doCommandFigish(vh.VEHICLE_ID, cmdID, CompleteStatus.CmpStatusLongTimeInaction, 0);
                     //要再上報Alamr Rerport給MCS
-                    //北群創不需要報這個 ProcessAlarmReport(vh, AlarmBLL.VEHICLE_LONG_TIME_INACTION, ErrorStatus.ErrSet, $"vehicle long time inaction, cmd id:{cmdID}");
+                    //北群創不需要報這個 => 2023.06.27還是要報
+                    ProcessAlarmReport(vh, AlarmBLL.VEHICLE_LONG_TIME_INACTION, ErrorStatus.ErrSet, $"vehicle long time inaction, cmd id:{cmdID}");
 
                     BCFApplication.onWarningMsg($"vehicle:{vh.VEHICLE_ID} long time inaction, cmd id:{cmdID}");
                 }
