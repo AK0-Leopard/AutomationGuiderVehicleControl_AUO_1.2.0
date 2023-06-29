@@ -274,7 +274,7 @@ namespace com.mirle.ibg3k0.sc
         /// <summary>
         /// 單筆命令，最大允許的搬送時間
         /// </summary>
-        public static UInt16 MAX_ALLOW_ACTION_TIME_SECOND { get; private set; } = 1200;
+        public static UInt16 MAX_ALLOW_ACTION_TIME_SECOND { get; private set; } = 600;
         /// <summary>
         /// 最大允許斷線時間
         /// </summary>
@@ -318,6 +318,7 @@ namespace com.mirle.ibg3k0.sc
         private Stopwatch CarrierInstalledTime;
         private Stopwatch CarrierInstalledWithoutCmdTime;
         private Stopwatch reserveFailStopWatch;  //2023.1.3 Hsinyu Chang
+        private bool isLongTimeInaction = false;
 
         private bool isLognTimeCarrierInstalled = false;
 
@@ -399,7 +400,11 @@ namespace com.mirle.ibg3k0.sc
         }
         public void onLongTimeInaction(string cmdID)
         {
-            LongTimeInaction?.Invoke(this, cmdID);
+            if (!isLongTimeInaction)
+            {
+                isLongTimeInaction = true;
+                LongTimeInaction?.Invoke(this, cmdID);
+            }
         }
         public void onLongTimeDisConnection()
         {
@@ -962,6 +967,7 @@ namespace com.mirle.ibg3k0.sc
         }
         public void Stop()
         {
+            isLongTimeInaction = false;
             CurrentCommandExcuteTime.Reset();
             if (CarrierInstalledTime.IsRunning)
                 CarrierInstalledWithoutCmdTime.Restart();
@@ -1591,30 +1597,30 @@ namespace com.mirle.ibg3k0.sc
                 this.Configure(VehicleState.NOT_ASSIGNED)
                     .PermitIf(VehicleTrigger.VehicleAssign, VehicleState.ASSIGNED, () => VehicleAssignGC())//guardClause為真才會執行狀態變化
                     .PermitIf(VehicleTrigger.VechileRemove, VehicleState.REMOVED, () => VechileRemoveGC());//guardClause為真才會執行狀態變化
-                
+
                 this.Configure(VehicleState.ASSIGNED).OnEntry(() => this.Fire(VehicleTrigger.VehicleAssign))
                     .PermitIf(VehicleTrigger.VehicleAssign, VehicleState.ENROUTE)
                     .PermitIf(VehicleTrigger.VehicleUnassign, VehicleState.NOT_ASSIGNED);
-                
+
                 this.Configure(VehicleState.ENROUTE).SubstateOf(VehicleState.ASSIGNED)
                     .PermitIf(VehicleTrigger.VehicleArrive, VehicleState.PARKED, () => VehicleArriveGC());//guardClause為真才會執行狀態變化
                                                                                                           //.PermitIf(VehicleTrigger.VehicleUnassign, VehicleState.NOT_ASSIGNED, () => VehicleUnassignGC());//guardClause為真才會執行狀態變化
-                
+
                 this.Configure(VehicleState.PARKED).SubstateOf(VehicleState.ASSIGNED)
                     .PermitIf(VehicleTrigger.VehicleDepart, VehicleState.ENROUTE, () => VehicleDepartGC())//guardClause為真才會執行狀態變化
                     .PermitIf(VehicleTrigger.VehicleAcquireStart, VehicleState.ACQUIRING, () => VehicleAcquireStartGC())//guardClause為真才會執行狀態變化
                     .PermitIf(VehicleTrigger.VehicleDepositStart, VehicleState.DEPOSITING, () => VehicleDepositStartGC());//guardClause為真才會執行狀態變化
-                
+
                 this.Configure(VehicleState.ACQUIRING).SubstateOf(VehicleState.ASSIGNED)
                     .PermitIf(VehicleTrigger.VehilceAcquireComplete, VehicleState.PARKED, () => VehilceAcquireCompleteGC())//guardClause為真才會執行狀態變化
                     .PermitIf(VehicleTrigger.VehicleDepositStart, VehicleState.DEPOSITING, () => VehicleDepositStartGC())//guardClause為真才會執行狀態變化
                     .PermitIf(VehicleTrigger.VehicleReposition, VehicleState.ENROUTE, () => VehicleRepositionGC());//guardClause為真才會執行狀態變化
-                
+
                 this.Configure(VehicleState.DEPOSITING).SubstateOf(VehicleState.ASSIGNED)
                     .PermitIf(VehicleTrigger.VehicleDepositComplete, VehicleState.PARKED, () => VehicleDepositCompleteGC())//guardClause為真才會執行狀態變化
                     .PermitIf(VehicleTrigger.VehicleAcquireStart, VehicleState.ACQUIRING, () => VehicleAcquireStartGC())//guardClause為真才會執行狀態變化
                     .PermitIf(VehicleTrigger.VehicleReposition, VehicleState.ENROUTE, () => VehicleRepositionGC());//guardClause為真才會執行狀態變化
-                
+
                 this.Configure(VehicleState.REMOVED)
                     .PermitIf(VehicleTrigger.VehicleInstall, VehicleState.NOT_ASSIGNED, () => VehicleInstallGC());//guardClause為真才會執行狀態變化
 
