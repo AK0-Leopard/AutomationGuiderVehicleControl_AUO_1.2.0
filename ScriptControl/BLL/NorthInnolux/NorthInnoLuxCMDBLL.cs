@@ -2167,7 +2167,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                                 vh.vh_CMD_Status = E_CMD_STATUS.NormalEnd;
                                 vh.VehicleUnassign();
                                 vh.Stop();
-
+                                scApp.VehicleService.ProcessAlarmReport(vh, AlarmBLL.VEHICLE_LONG_TIME_INACTION, ErrorStatus.ErrReset, $"vehicle long time inaction, cmd id:{cmd.CMD_ID}");
 
                                 if (!SCUtility.isEmpty(cmd.CMD_ID_MCS))
                                 {
