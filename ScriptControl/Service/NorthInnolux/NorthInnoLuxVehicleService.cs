@@ -4126,6 +4126,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
                     Data: $"can not reserve address id: {addressId}, continue to find next address.",
                     VehicleID: requestVh.VEHICLE_ID);
+                scApp.ReserveBLL.RemoveVehicle(needToAvoidVirtualVehicle);
                 return false;
             }
             else
