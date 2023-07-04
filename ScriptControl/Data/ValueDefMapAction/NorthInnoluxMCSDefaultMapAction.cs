@@ -2291,7 +2291,7 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             try
             {
                 LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(NorthInnoluxMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
-   Data: $"enter S6F11SendAlarmEvent eq_id:{eq_id} ceid{ceid} alid{alid} cmd_id{cmd_id} altx{altx} alarmLvl{alarmLvl} ");
+                    Data: $"enter S6F11SendAlarmEvent eq_id:{eq_id} ceid{ceid} alid{alid} cmd_id{cmd_id} altx{altx} alarmLvl{alarmLvl} ");
                 VIDCollection Vids = new VIDCollection();
                 Vids.VID_05_Clock.CLOCK = DateTime.Now.ToString(SCAppConstants.TimestampFormat_14).PadRight(16, '0');
                 Vids.VID_01_AlarmID.ALID = alid;

@@ -5176,7 +5176,7 @@ namespace com.mirle.ibg3k0.sc.Service
                 foreach (ALARM report_alarm in alarms)
                 {
                     if (report_alarm == null) continue;
-                    if (report_alarm.ALAM_LVL != E_ALARM_LVL.Error) continue;
+                    //if (report_alarm.ALAM_LVL != E_ALARM_LVL.Error) continue;
                     //需判斷Alarm是否存在如果有的話則需再判斷MCS是否有Disable該Alarm的上報
                     if (scApp.AlarmBLL.IsReportToHost(report_alarm.ALAM_CODE))
                     {
@@ -5188,13 +5188,12 @@ namespace com.mirle.ibg3k0.sc.Service
                         {
                             if (report_alarm.ALAM_STAT == ErrorStatus.ErrSet)
                             {
-
-                                scApp.ReportBLL.ReportAlarmHappend(report_alarm.ALAM_STAT, alarmConvertInfo.ALID, alarmConvertInfo.ALTX);
+                                if (report_alarm.ALAM_LVL is E_ALARM_LVL.Error) scApp.ReportBLL.ReportAlarmHappend(report_alarm.ALAM_STAT, alarmConvertInfo.ALID, alarmConvertInfo.ALTX);
                                 scApp.ReportBLL.newReportAlarmEvent(eqpt?.Real_ID ?? "AGVC", alarmConvertInfo.CEIDSet, alarmConvertInfo.ALID, eqpt?.MCS_CMD ?? "", alarmConvertInfo.ALTX, alarmConvertInfo.AlarmLevel, reportqueues);
                             }
                             else
                             {
-                                scApp.ReportBLL.ReportAlarmHappend(report_alarm.ALAM_STAT, alarm_code, report_alarm.ALAM_DESC);
+                                if (report_alarm.ALAM_LVL is E_ALARM_LVL.Error) scApp.ReportBLL.ReportAlarmHappend(report_alarm.ALAM_STAT, alarm_code, report_alarm.ALAM_DESC);
                                 scApp.ReportBLL.newReportAlarmEvent(eqpt?.Real_ID ?? "AGVC", alarmConvertInfo.CEIDClear, alarmConvertInfo.ALID, eqpt?.MCS_CMD ?? "", alarmConvertInfo.ALTX, alarmConvertInfo.AlarmLevel, reportqueues);
                             }
                         }
