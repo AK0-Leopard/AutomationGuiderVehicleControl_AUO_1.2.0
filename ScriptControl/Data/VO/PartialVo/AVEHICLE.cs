@@ -939,6 +939,10 @@ namespace com.mirle.ibg3k0.sc
                    DateTime.Now > LAST_FULLY_CHARGED_TIME?.AddMinutes(SystemParameter.TheLongestFullyChargedIntervalTime_Mim);
         }
 
+        public static void SetMaxExecutionTime(int seconds)
+        {
+            MAX_ALLOW_ACTION_TIME_SECOND = (UInt16)seconds;
+        }
 
         [JsonIgnore]
         public string VhExcuteCMDStatusChangeEvent = "VhExcuteCMDStatusChangeEvent";

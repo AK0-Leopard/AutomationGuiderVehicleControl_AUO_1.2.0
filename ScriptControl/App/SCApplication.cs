@@ -563,6 +563,9 @@ namespace com.mirle.ibg3k0.sc.App
             //bdTableWatcher = new DBTableWatcher(this);
             SystemParameter.setCstMaxWaitTime(getInt("CSTMaxWaitTime", 0));
             SystemParameter.setLongestFullyChargedIntervalTime(getInt("LongestFullyChargedIntervalTime", 15));
+
+            var maxExecutionSeconds = getInt("MaxExecutionSeconds", 600);
+            AVEHICLE.SetMaxExecutionTime(maxExecutionSeconds);
         }
 
         private void initialReserveSectionAPI()
