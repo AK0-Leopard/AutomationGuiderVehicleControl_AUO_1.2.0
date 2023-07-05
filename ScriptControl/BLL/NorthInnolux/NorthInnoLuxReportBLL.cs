@@ -519,6 +519,13 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && (iBSEMDriver as AUOMCSDefaultMapAction).S6F11SendUnitAlarmSet(unitID, alarmID, alarmTest, reportqueues);
             return isSuccsess;
         }
+
+        public override bool newReportUnitAlarmSet(string eq_id, string ceid, string alid, string cmd_id, string altx, string alarmLvl, List<AMCSREPORTQUEUE> reportQueues)
+        {
+            bool isSuccsess = true;
+            isSuccsess = isSuccsess && (iBSEMDriver as NorthInnoluxMCSDefaultMapAction).S6F11SendUnitAlarmEvent(eq_id, ceid, alid, cmd_id, altx, alarmLvl, reportQueues);
+            return isSuccsess;
+        }
         public bool newReportUnitAlarmClear(string unitID, string alarmID, string alarmTest, List<AMCSREPORTQUEUE> reportqueues)
         {
             bool isSuccsess = true;

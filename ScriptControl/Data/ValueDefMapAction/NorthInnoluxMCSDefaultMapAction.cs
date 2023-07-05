@@ -2323,6 +2323,39 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 return false;
             }
         }
+        public bool S6F11SendUnitAlarmEvent(string eq_id, string ceid, string alid, string cmd_id, string altx, string alarmLvl, List<AMCSREPORTQUEUE> reportQueues = null)
+        {
+            try
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(NorthInnoluxMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                    Data: $"enter S6F11SendUnitAlarmEvent eq_id:{eq_id} ceid{ceid} alid{alid} cmd_id{cmd_id} altx{altx} ");
+                VIDCollection Vids = new VIDCollection();
+                Vids.VID_05_Clock.CLOCK = DateTime.Now.ToString(SCAppConstants.TimestampFormat_14).PadRight(16, '0');
+                Vids.VID_01_AlarmID.ALID = alid;
+                Vids.VID_70_VehicleID.VEHICLE_ID = eq_id;
+                Vids.VID_58_CommandID.COMMAND_ID = cmd_id;
+                Vids.VID_1060_AlarmText.ALARM_TEXT = altx;
+                Vids.VID_1070_AlarmLoc.ALARM_LOC = eq_id;
+                List<string> rptids = new List<string> { "901" };
+                AMCSREPORTQUEUE mcs_queue = S6F11BulibMessage(ceid, Vids, rptids);
+                scApp.ReportBLL.insertMCSReport(mcs_queue);
+                if (reportQueues == null)
+                {
+                    S6F11SendMessage(mcs_queue);
+                }
+                else
+                {
+                    reportQueues.Add(mcs_queue);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Warn, Class: nameof(NorthInnoluxMCSDefaultMapAction), Device: DEVICE_NAME_MCS,
+                   Data: ex);
+                return false;
+            }
+        }
         public override bool S64F1SendDestinationChangeRequest(string cmd_id, string carrier_id)
         {
             try

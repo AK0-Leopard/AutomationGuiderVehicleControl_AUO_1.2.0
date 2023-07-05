@@ -5186,15 +5186,30 @@ namespace com.mirle.ibg3k0.sc.Service
                         AlarmConvertInfo alarmConvertInfo = scApp.AlarmBLL.getAlarmConvertInfo(alarm_code);
                         if (alarmConvertInfo != null)
                         {
+                            //newReportUnitAlarmSet
                             if (report_alarm.ALAM_STAT == ErrorStatus.ErrSet)
                             {
-                                if (report_alarm.ALAM_LVL is E_ALARM_LVL.Error) scApp.ReportBLL.ReportAlarmHappend(report_alarm.ALAM_STAT, alarmConvertInfo.ALID, alarmConvertInfo.ALTX);
-                                scApp.ReportBLL.newReportAlarmEvent(eqpt?.Real_ID ?? "AGVC", alarmConvertInfo.CEIDSet, alarmConvertInfo.ALID, eqpt?.MCS_CMD ?? "", alarmConvertInfo.ALTX, alarmConvertInfo.AlarmLevel, reportqueues);
+                                if (report_alarm.ALAM_LVL is E_ALARM_LVL.Error)
+                                {
+                                    scApp.ReportBLL.ReportAlarmHappend(report_alarm.ALAM_STAT, alarmConvertInfo.ALID, alarmConvertInfo.ALTX);
+                                    scApp.ReportBLL.newReportAlarmEvent(eqpt?.Real_ID ?? "AGVC", alarmConvertInfo.CEIDSet, alarmConvertInfo.ALID, eqpt?.MCS_CMD ?? "", alarmConvertInfo.ALTX, alarmConvertInfo.AlarmLevel, reportqueues);
+                                }
+                                else
+                                {
+                                    scApp.ReportBLL.newReportUnitAlarmSet(eqpt?.Real_ID ?? "AGVC", alarmConvertInfo.CEIDSet, alarmConvertInfo.ALID, eqpt?.MCS_CMD ?? "", alarmConvertInfo.ALTX, alarmConvertInfo.AlarmLevel, reportqueues);
+                                }
                             }
                             else
                             {
-                                if (report_alarm.ALAM_LVL is E_ALARM_LVL.Error) scApp.ReportBLL.ReportAlarmHappend(report_alarm.ALAM_STAT, alarm_code, report_alarm.ALAM_DESC);
-                                scApp.ReportBLL.newReportAlarmEvent(eqpt?.Real_ID ?? "AGVC", alarmConvertInfo.CEIDClear, alarmConvertInfo.ALID, eqpt?.MCS_CMD ?? "", alarmConvertInfo.ALTX, alarmConvertInfo.AlarmLevel, reportqueues);
+                                if (report_alarm.ALAM_LVL is E_ALARM_LVL.Error)
+                                {
+                                    scApp.ReportBLL.ReportAlarmHappend(report_alarm.ALAM_STAT, alarm_code, report_alarm.ALAM_DESC);
+                                    scApp.ReportBLL.newReportAlarmEvent(eqpt?.Real_ID ?? "AGVC", alarmConvertInfo.CEIDClear, alarmConvertInfo.ALID, eqpt?.MCS_CMD ?? "", alarmConvertInfo.ALTX, alarmConvertInfo.AlarmLevel, reportqueues);
+                                }
+                                else
+                                {
+                                    scApp.ReportBLL.newReportUnitAlarmSet(eqpt?.Real_ID ?? "AGVC", alarmConvertInfo.CEIDClear, alarmConvertInfo.ALID, eqpt?.MCS_CMD ?? "", alarmConvertInfo.ALTX, alarmConvertInfo.AlarmLevel, reportqueues);
+                                }
                             }
                         }
                         else

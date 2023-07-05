@@ -562,6 +562,11 @@ namespace com.mirle.ibg3k0.sc.BLL
             isSuccsess = isSuccsess && (iBSEMDriver as AUOMCSDefaultMapAction).S6F11SendUnitAlarmCleared(unitID, alarmID, alarmTest, reportqueues);
             return isSuccsess;
         }
+        public virtual bool newReportUnitAlarmSet(string eq_id, string ceid, string alid, string cmd_id, string altx, string alarmLvl, List<AMCSREPORTQUEUE> reportQueues)
+        {
+            return false;
+        }
+
         public bool newReportVehicleInstalled(string vhID, List<AMCSREPORTQUEUE> reportqueues)
         {
             bool isSuccsess = true;
