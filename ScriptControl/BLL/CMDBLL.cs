@@ -2020,8 +2020,13 @@ namespace com.mirle.ibg3k0.sc.BLL
             {
                 cmd_ohtc = cmd_ohtcDAO.getByID(con, cmdID);
             }
-            return cmd_ohtc != null &&
-                   cmd_ohtc.CMD_STAUS >= E_CMD_STATUS.NormalEnd;
+            if (cmd_ohtc == null)
+                return true;
+            if(cmd_ohtc.CMD_STAUS >= E_CMD_STATUS.NormalEnd)
+                return true;
+            return false;
+            //return cmd_ohtc != null &&
+            //   cmd_ohtc.CMD_STAUS >= E_CMD_STATUS.NormalEnd;
         }
 
 
@@ -2909,6 +2914,15 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             return hcmds;
         }
+        public void RemoteHCMD_MCSBefore6MonthByBatch()
+        {
+            DateTime date_teime_before_6_month = DateTime.Now.AddMonths(-6);
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                hcmd_mcsDao.RemoteByBatch(con, date_teime_before_6_month);
+            }
+        }
+
         #endregion HCMD_MCS
         #region HCMD_OHTC
         public void CreatHCMD_OHTCs(List<HCMD_OHTC> HCMD_OHTC)
@@ -2929,6 +2943,14 @@ namespace com.mirle.ibg3k0.sc.BLL
             return cmd_ohtc;
         }
 
+        public void RemoteHCMD_OHTCBefore6MonthByBatch()
+        {
+            DateTime date_teime_before_6_month = DateTime.Now.AddMonths(-6);
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                hcmd_ohtcDao.RemoteByBatch(con, date_teime_before_6_month);
+            }
+        }
 
         #endregion HCMD_OHTC
 

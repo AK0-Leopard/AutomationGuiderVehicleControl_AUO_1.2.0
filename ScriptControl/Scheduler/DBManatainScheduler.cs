@@ -5,6 +5,7 @@ using Quartz;
 using Quartz.Impl;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,11 +17,30 @@ namespace com.mirle.ibg3k0.sc.Scheduler
     {
         NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         SCApplication scApp = SCApplication.getInstance();
+        static long syncPoint = 0;
         public void Execute(IJobExecutionContext context)
         {
-            MoveACMD_MCSToHCMD_MCS();
+            if (System.Threading.Interlocked.Exchange(ref syncPoint, 1) == 0)
+            {
+                try
+                {
+                    MoveACMD_MCSToHCMD_MCS();
 
-            MoveACMD_OHTCToHCMD_OHTC();
+                    MoveACMD_OHTCToHCMD_OHTC();
+
+                    scApp.CMDBLL.RemoteHCMD_MCSBefore6MonthByBatch();
+
+                    scApp.CMDBLL.RemoteHCMD_OHTCBefore6MonthByBatch();
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Exception");
+                }
+                finally
+                {
+                    System.Threading.Interlocked.Exchange(ref syncPoint, 0);
+                }
+            }
         }
 
         private void MoveACMD_MCSToHCMD_MCS()
