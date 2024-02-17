@@ -1578,4 +1578,3 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         }
     }
 }
-}

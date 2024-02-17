@@ -36,7 +36,7 @@ namespace com.mirle.ibg3k0.sc.Data.VO
         }
         public bool IsReadyReplyPass { get; set; }
 
-        public void AGVRepuestEntry(string askVhID)
+        public void AGVRepuestEntry()
         {
 
             if (StateMachine.canFire(TrafficControlStateMachine.Trigger.AGVRepuestEntry))
