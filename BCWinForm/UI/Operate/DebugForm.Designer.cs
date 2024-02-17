@@ -331,6 +331,12 @@
             this.label45 = new System.Windows.Forms.Label();
             this.label44 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.label68 = new System.Windows.Forms.Label();
+            this.lbl_trafficState = new System.Windows.Forms.Label();
+            this.btn_resetTraffic = new System.Windows.Forms.Button();
+            this.label74 = new System.Windows.Forms.Label();
+            this.lbl_trafficControlPassFalg = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -375,6 +381,7 @@
             this.DIO_DEVICE_TEST.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage6.SuspendLayout();
+            this.tabPage7.SuspendLayout();
             this.SuspendLayout();
             // 
             // cb_FroceBlockPass
@@ -1327,6 +1334,7 @@
             this.tabControl1.Controls.Add(this.DIO_DEVICE_TEST);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage6);
+            this.tabControl1.Controls.Add(this.tabPage7);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -1580,7 +1588,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(274, 3);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(274, 8);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(164, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -3545,6 +3553,67 @@
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // tabPage7
+            // 
+            this.tabPage7.Controls.Add(this.lbl_trafficControlPassFalg);
+            this.tabPage7.Controls.Add(this.label74);
+            this.tabPage7.Controls.Add(this.btn_resetTraffic);
+            this.tabPage7.Controls.Add(this.lbl_trafficState);
+            this.tabPage7.Controls.Add(this.label68);
+            this.tabPage7.Location = new System.Drawing.Point(4, 31);
+            this.tabPage7.Name = "tabPage7";
+            this.tabPage7.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage7.Size = new System.Drawing.Size(1519, 830);
+            this.tabPage7.TabIndex = 9;
+            this.tabPage7.Text = "Traffic Control";
+            this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // label68
+            // 
+            this.label68.AutoSize = true;
+            this.label68.Location = new System.Drawing.Point(61, 102);
+            this.label68.Name = "label68";
+            this.label68.Size = new System.Drawing.Size(150, 22);
+            this.label68.TabIndex = 0;
+            this.label68.Text = "Traffic State:";
+            // 
+            // lbl_trafficState
+            // 
+            this.lbl_trafficState.AutoSize = true;
+            this.lbl_trafficState.Location = new System.Drawing.Point(217, 102);
+            this.lbl_trafficState.Name = "lbl_trafficState";
+            this.lbl_trafficState.Size = new System.Drawing.Size(220, 22);
+            this.lbl_trafficState.TabIndex = 1;
+            this.lbl_trafficState.Text = "                     ";
+            // 
+            // btn_resetTraffic
+            // 
+            this.btn_resetTraffic.Location = new System.Drawing.Point(65, 157);
+            this.btn_resetTraffic.Name = "btn_resetTraffic";
+            this.btn_resetTraffic.Size = new System.Drawing.Size(224, 44);
+            this.btn_resetTraffic.TabIndex = 2;
+            this.btn_resetTraffic.Text = "Reset Traffic State";
+            this.btn_resetTraffic.UseVisualStyleBackColor = true;
+            this.btn_resetTraffic.Click += new System.EventHandler(this.btn_resetTraffic_Click);
+            // 
+            // label74
+            // 
+            this.label74.AutoSize = true;
+            this.label74.Location = new System.Drawing.Point(61, 40);
+            this.label74.Name = "label74";
+            this.label74.Size = new System.Drawing.Size(270, 22);
+            this.label74.TabIndex = 3;
+            this.label74.Text = "Traffic Control Pass Flag:";
+            // 
+            // lbl_trafficControlPassFalg
+            // 
+            this.lbl_trafficControlPassFalg.AutoSize = true;
+            this.lbl_trafficControlPassFalg.Location = new System.Drawing.Point(337, 40);
+            this.lbl_trafficControlPassFalg.Name = "lbl_trafficControlPassFalg";
+            this.lbl_trafficControlPassFalg.Size = new System.Drawing.Size(220, 22);
+            this.lbl_trafficControlPassFalg.TabIndex = 4;
+            this.lbl_trafficControlPassFalg.Text = "                     ";
+            // 
             // DebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 22F);
@@ -3631,6 +3700,8 @@
             this.tabPage2.ResumeLayout(false);
             this.tabPage6.ResumeLayout(false);
             this.tabPage6.PerformLayout();
+            this.tabPage7.ResumeLayout(false);
+            this.tabPage7.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -3939,5 +4010,11 @@
         private System.Windows.Forms.NumericUpDown num_vh_idle_time;
         private System.Windows.Forms.Button btn_charger_alarm_test;
         private System.Windows.Forms.CheckBox cb_IsAvoidSearchGuide;
+        private System.Windows.Forms.TabPage tabPage7;
+        private System.Windows.Forms.Label label68;
+        private System.Windows.Forms.Label lbl_trafficState;
+        private System.Windows.Forms.Button btn_resetTraffic;
+        private System.Windows.Forms.Label lbl_trafficControlPassFalg;
+        private System.Windows.Forms.Label label74;
     }
 }

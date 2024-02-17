@@ -7,6 +7,7 @@ using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.Data;
 using com.mirle.ibg3k0.sc.Data.SECS.AGVC;
 using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -954,6 +955,15 @@ namespace com.mirle.ibg3k0.bc.winform.UI
         private void timer1_Tick(object sender, EventArgs e)
         {
             dgv_cache_object_data.Refresh();
+            RefreshTrafficControl();
+
+        }
+
+        private void RefreshTrafficControl()
+        {
+            var traffic_control = bcApp.SCApplication.TrafficControlBLL.cache.GetTrafficController();
+            lbl_trafficState.Text = traffic_control.TrafficControlState.ToString();
+            lbl_trafficControlPassFalg.Text = traffic_control.IsReadyReplyPass.ToString();
         }
 
         private void btn_reserve_clear_Click(object sender, EventArgs e)
@@ -1546,5 +1556,26 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 grb_cycleRunBlock.Visible = true;
             }
         }
+
+        private async void btn_resetTraffic_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                btn_resetTraffic.Enabled = false;
+                var traffic_control = bcApp.SCApplication.TrafficControlBLL.cache.GetTrafficController();
+                if (traffic_control == null)
+                    return;
+                await Task.Run(() => traffic_control.CancelRequestForRightOfWay());
+            }
+            catch (Exception ex)
+            {
+                NLog.LogManager.GetCurrentClassLogger().Error(ex, "Exception:");
+            }
+            finally
+            {
+                btn_resetTraffic.Enabled = true;
+            }
+        }
     }
+}
 }

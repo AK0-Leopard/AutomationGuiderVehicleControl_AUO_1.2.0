@@ -15,7 +15,9 @@ using com.mirle.ibg3k0.bcf.Controller;
 using com.mirle.ibg3k0.bcf.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.bcf.Data.VO;
 using com.mirle.ibg3k0.sc.App;
+using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data.PLC_Functions;
+using com.mirle.ibg3k0.sc.Data.TimerAction;
 using com.mirle.ibg3k0.sc.Data.VO;
 using NLog;
 using System;
@@ -82,8 +84,10 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 function.Read(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
                 //2.read log
                 function.Timestamp = DateTime.Now;
-                LogManager.GetLogger("com.mirle.ibg3k0.sc.Common.LogHelper").Info(function.ToString());
 
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(TrafficSingalDefaultValueDefMapAction), Device: "AGV",
+                   Data: function.ToString());
+                
                 eqpt.IsReadyReplyPass = function.CanPass;
             }
             catch (Exception ex)
@@ -107,7 +111,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 function.Write(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
                 //2.write log
                 function.Timestamp = DateTime.Now;
-                LogManager.GetLogger("com.mirle.ibg3k0.sc.Common.LogHelper").Info(function.ToString());
+                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(TrafficSingalDefaultValueDefMapAction), Device: "AGV",
+                   Data: function.ToString());
+
                 return true;
 
             }
@@ -129,11 +135,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             try
             {
+
                 ValueRead traffic_singnal_auo_agvc_ack_pass_vr = null;
                 if (bcfApp.tryGetReadValueEventstring(SCAppConstants.EQPT_OBJECT_CATE_EQPT, eqpt.EQPT_ID, "TRAFFIC_SINGNAL_AUO_AGVC_ACK_PASS", out traffic_singnal_auo_agvc_ack_pass_vr))
                 {
                     traffic_singnal_auo_agvc_ack_pass_vr.afterValueChange += (_sender, _e) => TrafficSignalAUOPassAckChange(_sender, _e);
                 }
+
+                InitialValue();
 
             }
             catch (Exception ex)
@@ -143,5 +152,11 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
 
         }
 
+        private void InitialValue()
+        {
+            TrafficSignalAUOPassAckChange(null, null);
+
+            SendTrafficSignalMirlePassAsk(false);
+        }
     }
 }

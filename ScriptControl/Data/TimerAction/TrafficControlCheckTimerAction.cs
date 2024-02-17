@@ -14,6 +14,9 @@
 using com.mirle.ibg3k0.bcf.Data.TimerAction;
 using com.mirle.ibg3k0.sc.App;
 using com.mirle.ibg3k0.sc.BLL;
+using com.mirle.ibg3k0.sc.Common;
+using com.mirle.ibg3k0.sc.Data.VO;
+using com.mirle.ibg3k0.sc.Service;
 using NLog;
 using System;
 
@@ -45,18 +48,37 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                             //not thing...
                             break;
                         case StateMachine.TrafficControlStateMachine.State.AGVRequest:
-                            traffic_controller.AGVCRequestForRightOfWay();
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(TrafficControlCheckTimerAction), Device: "AGV",
+                               Data: $"有車輛正在要求 traffic control:{traffic_controller.EQPT_ID}的通行權...");
+                            if (traffic_controller.IsOverAGVRequestTime())
+                            {
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(TrafficControlCheckTimerAction), Device: "AGV",
+                                   Data: $"已間隔{TrafficController.MAX_AGV_REQUEST_INTRRVAL_TIME_MS} ms,AGV無再重複要求，取消通行需求");
+                                traffic_controller.CancelRequestForRightOfWay();
+                            }
+                            else
+                            {
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(TrafficControlCheckTimerAction), Device: "AGV",
+                                   Data: $"嘗試發出通行需求...");
+                                traffic_controller.AGVCRequestForRightOfWay();
+                            }
                             break;
                         case StateMachine.TrafficControlStateMachine.State.WaitReply:
                             //這邊要持續確認AGV是否還有通過的需求，如果沒有的話就可以直接cancel request
+                            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(TrafficControlCheckTimerAction), Device: "AGV",
+                               Data: $"等待 Traffic Control回復通行許可...");
                             if (traffic_controller.IsReadyReplyPass)
                             {
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(TrafficControlCheckTimerAction), Device: "AGV",
+                                   Data: $"收到Traffic Control回復通行許可");
                                 traffic_controller.AGVCAcquireRightOfWay();
                             }
                             else
                             {
                                 if (traffic_controller.IsOverAGVRequestTime())
                                 {
+                                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(TrafficControlCheckTimerAction), Device: "AGV",
+                                       Data: $"已間隔{TrafficController.MAX_AGV_REQUEST_INTRRVAL_TIME_MS} ms,AGV無再重複要求，取消通行需求");
                                     traffic_controller.CancelRequestForRightOfWay();
                                 }
                             }
@@ -65,12 +87,12 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                             //持續確認AGV是否已經通過(確認Reserve圖資、Section的資料)，如果已通過或無需求，就呼叫Complete
                             if (traffic_controller.IsNoAGVWiilPass(scApp.VehicleBLL, scApp.ReserveBLL))
                             {
+                                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(TrafficControlCheckTimerAction), Device: "AGV",
+                                   Data: $"已無AGV無管制路段中,重置通行需求");
                                 traffic_controller.ReturnRightOfWay();
                             }
                             break;
                     }
-
-
                 }
 
 

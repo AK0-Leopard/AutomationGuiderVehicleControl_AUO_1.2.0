@@ -18,7 +18,7 @@ namespace com.mirle.ibg3k0.sc.Data.VO
         TrafficControlStateMachine StateMachine;
         Stopwatch StopwatchLastAGVRequestTIme;
         //最大間隔詢問時間的常數設定值
-        const int MAX_AGV_REQUEST_INTRRVAL_TIME_MS = 10_000;
+        public const int MAX_AGV_REQUEST_INTRRVAL_TIME_MS = 10_000;
 
 
         public TrafficController(TrafficControlInfo trafficControlInfo)
@@ -36,9 +36,9 @@ namespace com.mirle.ibg3k0.sc.Data.VO
         }
         public bool IsReadyReplyPass { get; set; }
 
-
-        public void AGVRepuestEntry()
+        public void AGVRepuestEntry(string askVhID)
         {
+
             if (StateMachine.canFire(TrafficControlStateMachine.Trigger.AGVRepuestEntry))
                 StateMachine.AGVRepuestEntry();
             StopwatchLastAGVRequestTIme.Restart();

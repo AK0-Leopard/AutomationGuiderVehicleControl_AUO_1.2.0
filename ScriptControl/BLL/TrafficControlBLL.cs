@@ -50,7 +50,12 @@ namespace com.mirle.ibg3k0.sc.BLL
                 var trafficControllers = eqs.Where(e => e is TrafficController).Select(e => e as TrafficController);
                 return trafficControllers;
             }
-
+            public TrafficController GetTrafficController()
+            {
+                var eqs = EqObjCacheManager.getAllEquipment();
+                var trafficControllers = eqs.Where(e => e is TrafficController).FirstOrDefault() as TrafficController;
+                return trafficControllers;
+            }
             public (bool hasPass, TrafficController controller) tryGetPassTrafficControl(string sectionID)
             {
                 var eqs = EqObjCacheManager.getAllEquipment();
