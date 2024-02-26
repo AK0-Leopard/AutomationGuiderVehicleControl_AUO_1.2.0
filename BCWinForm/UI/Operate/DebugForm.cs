@@ -1565,7 +1565,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 var traffic_control = bcApp.SCApplication.TrafficControlBLL.cache.GetTrafficController();
                 if (traffic_control == null)
                     return;
-                await Task.Run(() => traffic_control.CancelRequestForRightOfWay());
+                await Task.Run(() => traffic_control.CancelRequestForRightOfWay(true));
             }
             catch (Exception ex)
             {
@@ -1576,5 +1576,6 @@ namespace com.mirle.ibg3k0.bc.winform.UI
                 btn_resetTraffic.Enabled = true;
             }
         }
+
     }
 }

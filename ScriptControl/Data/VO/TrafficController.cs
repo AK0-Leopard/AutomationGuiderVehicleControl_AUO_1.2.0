@@ -18,7 +18,7 @@ namespace com.mirle.ibg3k0.sc.Data.VO
         TrafficControlStateMachine StateMachine;
         Stopwatch StopwatchLastAGVRequestTIme;
         //最大間隔詢問時間的常數設定值
-        public const int MAX_AGV_REQUEST_INTRRVAL_TIME_MS = 10_000;
+        public const int MAX_AGV_REQUEST_INTRRVAL_TIME_MS = 30_000;
 
 
         public TrafficController(TrafficControlInfo trafficControlInfo)
@@ -65,10 +65,10 @@ namespace com.mirle.ibg3k0.sc.Data.VO
                 StateMachine.ReturnRightOfWay();
             }
         }
-        public void CancelRequestForRightOfWay()
+        public void CancelRequestForRightOfWay(bool isForce = false)
         {
             bool is_wirte_sucess = getExcuteMapAction().SendTrafficSignalMirlePassAsk(false);
-            if (is_wirte_sucess)
+            if (is_wirte_sucess || isForce)
             {
                 StateMachine.CancelRequestForRightOfWay();
             }

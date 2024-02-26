@@ -16,6 +16,7 @@ namespace com.mirle.ibg3k0.sc.BLL
 {
     public class TrafficControlBLL
     {
+        public static NLog.Logger TrafficControlLogger = NLog.LogManager.GetLogger("TrafficControl");
         static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         protected SCApplication scApp;
         public Database dataBase { get; private set; }
@@ -58,9 +59,10 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             public (bool hasPass, TrafficController controller) tryGetPassTrafficControl(string sectionID)
             {
+
                 var eqs = EqObjCacheManager.getAllEquipment();
                 var trafficControllers = eqs.Where(e => e is TrafficController).Select(e => e as TrafficController);
-                var pass_traffic_controller = trafficControllers.Where(t => t.IsInControlSection(sectionID)).FirstOrDefault();
+                var pass_traffic_controller = trafficControllers.Where(t => t.IsInControlSection(SCUtility.Trim(sectionID))).FirstOrDefault();
                 if (pass_traffic_controller != null)
                 {
                     return (true, pass_traffic_controller);

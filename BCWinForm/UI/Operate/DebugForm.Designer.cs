@@ -330,13 +330,13 @@
             this.label46 = new System.Windows.Forms.Label();
             this.label45 = new System.Windows.Forms.Label();
             this.label44 = new System.Windows.Forms.Label();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tabPage7 = new System.Windows.Forms.TabPage();
-            this.label68 = new System.Windows.Forms.Label();
-            this.lbl_trafficState = new System.Windows.Forms.Label();
-            this.btn_resetTraffic = new System.Windows.Forms.Button();
-            this.label74 = new System.Windows.Forms.Label();
             this.lbl_trafficControlPassFalg = new System.Windows.Forms.Label();
+            this.label74 = new System.Windows.Forms.Label();
+            this.btn_resetTraffic = new System.Windows.Forms.Button();
+            this.lbl_trafficState = new System.Windows.Forms.Label();
+            this.label68 = new System.Windows.Forms.Label();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1588,7 +1588,7 @@
             // 
             this.cb_Cache_data_Name.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.cb_Cache_data_Name.FormattingEnabled = true;
-            this.cb_Cache_data_Name.Location = new System.Drawing.Point(274, 8);
+            this.cb_Cache_data_Name.Location = new System.Drawing.Point(274, 3);
             this.cb_Cache_data_Name.Name = "cb_Cache_data_Name";
             this.cb_Cache_data_Name.Size = new System.Drawing.Size(164, 30);
             this.cb_Cache_data_Name.TabIndex = 1;
@@ -3548,11 +3548,6 @@
             this.label44.TabIndex = 0;
             this.label44.Text = "EqpNAME:";
             // 
-            // timer1
-            // 
-            this.timer1.Interval = 1000;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
             // tabPage7
             // 
             this.tabPage7.Controls.Add(this.lbl_trafficControlPassFalg);
@@ -3568,23 +3563,23 @@
             this.tabPage7.Text = "Traffic Control";
             this.tabPage7.UseVisualStyleBackColor = true;
             // 
-            // label68
+            // lbl_trafficControlPassFalg
             // 
-            this.label68.AutoSize = true;
-            this.label68.Location = new System.Drawing.Point(61, 102);
-            this.label68.Name = "label68";
-            this.label68.Size = new System.Drawing.Size(150, 22);
-            this.label68.TabIndex = 0;
-            this.label68.Text = "Traffic State:";
+            this.lbl_trafficControlPassFalg.AutoSize = true;
+            this.lbl_trafficControlPassFalg.Location = new System.Drawing.Point(337, 40);
+            this.lbl_trafficControlPassFalg.Name = "lbl_trafficControlPassFalg";
+            this.lbl_trafficControlPassFalg.Size = new System.Drawing.Size(220, 22);
+            this.lbl_trafficControlPassFalg.TabIndex = 4;
+            this.lbl_trafficControlPassFalg.Text = "                     ";
             // 
-            // lbl_trafficState
+            // label74
             // 
-            this.lbl_trafficState.AutoSize = true;
-            this.lbl_trafficState.Location = new System.Drawing.Point(217, 102);
-            this.lbl_trafficState.Name = "lbl_trafficState";
-            this.lbl_trafficState.Size = new System.Drawing.Size(220, 22);
-            this.lbl_trafficState.TabIndex = 1;
-            this.lbl_trafficState.Text = "                     ";
+            this.label74.AutoSize = true;
+            this.label74.Location = new System.Drawing.Point(61, 40);
+            this.label74.Name = "label74";
+            this.label74.Size = new System.Drawing.Size(270, 22);
+            this.label74.TabIndex = 3;
+            this.label74.Text = "Traffic Control Pass Flag:";
             // 
             // btn_resetTraffic
             // 
@@ -3596,23 +3591,28 @@
             this.btn_resetTraffic.UseVisualStyleBackColor = true;
             this.btn_resetTraffic.Click += new System.EventHandler(this.btn_resetTraffic_Click);
             // 
-            // label74
+            // lbl_trafficState
             // 
-            this.label74.AutoSize = true;
-            this.label74.Location = new System.Drawing.Point(61, 40);
-            this.label74.Name = "label74";
-            this.label74.Size = new System.Drawing.Size(270, 22);
-            this.label74.TabIndex = 3;
-            this.label74.Text = "Traffic Control Pass Flag:";
+            this.lbl_trafficState.AutoSize = true;
+            this.lbl_trafficState.Location = new System.Drawing.Point(217, 102);
+            this.lbl_trafficState.Name = "lbl_trafficState";
+            this.lbl_trafficState.Size = new System.Drawing.Size(220, 22);
+            this.lbl_trafficState.TabIndex = 1;
+            this.lbl_trafficState.Text = "                     ";
             // 
-            // lbl_trafficControlPassFalg
+            // label68
             // 
-            this.lbl_trafficControlPassFalg.AutoSize = true;
-            this.lbl_trafficControlPassFalg.Location = new System.Drawing.Point(337, 40);
-            this.lbl_trafficControlPassFalg.Name = "lbl_trafficControlPassFalg";
-            this.lbl_trafficControlPassFalg.Size = new System.Drawing.Size(220, 22);
-            this.lbl_trafficControlPassFalg.TabIndex = 4;
-            this.lbl_trafficControlPassFalg.Text = "                     ";
+            this.label68.AutoSize = true;
+            this.label68.Location = new System.Drawing.Point(61, 102);
+            this.label68.Name = "label68";
+            this.label68.Size = new System.Drawing.Size(150, 22);
+            this.label68.TabIndex = 0;
+            this.label68.Text = "Traffic State:";
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // DebugForm
             // 

@@ -16,6 +16,7 @@ using com.mirle.ibg3k0.bcf.Common.MPLC;
 using com.mirle.ibg3k0.bcf.Controller;
 using com.mirle.ibg3k0.sc.Common;
 using Newtonsoft.Json;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -94,18 +95,20 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions
                 BCFUtility.writeEquipmentLog(eq_id, listVR);
             }
         }
-        public virtual void Write(BCFApplication bcfApp, string eqObjIDCate, string eq_id)
+        public virtual bool Write(BCFApplication bcfApp, string eqObjIDCate, string eq_id)
         {
             ValueWrite ve_handshake = null;
-            Write(bcfApp, eqObjIDCate, eq_id, out ve_handshake);
+            if (!Write(bcfApp, eqObjIDCate, eq_id, out ve_handshake))
+                return false;
             if (ve_handshake != null)
             {
                 SpinWait.SpinUntil(() => false, 500);
-                ISMControl.writeDeviceBlock(bcfApp, ve_handshake);
+                return ISMControl.writeDeviceBlock(bcfApp, ve_handshake);
             }
+            return true;
         }
 
-        private void Write(BCFApplication bcfApp, string eqObjIDCate, string eq_id, out ValueWrite vw_handshake)
+        private bool Write(BCFApplication bcfApp, string eqObjIDCate, string eq_id, out ValueWrite vw_handshake)
         {
             vw_handshake = null;
             EQ_ID = eq_id;
@@ -153,7 +156,11 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions
                 }
                 else
                 {
-                    ISMControl.writeDeviceBlock(bcfApp, vw);
+                    if (!ISMControl.writeDeviceBlock(bcfApp, vw))
+                    {
+                        NLog.LogManager.GetCurrentClassLogger().Warn($"write plc name:{vw.Name} valus:{value} fail");
+                        return false;
+                    }
                 }
                 listVW.Add(vw);
             }
@@ -161,6 +168,7 @@ namespace com.mirle.ibg3k0.sc.Data.PLC_Functions
             {
                 BCFUtility.writeEquipmentLog(eq_id, listVW);
             }
+            return true;
         }
         public TrxMPLC.ReturnCode SendRecv(BCFApplication bcfApp, string eqObjIDCate, string eq_id, ValueRead replyMsg)
         {

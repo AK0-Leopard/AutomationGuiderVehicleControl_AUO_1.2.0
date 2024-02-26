@@ -15,6 +15,7 @@ using com.mirle.ibg3k0.bcf.Controller;
 using com.mirle.ibg3k0.bcf.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.bcf.Data.VO;
 using com.mirle.ibg3k0.sc.App;
+using com.mirle.ibg3k0.sc.BLL;
 using com.mirle.ibg3k0.sc.Common;
 using com.mirle.ibg3k0.sc.Data.PLC_Functions;
 using com.mirle.ibg3k0.sc.Data.TimerAction;
@@ -85,9 +86,8 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                 //2.read log
                 function.Timestamp = DateTime.Now;
 
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(TrafficSingalDefaultValueDefMapAction), Device: "AGV",
-                   Data: function.ToString());
-                
+                TrafficControlBLL.TrafficControlLogger.Info(function.ToString());
+
                 eqpt.IsReadyReplyPass = function.CanPass;
             }
             catch (Exception ex)
@@ -108,11 +108,14 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
             {
                 //1.建立各個Function物件
                 function.RequestPass = signal;
-                function.Write(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID);
+                if (!function.Write(bcfApp, eqpt.EqptObjectCate, eqpt.EQPT_ID))
+                {
+                    TrafficControlBLL.TrafficControlLogger.Info($"write fail,{function.ToString()}");
+                    return false;
+                }
                 //2.write log
                 function.Timestamp = DateTime.Now;
-                LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(TrafficSingalDefaultValueDefMapAction), Device: "AGV",
-                   Data: function.ToString());
+                TrafficControlBLL.TrafficControlLogger.Info(function.ToString());
 
                 return true;
 

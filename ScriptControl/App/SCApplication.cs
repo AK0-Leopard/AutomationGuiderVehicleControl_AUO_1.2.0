@@ -481,8 +481,9 @@ namespace com.mirle.ibg3k0.sc.App
             double moveCostForward = getDouble("MoveCostForward", 1);
             double moveCostReverse = getDouble("MoveCostReverse", 1);
             string algorithm = getString("ShortestPathAlgorithm", "DIJKSTRA");
-
             SystemParameter.SECSConversactionTimeout = getInt("SECSConversactionTimeout", 60);
+
+            SystemParameter.setAllowIdleTime_ms(getInt("AllowIdleTime", 10_000));
 
             initDao();      //Initial DAO
             initBLL(algorithm);      //Initial BLL
@@ -1146,7 +1147,7 @@ namespace com.mirle.ibg3k0.sc.App
             UnitBLL = new UnitBLL();
             switch (BC_ID)
             {
-                case SCAppConstants.WorkVersion.VERSION_NAME_AUO_CAAGVC00:
+                //case SCAppConstants.WorkVersion.VERSION_NAME_AUO_CAAGVC00:
                 //case SCAppConstants.WorkVersion.VERSION_NAME_AUO_CAAGV200:
                 case SCAppConstants.WorkVersion.VERSION_NAME_AUO_FAXAGV03:
                     ReserveBLL = new ReserveBLLForByPass();
