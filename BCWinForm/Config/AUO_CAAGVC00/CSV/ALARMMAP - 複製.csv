@@ -2,8 +2,8 @@ OBJECT_ID,ALARM_ID,ALARM_LVL,ALARM_DESC
 AGV_NODE,1,1,Agv already have a transfer command on middler get new transfer command.
 AGV_NODE,2,1,Watch low power thread is charging can't do new transfer command.
 AGV_NODE,3,1,Loading is off after load finished.
-AGV_NODE,4,2,Carrier ID is EMPTY after load finished.
-AGV_NODE,5,2,Carrier ID is ERROR after load finished.
+AGV_NODE,4,1,Carrier ID is EMPTY after load finished.
+AGV_NODE,5,1,Carrier ID is ERROR after load finished.
 AGV_NODE,6,1,Move finish fail.
 AGV_NODE,7,1,Loading is ON after unload finished.
 AGV_NODE,8,1,Fork command is exist before unload.
@@ -25,7 +25,7 @@ AGV_NODE,23,1,Load address unmatch current command load address.
 AGV_NODE,24,1,ToUnloadSections is empty.
 AGV_NODE,25,1,ToLoadSections is empty.
 AGV_NODE,26,1,Exception happened in override-check.
-AGV_NODE,27,2,Agv not Auto reject transfer command.
+AGV_NODE,27,2,Fork not home reject transfer command.
 AGV_NODE,28,1,Carrier ID is mismatch after load finished.
 AGV_NODE,29,1,Carrier ID read reply is timeout
 AGV_NODE,30,1,Vehicle has alarm cannot do transfer command.
@@ -37,8 +37,6 @@ AGV_NODE,35,1,Vehicle is not pause by reserve reject avoid.
 AGV_NODE,36,1,Exception happened in avoid-check.
 AGV_NODE,37,2,Get EMS from AGVC.
 AGV_NODE,38,1,Interlock Error With EQ.
-AGV_NODE,40,1,AGV connection is failed.
-AGV_NODE,41,1,Position Error.
 AGV_NODE,100000,2, Elmo connection failed
 AGV_NODE,100001,2, Elmo Config read failed
 AGV_NODE,100002,2, Elmo Config path error
@@ -49,7 +47,7 @@ AGV_NODE,101101,2, SR2000-R data format error
 AGV_NODE,110000,2, Reject Middler Move Command: Program Closed
 AGV_NODE,110001,2, Reject Middler move command: AGV moving
 AGV_NODE,110002,2, Reject Middler Move Command: Charging
-AGV_NODE,110003,2, Reject Middler move command: Agv not Auto
+AGV_NODE,110003,2, Reject Middler move command: Fork not Home
 AGV_NODE,110004,2, Reject Middler Move Command: Excessive Start Error
 AGV_NODE,110005,2, Reject Middler Move Command: AGV Trek
 AGV_NODE,110006,2, Reject Middler move command: command breakdown failed
@@ -97,120 +95,6 @@ AGV_NODE,156000,2, Second repair timeout
 AGV_NODE,156001,2, Start second repair timeout
 AGV_NODE,159998,2, Where program triggers should not trigger
 AGV_NODE,159999,2, Trigger to unimplemented function
-AGV_NODE,500000,2,MoveControl Exception
-AGV_NODE,500001,1,Send PLC to Stop AGV
-AGV_NODE,500002,2,Command out of trigger range
-AGV_NODE,500100,2,Move : Initail Wheel Angle Timeout
-AGV_NODE,500101,2,Move : Enable allAxis Timeout
-AGV_NODE,500200,1,Reserve : Get Reserve with MoveControl Idle
-AGV_NODE,500201,1,Reserve : Get Reserve position not math
-AGV_NODE,500202,2,Reserve : Command's Reserve out of ReserveList's Range
-AGV_NODE,500300,2,SlowStop : Timeout
-AGV_NODE,500400,2,STurn : AGV turning too fast
-AGV_NODE,500401,2,STurn : AGV turning too slow
-AGV_NODE,500402,1,STurn : AGV turning with GroupTurn not Ready
-AGV_NODE,500403,2,STurn : AGV turning with wrong path
-AGV_NODE,500404,2,STurn : one of wheels turning too slow
-AGV_NODE,500405,2,STurn : stop in STurn feature distable
-AGV_NODE,500406,2,STurn : continue in STurn feature distable
-AGV_NODE,500500,2,RTurn : AGV turning too fast
-AGV_NODE,500501,2,RTurn : AGV turning too slow
-AGV_NODE,500502,2,RTurn : Virtual Axis not Link
-AGV_NODE,500503,2,RTurn : Turn direction format error
-AGV_NODE,500504,2,RTurn : stop in RTurn feature distable
-AGV_NODE,500505,2,RTurn : RTurn Control timeout
-AGV_NODE,500506,2,RTurn : stop in can't continue step
-AGV_NODE,500507,2,RTurn : continue in RTurn feature distable
-AGV_NODE,500600,2,StopAndClear : Timeout
-AGV_NODE,500700,2,SecondCorrection : Timeout
-AGV_NODE,500701,2,SecondCorrection : Disable Timeout
-AGV_NODE,501000,2,MoveMethod Initail Fail
-AGV_NODE,501001,2,MoveMethod Driver Command Fail
-AGV_NODE,501100,2,MotionDriver_Elmo Initail Fail
-AGV_NODE,501101,2,MotionDriver_Elmo Connect Fail
-AGV_NODE,501102,2,MotionDriver_Elmo Axis Setting format error
-AGV_NODE,501103,2,MotionDriver_Elmo Bulk Exception
-AGV_NODE,501104,2,MotionDriver_Elmo Disconnect : IPC witch controler
-AGV_NODE,501105,2,MotionDriver_Elmo Disconnect : controler witch driver
-AGV_NODE,501110,1,MotionDriver Axis Error
-AGV_NODE,501111,1,MotionDriver Axis XFL Error
-AGV_NODE,501112,1,MotionDriver Axis XFR Error
-AGV_NODE,501113,1,MotionDriver Axis XRL Error
-AGV_NODE,501114,1,MotionDriver Axis XRR Error
-AGV_NODE,501115,1,MotionDriver Axis TFL Error
-AGV_NODE,501116,1,MotionDriver Axis TFR Error
-AGV_NODE,501117,1,MotionDriver Axis TRL Error
-AGV_NODE,501118,1,MotionDriver Axis TRR Error
-AGV_NODE,501119,1,MotionDriver Axis VXFL Error
-AGV_NODE,501120,1,MotionDriver Axis VXFR Error
-AGV_NODE,501121,1,MotionDriver Axis VXRL Error
-AGV_NODE,501122,1,MotionDriver Axis VXRR Error
-AGV_NODE,501123,1,MotionDriver Axis VTFL Error
-AGV_NODE,501124,1,MotionDriver Axis VTFR Error
-AGV_NODE,501125,1,MotionDriver Axis VTRL Error
-AGV_NODE,501126,1,MotionDriver Axis VTRR Error
-AGV_NODE,501127,1,MotionDriver Axis XFL Error
-AGV_NODE,501128,1,MotionDriver Axis XFL Error
-AGV_NODE,502000,2,LocateControl Initail Fail
-AGV_NODE,502100,2,LocateDriver_BarcodeMapSystem Initail Fail
-AGV_NODE,502101,2,LocateDriver_BarcodeMapSystem Connect Fail
-AGV_NODE,502102,2,LocateDriver_BarcodeMapSystem data format error
-AGV_NODE,502103,1,LocateDriver_BarcodeMapSystem LON Exception
-AGV_NODE,502104,1,LocateDriver_BarcodeMapSystem Error
-AGV_NODE,502200,2,LocateDriver_SLAM_Sick Initail Fail
-AGV_NODE,502201,2,LocateDriver_SLAM_Sick Connect Fail
-AGV_NODE,502202,2,LocateDriver_SLAM_Sick data format error
-AGV_NODE,502203,1,LocateDriver_SLAM_Sick wrong locate
-AGV_NODE,503000,1,CreateMoveCommandList Fail
-AGV_NODE,503100,1,Can't Override : Can't Pause now
-AGV_NODE,503101,2,Can't Override : Override Timeout
-AGV_NODE,504000,1,Can't Auto : MoveControl Status is not Idle
-AGV_NODE,504001,1,Can't Auto : Motion Driver Disconnect
-AGV_NODE,504002,1,Can't Auto : MoveCommandControl Intail Fail
-AGV_NODE,504003,1,Can't Auto : Closing program
-AGV_NODE,504004,1,Can't Auto : Axis Error
-AGV_NODE,504005,1,Can't Auto : Wait ResetAlarm Finish
-AGV_NODE,504006,1,Can't Auto : JogPitch Action
-AGV_NODE,504007,1,Can't Auto : LocateControl Intail Fail
-AGV_NODE,504008,1,Can't Auto : Locate Driver Disconnect
-AGV_NODE,504009,1,Can't Auto : Locate Driver Error
-AGV_NODE,504010,1,Can't Auto : AutoAction Fail
-AGV_NODE,504100,1,Reject Move Command : MovecmdInfo data error
-AGV_NODE,504101,1,Reject Move Command : Closing Program
-AGV_NODE,504102,1,Reject Move Command : MoveControl Status is not Idle
-AGV_NODE,504103,1,Reject Move Command : Charging
-AGV_NODE,504104,1,Reject Move Command : Fork isn't on Auto Status
-AGV_NODE,504105,1,Reject Move Command : MoveControl driver disconnect
-AGV_NODE,504106,1,Reject Move Command : No current coordinates
-AGV_NODE,504107,1,Reject Move Command : Not is start position
-AGV_NODE,504108,1,Reject Move Command : Not is start AGV angle
-AGV_NODE,504109,1,Reject Move Command : in cancel flow
-AGV_NODE,504110,1,Reject Move Command : in AutoRetry flow
-AGV_NODE,504200,2,SafetyStop : Fork isn't on Auto Status
-AGV_NODE,504201,2,SafetyStop : Charging
-AGV_NODE,504202,2,SafetyStop : Excessive angular deviation
-AGV_NODE,504203,2,SafetyStop : Excessive section deviation
-AGV_NODE,504204,2,SafetyStop : Too long not read barcode (turn)
-AGV_NODE,504205,2,SafetyStop : Too long not read barcode (line)
-AGV_NODE,504206,2,SafetyStop : AGV Stop without reason
-AGV_NODE,504207,2,SafetyStop : Velocity change error
-AGV_NODE,504208,2,SafetyStop : Axis error
-AGV_NODE,504209,2,SafetyStop : LocateControl Error
-AGV_NODE,504210,2,SafetyStop : Stop Request
-AGV_NODE,504211,2,SafetyStop : Bumper Stop
-AGV_NODE,504212,2,SafetyStop : EMO Stop
-AGV_NODE,504213,2,SafetyStop : Delta update value error
-AGV_NODE,504300,1,Can't Reset Alarm : Main Flow Exception
-AGV_NODE,504301,1,Can't Reset Alarm : stop in turn flow
-AGV_NODE,504302,1,Can't Reset Alarm : vehicle not in section
-AGV_NODE,504303,1,Can't Reset Alarm : Locate Control Error
-AGV_NODE,504304,1,Can't Reset Alarm : Motion Control Error
-AGV_NODE,504400,1,Can't AutoReset : Special Alarm
-AGV_NODE,504500,2,Can't AutoRetry : AutoRetry Count more than config
-AGV_NODE,504501,2,Can't AutoRetry : AutoReset fail
-AGV_NODE,504502,2,Can't AutoRetry : Create Retry MoveCmdInfo fail
-AGV_NODE,504600,2,BeamSensor singal on Timeout
-AGV_NODE,510000,1,Elmo Alarm
 AGV_NODE,270001,2, Fork Command Format NG
 AGV_NODE,270002,2, Fork Command Read timeout
 AGV_NODE,270003,2, Fork Not Busy timeout
@@ -716,126 +600,126 @@ AGV_NODE,200496,2,
 AGV_NODE,200497,2, 
 AGV_NODE,200498,2, 
 AGV_NODE,200499,2, 
-AGV_NODE,200500,2,A0500:(IPC)Charging is ON after send stop charge command to plc.
-AGV_NODE,200501,2,A0501:(IPC)Not on Auto mode reject transfer command.
-AGV_NODE,200502,2,A0502:(IPC)Get EMS from AGVC.
-AGV_NODE,200503,2,A0503:(IPC)Elmo³s½u¥¢±Ñ
-AGV_NODE,200504,2,A0504:(IPC)Elmo ConfigÅª¨ú¥¢±Ñ
-AGV_NODE,200505,2,A0505:(IPC)Elmo Config¸ô®|¿ù»~
-AGV_NODE,200506,2,A0506:(IPC)SR2000-L³s½u¥¢±Ñ
-AGV_NODE,200507,2,A0507:(IPC)SR2000-R³s½u¥¢±Ñ
-AGV_NODE,200508,2,A0508:(IPC)©Úµ´Middler²¾°Ê©R¥O:µ{¦¡Ãö³¬¤¤
-AGV_NODE,200509,2,A0509:(IPC)©Úµ´Middler²¾°Ê©R¥O:AGV²¾°Ê¤¤
-AGV_NODE,200510,2,A0510:(IPC)©Úµ´Middler²¾°Ê©R¥O:Charging
-AGV_NODE,200511,2,A0511:(IPC)©Úµ´Middler²¾°Ê©R¥O:AGV¤£¦bAutoª¬ºA
-AGV_NODE,200512,2,A0512:(IPC)©Úµ´Middler²¾°Ê©R¥O:°_ÂI»~®t¹L¤j
-AGV_NODE,200513,2,A0513:(IPC)©Úµ´Middler²¾°Ê©R¥O:AGV°g¯è¤¤
-AGV_NODE,200514,2,A0514:(IPC)©Úµ´Middler²¾°Ê©R¥O:©R¥O¤À¸Ñ¥¢±Ñ
-AGV_NODE,200515,2,A0515:(IPC)¥XÅs«á¹L¤[¨SÅª¨ìBarcode
-AGV_NODE,200516,2,A0516:(IPC)ª½½u¹L¤[¨SÅª¨ìBarcode
-AGV_NODE,200517,2,A0517:(IPC)©MSection¨¤«×°¾®t¹L¤j
-AGV_NODE,200518,2,A0518:(IPC)©MSection­y¹D°¾®t¹L¤j
-AGV_NODE,200519,2,A0519:(IPC)¨SÅª¨ú¨ì¸ÓÅª¨úªºBarcode
-AGV_NODE,200520,2,A0520:(IPC)¨«¦æ¤¤AGV¤£¦bAutoª¬ºA
-AGV_NODE,200521,2,A0521:(IPC)¨«¦æ¤¤XFL²§±`
-AGV_NODE,200522,2,A0522:(IPC)¨«¦æ¤¤XFR²§±`
-AGV_NODE,200523,2,A0523:(IPC)¨«¦æ¤¤XRL²§±`
-AGV_NODE,200524,2,A0524:(IPC)¨«¦æ¤¤XRR²§±`
-AGV_NODE,200525,2,A0525:(IPC)¨«¦æ¤¤TFL²§±`
-AGV_NODE,200526,2,A0526:(IPC)¨«¦æ¤¤TFR²§±`
-AGV_NODE,200527,2,A0527:(IPC)¨«¦æ¤¤TRL²§±`
-AGV_NODE,200528,2,A0528:(IPC)¨«¦æ¤¤TRR²§±`
-AGV_NODE,200529,2,A0529:(IPC)¨«¦æ¤¤VXFL²§±`
-AGV_NODE,200530,2,A0530:(IPC)¨«¦æ¤¤VXFR²§±`
-AGV_NODE,200531,2,A0531:(IPC)¨«¦æ¤¤VXRL²§±`
-AGV_NODE,200532,2,A0532:(IPC)¨«¦æ¤¤VXRR²§±`
-AGV_NODE,200533,2,A0533:(IPC)¨«¦æ¤¤VTFL²§±`
-AGV_NODE,200534,2,A0534:(IPC)¨«¦æ¤¤VTFR²§±`
-AGV_NODE,200535,2,A0535:(IPC)¨«¦æ¤¤VTRL²§±`
-AGV_NODE,200536,2,A0536:(IPC)¨«¦æ¤¤VTRR²§±`
-AGV_NODE,200537,2,A0537:(IPC)MoveControl¥DThread Excption
-AGV_NODE,200538,2,A0538:(IPC)²¾°Ê«e±ÛÂàÂà¦V¶b±ÛÂà¤£¨ì¦ì
-AGV_NODE,200539,2,A0539:(IPC)¶W¹L©R¥OÄ²µo°Ï¶¡
-AGV_NODE,200540,2,A0540:(IPC)AGV EMS
-AGV_NODE,200541,2,A0541:(IPC)­°³t«ü¥O­°³t³t«×²§±`
-AGV_NODE,200542,2,A0542:(IPC)TR¤JÅs¶W³t
-AGV_NODE,200543,2,A0543:(IPC)»P¹w­p¸ô®|®t²§¹L¤j
-AGV_NODE,200544,2,A0544:(IPC)TR¤JÅs¹LºC
-AGV_NODE,200545,2,A0545:(IPC)¥|½ü¨¤«×®t²§¹L¤j
-AGV_NODE,200546,2,A0546:(IPC)R2000¤JÅs¶W³t
-AGV_NODE,200547,2,A0547:(IPC)R2000¤JÅs¹LºC
-AGV_NODE,200548,2,A0548:(IPC)R2000²§±`°±¤î
-AGV_NODE,200549,2,A0549:(IPC)¨¤«×°¾®t¹L¤j
-AGV_NODE,200550,2,A0550:(IPC)­y¹D°¾®t¹L¤j
-AGV_NODE,200551,2,A0551:(IPC)SlowStop Timeout
-AGV_NODE,200552,2,A0552:(IPC)Stop Timeout
-AGV_NODE,200553,2,A0553:(IPC)StopAndClear Timeout
-AGV_NODE,200554,2,A0554:(IPC)¤G­×timeout
-AGV_NODE,200555,2,A0555:(IPC)±Ò°Ê¤G­×timeout
-AGV_NODE,200556,2,A0556:(IPC)µ{¦¡Ä²µo¤£À³¸ÓÄ²µoªº¦a¤è
-AGV_NODE,200557,2,A0557:(IPC)Ä²µo¨ì¥¼¹ê§@¥\¯à
-AGV_NODE,200558,2,A0558:(IPC)MoveControl Exception
-AGV_NODE,200559,2,A0559:(IPC)Command out of trigger range
-AGV_NODE,200560,2,A0560:(IPC)Move : Initail Wheel Angle Timeout
-AGV_NODE,200561,2,A0561:(IPC)Move : Enable allAxis Timeout
-AGV_NODE,200562,2,A0562:(IPC)Reserve : Command's Reserve out of ReserveList's Range
-AGV_NODE,200563,2,A0563:(IPC)SlowStop : Timeout
-AGV_NODE,200563,2,A0564:(IPC)STurn : AGV turning too fast
-AGV_NODE,200565,2,A0565:(IPC)STurn : AGV turning too slow
-AGV_NODE,200566,2,A0566:(IPC)STurn : AGV turning with wrong path
-AGV_NODE,200567,2,A0567:(IPC)STurn : one of wheels turning too slow
-AGV_NODE,200568,2,A0568:(IPC)STurn : stop in STurn feature distable
-AGV_NODE,200569,2,A0569:(IPC)STurn : continue in STurn feature distable
-AGV_NODE,200570,2,A0570:(IPC)RTurn : AGV turning too fast
-AGV_NODE,200571,2,A0571:(IPC)RTurn : AGV turning too slow
-AGV_NODE,200572,2,A0572:(IPC)RTurn : Virtual Axis not Link
-AGV_NODE,200573,2,A0573:(IPC)RTurn : Turn direction format error
-AGV_NODE,200574,2,A0574:(IPC)RTurn : stop in RTurn feature distable
-AGV_NODE,200575,2,A0575:(IPC)RTurn : RTurn Control timeout
-AGV_NODE,200576,2,A0576:(IPC)RTurn : stop in can't continue step
-AGV_NODE,200577,2,A0577:(IPC)RTurn : continue in RTurn feature distable
-AGV_NODE,200578,2,A0578:(IPC)StopAndClear : Timeout
-AGV_NODE,200579,2,A0579:(IPC)SecondCorrection : Timeout
-AGV_NODE,200580,2,A0580:(IPC)MoveMethod Initail Fail
-AGV_NODE,200581,2,A0581:(IPC)MoveMethod Driver Command Fail
-AGV_NODE,200582,2,A0582:(IPC)MotionDriver_Elmo Initail Fail
-AGV_NODE,200583,2,A0583:(IPC)MotionDriver_Elmo Connect Fail
-AGV_NODE,200584,2,A0584:(IPC)MotionDriver_Elmo Axis Setting format error
-AGV_NODE,200585,2,A0585:(IPC)MotionDriver_Elmo Bulk Exception
-AGV_NODE,200586,2,A0586:(IPC)MotionDriver_Elmo Disconnect : IPC witch controler
-AGV_NODE,200587,2,A0587:(IPC)MotionDriver_Elmo Disconnect : controler witch driver
-AGV_NODE,200588,2,A0588:(IPC)LocateControl Initail Fail
-AGV_NODE,200589,2,A0589:(IPC)LocateDriver_BarcodeMapSystem Initail Fail
-AGV_NODE,200590,2,A0590:(IPC)LocateDriver_BarcodeMapSystem Connect Fail
-AGV_NODE,200591,2,A0591:(IPC)LocateDriver_BarcodeMapSystem data format error
-AGV_NODE,200592,2,A0592:(IPC)LocateDriver_SLAM_Sick Initail Fail
-AGV_NODE,200593,2,A0593:(IPC)LocateDriver_SLAM_Sick Connect Fail
-AGV_NODE,200594,2,A0594:(IPC)LocateDriver_SLAM_Sick data format error
-AGV_NODE,200595,2,A0595:(IPC)Can't Override : Override Timeout
-AGV_NODE,200596,2,A0596:(IPC)SafetyStop : Fork isn't on Auto Status
-AGV_NODE,200597,2,A0597:(IPC)SafetyStop : Charging
-AGV_NODE,200598,2,A0598:(IPC)SafetyStop : Excessive angular deviation
-AGV_NODE,200599,2,A0599:(IPC)SafetyStop : Excessive section deviation
-AGV_NODE,200600,2,A0600:(IPC)SafetyStop : Too long not read barcode (turn)
-AGV_NODE,200601,2,A0601:(IPC)SafetyStop : Too long not read barcode (line)
-AGV_NODE,200602,2,A0602:(IPC)SafetyStop : AGV Stop without reason
-AGV_NODE,200603,2,A0603:(IPC)SafetyStop : Velocity change error
-AGV_NODE,200604,2,A0604:(IPC)SafetyStop : Axis error
-AGV_NODE,200605,2,A0605:(IPC)SafetyStop : LocateControl Error
-AGV_NODE,200606,2,A0606:(IPC)SafetyStop : Stop Request
-AGV_NODE,200607,2,A0607:(IPC)SafetyStop : Bumper Stop
-AGV_NODE,200608,2,A0608:(IPC)SafetyStop : EMO Stop
-AGV_NODE,200609,2,A0609:(IPC)SafetyStop : Delta update value error
-AGV_NODE,200610,2,A0610:(IPC)Can't AutoRetry : AutoRetry Count more than config
-AGV_NODE,200611,2,A0611:(IPC)Can't AutoRetry : AutoReset fail
-AGV_NODE,200612,2,A0612:(IPC)Can't AutoRetry : Create Retry MoveCmdInfo fail
-AGV_NODE,200613,2,A0613:(IPC)BeamSensor singal on Timeout
-AGV_NODE,200614,2,A0614:(IPC)Fork Command Format NG
-AGV_NODE,200615,2,A0615:(IPC)Fork Command Read timeout
-AGV_NODE,200616,2,A0616:(IPC)Fork Not Busy timeout
-AGV_NODE,200617,2,A0617:(IPC)Fork Command Executing timeout
-AGV_NODE,200618,2,A0618:(IPC)Fork Home Flag Waiting timeout
-AGV_NODE,200619,1,A0619:(IPC)Agv switch to Manual
+AGV_NODE,200500,2, Fork Command Format Error. Clear Fork Command for Continue! (IPC)
+AGV_NODE,200501,2, Fork Command PLC Read Error. Clear Fork Command for Continue! (IPC)
+AGV_NODE,200502,2, Fork Start Send out but Busy not on timeout. Please check PLC. (IPC)
+AGV_NODE,200503,2, Fork Command Executing timeout. (IPC)
+AGV_NODE,200504,1, Batterys Charging Time Out (IPC)
+AGV_NODE,200505,2, (IPC)
+AGV_NODE,200506,2, (IPC)
+AGV_NODE,200507,2, (IPC)
+AGV_NODE,200508,2, (IPC)
+AGV_NODE,200509,2, (IPC)
+AGV_NODE,200510,2, (IPC)
+AGV_NODE,200511,2, (IPC)
+AGV_NODE,200512,2, (IPC)
+AGV_NODE,200513,2, (IPC)
+AGV_NODE,200514,2, (IPC)
+AGV_NODE,200515,2, (IPC)
+AGV_NODE,200516,2, Move finish fail. (IPC)
+AGV_NODE,200517,2, (IPC)
+AGV_NODE,200518,2, (IPC)
+AGV_NODE,200519,2, (IPC)
+AGV_NODE,200520,2, (IPC)
+AGV_NODE,200521,2, (IPC)
+AGV_NODE,200522,2, (IPC)
+AGV_NODE,200523,2, (IPC)
+AGV_NODE,200524,2, (IPC)
+AGV_NODE,200525,2, (IPC)
+AGV_NODE,200526,2, (IPC)
+AGV_NODE,200527,2, (IPC)
+AGV_NODE,200528,2, (IPC)
+AGV_NODE,200529,2, (IPC)
+AGV_NODE,200530,2, (IPC)
+AGV_NODE,200531,2, (IPC)
+AGV_NODE,200532,2, (IPC)
+AGV_NODE,200533,2, (IPC)
+AGV_NODE,200534,2, (IPC)
+AGV_NODE,200535,2, (IPC)
+AGV_NODE,200536,2, (IPC)
+AGV_NODE,200537,2, (IPC)
+AGV_NODE,200538,2, (IPC)
+AGV_NODE,200539,2, (IPC)
+AGV_NODE,200540,2, (IPC)
+AGV_NODE,200541,2, (IPC)
+AGV_NODE,200542,2, (IPC)
+AGV_NODE,200543,2, (IPC)
+AGV_NODE,200544,2, (IPC)
+AGV_NODE,200545,2, (IPC)
+AGV_NODE,200546,2, (IPC)
+AGV_NODE,200547,2, (IPC)
+AGV_NODE,200548,2, (IPC)
+AGV_NODE,200549,2, (IPC)
+AGV_NODE,200550,2, (IPC)
+AGV_NODE,200551,2, (IPC)
+AGV_NODE,200552,2, (IPC)
+AGV_NODE,200553,2, (IPC)
+AGV_NODE,200554,2, (IPC)
+AGV_NODE,200555,2, (IPC)
+AGV_NODE,200556,2, (IPC)
+AGV_NODE,200557,2, (IPC)
+AGV_NODE,200558,2, (IPC)
+AGV_NODE,200559,2, (IPC)
+AGV_NODE,200560,2, (IPC)
+AGV_NODE,200561,2, (IPC)
+AGV_NODE,200562,2, (IPC)
+AGV_NODE,200563,2, (IPC)
+AGV_NODE,200564,2, (IPC)
+AGV_NODE,200565,2, (IPC)
+AGV_NODE,200566,2, (IPC)
+AGV_NODE,200567,2, (IPC)
+AGV_NODE,200568,2, (IPC)
+AGV_NODE,200569,2, (IPC)
+AGV_NODE,200570,2, (IPC)
+AGV_NODE,200571,2, (IPC)
+AGV_NODE,200572,2, (IPC)
+AGV_NODE,200573,2, (IPC)
+AGV_NODE,200574,2, (IPC)
+AGV_NODE,200575,2, (IPC)
+AGV_NODE,200576,2, (IPC)
+AGV_NODE,200577,2, (IPC)
+AGV_NODE,200578,2, (IPC)
+AGV_NODE,200579,2, (IPC)
+AGV_NODE,200580,2, Elmo connection failed (IPC)
+AGV_NODE,200581,2, Elmo Config read failure (IPC)
+AGV_NODE,200582,2, Elmo Config path error (IPC)
+AGV_NODE,200583,2, SR2000-L connection failed (IPC)
+AGV_NODE,200584,1, SR2000-L data format error (IPC)
+AGV_NODE,200585,2, SR2000-R connection failed (IPC)
+AGV_NODE,200586,1, SR2000-R data format error (IPC)
+AGV_NODE,200587,2, I haven't read Barcode (IPC) after too long
+AGV_NODE,200588,2, I haven't read Barcode (IPC) for too long
+AGV_NODE,200589,2, Excessive angular deviation from Section (IPC)
+AGV_NODE,200590,2, Excessive deviation from section orbit (IPC)
+AGV_NODE,200591,2, Fork is no longer on the home during the journey (IPC)
+AGV_NODE,200592,2, Axis exception during running (IPC)
+AGV_NODE,200593,2, Disable or virtual axis link failure during running
+AGV_NODE,200594,2, TR Turning Over Speed ?‹â€?IPC)
+AGV_NODE,200595,2, Excessive deviation from expected path
+AGV_NODE,200596,2, Excessive angle difference between four wheels
+AGV_NODE,200597,2, R2000 Cornering Speed ?‹â€?IPC)
+AGV_NODE,200598,2, (IPC)
+AGV_NODE,200599,2, (IPC)
+AGV_NODE,200600,2, (IPC)
+AGV_NODE,200601,2, (IPC)
+AGV_NODE,200602,2, (IPC)
+AGV_NODE,200603,2, (IPC)
+AGV_NODE,200604,2, (IPC)
+AGV_NODE,200605,2, (IPC)
+AGV_NODE,200606,2, (IPC)
+AGV_NODE,200607,2, (IPC)
+AGV_NODE,200608,2, (IPC)
+AGV_NODE,200609,2, (IPC)
+AGV_NODE,200610,2, (IPC)
+AGV_NODE,200611,2, (IPC)
+AGV_NODE,200612,2, (IPC)
+AGV_NODE,200613,2, (IPC)
+AGV_NODE,200614,2, (IPC)
+AGV_NODE,200615,2, (IPC)
+AGV_NODE,200616,2, (IPC)
+AGV_NODE,200617,2, (IPC)
+AGV_NODE,200618,2, (IPC)
+AGV_NODE,200619,2, (IPC)
 AGV_NODE,200620,2, (IPC)
 AGV_NODE,200621,2, (IPC)
 AGV_NODE,200622,2, (IPC)
@@ -1001,19 +885,19 @@ AGV_NODE,201026,2, ES3 Index Timeout
 AGV_NODE,201027,2, 
 AGV_NODE,201028,2, 
 AGV_NODE,201029,2, 
-AGV_NODE,201030,1, 
-AGV_NODE,201031,1, 
-AGV_NODE,201032,1, 
-AGV_NODE,201033,1, 
-AGV_NODE,201034,1, 
-AGV_NODE,201035,1, 
-AGV_NODE,201036,1, 
-AGV_NODE,201037,1, 
-AGV_NODE,201038,1, 
-AGV_NODE,201039,1, 
+AGV_NODE,201030,2, 
+AGV_NODE,201031,2, 
+AGV_NODE,201032,2, 
+AGV_NODE,201033,2, 
+AGV_NODE,201034,2, 
+AGV_NODE,201035,2, 
+AGV_NODE,201036,2, 
+AGV_NODE,201037,2, 
+AGV_NODE,201038,2, 
+AGV_NODE,201039,2, 
 AGV_NODE,201040,2, Vehicle Battery Setting status (None)
-AGV_NODE,201041,1, Vehicle BMS High Battery Warning
-AGV_NODE,201042,1, Vehicle BMS Low Battery Warning
+AGV_NODE,201041,2, Vehicle BMS High Battery 1ning
+AGV_NODE,201042,2, Vehicle BMS Low Battery 1ning
 AGV_NODE,201043,2, 
 AGV_NODE,201044,2, 
 AGV_NODE,201045,2, 
@@ -1083,7 +967,7 @@ AGV_NODE,201108,2,
 AGV_NODE,201109,2, 
 AGV_NODE,201110,2, Meter Communication Timeout
 AGV_NODE,201111,2, Meter Communication Error
-AGV_NODE,201112,1, Charger Station Error
+AGV_NODE,201112,2, Charger Station Error
 AGV_NODE,201113,2, 
 AGV_NODE,201114,2, 
 AGV_NODE,201115,2, GOTECH Battery Communication Timeout
@@ -1141,108 +1025,6 @@ AGV_NODE,201166,2, Interface T7 Timeout (R Side)
 AGV_NODE,201167,2, Interface T8 Timeout (R Side)
 AGV_NODE,201168,1, Interface Signal On (R Side)
 AGV_NODE,201169,2, Ready Signal Off (R Side)
-AGV_NODE,201180,1, PrePIO fail
-AGV_NODE,201181,1, Busy fail.
-AGV_NODE,201182,1, PostPIO fail.
-AGV_NODE,201200,1,W1200:(IPC)Agv already have a transfer command on middler get new transfer command.
-AGV_NODE,201201,1,W1201:(IPC)Watch low power thread is charging can't do new transfer command.
-AGV_NODE,201202,1,W1202:(IPC)Loading is off after load finished.
-AGV_NODE,201203,1,W1203:(IPC)Carrier ID is EMPTY after load finished.
-AGV_NODE,201204,1,W1204:(IPC)Carrier ID is ERROR after load finished.
-AGV_NODE,201205,1,W1205:(IPC)Move finish fail.
-AGV_NODE,201206,1,W1206:(IPC)Loading is ON after unload finished.
-AGV_NODE,201207,1,W1207:(IPC)Fork command is exist before unload.
-AGV_NODE,201208,1,W1208:(IPC)Vehicle is not in unload position and cannot unload.
-AGV_NODE,201209,1,W1209:(IPC)Fork command is exist before load.
-AGV_NODE,201210,1,W1210:(IPC)Vehicle is not in guide sections.
-AGV_NODE,201211,1,W1211:(IPC)This address is a couple but no charge direction.
-AGV_NODE,201212,1,W1212:(IPC)Charging is OFF after send start charge command to plc.
-AGV_NODE,201213,1,W1213:(IPC)Vehicle is not in load position and cannot load.
-AGV_NODE,201214,1,W1214:(IPC)Vehicle already have cassette cannot load.
-AGV_NODE,201215,1,W1215:(IPC)Vehicle has no cassette to unload.
-AGV_NODE,201216,1,W1216:(IPC)AgvcMoveCommand is not match the map to move.
-AGV_NODE,201217,1,W1217:(IPC)Vehicle is not in transfer reject override.
-AGV_NODE,201218,1,W1218:(IPC)Vehicle is not in moving-step reject override.
-AGV_NODE,201219,1,W1219:(IPC)Vehicle is not pause by reserve reject override.
-AGV_NODE,201220,1,W1220:(IPC)Unload address unmatch current command unload address.
-AGV_NODE,201221,1,W1221:(IPC)Load address unmatch current command load address.
-AGV_NODE,201222,1,W1222:(IPC)ToUnloadSections is empty.
-AGV_NODE,201223,1,W1223:(IPC)ToLoadSections is empty.
-AGV_NODE,201224,1,W1224:(IPC)Exception happened in override-check.
-AGV_NODE,201225,1,W1225:(IPC)Carrier ID is mismatch after load finished.
-AGV_NODE,201226,1,W1226:(IPC)Carrier ID read reply is timeout
-AGV_NODE,201227,1,W1227:(IPC)Vehicle has alarm cannot do transfer command.
-AGV_NODE,201228,1,W1228:(IPC)MoveControl status is not idle cannot switch to auto mode.
-AGV_NODE,201229,1,W1229:(IPC)Real position is null cannot switch to auto mode.
-AGV_NODE,201230,1,W1230:(IPC)Vehicle is not in transfer reject avoid.
-AGV_NODE,201231,1,W1231:(IPC)Vehicle is not in moving-step reject avoid.
-AGV_NODE,201232,1,W1232:(IPC)Vehicle is not pause by reserve reject avoid.
-AGV_NODE,201233,1,W1233:(IPC)Exception happened in avoid-check.
-AGV_NODE,201234,1,W1234:(IPC)Interlock Error
-AGV_NODE,201235,1,W1235:(IPC)SendWaitTimeout
-AGV_NODE,201236,1,W1236:(IPC)PositionError
-AGV_NODE,201237,1,W1237:(IPC)SR2000-L¸ê®Æ®æ¦¡¿ù»~
-AGV_NODE,201238,1,W1238:(IPC)SR2000-R¸ê®Æ®æ¦¡¿ù»~
-AGV_NODE,201239,1,W1239:(IPC)TRÀþ¶¡GT Moving
-AGV_NODE,201240,1,W1240:(IPC)Send PLC to Stop AGV
-AGV_NODE,201241,1,W1241:(IPC)Reserve : Get Reserve with MoveControl Idle
-AGV_NODE,201242,1,W1242:(IPC)Reserve : Get Reserve position not math
-AGV_NODE,201243,1,W1243:(IPC)STurn : AGV turning with GroupTurn not Ready
-AGV_NODE,201244,1,W1244:(IPC)SecondCorrection : Disable Timeout
-AGV_NODE,201245,1,W1245:(IPC)MotionDriver Axis Error
-AGV_NODE,201246,1,W1246:(IPC)MotionDriver Axis XFL Error
-AGV_NODE,201247,1,W1247:(IPC)MotionDriver Axis XFR Error
-AGV_NODE,201248,1,W1248:(IPC)MotionDriver Axis XRL Error
-AGV_NODE,201249,1,W1249:(IPC)MotionDriver Axis XRR Error
-AGV_NODE,201250,1,W1250:(IPC)MotionDriver Axis TFL Error
-AGV_NODE,201251,1,W1251:(IPC)MotionDriver Axis TFR Error
-AGV_NODE,201252,1,W1252:(IPC)MotionDriver Axis TRL Error
-AGV_NODE,201253,1,W1253:(IPC)MotionDriver Axis TRR Error
-AGV_NODE,201254,1,W1254:(IPC)MotionDriver Axis VXFL Error
-AGV_NODE,201255,1,W1255:(IPC)MotionDriver Axis VXFR Error
-AGV_NODE,201256,1,W1256:(IPC)MotionDriver Axis VXRL Error
-AGV_NODE,201257,1,W1257:(IPC)MotionDriver Axis VXRR Error
-AGV_NODE,201258,1,W1258:(IPC)MotionDriver Axis VTFL Error
-AGV_NODE,201259,1,W1259:(IPC)MotionDriver Axis VTFR Error
-AGV_NODE,201260,1,W1260:(IPC)MotionDriver Axis VTRL Error
-AGV_NODE,201261,1,W1261:(IPC)MotionDriver Axis VTRR Error
-AGV_NODE,201262,1,W1262:(IPC)MotionDriver Axis XFL Error
-AGV_NODE,201263,1,W1263:(IPC)MotionDriver Axis XFL Error
-AGV_NODE,201264,1,W1264:(IPC)LocateDriver_BarcodeMapSystem LON Exception
-AGV_NODE,201265,1,W1265:(IPC)LocateDriver_BarcodeMapSystem Error
-AGV_NODE,201266,1,W1266:(IPC)LocateDriver_SLAM_Sick wrong locate
-AGV_NODE,201267,1,W1267:(IPC)CreateMoveCommandList Fail
-AGV_NODE,201268,1,W1268:(IPC)Can't Override : Can't Pause now
-AGV_NODE,201269,1,W1269:(IPC)Can't Auto : MoveControl Status is not Idle
-AGV_NODE,201270,1,W1270:(IPC)Can't Auto : Motion Driver Disconnect
-AGV_NODE,201271,1,W1271:(IPC)Can't Auto : MoveCommandControl Intail Fail
-AGV_NODE,201272,1,W1272:(IPC)Can't Auto : Closing program
-AGV_NODE,201273,1,W1273:(IPC)Can't Auto : Axis Error
-AGV_NODE,201274,1,W1274:(IPC)Can't Auto : Wait ResetAlarm Finish
-AGV_NODE,201275,1,W1275:(IPC)Can't Auto : JogPitch Action
-AGV_NODE,201276,1,W1276:(IPC)Can't Auto : LocateControl Intail Fail
-AGV_NODE,201277,1,W1277:(IPC)Can't Auto : Locate Driver Disconnect
-AGV_NODE,201278,1,W1278:(IPC)Can't Auto : Locate Driver Error
-AGV_NODE,201279,1,W1279:(IPC)Can't Auto : AutoAction Fail
-AGV_NODE,201280,1,W1280:(IPC)Reject Move Command : MovecmdInfo data error
-AGV_NODE,201281,1,W1281:(IPC)
-AGV_NODE,201282,1,W1282:(IPC)Reject Move Command : MoveControl Status is not Idle
-AGV_NODE,201283,1,W1283:(IPC)Reject Move Command : Charging
-AGV_NODE,201284,1,W1284:(IPC)Reject Move Command : Fork isn't on Auto Status
-AGV_NODE,201285,1,W1285:(IPC)Reject Move Command : MoveControl driver disconnect
-AGV_NODE,201286,1,W1286:(IPC)Reject Move Command : No current coordinates
-AGV_NODE,201287,1,W1287:(IPC)Reject Move Command : Not is start position
-AGV_NODE,201288,1,W1288:(IPC)Reject Move Command : Not is start AGV angle
-AGV_NODE,201289,1,W1289:(IPC)Reject Move Command : in cancel flow
-AGV_NODE,201290,1,W1290:(IPC)Reject Move Command : in AutoRetry flow
-AGV_NODE,201291,1,W1291:(IPC)Can't Reset Alarm : Main Flow Exception
-AGV_NODE,201292,1,W1292:(IPC)Can't Reset Alarm : stop in turn flow
-AGV_NODE,201293,1,W1293:(IPC)Can't Reset Alarm : vehicle not in section
-AGV_NODE,201294,1,W1294:(IPC)Can't Reset Alarm : Locate Control Error
-AGV_NODE,201295,1,W1295:(IPC)Can't Reset Alarm : Motion Control Error
-AGV_NODE,201296,1,W1296:(IPC)Can't AutoReset : Special Alarm
-AGV_NODE,201297,1,W1297:(IPC)Elmo Alarm
-AGV_NODE,201298,1,W1298:(IPC)Batterys Charging Time Out
 AGV_NODE,10000,2,Long time inaction
 AGV_NODE,10001,2,Can not service
 ChargerM,1,2,A0001:Main box emergency stop
@@ -1277,20 +1059,20 @@ ChargerM,29,2,A0029:
 ChargerM,30,2,A0030:
 ChargerM,31,2,A0031:
 Charger1,32,2,A0032:Coupler01 charge time out
-Charger1,33,2,A0033:Coupler01 motor front end sensor error
-Charger1,34,2,A0034:Coupler01 motor rear end sensor error
-Charger1,35,2,A0035:Coupler01 Motor error
-Charger1,36,2,A0036:Charger01 Charger  error
-Charger1,37,2,A0037:Charger01 Charger  communication error
+Charger1,33,2,A0033:Coupler01 motor front end sensor erro
+Charger1,34,2,A0034:Coupler01 motor rear end sensor erro
+Charger1,35,2,A0035:Coupler01 Motor erro
+Charger1,36,2,A0036:Charger01 Charger  erro
+Charger1,37,2,A0037:Charger01 Charger  communication erro
 Charger1,38,2,A0038:Coupler01  Measuring without voltage
 Charger1,39,2,A0039:Coupler01 coupler in a position
 Charger1,40,2,A0040:Charger01 command tome out
-Charger1,41,2,A0041:Charger01 manual switch ON
+Charger1,41,2,A0041:
 Charger1,42,2,A0042:
 Charger1,43,2,A0043:
 Charger1,44,2,A0044:
-Charger1,45,2,A0045:Charger01 charge current error
-Charger1,46,2,A0046:Charger01 charger setting error
+Charger1,45,2,A0045:
+Charger1,46,2,A0046:
 Charger1,47,2,A0047:
 Charger1,48,2,A0048:
 Charger1,49,2,A0049:
@@ -1309,20 +1091,20 @@ Charger1,61,2,A0061:
 Charger1,62,2,A0062:
 Charger1,63,2,A0063:
 Charger2,64,2,A0064:Coupler02 charge time out
-Charger2,65,2,A0065:Coupler02 motor front end sensor error
-Charger2,66,2,A0066:Coupler02 motor rear end sensor error
-Charger2,67,2,A0067:Coupler02 Motor error
-Charger2,68,2,A0068:Charger02 Charger  error
-Charger2,69,2,A0069:Charger02 Charger  communication error
+Charger2,65,2,A0065:Coupler02 motor front end sensor erro
+Charger2,66,2,A0066:Coupler02 motor rear end sensor erro
+Charger2,67,2,A0067:Coupler02 Motor erro
+Charger2,68,2,A0068:Charger02 Charger  erro
+Charger2,69,2,A0069:Charger02 Charger  communication erro
 Charger2,70,2,A0070:Coupler02  Measuring without voltage
 Charger2,71,2,A0071:Coupler02 coupler in a position
 Charger2,72,2,A0072:Charger02 command tome out
-Charger2,73,2,A0073:Charger02 manual switch ON
+Charger2,73,2,A0073:
 Charger2,74,2,A0074:
 Charger2,75,2,A0075:
 Charger2,76,2,A0076:
-Charger2,77,2,A0077:Charger02 charge current error
-Charger2,78,2,A0078:Charger02 charger setting error
+Charger2,77,2,A0077:
+Charger2,78,2,A0078:
 Charger2,79,2,A0079:
 Charger2,80,2,A0080:
 Charger2,81,2,A0081:
@@ -1341,20 +1123,20 @@ Charger2,93,2,A0093:
 Charger2,94,2,A0094:
 Charger2,95,2,A0095:
 Charger3,96,2,A0096:Coupler03 charge time out
-Charger3,97,2,A0097:Coupler03 motor front end sensor error
-Charger3,98,2,A0098:Coupler03 motor rear end sensor error
-Charger3,99,2,A0099:Coupler03 Motor error
-Charger3,100,2,A0100:Charger03 Charger  error
-Charger3,101,2,A0101:Charger03 Charger  communication error
+Charger3,97,2,A0097:Coupler03 motor front end sensor erro
+Charger3,98,2,A0098:Coupler03 motor rear end sensor erro
+Charger3,99,2,A0099:Coupler03 Motor erro
+Charger3,100,2,A0100:Charger03 Charger  erro
+Charger3,101,2,A0101:Charger03 Charger  communication erro
 Charger3,102,2,A0102:Coupler03  Measuring without voltage
 Charger3,103,2,A0103:Coupler03 coupler in a position
 Charger3,104,2,A0104:Charger03 command tome out
-Charger3,105,2,A0105:Charger03 manual switch ON
+Charger3,105,2,A0105:
 Charger3,106,2,A0106:
 Charger3,107,2,A0107:
 Charger3,108,2,A0108:
-Charger3,109,2,A0109:Charger03 charge current error
-Charger3,110,2,A0110:Charger03 charger setting error
+Charger3,109,2,A0109:
+Charger3,110,2,A0110:
 Charger3,111,2,A0111:
 Charger3,112,2,A0112:
 Charger3,113,2,A0113:
@@ -1373,20 +1155,20 @@ Charger3,125,2,A0125:
 Charger3,126,2,A0126:
 Charger3,127,2,A0127:
 Charger4,128,2,A0128:Coupler04 charge time out
-Charger4,129,2,A0129:Coupler04 motor front end sensor error
-Charger4,130,2,A0130:Coupler04 motor rear end sensor error
-Charger4,131,2,A0131:Coupler04 Motor error
-Charger4,132,2,A0132:Charger04 Charger  error
-Charger4,133,2,A0133:Charger04 Charger  communication error
+Charger4,129,2,A0129:Coupler04 motor front end sensor erro
+Charger4,130,2,A0130:Coupler04 motor rear end sensor erro
+Charger4,131,2,A0131:Coupler04 Motor erro
+Charger4,132,2,A0132:Charger04 Charger  erro
+Charger4,133,2,A0133:Charger04 Charger  communication erro
 Charger4,134,2,A0134:Coupler04  Measuring without voltage
 Charger4,135,2,A0135:Coupler04 coupler in a position
 Charger4,136,2,A0136:Charger04 command tome out
-Charger4,137,2,A0136:Charger04 manual switch ON
+Charger4,137,2,A0137:
 Charger4,138,2,A0138:
 Charger4,139,2,A0139:
 Charger4,140,2,A0140:
-Charger4,141,2,A0141:Charger04 charge current error
-Charger4,142,2,A0142:Charger04 charger setting error
+Charger4,141,2,A0141:
+Charger4,142,2,A0142:
 Charger4,143,2,A0143:
 Charger4,144,2,A0144:
 Charger4,145,2,A0145:
@@ -1405,18 +1187,11 @@ Charger4,157,2,A0157:
 Charger4,158,2,A0158:
 Charger4,159,2,A0159:
 Charger5,160,2,A0160:Coupler05 charge time out
-Charger5,161,2,A0161:Coupler05 motor front end sensor error
-Charger5,162,2,A0162:Coupler05 motor rear end sensor error
-Charger5,163,2,A0163:Coupler05 Motor error
-Charger5,164,2,A0164:Charger01 Charger  error
-Charger5,165,2,A0165:Charger01 Charger  communication error
+Charger5,161,2,A0161:Coupler05 motor front end sensor erro
+Charger5,162,2,A0162:Coupler05 motor rear end sensor erro
+Charger5,163,2,A0163:Coupler05 Motor erro
+Charger5,164,2,A0164:Charger01 Charger  erro
+Charger5,165,2,A0165:Charger01 Charger  communication erro
 Charger5,166,2,A0166:Coupler05  Measuring without voltage
 Charger5,167,2,A0167:Coupler05 coupler in a position
 Charger5,168,2,A0168:Charger05 command tome out
-Charger5,169,2,A0169:Charger05 manual switch ON
-Charger5,169,2,A0170:
-Charger5,169,2,A0171:
-Charger5,169,2,A0172:
-Charger5,169,2,A0173:Charger01 charge current error
-Charger5,169,2,A0174:Charger01 charger setting error
-Charger5,169,2,A0175:
