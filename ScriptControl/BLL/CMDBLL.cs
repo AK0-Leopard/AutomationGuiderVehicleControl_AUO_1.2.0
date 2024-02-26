@@ -2019,6 +2019,17 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             return count != 0;
         }
+        public bool isCMD_OHTCExcute()
+        {
+            int count = 0;
+            //DBConnection_EF con = DBConnection_EF.GetContext();
+            //using (DBConnection_EF con = new DBConnection_EF())
+            using (DBConnection_EF con = DBConnection_EF.GetUContext())
+            {
+                count = cmd_ohtcDAO.getExcuteCMDConut(con);
+            }
+            return count != 0;
+        }
 
         public bool hasExcuteCMDFromToAdrIsParkInSpecifyParkZoneID(string park_zone_id, out int ready_come_to_count)
         {

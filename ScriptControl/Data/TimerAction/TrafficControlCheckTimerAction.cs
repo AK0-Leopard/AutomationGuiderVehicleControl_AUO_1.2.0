@@ -83,7 +83,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                                 break;
                             case StateMachine.TrafficControlStateMachine.State.AllowedEntry:
                                 //持續確認AGV是否已經通過(確認Reserve圖資、Section的資料)，如果已通過或無需求，就呼叫Complete
-                                if (traffic_controller.IsNoAGVWiilPass(scApp.VehicleBLL, scApp.ReserveBLL))
+                                if (traffic_controller.IsNoAGVWiilPass(scApp.CMDBLL, scApp.VehicleBLL, scApp.AddressesBLL))
                                 {
                                     TrafficControlBLL.TrafficControlLogger.Info($"已無AGV無管制路段中,重置通行需求");
                                     traffic_controller.ReturnRightOfWay();

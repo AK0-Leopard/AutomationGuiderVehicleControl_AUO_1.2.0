@@ -1946,7 +1946,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 //       CarrierID: vh.CST_ID);
                 //    return;
                 //}
-                updateVheiclePosition_CacheManager(vh, current_adr_id, current_sec_id, current_seg_id, sec_dis,  DriveDirction.DriveDirNone, x_axis, y_axis, dir_angle, vh_angle);
+                updateVheiclePosition_CacheManager(vh, current_adr_id, current_sec_id, current_seg_id, sec_dis, DriveDirction.DriveDirNone, x_axis, y_axis, dir_angle, vh_angle);
                 //if (!SCUtility.isMatche(current_adr_id, last_adr_id))
                 {
                     //var update_result = updateVheiclePositionToReserveControlModule(scApp.ReserveBLL, vh, x_axis, y_axis, dir_angle, vh_angle, speed,
@@ -2236,6 +2236,25 @@ namespace com.mirle.ibg3k0.sc.BLL
                        Where(vh => segIDs.Contains(SCUtility.Trim(vh.CUR_SEC_ID, true))).
                        ToList();
             }
+            public List<AVEHICLE> loadHasPassSectionVhBySectionIDs(List<string> sectionIDs)
+            {
+                var vhs = eqObjCacheManager.getAllVehicle();
+                List<AVEHICLE> vs = new List<AVEHICLE>();
+                foreach (var v in vhs)
+                {
+                    var current_pass_section = v.tryGetCurrentGuideSection();
+                    if (!current_pass_section.hasInfo)
+                        continue;
+                    foreach (var s in sectionIDs)
+                    {
+                        if (current_pass_section.currentGuideSection.Contains(s))
+                        {
+                            vs.Add(v);
+                        }
+                    }
+                }
+                return vs;
+            }
 
             public UInt16 getVhCurrentModeInAutoRemoteCount()
             {
@@ -2295,6 +2314,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return is_idle;
 
             }
+
 
 
 

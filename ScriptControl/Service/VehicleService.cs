@@ -2822,6 +2822,20 @@ namespace com.mirle.ibg3k0.sc.Service
             var get_result = scApp.TrafficControlBLL.cache.tryGetPassTrafficControl(reserve_section_id);
             if (get_result.hasPass)
             {
+                if (get_result.controller.IsRightOfWayCanceling)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: $"Try add reserve section:{reserve_section_id} but traffic controller reply not ready.(Canceling)");
+                    get_result.controller.RestartStopwatchLastAGVRequestTIme();
+                    return false;
+                }
+                if (get_result.controller.IsRightOfWayReturning)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+                       Data: $"Try add reserve section:{reserve_section_id} but traffic controller reply not ready.(Returning)");
+                    get_result.controller.RestartStopwatchLastAGVRequestTIme();
+                    return false;
+                }
                 //確認這個管制路段是否已經為可通過
                 if (get_result.controller.IsAllowedEntry)
                 {
@@ -4988,6 +5002,7 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         private bool replyCommandComplete(AVEHICLE eqpt, int seq_num, string finish_ohxc_cmd, string finish_mcs_cmd)
         {
+            //checkIsTrunOffTr(eqpt);
             ID_32_TRANS_COMPLETE_RESPONSE send_str = new ID_32_TRANS_COMPLETE_RESPONSE
             {
                 ReplyCode = 0
@@ -5003,6 +5018,16 @@ namespace com.mirle.ibg3k0.sc.Service
             return resp_cmp;
         }
 
+        private void checkIsTrunOffTr(AVEHICLE eqpt)
+        {
+            AADDRESS adr = scApp.AddressesBLL.cache.GetAddress(eqpt.CUR_ADR_ID);
+            if (adr.IsCanNotStay)
+            {
+                return;
+            }
+            var tr = scApp.TrafficControlBLL.cache.GetTrafficController();
+            tr.CancelRequestForRightOfWay(true);
+        }
 
         private void ProcessVehicleAbort(string vhID, string mcsCmdID, List<AMCSREPORTQUEUE> reportqueues)
         {

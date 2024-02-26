@@ -1562,9 +1562,19 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             try
             {
                 btn_resetTraffic.Enabled = false;
+
+                DialogResult confirmResult = MessageBox.Show(this, $"Do you want to reset traffic control?",
+                BCApplication.getMessageString("CONFIRM"), MessageBoxButtons.YesNo);
+                if (confirmResult != System.Windows.Forms.DialogResult.Yes)
+                {
+                    return;
+                }
+
                 var traffic_control = bcApp.SCApplication.TrafficControlBLL.cache.GetTrafficController();
                 if (traffic_control == null)
                     return;
+                sc.BLL.TrafficControlBLL.TrafficControlLogger.Info($"手動清除雙系統交通路權");
+
                 await Task.Run(() => traffic_control.CancelRequestForRightOfWay(true));
             }
             catch (Exception ex)

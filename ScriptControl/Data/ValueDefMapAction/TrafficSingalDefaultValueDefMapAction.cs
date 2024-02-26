@@ -138,14 +138,13 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
         {
             try
             {
-
+                InitialValue();
                 ValueRead traffic_singnal_auo_agvc_ack_pass_vr = null;
                 if (bcfApp.tryGetReadValueEventstring(SCAppConstants.EQPT_OBJECT_CATE_EQPT, eqpt.EQPT_ID, "TRAFFIC_SINGNAL_AUO_AGVC_ACK_PASS", out traffic_singnal_auo_agvc_ack_pass_vr))
                 {
                     traffic_singnal_auo_agvc_ack_pass_vr.afterValueChange += (_sender, _e) => TrafficSignalAUOPassAckChange(_sender, _e);
                 }
 
-                InitialValue();
 
             }
             catch (Exception ex)

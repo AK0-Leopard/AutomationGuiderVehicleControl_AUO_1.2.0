@@ -1147,7 +1147,7 @@ namespace com.mirle.ibg3k0.sc.App
             UnitBLL = new UnitBLL();
             switch (BC_ID)
             {
-                //case SCAppConstants.WorkVersion.VERSION_NAME_AUO_CAAGVC00:
+                case SCAppConstants.WorkVersion.VERSION_NAME_AUO_CAAGVC00:
                 //case SCAppConstants.WorkVersion.VERSION_NAME_AUO_CAAGV200:
                 case SCAppConstants.WorkVersion.VERSION_NAME_AUO_FAXAGV03:
                     ReserveBLL = new ReserveBLLForByPass();
