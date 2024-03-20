@@ -9,18 +9,21 @@ using com.mirle.ibg3k0.sc.Data.SECS;
 using com.mirle.ibg3k0.sc.Data.ValueDefMapAction;
 using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
+using DocumentFormat.OpenXml.Bibliography;
 using NLog;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using static com.mirle.ibg3k0.sc.Data.SECS.NorthInnolux.S2F49.TRANSFERINFO.INFO;
 
 namespace com.mirle.ibg3k0.sc.BLL
 {
-    [TeaceMethodAspect]
+    //[TeaceMethodAspect]
     public class CMDBLL
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -1130,7 +1133,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                                     string from_adr = string.Empty;
                                     string to_adr = string.Empty;
                                     AVEHICLE bestSuitableVh = null;
-                                    E_VH_TYPE vh_type = E_VH_TYPE.None;
+                                    E_VH_TYPE source_vh_type = E_VH_TYPE.None;
                                     E_CMD_TYPE cmd_type = default(E_CMD_TYPE);
 
                                     //      bool sourceIsVh = scApp.getEQObjCacheManager().getVehicletByVHID(hostsource) != null;
@@ -1139,8 +1142,11 @@ namespace com.mirle.ibg3k0.sc.BLL
                                     bool source_is_a_port = scApp.PortStationBLL.OperateCatch.IsExist(hostsource);
                                     if (source_is_a_port)
                                     {
-                                        scApp.MapBLL.getAddressID(hostsource, out from_adr, out vh_type);
-                                        bestSuitableVh = scApp.VehicleBLL.findBestSuitableVhStepByStepFromAdr_New(from_adr, vh_type);
+                                        scApp.MapBLL.getAddressID(hostsource, out from_adr, out source_vh_type);
+                                        E_VH_TYPE source_port_type = GetLoadPortType(hostsource);
+                                        E_VH_TYPE dest_port_type = GetUnloadPortType(hostdest);
+                                        //bestSuitableVh = scApp.VehicleBLL.findBestSuitableVhStepByStepFromAdr_New(from_adr, source_vh_type);
+                                        bestSuitableVh = scApp.VehicleBLL.findBestSuitableVhStepByStepFromAdr_New(from_adr, source_port_type, dest_port_type);
                                         cmd_type = E_CMD_TYPE.LoadUnload;
                                     }
                                     else
@@ -1212,6 +1218,27 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
         }
 
+        private E_VH_TYPE GetLoadPortType(string sourcePort)
+        {
+            var source_port_obj = scApp.PortStationBLL.OperateCatch.getPortStation(sourcePort);
+            if (source_port_obj == null)
+            {
+                logger.Warn($"want get port type,but source port:{sourcePort} is null");
+                return E_VH_TYPE.None;
+            }
+            return source_port_obj.LD_VH_TYPE;
+        }
+        private E_VH_TYPE GetUnloadPortType(string destPort)
+        {
+            var dest_port_obj = scApp.PortStationBLL.OperateCatch.getPortStation(destPort);
+            if (dest_port_obj == null)
+            {
+                logger.Warn($"want get port type,but dest port:{destPort} is null");
+                return E_VH_TYPE.None;
+            }
+            return dest_port_obj.ULD_VH_TYPE;
+        }
+
         public virtual bool createWaitingRetryOHTCCmd(string vhID, string mcs_cmd_ID)
         {
             return false;
@@ -1267,6 +1294,11 @@ namespace com.mirle.ibg3k0.sc.BLL
                         bool source_is_a_port = scApp.PortStationBLL.OperateCatch.IsExist(hostsource);
                         if (!source_is_a_port) continue;
 
+                        if (!IsVhTypeAndPortLULTypeMatch(vh, mcs_cmd))
+                        {
+                            continue;
+                        }
+
                         E_VH_TYPE vh_type = E_VH_TYPE.None;
                         scApp.MapBLL.getAddressID(hostsource, out from_adr, out vh_type);
 
@@ -1274,6 +1306,7 @@ namespace com.mirle.ibg3k0.sc.BLL
                                       Data: $"Start calculation distance, command id:{mcs_cmd.CMD_ID.Trim()} command source port:{mcs_cmd.HOSTSOURCE?.Trim()}," +
                                             $"vh:{vh.VEHICLE_ID} current adr:{vh.CUR_ADR_ID},from adr:{from_adr} ...",
                                       XID: mcs_cmd.CMD_ID);
+
                         var result = scApp.GuideBLL.getGuideInfo(vh.CUR_ADR_ID, from_adr);
                         //double total_section_distance = result.guideSectionIds != null && result.guideSectionIds.Count > 0 ?
                         //                                scApp.SectionBLL.cache.GetSectionsDistance(result.guideSectionIds) : 0;
@@ -1309,6 +1342,53 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             return (nearest_vh, nearest_cmd_mcs);
         }
+        private bool IsVhTypeAndPortLULTypeMatch(AVEHICLE vh, ACMD_MCS mcsCmd)
+        {
+            if (vh.VEHICLE_TYPE == E_VH_TYPE.None)
+            {
+                return true;
+            }
+            string host_source = mcsCmd.HOSTSOURCE;
+            string host_desc = mcsCmd.HOSTDESTINATION;
+            var source_port = scApp.PortStationBLL.OperateCatch.getPortStation(host_source);
+            if (source_port == null || source_port.LD_VH_TYPE == E_VH_TYPE.None)
+            {
+                //not thing...
+            }
+            else
+            {
+                if (source_port.LD_VH_TYPE != vh.VEHICLE_TYPE)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
+                       Data: $"vh id:{vh.VEHICLE_ID} vh type:{vh.VEHICLE_TYPE}, vehicle type not match current find vh type:{source_port.LD_VH_TYPE}(source port type)," +
+                             $"so filter it out",
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID);
+                    return false;
+                }
+            }
+
+            var dest_port = scApp.PortStationBLL.OperateCatch.getPortStation(host_desc);
+
+            if (dest_port == null || dest_port.ULD_VH_TYPE == E_VH_TYPE.None)
+            {
+                //not thing...
+            }
+            else
+            {
+                if (dest_port.ULD_VH_TYPE != vh.VEHICLE_TYPE)
+                {
+                    LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
+                       Data: $"vh id:{vh.VEHICLE_ID} vh type:{vh.VEHICLE_TYPE}, vehicle type not match current find vh type:{dest_port.ULD_VH_TYPE}(dest port type)," +
+                             $"so filter it out",
+                       VehicleID: vh.VEHICLE_ID,
+                       CarrierID: vh.CST_ID);
+                    return false;
+                }
+            }
+            return true;
+        }
+
 
         private (bool isFind, AVEHICLE onTheWayVh) tryFindOnTheWayVehicle(string cmdSourcePort)
         {
@@ -2022,7 +2102,7 @@ namespace com.mirle.ibg3k0.sc.BLL
             }
             if (cmd_ohtc == null)
                 return true;
-            if(cmd_ohtc.CMD_STAUS >= E_CMD_STATUS.NormalEnd)
+            if (cmd_ohtc.CMD_STAUS >= E_CMD_STATUS.NormalEnd)
                 return true;
             return false;
             //return cmd_ohtc != null &&

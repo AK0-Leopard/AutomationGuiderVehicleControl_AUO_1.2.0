@@ -469,10 +469,10 @@ namespace com.mirle.ibg3k0.bc.winform.UI.Components
                             {
                                 switch (eqpt.VEHICLE_TYPE)
                                 {
-                                    case E_VH_TYPE.Clean:
+                                    case E_VH_TYPE.Type1:
                                         p_Status = E_MAP_VHSTS.enMove2ClearPark;
                                         break;
-                                    case E_VH_TYPE.Dirty:
+                                    case E_VH_TYPE.Type2:
                                         p_Status = E_MAP_VHSTS.enMove2DirtyPark;
                                         break;
                                     default:

@@ -55,8 +55,8 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
             {
                 try
                 {
-                    int total_idle_vh_clean = scApp.VehicleBLL.getNoExcuteMcsCmdVhCount(E_VH_TYPE.Clean);
-                    int total_idle_vh_Dirty = scApp.VehicleBLL.getNoExcuteMcsCmdVhCount(E_VH_TYPE.Dirty);
+                    int total_idle_vh_clean = scApp.VehicleBLL.getNoExcuteMcsCmdVhCount(E_VH_TYPE.Type1);
+                    int total_idle_vh_Dirty = scApp.VehicleBLL.getNoExcuteMcsCmdVhCount(E_VH_TYPE.Type2);
                     scApp.ReportBLL.ZabbixPush(SCAppConstants.ZabbixServerInfo.ZABBIX_OHXC_IDLE_DIRTY_CAR, total_idle_vh_Dirty);
                     scApp.ReportBLL.ZabbixPush(SCAppConstants.ZabbixServerInfo.ZABBIX_OHXC_IDLE_CLEAR_CAR, total_idle_vh_clean);
                     //scApp.ZabbixService.Send(SCAppConstants.ZABBIX_SERVER_NAME, "OHxC_IDLE_Dirty_Car", total_idle_vh_Dirty.ToString());

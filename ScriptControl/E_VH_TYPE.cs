@@ -13,8 +13,8 @@ namespace com.mirle.ibg3k0.sc
     
     public enum E_VH_TYPE : int
     {
-        Clean = 1,
-        Dirty = 2,
+        Type1 = 1,
+        Type2 = 2,
         None = 0
     }
 }

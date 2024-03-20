@@ -5280,6 +5280,22 @@ namespace com.mirle.ibg3k0.sc.Service
         }
         #endregion Specially Control
 
+        #region VhTypeUpdate
+        public void VhTypeUpdate(string vhID, E_VH_TYPE vhType)
+        {
+            AVEHICLE vh = scApp.VehicleBLL.cache.getVehicle(vhID);
+            if (vh == null)
+            {
+                throw new NullReferenceException($"vh id:{vhID} not exist.");
+            }
+            string message = $"Update vh id:{vhID} to type:{vhType}";
+            LogHelper.Log(logger: logger, LogLevel: LogLevel.Info, Class: nameof(VehicleService), Device: DEVICE_NAME_AGV,
+               Data: message,
+               VehicleID: vhID);
+            scApp.VehicleBLL.updataVehicleType(vhID, vhType);
+        }
+        #endregion VhTypeUpdate
+
         #region RoadService
         public (bool isSuccess, ASEGMENT segment) doEnableDisableSegment(string segment_id, E_PORT_STATUS port_status)
         {

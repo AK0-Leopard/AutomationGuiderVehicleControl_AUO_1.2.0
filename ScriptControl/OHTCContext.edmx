@@ -1738,8 +1738,8 @@
           <Member Name="Reject" Value="10" />
         </EnumType>
         <EnumType Name="E_VH_TYPE" >
-          <Member Name="Clean" Value="1" />
-          <Member Name="Dirty" Value="2" />
+          <Member Name="Type1" Value="1" />
+          <Member Name="Type2" Value="2" />
           <Member Name="None" Value="0" />
         </EnumType>
         <EntityType Name="APORTICON">

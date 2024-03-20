@@ -270,9 +270,9 @@ namespace com.mirle.ibg3k0.sc.Data.ValueDefMapAction
                         //等待Timer發現後會將此命令取下來並下命令給車子去執行
                         //(此處將再考慮是要透過Timer或是開Thread來監控這件事)
 
-                        var port = scApp.MapBLL.getPortByPortID(source_port_id);
-                        AVEHICLE vh_test = scApp.VehicleBLL.findBestSuitableVhStepByStepFromAdr_New(port.ADR_ID, port.LD_VH_TYPE);
-                        scApp.VehicleBLL.callVehicleToMove(vh_test, port.ADR_ID);
+                        //var port = scApp.MapBLL.getPortByPortID(source_port_id);
+                        //AVEHICLE vh_test = scApp.VehicleBLL.findBestSuitableVhStepByStepFromAdr_New(port.ADR_ID, port.LD_VH_TYPE);
+                        //scApp.VehicleBLL.callVehicleToMove(vh_test, port.ADR_ID);
                         break;
                 }
                 line.CommunicationIntervalWithMCS.Restart();

@@ -88,7 +88,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                     }
                     dicTranTaskSchedule_Clear_Dirty["N"].Add(task);
                 }
-                else if (port_station.ULD_VH_TYPE == E_VH_TYPE.Clean)
+                else if (port_station.ULD_VH_TYPE == E_VH_TYPE.Type1)
                 {
                     if (!dicTranTaskSchedule_Clear_Dirty.ContainsKey("C"))
                     {
@@ -96,7 +96,7 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
                     }
                     dicTranTaskSchedule_Clear_Dirty["C"].Add(task);
                 }
-                else if (port_station.ULD_VH_TYPE == E_VH_TYPE.Dirty)
+                else if (port_station.ULD_VH_TYPE == E_VH_TYPE.Type2)
                 {
                     if (!dicTranTaskSchedule_Clear_Dirty.ContainsKey("D"))
                     {
@@ -143,10 +143,10 @@ namespace com.mirle.ibg3k0.sc.Data.TimerAction
 
         private void OHS100()
         {
-            if (scApp.VehicleBLL.getNoExcuteMcsCmdVhCount(E_VH_TYPE.Clean) > 0)
+            if (scApp.VehicleBLL.getNoExcuteMcsCmdVhCount(E_VH_TYPE.Type1) > 0)
                 RandomGenerates_TranTask_Clear_Drity("C");
             Thread.Sleep(1000);
-            if (scApp.VehicleBLL.getNoExcuteMcsCmdVhCount(E_VH_TYPE.Dirty) > 0)
+            if (scApp.VehicleBLL.getNoExcuteMcsCmdVhCount(E_VH_TYPE.Type2) > 0)
                 RandomGenerates_TranTask_Clear_Drity("D");
         }
 

@@ -74,6 +74,7 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             cmb_pauseEvent.DataSource = Enum.GetValues(typeof(sc.ProtocolFormat.OHTMessage.PauseEvent));
             cmb_pauseType.DataSource = Enum.GetValues(typeof(OHxCPauseType));
             cb_Abort_Type.DataSource = Enum.GetValues(typeof(sc.ProtocolFormat.OHTMessage.CMDCancelType));
+            cmbVhType.DataSource = Enum.GetValues(typeof(E_VH_TYPE));
 
 
             mcsMapAction = SCApplication.getInstance().getEQObjCacheManager().getLine().getMapActionByIdentityKey(typeof(AUOMCSDefaultMapAction).Name) as AUOMCSDefaultMapAction;
@@ -511,6 +512,9 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             noticeCar = bcApp.SCApplication.getEQObjCacheManager().getVehicletByVHID(vh_id);
             lbl_id_37_cmdID_value.Text = noticeCar?.OHTC_CMD;
             lbl_install_status.Text = noticeCar?.IS_INSTALLED.ToString();
+
+            cmbVhType.SelectedItem = noticeCar?.VEHICLE_TYPE;
+
         }
 
         private void uctl_Btn1_Click(object sender, EventArgs e)
@@ -1569,6 +1573,23 @@ namespace com.mirle.ibg3k0.bc.winform.UI
             if (e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.Control)
             {
                 grp_cycleRunBlock.Visible = true;
+            }
+        }
+
+        private async void btnVhTypeUpdate_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                btnVhTypeUpdate.Enabled = false;
+                E_VH_TYPE vh_type;
+                Enum.TryParse(cmbVhType.SelectedValue.ToString(), out vh_type);
+                await Task.Run(() => bcApp.SCApplication.VehicleService.VhTypeUpdate(vh_id, vh_type));
+                cmbVhType.SelectedItem = noticeCar.VEHICLE_TYPE;
+                MessageBox.Show($"update vh:[{vh_id}] to type:[{vh_type}] is success.");
+            }
+            finally
+            {
+                btnVhTypeUpdate.Enabled = true;
             }
         }
     }

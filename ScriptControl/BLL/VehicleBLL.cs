@@ -8,11 +8,13 @@ using com.mirle.ibg3k0.sc.Data.VO;
 using com.mirle.ibg3k0.sc.ProtocolFormat.OHTMessage;
 using com.mirle.iibg3k0.ttc.Common;
 using NLog;
+using NLog.Fluent;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -1047,6 +1049,73 @@ namespace com.mirle.ibg3k0.sc.BLL
                 }
             }
         }
+        public AVEHICLE findBestSuitableVhStepByStepFromAdr_New(string source, E_VH_TYPE sourceVhType, E_VH_TYPE destVhType, bool isCheckHasVhCarry = false)
+        {
+            AVEHICLE best_vh = null;
+
+            //List<AVEHICLE> vhs = cache.loadAllVh();
+            List<AVEHICLE> vhs = cache.loadAllVh().ToList();
+
+            FiltVhTypeAndPortLULType(ref vhs, sourceVhType, destVhType);
+
+            //1.過濾掉狀態不符的
+            filterVh(ref vhs, E_VH_TYPE.None);
+            //2.尋找距離Source最近的車子
+            int minimum_cost = int.MaxValue;
+            foreach (var vh in vhs)
+            {
+                var result = scApp.GuideBLL.getGuideInfo(vh.CUR_ADR_ID, source);
+                if (result.totalCost < minimum_cost)
+                {
+                    best_vh = vh;
+                    minimum_cost = result.totalCost;
+                }
+            }
+            return best_vh;
+        }
+
+        private void FiltVhTypeAndPortLULType(ref List<AVEHICLE> vhs, E_VH_TYPE sourceVhType, E_VH_TYPE destVhType)
+        {
+            foreach (var vh in vhs.ToList())
+            {
+                if (vh.VEHICLE_TYPE == E_VH_TYPE.None)
+                    continue;
+                if (sourceVhType == E_VH_TYPE.None)
+                {
+                    //not thing...
+                }
+                else
+                {
+                    if (sourceVhType != vh.VEHICLE_TYPE)
+                    {
+                        vhs.Remove(vh);
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
+                           Data: $"vh id:{vh.VEHICLE_ID} vh type:{vh.VEHICLE_TYPE}, vehicle type not match current find vh type:{sourceVhType}(source port type)," +
+                                 $"so filter it out",
+                           VehicleID: vh.VEHICLE_ID,
+                           CarrierID: vh.CST_ID);
+                    }
+                }
+
+                if (destVhType == E_VH_TYPE.None)
+                {
+                    //not thing...
+                }
+                else
+                {
+                    if (destVhType != vh.VEHICLE_TYPE)
+                    {
+                        vhs.Remove(vh);
+                        LogHelper.Log(logger: logger, LogLevel: LogLevel.Debug, Class: nameof(VehicleBLL), Device: "OHxC",
+                           Data: $"vh id:{vh.VEHICLE_ID} vh type:{vh.VEHICLE_TYPE}, vehicle type not match current find vh type:{destVhType}(dest port type)," +
+                                 $"so filter it out",
+                           VehicleID: vh.VEHICLE_ID,
+                           CarrierID: vh.CST_ID);
+                    }
+                }
+            }
+        }
+
 
         private List<AVEHICLE> ListVhByBeginAdr(ref List<string> to_adrs, ref HashSet<string> searchedSection, int eachSearchCount)
         {
@@ -2138,6 +2207,28 @@ namespace com.mirle.ibg3k0.sc.BLL
                 return default(T);
             Google.Protobuf.MessageParser<T> parser = new Google.Protobuf.MessageParser<T>(() => new T());
             return parser.ParseFrom(buf);
+        }
+
+        public void updataVehicleType(string vhID, E_VH_TYPE vhType)
+        {
+            AVEHICLE vh = new AVEHICLE();
+            try
+            {
+                using (DBConnection_EF con = DBConnection_EF.GetUContext())
+                {
+                    vh.VEHICLE_ID = vhID;
+                    con.AVEHICLE.Attach(vh);
+                    vh.VEHICLE_TYPE = vhType;
+                    con.Entry(vh).Property(p => p.VEHICLE_TYPE).IsModified = true;
+                    vehicleDAO.doUpdate(scApp, con, vh);
+                    con.Entry(vh).State = EntityState.Detached;
+                }
+            }
+            catch(Exception ex)
+            {
+                logger.Error(ex, "Exception:");
+            }
+
         }
         #endregion Vehicle Object Info
 

@@ -226,8 +226,8 @@ namespace com.mirle.ibg3k0.sc.WebAPI
 
             Get["metrics"] = (p) =>
             {
-                int total_idle_vh_clean = SCApplication.getInstance().VehicleBLL.getNoExcuteMcsCmdVhCount(E_VH_TYPE.Clean);
-                int total_idle_vh_Dirty = SCApplication.getInstance().VehicleBLL.getNoExcuteMcsCmdVhCount(E_VH_TYPE.Dirty);
+                int total_idle_vh_clean = SCApplication.getInstance().VehicleBLL.getNoExcuteMcsCmdVhCount(E_VH_TYPE.Type1);
+                int total_idle_vh_Dirty = SCApplication.getInstance().VehicleBLL.getNoExcuteMcsCmdVhCount(E_VH_TYPE.Type2);
                 int total_cmd_is_queue_count = SCApplication.getInstance().CMDBLL.getCMD_MCSIsQueueCount();
                 int total_cmd_is_running_count = SCApplication.getInstance().CMDBLL.getCMD_MCSIsRunningCount();
 
